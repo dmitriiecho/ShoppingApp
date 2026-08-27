@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Навигация ShoppingApp — архитектура</title>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      themeVariables: {
+        fontFamily: "IBM Plex Sans, Segoe UI, system-ui, sans-serif",
+        fontSize: "15px",
+        primaryColor: "#e8f1ff",
+        primaryTextColor: "#122033",
+        primaryBorderColor: "#3b6ea8",
+        secondaryColor: "#fff4e5",
+        secondaryBorderColor: "#c47b2b",
+        tertiaryColor: "#eaf7ee",
+        tertiaryBorderColor: "#2f7a4a",
+        lineColor: "#4a5b6e",
+        clusterBkg: "#f7f9fc",
+        clusterBorder: "#c5d0dc",
+      },
+      flowchart: { curve: "basis", padding: 14 },
+      sequence: { actorMargin: 48, messageMargin: 36 },
+    });
+  </script>
+  <style>
+    :root {
+      --ink: #15202b;
+      --muted: #5b6b7c;
+      --line: #d7e0ea;
+      --paper: #fbfcfe;
+      --card: #ffffff;
+      --accent: #1f5fbf;
+      --accent-soft: #e8f0fc;
+      --catalog: #1f5fbf;
+      --cart: #c45c14;
+      --checkout: #2f7a4a;
+      --promo: #6b3fa0;
+      --code-bg: #0f1720;
+      --shadow: 0 10px 30px rgba(21, 32, 43, 0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 500px at 0% -10%, #e8f0fc 0%, transparent 55%),
+        radial-gradient(900px 400px at 100% 0%, #fff1e4 0%, transparent 50%),
+        var(--paper);
+      font: 16.5px/1.6 "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    nav.toc {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 28px 20px 40px;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(10px);
+    }
+
+    nav.toc .brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    nav.toc .brand small {
+      display: block;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    nav.toc a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      font-size: 13.5px;
+    }
+
+    nav.toc a:hover { background: var(--accent-soft); color: var(--accent); }
+    nav.toc .group { margin-top: 18px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #8a97a6; padding: 0 8px; }
+
+    main {
+      max-width: 1080px;
+      padding: 48px 56px 96px;
+    }
+
+    h1 { font-size: 40px; letter-spacing: -0.04em; line-height: 1.15; margin: 0 0 12px; }
+    h2 { font-size: 26px; letter-spacing: -0.03em; margin: 56px 0 14px; }
+    h3 { font-size: 18px; margin: 32px 0 10px; }
+    p { color: #243140; }
+    .lead { font-size: 19px; color: var(--muted); max-width: 720px; }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 20px 0 36px;
+    }
+
+    .chip {
+      font-size: 12.5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+      margin: 16px 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .diagram {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px 12px;
+      overflow-x: auto;
+      margin: 18px 0 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .phone {
+      width: 280px;
+      margin: 0 auto;
+      background: #11181f;
+      border-radius: 28px;
+      padding: 12px 10px 14px;
+      color: #fff;
+      box-shadow: 0 20px 50px rgba(0,0,0,.18);
+    }
+
+    .phone .notch {
+      width: 86px; height: 8px; border-radius: 8px; background: #2a333c; margin: 4px auto 10px;
+    }
+
+    .phone .screen {
+      background: #f4f7fb;
+      color: var(--ink);
+      border-radius: 18px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone .appbar {
+      padding: 14px 14px 10px;
+      font-weight: 700;
+      border-bottom: 1px solid #e6edf4;
+      font-size: 14px;
+    }
+
+    .phone .body { flex: 1; padding: 14px; font-size: 13px; color: var(--muted); }
+    .phone .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid #e6edf4;
+      background: #fff;
+    }
+
+    .phone .tabs div {
+      text-align: center;
+      padding: 10px 0 12px;
+      font-size: 12px;
+    }
+
+    .phone .tabs .on { color: var(--accent); font-weight: 700; }
+
+    .stack {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 8px;
+      min-width: 220px;
+    }
+
+    .stack .frame {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      font-size: 13px;
+    }
+
+    .stack .frame b { display: block; }
+    .stack .frame span { color: var(--muted); font-size: 12px; }
+    .stack .frame.top { outline: 2px solid var(--accent); background: var(--accent-soft); }
+
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+    .dot { width: 10px; height: 10px; border-radius: 99px; display: inline-block; margin-right: 6px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th { background: #f4f7fb; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    code, .mono { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+    pre {
+      background: var(--code-bg);
+      color: #e6edf5;
+      padding: 16px 18px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 12.8px;
+      line-height: 1.55;
+    }
+
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      padding: 12px 16px;
+      border-radius: 0 12px 12px 0;
+      margin: 16px 0;
+    }
+
+    .warn {
+      border-left-color: var(--cart);
+      background: #fff4e8;
+    }
+
+    .k {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      color: #fff;
+    }
+    .k-catalog { background: var(--catalog); }
+    .k-cart { background: var(--cart); }
+    .k-checkout { background: var(--checkout); }
+    .k-promo { background: var(--promo); }
+    .k-app { background: #334155; }
+
+    footer { margin-top: 64px; color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      nav.toc { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      main { padding: 28px 20px 64px; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc">
+      <div class="brand">
+        ShoppingApp
+        <small>Документация навигации</small>
+      </div>
+      <div class="group">Обзор</div>
+      <a href="#principles">Принципы</a>
+      <a href="#modules">Модули и владение</a>
+      <a href="#tree">Дерево графа</a>
+      <a href="#ui">Как это выглядит</a>
+      <div class="group">Механика</div>
+      <a href="#tabs">Нижние вкладки</a>
+      <a href="#type-safe">Type-safe routes</a>
+      <a href="#callbacks">Изоляция фич</a>
+      <a href="#product">Два входа в детали</a>
+      <a href="#promo">Промокод и результат</a>
+      <a href="#checkout">Checkout вне табов</a>
+      <a href="#deeplinks">Диплинки</a>
+      <a href="#backstack">Сценарии стека</a>
+      <div class="group">Справочник</div>
+      <a href="#routes">Таблица маршрутов</a>
+      <a href="#files">Карта файлов</a>
+    </nav>
+
+    <main>
+      <h1>Как устроена навигация</h1>
+      <p class="lead">
+        Приложение собирает один корневой <span class="mono">NavHost</span> в модуле
+        <span class="mono">:app</span>. Фичи не знают друг о друге: каждая отдаёт
+        свой граф и набор колбэков, а приложение склеивает переходы.
+      </p>
+      <div class="meta">
+        <span class="chip">Navigation Compose 2.9.6</span>
+        <span class="chip">kotlinx.serialization routes</span>
+        <span class="chip">single activity</span>
+        <span class="chip">feature graphs</span>
+      </div>
+
+      <h2 id="principles">1. Принципы</h2>
+      <div class="grid-2">
+        <div class="card">
+          <b>Один NavController</b>
+          <p>Создаётся в <span class="mono">AppNavHost</span> через <span class="mono">rememberNavController()</span> и живёт на весь процесс. Отдельных хостов на таб нет.</p>
+        </div>
+        <div class="card">
+          <b>Вложенные графы вместо XML</b>
+          <p>Каждый экран — <span class="mono">@Serializable</span> Kotlin-тип. Графы объявляются <span class="mono">navigation&lt;Route&gt; { }</span>, экраны — <span class="mono">composable&lt;Route&gt; { }</span>.</p>
+        </div>
+        <div class="card">
+          <b>Фича не импортирует другую фичу</b>
+          <p>Каталог не знает про корзину. Переход «открой корзину» — лямбда <span class="mono">onOpenCart</span>, которую подставляет <span class="mono">:app</span>.</p>
+        </div>
+        <div class="card">
+          <b>Табы сохраняют стек</b>
+          <p>Переключение Каталог ↔ Корзина идёт с <span class="mono">saveState / restoreState</span>. Детали товара, открытые в каталоге, не теряются, если уйти в корзину и вернуться.</p>
+        </div>
+      </div>
+
+      <h2 id="modules">2. Кто чем владеет</h2>
+      <p>
+        Навигационные типы и билдеры живут в фичах. Приложение только монтирует их
+        в корневой хост и решает, <i>куда</i> ведёт колбэк.
+      </p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+  subgraph app [":app"]
+    MainActivity --> AppNavHost
+    AppNavHost --> AppBottomBar
+    AppNavHost --> CatalogTab
+    AppNavHost --> CartTab
+    AppNavHost --> CheckoutGraph
+  end
+
+  subgraph catalog [":feature:catalog"]
+    CatalogRoutes
+    CatalogNavigation
+    ProductListScreen
+    ProductDetailsScreen
+  end
+
+  subgraph cart [":feature:cart"]
+    CartRoutes
+    CartNavigation
+    CartScreen
+  end
+
+  subgraph promo [":feature:promo"]
+    PromoRoutes
+    PromoNavigation
+    PromoCodeScreen
+  end
+
+  subgraph checkout [":feature:checkout"]
+    CheckoutRoutes
+    CheckoutNavigation
+    CheckoutScreen
+  end
+
+  CatalogTab --> CatalogNavigation
+  CartTab --> CartNavigation
+  CartTab --> PromoNavigation
+  CartTab --> ProductDetailsScreen
+  CheckoutGraph --> CheckoutNavigation
+        </pre>
+      </div>
+      <p class="legend">
+        <span><i class="dot" style="background:var(--catalog)"></i>каталог</span>
+        <span><i class="dot" style="background:var(--cart)"></i>корзина</span>
+        <span><i class="dot" style="background:var(--promo)"></i>промо</span>
+        <span><i class="dot" style="background:var(--checkout)"></i>оформление</span>
+      </p>
+
+      <h2 id="tree">3. Дерево графа</h2>
+      <p>
+        Корень — <span class="mono">NavHost(startDestination = CatalogTab)</span>.
+        У него три непосредственных ребёнка: две вкладки и граф оформления заказа.
+        Checkout специально вынесен из табов, чтобы нижняя панель на нём скрывалась.
+      </p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart TB
+  NH["NavHost<br/>start = CatalogTab"]
+
+  subgraph CT["BottomNavRoutes.CatalogTab"]
+    CG["CatalogRoutes.Graph"]
+    PL["ProductList  ★ start"]
+    PD["ProductDetails(productId, productName)"]
+    CG --> PL
+    CG --> PD
+  end
+
+  subgraph CART["BottomNavRoutes.CartTab"]
+    CRG["CartRoutes.Graph"]
+    CS["Cart  ★ start"]
+    PRG["PromoRoutes.Graph(resultKey)"]
+    PC["PromoCode"]
+    CPR["CustomProductRoute(productId, productName)"]
+    CRG --> CS
+    PRG --> PC
+  end
+
+  subgraph CHK["CheckoutRoutes.Graph  — sibling, не вкладка"]
+    CH["Checkout  ★ start"]
+  end
+
+  NH --> CT
+  NH --> CART
+  NH --> CHK
+        </pre>
+      </div>
+
+      <div class="callout">
+        <b>Почему Product Details встречается дважды.</b>
+        Один и тот же <span class="mono">ProductDetailsScreen</span> регистрируется
+        на двух разных маршрутах: внутри каталога и внутри вкладки корзины.
+        Так у каждого таба свой back stack: открытый из корзины товар не «переезжает» в каталог.
+      </div>
+
+      <h2 id="ui">4. Как это выглядит на экране</h2>
+      <div class="grid-2">
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="screen">
+              <div class="appbar">Каталог</div>
+              <div class="body">
+                Список товаров.<br/>Тап по карточке → ProductDetails
+                внутри <b>CatalogTab</b>.
+              </div>
+              <div class="tabs">
+                <div class="on">Каталог</div>
+                <div>Корзина</div>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:center;color:var(--muted);font-size:13px">Нижняя панель видна: в иерархии есть CatalogTab или CartTab.</p>
+        </div>
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="screen">
+              <div class="appbar">Checkout</div>
+              <div class="body">
+                Корневой граф оформления.<br/>
+                В иерархии нет табов → <b>AppBottomBar</b> возвращает <span class="mono">Unit</span> и не рисуется.
+              </div>
+            </div>
+          </div>
+          <p style="text-align:center;color:var(--muted);font-size:13px">Checkout и любой будущий full-screen flow прячут табы автоматически.</p>
+        </div>
+      </div>
+
+      <h2 id="tabs">5. Нижние вкладки</h2>
+      <p>
+        <span class="mono">AppBottomBar</span> смотрит на
+        <span class="mono">currentDestination.hierarchy</span>.
+        Вкладка выбрана, если в предках есть <span class="mono">CatalogTab</span> или
+        <span class="mono">CartTab</span>. Клик не делает <span class="mono">navigate(screen)</span>,
+        а вызывает отдельный хелпер:
+      </p>
+      <pre><code>private fun NavHostController.navigateToBottomTab(route: Any) {
+    navigate(route) {
+        popUpTo(graph.findStartDestination().id) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
+    }
+}</code></pre>
+      <table>
+        <thead>
+          <tr><th>Флаг</th><th>Зачем</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">popUpTo(startDestination) + saveState</span></td>
+            <td>Не раздувать стек копиями табов. Состояние графа уходящей вкладки кладётся в Restoration.</td>
+          </tr>
+          <tr>
+            <td><span class="mono">launchSingleTop</span></td>
+            <td>Повторный тап по уже выбранной вкладке не пушит её ещё раз.</td>
+          </tr>
+          <tr>
+            <td><span class="mono">restoreState</span></td>
+            <td>Вернувшись в Каталог, пользователь снова видит Product Details, если уходил с него.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <b>Отличие от колбэка onOpenCart.</b>
+        В <span class="mono">AppNavHost</span> каталог открывает корзину так:
+        <span class="mono">navigate(CartRoutes.Graph)</span> — без
+        <span class="mono">saveState/restoreState</span>. Это переход к графу корзины,
+        а не «переключить таб как в BottomBar». Если понадобится одинаковое поведение,
+        колбэк стоит вести в <span class="mono">navigateToBottomTab(CartTab)</span>.
+      </div>
+
+      <h2 id="type-safe">6. Type-safe маршруты</h2>
+      <p>
+        Каждый маршрут — Kotlin-класс с <span class="mono">@Serializable</span>.
+        Navigation Compose сериализует его в строку back stack и обратно.
+        Аргументы становятся полями класса, а не «магическими» query-ключами в XML.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <b>Без аргументов</b>
+          <pre style="margin:12px 0 0"><code>@Serializable
+data object ProductList</code></pre>
+        </div>
+        <div class="card">
+          <b>С аргументами</b>
+          <pre style="margin:12px 0 0"><code>@Serializable
+data class ProductDetails(
+    override val productId: String,
+    override val productName: String = "",
+) : ProductDetailsRoute</code></pre>
+        </div>
+      </div>
+      <p>
+        Имя поля = ключ в <span class="mono">SavedStateHandle</span>.
+        ViewModel деталей читает их так:
+      </p>
+      <pre><code>private val productId = checkNotNull(savedStateHandle.get&lt;String&gt;("productId"))
+private val productName = savedStateHandle.get&lt;String&gt;("productName").orEmpty()</code></pre>
+      <p>
+        <span class="mono">productName</span> передаётся сразу при навигации, чтобы тулбар
+        показал название до ответа сети. Пустой default нужен диплинку, у которого может быть только id.
+      </p>
+      <p>
+        Видимость <span class="mono">internal</span> у экранов фичи (ProductList, Cart, Checkout)
+        не даёт приложению навигировать «мимо» публичного Graph-маршрута. Снаружи виден граф, не лист.
+      </p>
+
+      <h2 id="callbacks">7. Изоляция фич: колбэки вместо прямых navigate</h2>
+      <p>
+        Фича объявляет <span class="mono">XxxNavigationScope</span> и extension
+        на <span class="mono">NavGraphBuilder</span>. Снаружи это выглядит как DSL:
+      </p>
+      <pre><code>catalog.catalogGraph(
+    navController = navController,
+    onClose = { },
+    onOpenCart = { navController.navigate(CartRoutes.Graph) },
+)</code></pre>
+      <div class="diagram">
+        <pre class="mermaid">
+sequenceDiagram
+  participant UI as ProductListScreen
+  participant VM as ProductListViewModel
+  participant Nav as CatalogNavigation
+  participant App as AppNavHost
+
+  UI->>VM: onEvent(OnItemClick)
+  VM-->>UI: Effect.NavigateToDetails(id, name)
+  UI->>Nav: onOpenProduct(id, name)
+  Nav->>Nav: navigate(CatalogRoutes.ProductDetails)
+  Note over App: Колбэк onOpenCart реализован уже в app
+        </pre>
+      </div>
+      <p>
+        Внутри фичи <span class="mono">navigate</span> к <i>своим</i> экранам допустим
+        (список → детали каталога). Переход в чужой модуль всегда идёт через лямбду,
+        которую задал <span class="mono">:app</span>.
+      </p>
+      <table>
+        <thead><tr><th>Фича</th><th>Колбэки наружу</th><th>Кто реализует</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="k k-catalog">catalog</span></td>
+            <td><span class="mono">onClose</span>, <span class="mono">onOpenCart</span>, <span class="mono">onOpenProduct</span></td>
+            <td>AppNavHost / CatalogNavigation</td>
+          </tr>
+          <tr>
+            <td><span class="k k-cart">cart</span></td>
+            <td><span class="mono">onClose</span>, <span class="mono">onOpenCheckout</span>, <span class="mono">onOpenPromo(resultKey)</span>, <span class="mono">onOpenProduct(id, name)</span></td>
+            <td>AppNavHost</td>
+          </tr>
+          <tr>
+            <td><span class="k k-promo">promo</span></td>
+            <td><span class="mono">onClose</span>, <span class="mono">onCloseWithResult(resultKey, result)</span></td>
+            <td>AppNavHost пишет в SavedStateHandle корзины</td>
+          </tr>
+          <tr>
+            <td><span class="k k-checkout">checkout</span></td>
+            <td><span class="mono">onClose</span></td>
+            <td>popBackStack Checkout Graph inclusive</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="product">8. Два входа в детали товара</h2>
+      <p>
+        Контракт экрана вынесен в интерфейс, а не в конкретный route-класс:
+      </p>
+      <pre><code>interface ProductDetailsRoute {
+    val productId: String
+    val productName: String
+}</code></pre>
+      <div class="grid-2">
+        <div class="card">
+          <span class="k k-catalog">из каталога</span>
+          <p><span class="mono">CatalogRoutes.ProductDetails</span> лежит внутри <span class="mono">CatalogRoutes.Graph</span>. Back возвращает к списку той же вкладки.</p>
+        </div>
+        <div class="card">
+          <span class="k k-cart">из корзины</span>
+          <p><span class="mono">CustomProductRoute</span> объявлен в <span class="mono">:app</span> и регистрируется <span class="mono">catalog.productDetailsScreen&lt;CustomProductRoute&gt;()</span> уже <b>внутри CartTab</b>.</p>
+        </div>
+      </div>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+  List[ProductList] -->|navigate ProductDetails| DetCatalog[ProductDetailsScreen<br/>route = CatalogRoutes.ProductDetails]
+  Cart[CartScreen] -->|navigate CustomProductRoute| DetCart[ProductDetailsScreen<br/>route = CustomProductRoute]
+
+  DetCatalog -.->|SavedStateHandle productId/name| VM1[ProductDetailsViewModel]
+  DetCart -.->|те же ключи полей| VM2[ProductDetailsViewModel]
+        </pre>
+      </div>
+      <p>
+        Дженерик-хелпер в каталоге:
+      </p>
+      <pre><code>inline fun &lt;reified T&gt; CatalogNavigationScope.productDetailsScreen(
+    noinline onBack: () -&gt; Unit,
+) where T : Any, T : ProductDetailsRoute {
+    builder.composable&lt;T&gt; {
+        ProductDetailsScreen(onBack = onBack)
+    }
+}</code></pre>
+      <p>
+        ViewModel не знает, с какого таба его открыли: ему достаточно одинаковых имён полей.
+        Hilt создаёт отдельный экземпляр на каждый back stack entry.
+      </p>
+
+      <h2 id="promo">9. Промокод: граф с аргументом и возврат результата</h2>
+      <p>
+        Это самый сложный поток. Промокод — не «просто экран», а вложенный граф
+        с аргументом <span class="mono">resultKey</span>. Ключ нужен, чтобы корзина
+        знала, куда в <span class="mono">SavedStateHandle</span> ждать ответ.
+      </p>
+      <div class="diagram">
+        <pre class="mermaid">
+sequenceDiagram
+  participant Cart as Cart composable
+  participant App as AppNavHost
+  participant Promo as PromoRoutes.Graph
+  participant Screen as PromoCodeScreen
+
+  Cart->>App: onOpenPromo("cart_promo_result")
+  App->>Promo: navigate(Graph(resultKey))
+  Screen->>Screen: parentEntry.toRoute&lt;Graph&gt;().resultKey
+  Screen->>App: onCloseWithResult(resultKey, PromoCodeResult)
+  App->>App: popBackStack&lt;Promo Graph&gt;(inclusive = true)
+  App->>Cart: currentBackStackEntry.savedStateHandle[resultKey] = CartPromoResult
+  Cart->>Cart: collect getStateFlow(resultKey)
+  Cart->>Cart: viewModel.onPromoApplied(...)
+  Cart->>Cart: remove(resultKey)
+        </pre>
+      </div>
+      <h3>Почему resultKey на графе, а не на экране</h3>
+      <p>
+        <span class="mono">PromoCodeScreen</span> читает ключ с <b>родительского</b> back stack entry:
+      </p>
+      <pre><code>val parentEntry = remember(entry) {
+    navController.getBackStackEntry&lt;PromoRoutes.Graph&gt;()
+}
+val resultKey = parentEntry.toRoute&lt;PromoRoutes.Graph&gt;().resultKey</code></pre>
+      <p>
+        Так ключ принадлежит графу целиком. Если внутри промо позже появятся шаги
+        (ввод → подтверждение), все они увидят тот же <span class="mono">resultKey</span>.
+      </p>
+      <h3>Контракт результата</h3>
+      <ul>
+        <li>Фича promo отдаёт <span class="mono">PromoCodeResult(promoCode)</span> — обычный data class.</li>
+        <li>App мапит его в <span class="mono">CartPromoResult</span>, который <span class="mono">Parcelable</span>, потому что SavedStateHandle переживает смерть процесса.</li>
+        <li>Корзина слушает <span class="mono">entry.savedStateHandle.getStateFlow&lt;CartPromoResult?&gt;(KEY, null)</span> и после обработки удаляет значение, чтобы не применить промокод повторно при recomposition.</li>
+      </ul>
+      <p>
+        Закрытие крестиком идёт через <span class="mono">onClose</span> — тот же
+        <span class="mono">popBackStack&lt;Promo Graph&gt;(inclusive = true)</span>, но без записи в Handle.
+      </p>
+
+      <h2 id="checkout">10. Checkout — sibling, не вкладка</h2>
+      <p>
+        Граф оформления регистрируется <b>на корне NavHost</b>, рядом с табами, а не внутри CartTab:
+      </p>
+      <pre><code>checkout.checkoutGraph(
+    navController = navController,
+    onClose = {
+        navController.popBackStack&lt;CheckoutRoutes.Graph&gt;(inclusive = true)
+    },
+)</code></pre>
+      <p>
+        Навигация из корзины: <span class="mono">navigate(CheckoutRoutes.Graph)</span>.
+        Back / Close снимает весь граф целиком (<span class="mono">inclusive = true</span>),
+        пользователь возвращается туда, откуда открыл checkout — обычно на Cart.
+      </p>
+      <p>
+        Нижняя панель скрыта, потому что в <span class="mono">hierarchy</span> текущего
+        destination нет ни CatalogTab, ни CartTab. Это правило общее: любой будущий
+        full-screen flow достаточно повесить соседом табов.
+      </p>
+
+      <h2 id="deeplinks">11. Диплинки</h2>
+      <p>
+        База задана в <span class="mono">core/config</span>:
+        <span class="mono">DeepLinkConfig.BASE_URI = "https://shopping.example.com"</span>.
+        Фичи сами вешают <span class="mono">navDeepLink&lt;Route&gt;(basePath = ...)</span>.
+        Activity ловит https-интенты в манифесте.
+      </p>
+      <table>
+        <thead><tr><th>URL</th><th>Куда попадает</th><th>Где объявлен</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">https://shopping.example.com/catalog</span></td>
+            <td>ProductList</td>
+            <td>CatalogNavigation + Manifest pathPrefix /catalog</td>
+          </tr>
+          <tr>
+            <td><span class="mono">https://shopping.example.com/product/{productId}</span></td>
+            <td>ProductDetails (каталожный route)</td>
+            <td>navDeepLink&lt;CatalogRoutes.ProductDetails&gt;, pathPrefix /product</td>
+          </tr>
+          <tr>
+            <td><span class="mono">https://shopping.example.com/cart</span></td>
+            <td>Cart</td>
+            <td>CartNavigation + pathPrefix /cart</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Promo и Checkout диплинков не имеют. Имя товара в диплинке продукта опционально
+        (<span class="mono">productName = ""</span>): тулбар покажет «Товар», пока не загрузится сущность.
+      </p>
+      <div class="callout">
+        <span class="mono">android:autoVerify="true"</span> стоит на VIEW-фильтре.
+        Для боевого App Links нужна Digital Asset Links на домене
+        <span class="mono">shopping.example.com</span>. Сейчас это учебный хост.
+      </div>
+
+      <h2 id="backstack">12. Сценарии стека</h2>
+      <p>Ниже — логический back stack (снизу старый кадр, сверху текущий экран).</p>
+
+      <h3>Старт приложения</h3>
+      <div class="grid-2">
+        <div class="stack">
+          <div class="frame top"><b>ProductList</b><span>CatalogRoutes.Graph → CatalogTab</span></div>
+          <div class="frame"><b>CatalogTab</b><span>startDestination NavHost</span></div>
+        </div>
+        <p>Первый кадр — список. Bottom bar: Каталог выбран.</p>
+      </div>
+
+      <h3>Список → детали → таб Корзина → обратно в Каталог</h3>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+  A["1. ProductList"] --> B["2. ProductDetails<br/>на стеке CatalogTab"]
+  B --> C["3. Переключение таба<br/>saveState CatalogTab"]
+  C --> D["4. Cart<br/>на стеке CartTab"]
+  D --> E["5. Таб Каталог<br/>restoreState"]
+  E --> F["Снова ProductDetails<br/>не список"]
+        </pre>
+      </div>
+
+      <h3>Корзина → промокод → применить</h3>
+      <div class="grid-2">
+        <div class="stack">
+          <div class="frame top"><b>PromoCode</b><span>PromoRoutes.Graph(resultKey)</span></div>
+          <div class="frame"><b>Cart</b><span>ждёт SavedStateHandle</span></div>
+          <div class="frame"><b>CartTab</b></div>
+        </div>
+        <div class="stack">
+          <div class="frame top"><b>Cart</b><span>прочитал CartPromoResult, ключ удалили</span></div>
+          <div class="frame"><b>CartTab</b><span>граф промо снят inclusive</span></div>
+        </div>
+      </div>
+
+      <h3>Корзина → checkout → закрыть</h3>
+      <div class="grid-2">
+        <div class="stack">
+          <div class="frame top"><b>Checkout</b><span>корневой CheckoutRoutes.Graph, табов нет</span></div>
+          <div class="frame"><b>Cart … CatalogTab</b><span>остаются под checkout</span></div>
+        </div>
+        <div class="stack">
+          <div class="frame top"><b>Cart</b><span>popBackStack Graph inclusive</span></div>
+        </div>
+      </div>
+
+      <h3>Корзина → детали товара</h3>
+      <div class="stack" style="max-width:420px">
+        <div class="frame top"><b>ProductDetailsScreen</b><span>CustomProductRoute на CartTab, не CatalogRoutes.ProductDetails</span></div>
+        <div class="frame"><b>Cart</b></div>
+        <div class="frame"><b>CartTab</b></div>
+      </div>
+      <p>Back из этих деталей возвращает в корзину, а не в каталог.</p>
+
+      <h2 id="routes">13. Справочник маршрутов</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Тип</th>
+            <th>Родитель</th>
+            <th>Аргументы</th>
+            <th>Экран / роль</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">BottomNavRoutes.CatalogTab</span></td>
+            <td>NavHost</td>
+            <td>—</td>
+            <td>Вкладка. start = CatalogRoutes.Graph</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CatalogRoutes.Graph</span></td>
+            <td>CatalogTab</td>
+            <td>—</td>
+            <td>Публичный вход в фичу каталога</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CatalogRoutes.ProductList</span></td>
+            <td>Catalog Graph</td>
+            <td>—</td>
+            <td>Список. Диплинк /catalog</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CatalogRoutes.ProductDetails</span></td>
+            <td>Catalog Graph</td>
+            <td>productId, productName=""</td>
+            <td>Детали. Диплинк /product</td>
+          </tr>
+          <tr>
+            <td><span class="mono">BottomNavRoutes.CartTab</span></td>
+            <td>NavHost</td>
+            <td>—</td>
+            <td>Вкладка. start = CartRoutes.Graph</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CartRoutes.Graph</span></td>
+            <td>CartTab</td>
+            <td>—</td>
+            <td>Публичный вход в корзину</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CartRoutes.Cart</span></td>
+            <td>Cart Graph</td>
+            <td>—</td>
+            <td>Корзина. Диплинк /cart</td>
+          </tr>
+          <tr>
+            <td><span class="mono">PromoRoutes.Graph</span></td>
+            <td>CartTab</td>
+            <td>resultKey</td>
+            <td>Вложенный flow промокода</td>
+          </tr>
+          <tr>
+            <td><span class="mono">PromoRoutes.PromoCode</span></td>
+            <td>Promo Graph</td>
+            <td>—</td>
+            <td>Ввод промокода</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CustomProductRoute</span></td>
+            <td>CartTab</td>
+            <td>productId, productName=""</td>
+            <td>Детали товара «поверх» корзины</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CheckoutRoutes.Graph</span></td>
+            <td>NavHost</td>
+            <td>—</td>
+            <td>Full-screen оформление</td>
+          </tr>
+          <tr>
+            <td><span class="mono">CheckoutRoutes.Checkout</span></td>
+            <td>Checkout Graph</td>
+            <td>—</td>
+            <td>Экран checkout</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="files">14. Карта файлов</h2>
+      <table>
+        <thead><tr><th>Файл</th><th>Ответственность</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">app/.../MainActivity.kt</span></td>
+            <td>Единственная Activity, setContent → AppNavHost</td>
+          </tr>
+          <tr>
+            <td><span class="mono">app/.../navigation/AppNavHost.kt</span></td>
+            <td>Сборка графа, колбэки между фичами, регистрация CustomProductRoute</td>
+          </tr>
+          <tr>
+            <td><span class="mono">app/.../navigation/AppBottomBar.kt</span></td>
+            <td>Видимость и переключение табов</td>
+          </tr>
+          <tr>
+            <td><span class="mono">app/.../navigation/BottomNavRoutes.kt</span></td>
+            <td>CatalogTab, CartTab</td>
+          </tr>
+          <tr>
+            <td><span class="mono">app/.../navigation/CustomProductRoute.kt</span></td>
+            <td>Второй маршрут деталей для вкладки корзины</td>
+          </tr>
+          <tr>
+            <td><span class="mono">feature/catalog/.../CatalogRoutes.kt</span></td>
+            <td>Graph, ProductList, ProductDetails, интерфейс ProductDetailsRoute</td>
+          </tr>
+          <tr>
+            <td><span class="mono">feature/catalog/.../CatalogNavigation.kt</span></td>
+            <td>DSL catalog.graph / productDetailsScreen</td>
+          </tr>
+          <tr>
+            <td><span class="mono">feature/cart/.../CartRoutes.kt</span></td>
+            <td>Graph, Cart, CartPromoResult, ключ SavedStateHandle</td>
+          </tr>
+          <tr>
+            <td><span class="mono">feature/cart/.../CartNavigation.kt</span></td>
+            <td>Граф корзины, приём промокода</td>
+          </tr>
+          <tr>
+            <td><span class="mono">feature/promo/.../PromoRoutes.kt</span></td>
+            <td>Graph(resultKey), PromoCode, PromoCodeResult</td>
+          </tr>
+          <tr>
+            <td><span class="mono">feature/promo/.../PromoNavigation.kt</span></td>
+            <td>Чтение resultKey с родительского entry</td>
+          </tr>
+          <tr>
+            <td><span class="mono">feature/checkout/.../CheckoutRoutes.kt</span></td>
+            <td>Graph, Checkout</td>
+          </tr>
+          <tr>
+            <td><span class="mono">core/config/.../DeepLinkConfig.kt</span></td>
+            <td>Общий BASE_URI диплинков</td>
+          </tr>
+          <tr>
+            <td><span class="mono">app/src/main/AndroidManifest.xml</span></td>
+            <td>VIEW intent-filter на /catalog, /product, /cart</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Краткая шпаргалка</h2>
+      <div class="card">
+        <ol>
+          <li>Хотите новый экран внутри фичи — добавьте <span class="mono">@Serializable</span> тип и <span class="mono">composable</span> в её Navigation.kt.</li>
+          <li>Хотите вход снаружи — оставьте Graph публичным, экраны <span class="mono">internal</span>.</li>
+          <li>Хотите переход в другую фичу — добавьте колбэк, реализуйте его только в <span class="mono">AppNavHost</span>.</li>
+          <li>Хотите сохранить стек таба — переключайтесь через <span class="mono">navigateToBottomTab</span>.</li>
+          <li>Хотите спрятать табы — вешайте граф соседом CatalogTab/CartTab, как Checkout.</li>
+          <li>Хотите вернуть результат — ключ на родительском Graph + Parcelable в SavedStateHandle предыдущего entry.</li>
+        </ol>
+      </div>
+
+      <footer>
+        Сгенерировано по текущему коду ShoppingAppV2. Источник правды — Kotlin-графы в
+        <span class="mono">AppNavHost</span> и feature-модулях, не этот HTML.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

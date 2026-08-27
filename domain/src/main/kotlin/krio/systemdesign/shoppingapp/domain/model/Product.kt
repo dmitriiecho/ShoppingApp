@@ -1,0 +1,9 @@
+package krio.systemdesign.shoppingapp.domain.model
+
+data class Product(
+    val id: String,
+    val name: String,
+    val price: Long,
+    val imageUrl: String,
+    val description: String,
+)
