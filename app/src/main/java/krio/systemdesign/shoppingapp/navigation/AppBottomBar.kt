@@ -51,7 +51,7 @@ fun AppBottomBar(
     }
 }
 
-private fun NavHostController.navigateToBottomTab(route: Any) {
+internal fun NavHostController.navigateToBottomTab(route: Any) {
     navigate(route) {
         popUpTo(graph.findStartDestination().id) {
             saveState = true
