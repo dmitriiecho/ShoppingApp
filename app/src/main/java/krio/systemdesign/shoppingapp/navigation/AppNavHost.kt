@@ -50,7 +50,7 @@ fun AppNavHost(
                     navController = navController,
                     onClose = { },
                     onOpenCart = {
-                        navController.navigateToBottomTab(BottomNavRoutes.CartTab)
+                        navController.navigate(CartRoutes.Graph)
                     }
                 )
             }
