@@ -52,7 +52,7 @@ import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.domain.model.Product
-import krio.systemdesign.shoppingapp.feature.catalog.presentation.components.CartQuantityControl
+import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import kotlinx.collections.immutable.ImmutableMap
 import java.text.NumberFormat
 import java.util.Locale

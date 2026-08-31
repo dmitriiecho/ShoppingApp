@@ -4,7 +4,7 @@ import krio.systemdesign.shoppingapp.data.repository.CartRepositoryImpl
 import krio.systemdesign.shoppingapp.data.source.FakeCartValidatorDataSource
 import krio.systemdesign.shoppingapp.data.source.CartValidatorDataSource
 import krio.systemdesign.shoppingapp.data.source.LocalCartDataSource
-import krio.systemdesign.shoppingapp.data.source.RoomLocalCartDataSource
+import krio.systemdesign.shoppingapp.data.source.RemoteCartDataSource
 import krio.systemdesign.shoppingapp.domain.repository.CartRepository
 import dagger.Binds
 import dagger.Module
@@ -18,7 +18,7 @@ internal abstract class DataBindingsModule {
     @Binds
     @Singleton
     abstract fun bindLocalCartDataSource(
-        impl: RoomLocalCartDataSource,
+        impl: RemoteCartDataSource,
     ): LocalCartDataSource
 
     @Binds

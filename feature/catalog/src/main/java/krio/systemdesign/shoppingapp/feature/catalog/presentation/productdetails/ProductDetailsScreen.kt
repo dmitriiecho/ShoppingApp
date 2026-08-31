@@ -38,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.domain.model.Product
-import krio.systemdesign.shoppingapp.feature.catalog.presentation.components.CartQuantityControl
+import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import java.text.NumberFormat
 import java.util.Locale
 

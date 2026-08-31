@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.feature.catalog.presentation.components
+package krio.systemdesign.shoppingapp.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
