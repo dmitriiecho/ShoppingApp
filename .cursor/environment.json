@@ -1,0 +1,8 @@
+{
+  "name": "ShoppingApp Android",
+  "user": "ubuntu",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "install": "bash .cursor/install.sh"
+}
