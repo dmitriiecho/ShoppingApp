@@ -27,6 +27,11 @@ data class CartPromoResult(
     }
 }
 
+fun PromoCode.toCartPromoResult(): CartPromoResult = CartPromoResult(
+    promoCode = code,
+    discountPercent = discountPercent,
+)
+
 internal fun CartPromoResult.toPromoCode(): PromoCode = PromoCode(
     code = promoCode,
     discountPercent = discountPercent,

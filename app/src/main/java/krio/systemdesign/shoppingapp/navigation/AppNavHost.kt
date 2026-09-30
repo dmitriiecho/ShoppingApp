@@ -10,11 +10,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.CartPromoResult
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.CartRoutes
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.cart
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.graph
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.graph as cartGraph
+import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.toCartPromoResult
 import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.CatalogRoutes
 import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.catalog
 import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.graph as catalogGraph
@@ -85,13 +85,7 @@ fun AppNavHost(
                         navController.popBackStack<PromoRoutes.Graph>(inclusive = true)
                         navController.currentBackStackEntry
                             ?.savedStateHandle
-                            ?.set(
-                                resultKey,
-                                CartPromoResult(
-                                    promoCode = promoCode.code,
-                                    discountPercent = promoCode.discountPercent,
-                                ),
-                            )
+                            ?.set(resultKey, promoCode.toCartPromoResult())
                     },
                 )
 
