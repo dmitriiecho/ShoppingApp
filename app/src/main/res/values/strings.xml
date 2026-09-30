@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ShoppingAppV2</string>
+    <string name="app_bottom_bar_catalog">Каталог</string>
+    <string name="app_bottom_bar_cart">Корзина</string>
 </resources>

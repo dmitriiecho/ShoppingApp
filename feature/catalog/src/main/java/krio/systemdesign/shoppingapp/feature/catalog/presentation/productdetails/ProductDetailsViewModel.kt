@@ -5,11 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import krio.systemdesign.shoppingapp.core.ui.text.UiText
+import krio.systemdesign.shoppingapp.core.ui.text.toUiText
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.domain.usecase.AddToCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
+import krio.systemdesign.shoppingapp.feature.catalog.R
 import krio.systemdesign.shoppingapp.feature.catalog.domain.usecase.GetProductUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,7 +96,7 @@ class ProductDetailsViewModel @Inject constructor(
                 .onSuccess { productLoad.value = ProductLoad.Success(it) }
                 .onFailure { error ->
                     productLoad.value = ProductLoad.Error(
-                        error.message ?: "Не удалось загрузить товар",
+                        error.toUiText(R.string.catalog_product_load_error),
                     )
                 }
         }
@@ -102,7 +105,7 @@ class ProductDetailsViewModel @Inject constructor(
     private fun launchCartAction(action: suspend () -> Result<Unit>) {
         viewModelScope.launch {
             action().onFailure { error ->
-                send(ProductDetailsEffect.ShowSnackBar(error.message ?: "Не удалось обновить корзину"))
+                send(ProductDetailsEffect.ShowSnackBar(error.toUiText(R.string.catalog_cart_update_error)))
             }
         }
     }
@@ -114,6 +117,6 @@ class ProductDetailsViewModel @Inject constructor(
     private sealed interface ProductLoad {
         data object Loading : ProductLoad
         data class Success(val product: Product) : ProductLoad
-        data class Error(val message: String) : ProductLoad
+        data class Error(val message: UiText) : ProductLoad
     }
 }

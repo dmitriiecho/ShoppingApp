@@ -1,0 +1,17 @@
+<resources>
+    <string name="checkout_title">Оформление заказа</string>
+    <string name="checkout_place_order">Оформить заказ</string>
+    <string name="checkout_order_items">Состав заказа</string>
+    <string name="checkout_delivery_address">Адрес доставки</string>
+    <string name="checkout_street">Улица</string>
+    <string name="checkout_required">Обязательно</string>
+    <string name="checkout_apartment">Квартира</string>
+    <string name="checkout_courier_comment">Комментарий курьеру</string>
+    <string name="checkout_payment">Оплата</string>
+    <string name="checkout_payment_card">Карта</string>
+    <string name="checkout_payment_cash">Наличные</string>
+    <string name="checkout_order_total">Сумма заказа</string>
+    <string name="checkout_empty_title">Корзина пуста</string>
+    <string name="checkout_empty_message">Добавьте товары из каталога</string>
+    <string name="checkout_place_order_error">Не удалось оформить заказ</string>
+</resources>

@@ -40,6 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,7 +54,9 @@ import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
+import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.Product
+import krio.systemdesign.shoppingapp.feature.catalog.R
 import kotlinx.collections.immutable.ImmutableMap
 import java.text.NumberFormat
 import java.util.Locale
@@ -68,13 +72,16 @@ fun ProductListScreen(
     val cartQuantities by viewModel.cartQuantities.collectAsStateWithLifecycle()
     val products = viewModel.products.collectAsLazyPagingItems()
     val snackbarHostState = remember { SnackbarHostState() }
+    val resources = LocalResources.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 ProductListEffect.NavigateBack -> onBack()
                 is ProductListEffect.NavigateToDetails -> onOpenProduct(effect.productId, effect.productName)
-                is ProductListEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
+                is ProductListEffect.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                }
             }
         }
     }
@@ -82,7 +89,7 @@ fun ProductListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Каталог") },
+                title = { Text(stringResource(R.string.catalog_title)) },
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -120,7 +127,7 @@ private fun SearchField(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        placeholder = { Text("Поиск товаров") },
+        placeholder = { Text(stringResource(R.string.catalog_search_placeholder)) },
         leadingIcon = {
             Icon(Icons.Default.Search, contentDescription = null)
         },
@@ -146,14 +153,14 @@ private fun ProductListBody(
     when {
         refresh is LoadState.Loading -> LoadingContent()
         refresh is LoadState.Error -> ErrorContent(
-            message = refresh.error.message ?: "Не удалось загрузить товары",
+            message = refresh.error.message ?: stringResource(R.string.catalog_load_error),
             onRetry = { products.retry() },
         )
         refresh is LoadState.NotLoading && products.itemCount == 0 -> EmptyContent(
             message = if (searchQuery.isBlank()) {
-                "Каталог пуст"
+                stringResource(R.string.catalog_empty)
             } else {
-                "Ничего не найдено по запросу «$searchQuery»"
+                stringResource(R.string.catalog_search_no_results, searchQuery)
             },
         )
         else -> LazyColumn(
@@ -197,7 +204,7 @@ private fun ProductListBody(
                 is LoadState.Error -> {
                     item(key = "append_error") {
                         AppendError(
-                            message = append.error.message ?: "Ошибка загрузки",
+                            message = append.error.message ?: stringResource(R.string.catalog_append_error),
                             onRetry = { products.retry() },
                         )
                     }
@@ -307,7 +314,7 @@ private fun ErrorContent(
         )
         Spacer(Modifier.height(16.dp))
         Button(onClick = onRetry) {
-            Text("Повторить")
+            Text(stringResource(R.string.catalog_retry))
         }
     }
 }
@@ -359,7 +366,7 @@ private fun AppendError(
         )
         Spacer(Modifier.height(8.dp))
         Button(onClick = onRetry) {
-            Text("Повторить")
+            Text(stringResource(R.string.catalog_retry))
         }
     }
 }

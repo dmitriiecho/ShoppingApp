@@ -30,10 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.R
 
 @Composable
 fun CartQuantityControl(
@@ -61,7 +63,7 @@ fun CartQuantityControl(
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(8.dp))
-            Text("В корзину")
+            Text(stringResource(R.string.core_ui_add_to_cart))
         }
         return
     }
@@ -85,7 +87,7 @@ fun CartQuantityControl(
             ) {
                 CartControlIconButton(
                     imageVector = Icons.Filled.Remove,
-                    contentDescription = "Уменьшить количество",
+                    contentDescription = stringResource(R.string.core_ui_decrease_quantity),
                     onClick = onDecrease,
                     size = controlHeight,
                     contentColor = contentColor,
@@ -99,7 +101,7 @@ fun CartQuantityControl(
                 )
                 CartControlIconButton(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Добавить ещё",
+                    contentDescription = stringResource(R.string.core_ui_increase_quantity),
                     onClick = onIncrease,
                     size = controlHeight,
                     contentColor = contentColor,
@@ -108,7 +110,7 @@ fun CartQuantityControl(
         }
         CartControlIconButton(
             imageVector = Icons.Filled.Delete,
-            contentDescription = "Удалить из корзины",
+            contentDescription = stringResource(R.string.core_ui_remove_from_cart),
             onClick = onRemoveAll,
             size = controlHeight,
             containerColor = containerColor,

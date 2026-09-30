@@ -1,0 +1,5 @@
+<resources>
+    <string name="promo_code">Промокод</string>
+    <string name="promo_apply">Применить</string>
+    <string name="promo_check_error">Не удалось проверить промокод</string>
+</resources>

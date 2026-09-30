@@ -20,13 +20,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
+import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.feature.promo.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +54,7 @@ fun PromoCodeScreen(
         modifier = Modifier.imePadding(),
         topBar = {
             TopAppBar(
-                title = { Text("Промокод") },
+                title = { Text(stringResource(R.string.promo_code)) },
                 navigationIcon = {
                     NavigateBackIconButton(onClick = onBack)
                 },
@@ -71,10 +74,10 @@ fun PromoCodeScreen(
                 value = uiState.promoCode,
                 onValueChange = { viewModel.onEvent(PromoCodeEvent.OnPromoCodeChange(it)) },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Промокод") },
+                label = { Text(stringResource(R.string.promo_code)) },
                 isError = error != null,
                 supportingText = if (error != null) {
-                    { Text(error) }
+                    { Text(error.asString()) }
                 } else {
                     null
                 },
@@ -100,7 +103,7 @@ fun PromoCodeScreen(
                         strokeWidth = 2.dp,
                     )
                 } else {
-                    Text("Применить")
+                    Text(stringResource(R.string.promo_apply))
                 }
             }
         }
