@@ -4,12 +4,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import krio.systemdesign.shoppingapp.core.ui.text.UiText
+import krio.systemdesign.shoppingapp.core.ui.text.toUiText
 import krio.systemdesign.shoppingapp.domain.model.CartValidationResult
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
+import krio.systemdesign.shoppingapp.feature.cart.R
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.AcceptCartChangesUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ApplyPromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ClearCartUseCase
@@ -73,10 +76,11 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             applyPromoCode(promoCode)
                 .onSuccess {
-                    send(CartEffect.ShowSnackBar("Промокод «${promoCode.code}» применён"))
+                    val message = UiText.Resource(R.string.cart_promo_applied, listOf(promoCode.code))
+                    send(CartEffect.ShowSnackBar(message))
                 }
                 .onFailure { error ->
-                    send(CartEffect.ShowSnackBar(error.message ?: "Не удалось применить промокод"))
+                    send(CartEffect.ShowSnackBar(error.toUiText(R.string.cart_promo_apply_error)))
                 }
         }
     }
@@ -116,7 +120,7 @@ class CartViewModel @Inject constructor(
 
     private fun checkout() {
         if (uiState.value.isEmpty) {
-            send(CartEffect.ShowSnackBar("Корзина пуста"))
+            send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_empty_title)))
             return
         }
         viewModelScope.launch {
@@ -127,7 +131,7 @@ class CartViewModel @Inject constructor(
                 is CartValidationResult.Error -> {
                     send(
                         CartEffect.ShowSnackBar(
-                            result.error.message ?: "Не удалось проверить корзину",
+                            result.error.toUiText(R.string.cart_validation_error),
                         ),
                     )
                 }
@@ -142,7 +146,7 @@ class CartViewModel @Inject constructor(
             acceptCartChanges(issues)
                 .onSuccess { issuesState.value = emptyList() }
                 .onFailure { error ->
-                    send(CartEffect.ShowSnackBar(error.message ?: "Не удалось обновить корзину"))
+                    send(CartEffect.ShowSnackBar(error.toUiText(R.string.cart_update_error)))
                 }
         }
     }
@@ -150,7 +154,7 @@ class CartViewModel @Inject constructor(
     private fun launchCartAction(action: suspend () -> Result<Unit>) {
         viewModelScope.launch {
             action().onFailure { error ->
-                send(CartEffect.ShowSnackBar(error.message ?: "Не удалось обновить корзину"))
+                send(CartEffect.ShowSnackBar(error.toUiText(R.string.cart_update_error)))
             }
         }
     }

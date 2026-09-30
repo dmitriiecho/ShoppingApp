@@ -41,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,8 +52,10 @@ import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeRow
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
+import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.feature.cart.R
 import kotlinx.collections.immutable.ImmutableList
 import java.text.NumberFormat
 import java.util.Locale
@@ -67,6 +71,7 @@ fun CartScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val resources = LocalResources.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -75,7 +80,9 @@ fun CartScreen(
                 CartEffect.NavigateToCheckout -> onOpenCheckout()
                 CartEffect.NavigateToPromo -> onOpenPromo()
                 is CartEffect.NavigateToProduct -> onOpenProduct(effect.productId, effect.productName)
-                is CartEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
+                is CartEffect.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                }
             }
         }
     }
@@ -100,16 +107,16 @@ fun CartScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Корзина") },
+                title = { Text(stringResource(R.string.cart_title)) },
                 actions = {
                     TextButton(onClick = { viewModel.onEvent(CartEvent.OnPromoClick) }) {
-                        Text("Промокод")
+                        Text(stringResource(R.string.cart_promo_code))
                     }
                     if (!uiState.isEmpty) {
                         IconButton(onClick = { viewModel.onEvent(CartEvent.OnClearCartClick) }) {
                             Icon(
                                 imageVector = Icons.Outlined.RemoveShoppingCart,
-                                contentDescription = "Очистить корзину",
+                                contentDescription = stringResource(R.string.cart_clear),
                                 tint = MaterialTheme.colorScheme.error,
                             )
                         }
@@ -122,7 +129,7 @@ fun CartScreen(
             if (!uiState.isEmpty) {
                 TotalBottomBar(
                     total = formatPrice(uiState.totalPrice),
-                    actionText = "Оформить заказ",
+                    actionText = stringResource(R.string.cart_checkout),
                     enabled = !uiState.isValidating,
                     isLoading = uiState.isValidating,
                     onAction = { viewModel.onEvent(CartEvent.OnCheckoutClick) },
@@ -258,7 +265,7 @@ private fun CartTotals(
     ) {
         HorizontalDivider()
         Text(
-            text = "Сумма заказа",
+            text = stringResource(R.string.cart_order_total),
             style = MaterialTheme.typography.titleMedium,
         )
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -294,13 +301,13 @@ private fun EmptyCart(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = "Корзина пуста",
+            text = stringResource(R.string.cart_empty_title),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Добавьте товары из каталога",
+            text = stringResource(R.string.cart_empty_message),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -316,13 +323,13 @@ private fun ClearCartDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Очистить корзину?") },
+        title = { Text(stringResource(R.string.cart_clear_dialog_title)) },
         text = {
             Text(
                 if (hasPromoCode) {
-                    "Все товары будут удалены, промокод тоже будет снят."
+                    stringResource(R.string.cart_clear_dialog_message_with_promo)
                 } else {
-                    "Все товары будут удалены."
+                    stringResource(R.string.cart_clear_dialog_message)
                 },
             )
         },
@@ -333,12 +340,12 @@ private fun ClearCartDialog(
                     contentColor = MaterialTheme.colorScheme.error,
                 ),
             ) {
-                Text("Очистить")
+                Text(stringResource(R.string.cart_clear_dialog_confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Отмена")
+                Text(stringResource(R.string.cart_cancel))
             }
         },
     )
@@ -354,10 +361,10 @@ private fun CartIssuesDialog(
     val names = items.associate { it.productId to it.name }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Корзина обновилась") },
+        title = { Text(stringResource(R.string.cart_issues_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Некоторые товары изменились:")
+                Text(stringResource(R.string.cart_issues_dialog_message))
                 issues.forEach { issue ->
                     Text(
                         text = issueMessage(issue, names),
@@ -368,28 +375,29 @@ private fun CartIssuesDialog(
         },
         confirmButton = {
             TextButton(onClick = onAccept) {
-                Text("Принять")
+                Text(stringResource(R.string.cart_issues_dialog_accept))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Отмена")
+                Text(stringResource(R.string.cart_cancel))
             }
         },
     )
 }
 
+@Composable
 private fun issueMessage(
     issue: ItemIssue,
     names: Map<String, String>,
 ): String = when (issue) {
     is ItemIssue.Unavailable -> {
-        val name = names[issue.productId] ?: "Товар"
-        "«$name» больше недоступен и будет удалён"
+        val name = names[issue.productId] ?: stringResource(R.string.cart_issue_unknown_product)
+        stringResource(R.string.cart_issue_unavailable, name)
     }
     is ItemIssue.PriceChanged -> {
-        val name = names[issue.productId] ?: "Товар"
-        "Цена «$name» изменилась: ${formatPrice(issue.newPrice)}"
+        val name = names[issue.productId] ?: stringResource(R.string.cart_issue_unknown_product)
+        stringResource(R.string.cart_issue_price_changed, name, formatPrice(issue.newPrice))
     }
 }
 

@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import krio.systemdesign.shoppingapp.core.ui.text.UiText
+import krio.systemdesign.shoppingapp.core.ui.text.toUiText
+import krio.systemdesign.shoppingapp.feature.promo.R
 import krio.systemdesign.shoppingapp.feature.promo.domain.usecase.CheckPromoCodeUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,7 +68,7 @@ class PromoCodeViewModel @Inject constructor(
                 .onSuccess { promoCode -> send(PromoCodeEffect.CloseWithResult(promoCode)) }
                 .onFailure { error ->
                     requestState.value = RequestState(
-                        error = error.message ?: "Не удалось проверить промокод",
+                        error = error.toUiText(R.string.promo_check_error),
                     )
                 }
         }
@@ -77,7 +80,7 @@ class PromoCodeViewModel @Inject constructor(
 
     private data class RequestState(
         val isLoading: Boolean = false,
-        val error: String? = null,
+        val error: UiText? = null,
     )
 
     private companion object {

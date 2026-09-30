@@ -31,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -38,7 +40,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
+import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.Product
+import krio.systemdesign.shoppingapp.feature.catalog.R
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -50,12 +54,15 @@ fun ProductDetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val resources = LocalResources.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 ProductDetailsEffect.NavigateBack -> onBack()
-                is ProductDetailsEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
+                is ProductDetailsEffect.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                }
             }
         }
     }
@@ -63,7 +70,7 @@ fun ProductDetailsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(uiState.title.ifEmpty { "Товар" }) },
+                title = { Text(uiState.title.ifEmpty { stringResource(R.string.catalog_product_title) }) },
                 navigationIcon = {
                     NavigateBackIconButton(
                         onClick = { viewModel.onEvent(ProductDetailsEvent.OnBackClick) },
@@ -79,7 +86,7 @@ fun ProductDetailsScreen(
         when (val state = uiState) {
             is ProductDetailsUiState.Loading -> LoadingContent(modifier = contentModifier)
             is ProductDetailsUiState.Error -> ErrorContent(
-                message = state.message,
+                message = state.message.asString(),
                 onRetry = { viewModel.onEvent(ProductDetailsEvent.OnRetry) },
                 modifier = contentModifier,
             )
@@ -183,7 +190,7 @@ private fun ErrorContent(
         )
         Spacer(Modifier.height(16.dp))
         Button(onClick = onRetry) {
-            Text("Повторить")
+            Text(stringResource(R.string.catalog_retry))
         }
     }
 }

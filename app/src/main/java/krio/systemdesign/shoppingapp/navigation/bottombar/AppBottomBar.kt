@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -19,6 +20,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import krio.systemdesign.shoppingapp.R
 
 @Composable
 fun AppBottomBar(
@@ -45,7 +47,7 @@ fun AppBottomBar(
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CatalogTab) },
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
-            label = { Text("Каталог") },
+            label = { Text(stringResource(R.string.app_bottom_bar_catalog)) },
         )
         NavigationBarItem(
             selected = currentDestination.hierarchy.any {
@@ -65,7 +67,7 @@ fun AppBottomBar(
                     Icon(Icons.Default.ShoppingCart, contentDescription = null)
                 }
             },
-            label = { Text("Корзина") },
+            label = { Text(stringResource(R.string.app_bottom_bar_cart)) },
         )
     }
 }

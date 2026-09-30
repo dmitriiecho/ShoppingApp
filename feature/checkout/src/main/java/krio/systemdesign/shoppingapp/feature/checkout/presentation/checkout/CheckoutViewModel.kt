@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import krio.systemdesign.shoppingapp.core.ui.text.toUiText
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveCartUseCase
+import krio.systemdesign.shoppingapp.feature.checkout.R
 import krio.systemdesign.shoppingapp.feature.checkout.domain.usecase.PlaceOrderUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,7 +90,7 @@ class CheckoutViewModel @Inject constructor(
                 .onFailure { error ->
                     send(
                         CheckoutEffect.ShowSnackBar(
-                            error.message ?: "Не удалось оформить заказ",
+                            error.toUiText(R.string.checkout_place_order_error),
                         ),
                     )
                     isSubmitting.value = false

@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.presentation.productdetails
 
+import krio.systemdesign.shoppingapp.core.ui.text.UiText
 import krio.systemdesign.shoppingapp.domain.model.Product
 
 sealed interface ProductDetailsUiState {
@@ -18,6 +19,6 @@ sealed interface ProductDetailsUiState {
 
     data class Error(
         override val title: String,
-        val message: String,
+        val message: UiText,
     ) : ProductDetailsUiState
 }

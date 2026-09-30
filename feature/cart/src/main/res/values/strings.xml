@@ -1,0 +1,27 @@
+<resources>
+    <string name="cart_title">Корзина</string>
+    <string name="cart_promo_code">Промокод</string>
+    <string name="cart_clear">Очистить корзину</string>
+    <string name="cart_checkout">Оформить заказ</string>
+    <string name="cart_order_total">Сумма заказа</string>
+    <string name="cart_empty_title">Корзина пуста</string>
+    <string name="cart_empty_message">Добавьте товары из каталога</string>
+    <string name="cart_cancel">Отмена</string>
+
+    <string name="cart_clear_dialog_title">Очистить корзину?</string>
+    <string name="cart_clear_dialog_message">Все товары будут удалены.</string>
+    <string name="cart_clear_dialog_message_with_promo">Все товары будут удалены, промокод тоже будет снят.</string>
+    <string name="cart_clear_dialog_confirm">Очистить</string>
+
+    <string name="cart_issues_dialog_title">Корзина обновилась</string>
+    <string name="cart_issues_dialog_message">Некоторые товары изменились:</string>
+    <string name="cart_issues_dialog_accept">Принять</string>
+    <string name="cart_issue_unknown_product">Товар</string>
+    <string name="cart_issue_unavailable">«%1$s» больше недоступен и будет удалён</string>
+    <string name="cart_issue_price_changed">Цена «%1$s» изменилась: %2$s</string>
+
+    <string name="cart_promo_applied">Промокод «%1$s» применён</string>
+    <string name="cart_promo_apply_error">Не удалось применить промокод</string>
+    <string name="cart_validation_error">Не удалось проверить корзину</string>
+    <string name="cart_update_error">Не удалось обновить корзину</string>
+</resources>

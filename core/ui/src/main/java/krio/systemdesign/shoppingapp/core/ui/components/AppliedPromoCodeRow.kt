@@ -10,7 +10,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.R
 
 @Composable
 fun AppliedPromoCodeRow(
@@ -27,7 +29,7 @@ fun AppliedPromoCodeRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Промокод $code · −$discountPercent%",
+            text = stringResource(R.string.core_ui_applied_promo_code, code, discountPercent),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f),
@@ -38,7 +40,7 @@ fun AppliedPromoCodeRow(
                 onClick = onRemove,
                 modifier = Modifier.offset(x = 12.dp),
             ) {
-                Text("Убрать")
+                Text(stringResource(R.string.core_ui_remove_promo_code))
             }
         }
     }

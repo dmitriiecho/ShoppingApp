@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.R
 
 @Composable
 fun OrderTotals(
@@ -25,12 +27,12 @@ fun OrderTotals(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         PriceRow(
-            label = "Товары",
+            label = stringResource(R.string.core_ui_subtotal),
             value = subtotal,
         )
         if (discount != null) {
             PriceRow(
-                label = "Скидка",
+                label = stringResource(R.string.core_ui_discount),
                 value = discount,
                 valueColor = MaterialTheme.colorScheme.primary,
             )
@@ -42,7 +44,7 @@ fun OrderTotals(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Итого",
+                text = stringResource(R.string.core_ui_total),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )

@@ -35,6 +35,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,7 +47,9 @@ import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeRow
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
+import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.CartItem
+import krio.systemdesign.shoppingapp.feature.checkout.R
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -57,12 +61,15 @@ fun CheckoutScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val resources = LocalResources.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 CheckoutEffect.Close -> onClose()
-                is CheckoutEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
+                is CheckoutEffect.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                }
             }
         }
     }
@@ -71,7 +78,7 @@ fun CheckoutScreen(
         modifier = Modifier.imePadding(),
         topBar = {
             TopAppBar(
-                title = { Text("Оформление заказа") },
+                title = { Text(stringResource(R.string.checkout_title)) },
                 actions = {
                     CloseIconButton(onClick = onClose)
                 },
@@ -82,7 +89,7 @@ fun CheckoutScreen(
             if (!uiState.isEmpty || uiState.isSubmitting) {
                 TotalBottomBar(
                     total = formatPrice(uiState.totalPrice),
-                    actionText = "Оформить заказ",
+                    actionText = stringResource(R.string.checkout_place_order),
                     enabled = uiState.canSubmit,
                     isLoading = uiState.isSubmitting,
                     onAction = { viewModel.onEvent(CheckoutEvent.OnPlaceOrderClick) },
@@ -121,7 +128,7 @@ private fun CheckoutContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "Состав заказа",
+            text = stringResource(R.string.checkout_order_items),
             style = MaterialTheme.typography.titleMedium,
         )
         uiState.items.forEach { item ->
@@ -131,15 +138,15 @@ private fun CheckoutContent(
         HorizontalDivider()
 
         Text(
-            text = "Адрес доставки",
+            text = stringResource(R.string.checkout_delivery_address),
             style = MaterialTheme.typography.titleMedium,
         )
         OutlinedTextField(
             value = uiState.street,
             onValueChange = { onEvent(CheckoutEvent.OnStreetChange(it)) },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Улица") },
-            supportingText = { Text("Обязательно") },
+            label = { Text(stringResource(R.string.checkout_street)) },
+            supportingText = { Text(stringResource(R.string.checkout_required)) },
             singleLine = true,
             enabled = !uiState.isSubmitting,
         )
@@ -147,7 +154,7 @@ private fun CheckoutContent(
             value = uiState.apartment,
             onValueChange = { onEvent(CheckoutEvent.OnApartmentChange(it)) },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Квартира") },
+            label = { Text(stringResource(R.string.checkout_apartment)) },
             singleLine = true,
             enabled = !uiState.isSubmitting,
         )
@@ -155,7 +162,7 @@ private fun CheckoutContent(
             value = uiState.courierComment,
             onValueChange = { onEvent(CheckoutEvent.OnCourierCommentChange(it)) },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Комментарий курьеру") },
+            label = { Text(stringResource(R.string.checkout_courier_comment)) },
             minLines = 2,
             enabled = !uiState.isSubmitting,
         )
@@ -163,17 +170,17 @@ private fun CheckoutContent(
         HorizontalDivider()
 
         Text(
-            text = "Оплата",
+            text = stringResource(R.string.checkout_payment),
             style = MaterialTheme.typography.titleMedium,
         )
         PaymentMethodRow(
-            label = "Карта",
+            label = stringResource(R.string.checkout_payment_card),
             selected = uiState.paymentMethod == PaymentMethod.Card,
             enabled = !uiState.isSubmitting,
             onSelect = { onEvent(CheckoutEvent.OnPaymentMethodChange(PaymentMethod.Card)) },
         )
         PaymentMethodRow(
-            label = "Наличные",
+            label = stringResource(R.string.checkout_payment_cash),
             selected = uiState.paymentMethod == PaymentMethod.Cash,
             enabled = !uiState.isSubmitting,
             onSelect = { onEvent(CheckoutEvent.OnPaymentMethodChange(PaymentMethod.Cash)) },
@@ -182,7 +189,7 @@ private fun CheckoutContent(
         HorizontalDivider()
 
         Text(
-            text = "Сумма заказа",
+            text = stringResource(R.string.checkout_order_total),
             style = MaterialTheme.typography.titleMedium,
         )
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -289,13 +296,13 @@ private fun EmptyCheckout(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = "Корзина пуста",
+            text = stringResource(R.string.checkout_empty_title),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Добавьте товары из каталога",
+            text = stringResource(R.string.checkout_empty_message),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
