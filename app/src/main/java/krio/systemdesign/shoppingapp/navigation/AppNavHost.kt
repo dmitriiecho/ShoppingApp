@@ -57,7 +57,9 @@ fun AppNavHost(
             ) {
                 catalog.catalogGraph(
                     navController = navController,
-                    onClose = { },
+                    onClose = {
+                        // Каталог — корень вкладки, закрывать его некуда.
+                    },
                 )
             }
 
@@ -66,7 +68,9 @@ fun AppNavHost(
             ) {
                 cart.cartGraph(
                     navController = navController,
-                    onClose = { },
+                    onClose = {
+                        // Корзина — корень вкладки, закрывать её некуда.
+                    },
                     onOpenCheckout = {
                         navController.navigate(CheckoutRoutes.Graph)
                     },
