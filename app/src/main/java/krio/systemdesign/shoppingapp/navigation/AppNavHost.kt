@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.navigation
@@ -43,7 +46,11 @@ fun AppNavHost(
             startDestination = BottomNavRoutes.CatalogTab,
             modifier = Modifier
                 .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
+                .consumeWindowInsets(innerPadding)
+                // Пока экраны сменяют друг друга, уходящий экран ещё виден и принимает нажатия:
+                // двойной тап по «Назад» закрывал два экрана, а по товару открывал две карточки.
+                // Поэтому касания доходят до экранов, только когда верхний экран полностью открыт.
+                .blockTouchesDuringTransitions(navController),
         ) {
             navigation<BottomNavRoutes.CatalogTab>(
                 startDestination = CatalogRoutes.Graph,
@@ -103,3 +110,18 @@ fun AppNavHost(
         }
     }
 }
+
+// Верхний экран становится RESUMED, только когда анимация перехода к нему закончилась.
+// Проверяем в момент касания, а не при перерисовке: второе нажатие может прийти раньше неё.
+private fun Modifier.blockTouchesDuringTransitions(navController: NavHostController): Modifier =
+    pointerInput(navController) {
+        awaitPointerEventScope {
+            while (true) {
+                val event = awaitPointerEvent(PointerEventPass.Initial)
+                val topScreenState = navController.currentBackStackEntry?.lifecycle?.currentState
+                if (topScreenState != Lifecycle.State.RESUMED) {
+                    event.changes.forEach { it.consume() }
+                }
+            }
+        }
+    }
