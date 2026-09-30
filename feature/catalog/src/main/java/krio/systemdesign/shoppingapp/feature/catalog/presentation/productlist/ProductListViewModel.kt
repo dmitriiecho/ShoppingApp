@@ -16,8 +16,6 @@ import krio.systemdesign.shoppingapp.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import krio.systemdesign.shoppingapp.feature.catalog.domain.usecase.GetProductsUseCase
-import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,6 +24,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -47,15 +46,21 @@ class ProductListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(LAST_SEARCH_QUERY, "")
+    private val searchQuery = savedStateHandle.getStateFlow(LAST_SEARCH_QUERY, "")
 
-    val cartQuantities: StateFlow<ImmutableMap<String, Int>> = observeCart()
-        .map { cart -> cart.items.associate { it.productId to it.quantity }.toImmutableMap() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = persistentMapOf(),
+    val uiState: StateFlow<ProductListUiState> = combine(
+        searchQuery,
+        observeCart().map { cart -> cart.items.associate { it.productId to it.quantity }.toImmutableMap() },
+    ) { query, cartQuantities ->
+        ProductListUiState(
+            searchQuery = query,
+            cartQuantities = cartQuantities,
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ProductListUiState(searchQuery = searchQuery.value),
+    )
 
     private val _effects = Channel<ProductListEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()

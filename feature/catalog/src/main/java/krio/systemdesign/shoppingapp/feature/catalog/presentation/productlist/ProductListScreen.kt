@@ -83,8 +83,7 @@ fun ProductListScreen(
     onOpenProduct: (productId: String, productName: String) -> Unit,
     viewModel: ProductListViewModel = hiltViewModel(),
 ) {
-    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-    val cartQuantities by viewModel.cartQuantities.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val products = viewModel.products.collectAsLazyPagingItems()
     val snackbarHostState = remember { SnackbarHostState() }
     val resources = LocalResources.current
@@ -115,14 +114,14 @@ fun ProductListScreen(
                 .padding(innerPadding),
         ) {
             SearchField(
-                query = searchQuery,
+                query = uiState.searchQuery,
                 onQueryChange = { viewModel.onEvent(ProductListEvent.OnSearchQueryChanged(it)) },
                 onClear = { viewModel.onEvent(ProductListEvent.OnClearSearch) },
             )
             ProductListBody(
-                searchQuery = searchQuery,
+                searchQuery = uiState.searchQuery,
                 products = products,
-                cartQuantities = cartQuantities,
+                cartQuantities = uiState.cartQuantities,
                 onEvent = viewModel::onEvent,
             )
         }
