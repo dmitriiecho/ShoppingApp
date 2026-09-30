@@ -4,12 +4,18 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.domain.usecase.GetProductsUseCase
+import java.util.concurrent.ConcurrentHashMap
 
 class ProductPagingSource(
     private val getProducts: GetProductsUseCase,
     private val query: String,
     private val pageSize: Int,
 ) : PagingSource<Int, Product>() {
+
+    // Id уже отданных товаров. Если товар переименовали, он может прийти второй раз
+    // (см. договорённость в ProductsApi.getProducts), а повтор ключа роняет список.
+    // Страницы сверху и снизу грузятся одновременно, поэтому множество потокобезопасное.
+    private val loadedIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
         val anchor = state.anchorPosition ?: return null
@@ -22,7 +28,7 @@ class ProductPagingSource(
         return getProducts(query, page, pageSize).fold(
             onSuccess = { result ->
                 LoadResult.Page(
-                    data = result.products,
+                    data = result.products.filter { loadedIds.add(it.id) },
                     prevKey = if (page == START_PAGE) null else page - 1,
                     nextKey = if (result.endReached) null else page + 1,
                     itemsBefore = (page - START_PAGE) * pageSize,

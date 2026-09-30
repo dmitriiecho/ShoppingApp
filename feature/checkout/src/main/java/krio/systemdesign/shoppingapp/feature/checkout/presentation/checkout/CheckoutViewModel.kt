@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import krio.systemdesign.shoppingapp.core.ui.text.toUiText
+import krio.systemdesign.shoppingapp.core.ui.text.UiText
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.feature.checkout.R
 import krio.systemdesign.shoppingapp.feature.checkout.domain.usecase.PlaceOrderUseCase
@@ -87,10 +87,10 @@ class CheckoutViewModel @Inject constructor(
             isSubmitting.value = true
             placeOrder()
                 .onSuccess { send(CheckoutEffect.Close) }
-                .onFailure { error ->
+                .onFailure {
                     send(
                         CheckoutEffect.ShowSnackBar(
-                            error.toUiText(R.string.checkout_place_order_error),
+                            UiText.Resource(R.string.checkout_place_order_error),
                         ),
                     )
                     isSubmitting.value = false

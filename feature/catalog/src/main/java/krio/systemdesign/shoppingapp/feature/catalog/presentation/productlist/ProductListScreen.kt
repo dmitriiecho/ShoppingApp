@@ -71,12 +71,12 @@ import coil3.compose.AsyncImage
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.text.asString
+import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
+import krio.systemdesign.shoppingapp.feature.catalog.presentation.component.OutOfStockButton
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -168,7 +168,7 @@ private fun ProductListBody(
     when {
         refresh is LoadState.Loading -> LoadingContent()
         refresh is LoadState.Error -> ErrorContent(
-            message = refresh.error.message ?: stringResource(R.string.catalog_load_error),
+            message = stringResource(R.string.catalog_load_error),
             onRetry = { products.retry() },
         )
         refresh is LoadState.NotLoading && products.itemCount == 0 -> EmptyContent(
@@ -266,7 +266,7 @@ private fun ProductList(
             is LoadState.Error -> {
                 item(key = "append_error") {
                     AppendError(
-                        message = append.error.message ?: stringResource(R.string.catalog_append_error),
+                        message = stringResource(R.string.catalog_append_error),
                         onRetry = { products.retry() },
                     )
                 }
@@ -326,14 +326,18 @@ private fun ProductListItem(
                 }
             }
             Spacer(Modifier.height(12.dp))
-            CartQuantityControl(
-                quantity = quantity,
-                onAdd = onAddToCart,
-                onIncrease = { onUpdateQuantity(quantity + 1) },
-                onDecrease = { onUpdateQuantity(quantity - 1) },
-                onRemoveAll = onRemoveFromCart,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            if (product.isAvailable) {
+                CartQuantityControl(
+                    quantity = quantity,
+                    onAdd = onAddToCart,
+                    onIncrease = { onUpdateQuantity(quantity + 1) },
+                    onDecrease = { onUpdateQuantity(quantity - 1) },
+                    onRemoveAll = onRemoveFromCart,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                OutOfStockButton()
+            }
         }
     }
 }
@@ -549,14 +553,6 @@ private fun AppendError(
             Text(stringResource(R.string.catalog_retry))
         }
     }
-}
-
-private fun formatPrice(amountMinor: Long): String {
-    val format = NumberFormat.getNumberInstance(Locale.forLanguageTag("ru-RU")).apply {
-        minimumFractionDigits = 2
-        maximumFractionDigits = 2
-    }
-    return "${format.format(amountMinor / 100.0)} ₽"
 }
 
 private const val SHIMMER_DURATION_MS = 1200L

@@ -26,5 +26,6 @@ sealed interface ProductListEvent {
 
     data class OnFirstVisibleItemChanged(val index: Int) : ProductListEvent
 
+    // Во вкладке кнопки «Назад» нет. Событие нужно, когда экран встроен во флоу, из которого можно выйти.
     data object OnBackClick : ProductListEvent
 }

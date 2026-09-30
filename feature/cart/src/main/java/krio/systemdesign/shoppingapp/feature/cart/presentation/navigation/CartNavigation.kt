@@ -18,6 +18,8 @@ class CartNavigationScope(val builder: NavGraphBuilder)
 val NavGraphBuilder.cart: CartNavigationScope
     get() = CartNavigationScope(this)
 
+// onClose — выход из фичи корзины целиком. Корзина может быть корнем вкладки, где закрывать некуда,
+// а может быть встроена во флоу, из которого пользователь возвращается назад.
 fun CartNavigationScope.graph(
     navController: NavController,
     onClose: () -> Unit,

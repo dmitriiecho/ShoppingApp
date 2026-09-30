@@ -48,11 +48,10 @@ import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.text.asString
+import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.feature.checkout.R
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -309,12 +308,4 @@ private fun EmptyCheckout(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
-}
-
-private fun formatPrice(amountMinor: Long): String {
-    val format = NumberFormat.getNumberInstance(Locale.forLanguageTag("ru-RU")).apply {
-        minimumFractionDigits = 2
-        maximumFractionDigits = 2
-    }
-    return "${format.format(amountMinor / 100.0)} ₽"
 }

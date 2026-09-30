@@ -2,6 +2,7 @@ package krio.systemdesign.shoppingapp.feature.cart.presentation.cart
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -53,13 +54,13 @@ import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.text.asString
+import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.cart.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +91,6 @@ fun CartScreen(
 
     if (uiState.isClearCartDialogVisible) {
         ClearCartDialog(
-            hasPromoCode = uiState.promoCode != null,
             onConfirm = { viewModel.onEvent(CartEvent.OnClearCartConfirmed) },
             onDismiss = { viewModel.onEvent(CartEvent.OnClearCartDismiss) },
         )
@@ -140,6 +140,8 @@ fun CartScreen(
     ) { innerPadding ->
         if (uiState.isEmpty) {
             EmptyCart(
+                promoCode = uiState.promoCode,
+                onRemovePromo = { viewModel.onEvent(CartEvent.OnRemovePromoClick) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
@@ -288,52 +290,60 @@ private fun CartTotals(
 }
 
 @Composable
-private fun EmptyCart(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.ShoppingCart,
-            contentDescription = null,
-            modifier = Modifier.size(56.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = stringResource(R.string.cart_empty_title),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.cart_empty_message),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+private fun EmptyCart(
+    promoCode: PromoCode?,
+    onRemovePromo: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    // Box, а не Column: надпись стоит по центру всего экрана и не сдвигается,
+    // когда строка промокода появляется или исчезает.
+    Box(modifier = modifier.padding(24.dp)) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.ShoppingCart,
+                contentDescription = null,
+                modifier = Modifier.size(56.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = stringResource(R.string.cart_empty_title),
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.cart_empty_message),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        // Промокод переживает удаление товаров: показываем его, чтобы было видно,
+        // что он сработает для следующих покупок, и чтобы его можно было убрать.
+        if (promoCode != null) {
+            AppliedPromoCodeRow(
+                code = promoCode.code,
+                discountPercent = promoCode.discountPercent,
+                onRemove = onRemovePromo,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
     }
 }
 
 @Composable
 private fun ClearCartDialog(
-    hasPromoCode: Boolean,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.cart_clear_dialog_title)) },
-        text = {
-            Text(
-                if (hasPromoCode) {
-                    stringResource(R.string.cart_clear_dialog_message_with_promo)
-                } else {
-                    stringResource(R.string.cart_clear_dialog_message)
-                },
-            )
-        },
+        text = { Text(stringResource(R.string.cart_clear_dialog_message)) },
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
@@ -400,12 +410,4 @@ private fun issueMessage(
         val name = names[issue.productId] ?: stringResource(R.string.cart_issue_unknown_product)
         stringResource(R.string.cart_issue_price_changed, name, formatPrice(issue.newPrice))
     }
-}
-
-private fun formatPrice(amountMinor: Long): String {
-    val format = NumberFormat.getNumberInstance(Locale.forLanguageTag("ru-RU")).apply {
-        minimumFractionDigits = 2
-        maximumFractionDigits = 2
-    }
-    return "${format.format(amountMinor / 100.0)} ₽"
 }

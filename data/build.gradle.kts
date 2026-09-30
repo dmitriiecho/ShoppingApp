@@ -31,7 +31,6 @@ room {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":core:network"))
     implementation(project(":core:config"))
 
     implementation(libs.hilt.android)

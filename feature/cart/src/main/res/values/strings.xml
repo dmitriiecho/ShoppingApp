@@ -10,7 +10,6 @@
 
     <string name="cart_clear_dialog_title">Очистить корзину?</string>
     <string name="cart_clear_dialog_message">Все товары будут удалены.</string>
-    <string name="cart_clear_dialog_message_with_promo">Все товары будут удалены, промокод тоже будет снят.</string>
     <string name="cart_clear_dialog_confirm">Очистить</string>
 
     <string name="cart_issues_dialog_title">Корзина обновилась</string>

@@ -8,5 +8,5 @@ class RemoveFromCartUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         productId: String,
-    ): Result<Unit> = cartRepository.remove(productId)
+    ): Result<Unit> = cartRepository.removeItem(productId)
 }

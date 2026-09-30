@@ -14,6 +14,8 @@ class CatalogNavigationScope(val builder: NavGraphBuilder)
 val NavGraphBuilder.catalog: CatalogNavigationScope
     get() = CatalogNavigationScope(this)
 
+// onClose — выход из фичи каталога целиком. Каталог может быть корнем вкладки, где закрывать некуда,
+// а может быть встроен во флоу, из которого пользователь возвращается назад.
 fun CatalogNavigationScope.graph(
     navController: NavController,
     onClose: () -> Unit,

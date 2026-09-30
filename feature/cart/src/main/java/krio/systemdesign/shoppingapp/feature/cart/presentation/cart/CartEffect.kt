@@ -4,6 +4,7 @@ import krio.systemdesign.shoppingapp.core.ui.text.UiText
 
 sealed interface CartEffect {
 
+    // Во вкладке не отправляется. Нужен, когда экран встроен во флоу, из которого можно выйти.
     data object NavigateBack : CartEffect
 
     data object NavigateToCheckout : CartEffect

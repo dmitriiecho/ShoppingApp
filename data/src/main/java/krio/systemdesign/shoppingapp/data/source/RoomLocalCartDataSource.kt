@@ -22,7 +22,7 @@ class RoomLocalCartDataSource @Inject constructor(
     private val appliedPromoCodeDao: AppliedPromoCodeDao,
 ) : LocalCartDataSource {
 
-    override suspend fun add(product: Product, quantity: Int): Result<Unit> = runCatching {
+    override suspend fun addItem(product: Product, quantity: Int): Result<Unit> = suspendRunCatching {
         require(quantity > 0) { "quantity must be positive" }
         database.withTransaction {
             val existing = cartItemDao.find(product.id)
@@ -38,21 +38,25 @@ class RoomLocalCartDataSource @Inject constructor(
         }
     }
 
-    override suspend fun setQuantity(productId: String, quantity: Int): Result<Unit> = runCatching {
+    override suspend fun setQuantity(productId: String, quantity: Int): Result<Unit> = suspendRunCatching {
         if (quantity <= 0) {
             cartItemDao.delete(productId)
-            return@runCatching
+            return@suspendRunCatching
         }
         val existing = cartItemDao.find(productId)
             ?: error("Product $productId is not in the cart")
         cartItemDao.upsert(existing.copy(quantity = quantity))
     }
 
-    override suspend fun remove(productId: String): Result<Unit> = runCatching {
+    override suspend fun removeItem(productId: String): Result<Unit> = suspendRunCatching {
         cartItemDao.delete(productId)
     }
 
-    override suspend fun clear(): Result<Unit> = runCatching {
+    override suspend fun clearItems(): Result<Unit> = suspendRunCatching {
+        cartItemDao.deleteAll()
+    }
+
+    override suspend fun reset(): Result<Unit> = suspendRunCatching {
         database.withTransaction {
             cartItemDao.deleteAll()
             appliedPromoCodeDao.delete()
@@ -71,7 +75,7 @@ class RoomLocalCartDataSource @Inject constructor(
         }
     }
 
-    override suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit> = runCatching {
+    override suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit> = suspendRunCatching {
         database.withTransaction {
             issues.forEach { issue ->
                 when (issue) {
@@ -85,7 +89,7 @@ class RoomLocalCartDataSource @Inject constructor(
         }
     }
 
-    override suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> = runCatching {
+    override suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> = suspendRunCatching {
         appliedPromoCodeDao.upsert(
             AppliedPromoCodeEntity(
                 code = promoCode.code,
@@ -94,7 +98,7 @@ class RoomLocalCartDataSource @Inject constructor(
         )
     }
 
-    override suspend fun removePromoCode(): Result<Unit> = runCatching {
+    override suspend fun removePromoCode(): Result<Unit> = suspendRunCatching {
         appliedPromoCodeDao.delete()
     }
 }

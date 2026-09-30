@@ -10,6 +10,8 @@ data class ProductDTO(
     val price: Long,
     val imageUrl: String,
     val description: String,
+    // false — товар закончился: он остаётся в каталоге, но заказать его нельзя.
+    val available: Boolean,
 )
 
 fun ProductDTO.toDomain(): Product = Product(
@@ -18,4 +20,5 @@ fun ProductDTO.toDomain(): Product = Product(
     price = price,
     imageUrl = imageUrl,
     description = description,
+    isAvailable = available,
 )

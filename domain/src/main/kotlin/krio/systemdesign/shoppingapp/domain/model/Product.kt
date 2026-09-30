@@ -6,4 +6,5 @@ data class Product(
     val price: Long,
     val imageUrl: String,
     val description: String,
+    val isAvailable: Boolean,
 )
