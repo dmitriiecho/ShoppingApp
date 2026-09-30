@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface PromoApi {
     @GET("promo-codes/{code}")
-    suspend fun getPromoCode(
+    suspend fun checkPromoCode(
         @Path("code") code: String,
     ): PromoCodeDTO
 }

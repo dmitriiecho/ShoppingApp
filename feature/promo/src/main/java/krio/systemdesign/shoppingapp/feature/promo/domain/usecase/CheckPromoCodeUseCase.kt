@@ -8,5 +8,5 @@ class CheckPromoCodeUseCase @Inject constructor(
     private val promoCodeRepository: PromoCodeRepository,
 ) {
     suspend operator fun invoke(code: String): Result<PromoCode> =
-        promoCodeRepository.getPromoCode(code.trim().uppercase())
+        promoCodeRepository.checkPromoCode(code.trim().uppercase())
 }

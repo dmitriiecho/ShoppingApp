@@ -5,7 +5,7 @@ import krio.systemdesign.shoppingapp.feature.promo.data.dto.PromoCodeDTO
 
 internal class FakePromoApi : PromoApi {
 
-    override suspend fun getPromoCode(code: String): PromoCodeDTO {
+    override suspend fun checkPromoCode(code: String): PromoCodeDTO {
         delay(NETWORK_DELAY_MS)
         return PROMO_CODES.find { it.code == code }
             ?: error("Промокод не найден")
