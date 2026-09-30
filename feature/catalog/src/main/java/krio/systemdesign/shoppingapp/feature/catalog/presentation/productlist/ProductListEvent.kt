@@ -24,5 +24,7 @@ sealed interface ProductListEvent {
 
     data object OnClearSearch : ProductListEvent
 
+    data class OnFirstVisibleItemChanged(val index: Int) : ProductListEvent
+
     data object OnBackClick : ProductListEvent
 }

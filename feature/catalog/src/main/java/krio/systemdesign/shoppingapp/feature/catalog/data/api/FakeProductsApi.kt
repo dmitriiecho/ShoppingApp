@@ -6,7 +6,7 @@ import krio.systemdesign.shoppingapp.feature.catalog.data.dto.ProductsPageDTO
 
 internal class FakeProductsApi : ProductsApi {
 
-    override suspend fun getProducts(query: String, page: Int): ProductsPageDTO {
+    override suspend fun getProducts(query: String, page: Int, pageSize: Int): ProductsPageDTO {
         delay(NETWORK_DELAY_MS)
 
         val filtered = if (query.isBlank()) {
@@ -19,12 +19,12 @@ internal class FakeProductsApi : ProductsApi {
             return ProductsPageDTO(products = emptyList(), endReached = true)
         }
 
-        val fromIndex = (page - FIRST_PAGE) * PAGE_SIZE
+        val fromIndex = (page - FIRST_PAGE) * pageSize
         if (fromIndex >= filtered.size) {
             return ProductsPageDTO(products = emptyList(), endReached = true)
         }
 
-        val toIndex = minOf(fromIndex + PAGE_SIZE, filtered.size)
+        val toIndex = minOf(fromIndex + pageSize, filtered.size)
         return ProductsPageDTO(
             products = filtered.subList(fromIndex, toIndex),
             endReached = toIndex >= filtered.size,
@@ -40,7 +40,6 @@ internal class FakeProductsApi : ProductsApi {
     private companion object {
         const val NETWORK_DELAY_MS = 2000L
         const val FIRST_PAGE = 1
-        const val PAGE_SIZE = 10
 
         val PRODUCTS = listOf(
             product(

@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -59,11 +60,20 @@ class ProductListViewModel @Inject constructor(
     private val _effects = Channel<ProductListEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
+    private val restoredPage: Int =
+        savedStateHandle[FIRST_VISIBLE_PAGE] ?: ProductPagingSource.START_PAGE
+
+    // После смерти процесса первый список открывается с пачки, на которой остановился пользователь.
+    // Новый поисковый запрос всегда начинается с первой пачки.
     val products: Flow<PagingData<Product>> = searchQuery
         .map { it.trim() }
         .debounce { if (it.isEmpty()) 0L else SEARCH_DEBOUNCE_MS }
         .distinctUntilChanged()
-        .flatMapLatest { productsPager(it).flow }
+        .withIndex()
+        .flatMapLatest { (index, query) ->
+            val initialPage = if (index == 0) restoredPage else ProductPagingSource.START_PAGE
+            productsPager(query, initialPage).flow
+        }
         .cachedIn(viewModelScope)
 
     fun onEvent(event: ProductListEvent) {
@@ -92,6 +102,10 @@ class ProductListViewModel @Inject constructor(
             ProductListEvent.OnClearSearch -> {
                 savedStateHandle[LAST_SEARCH_QUERY] = ""
             }
+            is ProductListEvent.OnFirstVisibleItemChanged -> {
+                savedStateHandle[FIRST_VISIBLE_PAGE] =
+                    event.index / PAGE_SIZE + ProductPagingSource.START_PAGE
+            }
             ProductListEvent.OnBackClick -> {
                 send(ProductListEffect.NavigateBack)
             }
@@ -110,18 +124,20 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun productsPager(query: String): Pager<Int, Product> = Pager(
+    private fun productsPager(query: String, initialPage: Int): Pager<Int, Product> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             initialLoadSize = PAGE_SIZE,
             prefetchDistance = PREFETCH_DISTANCE,
-            enablePlaceholders = false,
+            enablePlaceholders = true,
         ),
-        pagingSourceFactory = { ProductPagingSource(getProducts, query) },
+        initialKey = initialPage,
+        pagingSourceFactory = { ProductPagingSource(getProducts, query, PAGE_SIZE) },
     )
 
     private companion object {
         const val LAST_SEARCH_QUERY = "last_search_query"
+        const val FIRST_VISIBLE_PAGE = "first_visible_page"
         const val SEARCH_DEBOUNCE_MS = 300L
         const val PAGE_SIZE = 10
         const val PREFETCH_DISTANCE = 3
