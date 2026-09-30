@@ -1,8 +1,10 @@
-package krio.systemdesign.shoppingapp.navigation
+package krio.systemdesign.shoppingapp.navigation.bottombar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -10,6 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -20,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 fun AppBottomBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    viewModel: AppBottomBarViewModel = hiltViewModel(),
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -30,6 +35,8 @@ fun AppBottomBar(
     } == true
 
     if (!showBottomBar) return
+
+    val cartItemCount by viewModel.cartItemCount.collectAsStateWithLifecycle()
 
     NavigationBar(modifier = modifier) {
         NavigationBarItem(
@@ -45,13 +52,25 @@ fun AppBottomBar(
                 it.hasRoute<BottomNavRoutes.CartTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CartTab) },
-            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) },
+            icon = {
+                BadgedBox(
+                    badge = {
+                        if (cartItemCount > 0) {
+                            Badge {
+                                Text(if (cartItemCount > 99) "99+" else cartItemCount.toString())
+                            }
+                        }
+                    },
+                ) {
+                    Icon(Icons.Default.ShoppingCart, contentDescription = null)
+                }
+            },
             label = { Text("Корзина") },
         )
     }
 }
 
-internal fun NavHostController.navigateToBottomTab(route: Any) {
+private fun NavHostController.navigateToBottomTab(route: Any) {
     navigate(route) {
         popUpTo(graph.findStartDestination().id) {
             saveState = true

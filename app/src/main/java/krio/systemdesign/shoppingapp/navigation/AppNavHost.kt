@@ -25,6 +25,8 @@ import krio.systemdesign.shoppingapp.feature.checkout.presentation.navigation.gr
 import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.PromoRoutes
 import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.graph as promoGraph
 import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.promo
+import krio.systemdesign.shoppingapp.navigation.bottombar.AppBottomBar
+import krio.systemdesign.shoppingapp.navigation.bottombar.BottomNavRoutes
 
 @Composable
 fun AppNavHost(
@@ -49,9 +51,6 @@ fun AppNavHost(
                 catalog.catalogGraph(
                     navController = navController,
                     onClose = { },
-                    onOpenCart = {
-                        navController.navigateToBottomTab(BottomNavRoutes.CartTab)
-                    }
                 )
             }
 

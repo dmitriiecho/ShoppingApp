@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.navigation
+package krio.systemdesign.shoppingapp.navigation.bottombar
 
 import kotlinx.serialization.Serializable
 
