@@ -8,13 +8,17 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalCartDataSource {
 
-    suspend fun add(product: Product, quantity: Int): Result<Unit>
+    suspend fun addItem(product: Product, quantity: Int): Result<Unit>
 
     suspend fun setQuantity(productId: String, quantity: Int): Result<Unit>
 
-    suspend fun remove(productId: String): Result<Unit>
+    suspend fun removeItem(productId: String): Result<Unit>
 
-    suspend fun clear(): Result<Unit>
+    // Удаляет товары, промокод остаётся: пользователь очистил корзину, но код ещё может пригодиться.
+    suspend fun clearItems(): Result<Unit>
+
+    // Возвращает корзину в начальное состояние: удаляет товары и промокод разом.
+    suspend fun reset(): Result<Unit>
 
     fun observe(): Flow<Cart>
 

@@ -22,7 +22,7 @@ class RoomLocalCartDataSource @Inject constructor(
     private val appliedPromoCodeDao: AppliedPromoCodeDao,
 ) : LocalCartDataSource {
 
-    override suspend fun add(product: Product, quantity: Int): Result<Unit> = suspendRunCatching {
+    override suspend fun addItem(product: Product, quantity: Int): Result<Unit> = suspendRunCatching {
         require(quantity > 0) { "quantity must be positive" }
         database.withTransaction {
             val existing = cartItemDao.find(product.id)
@@ -48,11 +48,15 @@ class RoomLocalCartDataSource @Inject constructor(
         cartItemDao.upsert(existing.copy(quantity = quantity))
     }
 
-    override suspend fun remove(productId: String): Result<Unit> = suspendRunCatching {
+    override suspend fun removeItem(productId: String): Result<Unit> = suspendRunCatching {
         cartItemDao.delete(productId)
     }
 
-    override suspend fun clear(): Result<Unit> = suspendRunCatching {
+    override suspend fun clearItems(): Result<Unit> = suspendRunCatching {
+        cartItemDao.deleteAll()
+    }
+
+    override suspend fun reset(): Result<Unit> = suspendRunCatching {
         database.withTransaction {
             cartItemDao.deleteAll()
             appliedPromoCodeDao.delete()

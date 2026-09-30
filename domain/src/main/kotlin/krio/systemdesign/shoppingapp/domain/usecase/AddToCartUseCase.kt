@@ -10,5 +10,5 @@ class AddToCartUseCase @Inject constructor(
     suspend operator fun invoke(
         product: Product,
         quantity: Int = 1,
-    ): Result<Unit> = cartRepository.add(product, quantity)
+    ): Result<Unit> = cartRepository.addItem(product, quantity)
 }

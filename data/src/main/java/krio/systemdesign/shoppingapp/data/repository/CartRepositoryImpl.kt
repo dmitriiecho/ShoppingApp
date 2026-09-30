@@ -17,17 +17,20 @@ class CartRepositoryImpl @Inject constructor(
     private val validator: CartValidatorDataSource,
 ) : CartRepository {
 
-    override suspend fun add(product: Product, quantity: Int): Result<Unit> =
-        localCart.add(product, quantity)
+    override suspend fun addItem(product: Product, quantity: Int): Result<Unit> =
+        localCart.addItem(product, quantity)
 
     override suspend fun setQuantity(productId: String, quantity: Int): Result<Unit> =
         localCart.setQuantity(productId, quantity)
 
-    override suspend fun remove(productId: String): Result<Unit> =
-        localCart.remove(productId)
+    override suspend fun removeItem(productId: String): Result<Unit> =
+        localCart.removeItem(productId)
 
-    override suspend fun clear(): Result<Unit> =
-        localCart.clear()
+    override suspend fun clearItems(): Result<Unit> =
+        localCart.clearItems()
+
+    override suspend fun reset(): Result<Unit> =
+        localCart.reset()
 
     override fun observe(): Flow<Cart> =
         localCart.observe()

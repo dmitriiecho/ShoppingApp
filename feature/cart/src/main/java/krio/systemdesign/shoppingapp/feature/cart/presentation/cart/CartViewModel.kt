@@ -14,7 +14,7 @@ import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.cart.R
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.AcceptCartChangesUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ApplyPromoCodeUseCase
-import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ClearCartUseCase
+import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ClearCartItemsUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.RemovePromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ValidateCartUseCase
 import kotlinx.collections.immutable.toPersistentList
@@ -37,7 +37,7 @@ class CartViewModel @Inject constructor(
     private val acceptCartChanges: AcceptCartChangesUseCase,
     private val applyPromoCode: ApplyPromoCodeUseCase,
     private val removePromoCode: RemovePromoCodeUseCase,
-    private val clearCart: ClearCartUseCase,
+    private val clearCartItems: ClearCartItemsUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -107,7 +107,7 @@ class CartViewModel @Inject constructor(
             }
             CartEvent.OnClearCartConfirmed -> {
                 savedStateHandle[KEY_CLEAR_CART_DIALOG_VISIBLE] = false
-                launchCartAction { clearCart() }
+                launchCartAction { clearCartItems() }
             }
             CartEvent.OnClearCartDismiss -> {
                 savedStateHandle[KEY_CLEAR_CART_DIALOG_VISIBLE] = false

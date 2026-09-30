@@ -6,5 +6,5 @@ import javax.inject.Inject
 class PlaceOrderUseCase @Inject constructor(
     private val cartRepository: CartRepository,
 ) {
-    suspend operator fun invoke(): Result<Unit> = cartRepository.clear()
+    suspend operator fun invoke(): Result<Unit> = cartRepository.reset()
 }
