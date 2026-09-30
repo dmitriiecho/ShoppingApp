@@ -1,6 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.checkout.presentation.checkout
 
 import krio.systemdesign.shoppingapp.domain.model.CartItem
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -11,7 +12,10 @@ enum class PaymentMethod {
 
 data class CheckoutUiState(
     val items: ImmutableList<CartItem> = persistentListOf(),
+    val subtotal: Long = 0,
+    val discount: Long = 0,
     val totalPrice: Long = 0,
+    val promoCode: PromoCode? = null,
     val street: String = "",
     val apartment: String = "",
     val courierComment: String = "",

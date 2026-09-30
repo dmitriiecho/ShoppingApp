@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.checkout.presentation.checkout
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,9 +20,18 @@ import javax.inject.Inject
 class CheckoutViewModel @Inject constructor(
     observeCart: ObserveCartUseCase,
     private val placeOrder: PlaceOrderUseCase,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val formState = MutableStateFlow(FormState())
+    // Поля формы лежат в SavedStateHandle, чтобы введённый адрес пережил смерть процесса.
+    private val formState = combine(
+        savedStateHandle.getStateFlow(KEY_STREET, ""),
+        savedStateHandle.getStateFlow(KEY_APARTMENT, ""),
+        savedStateHandle.getStateFlow(KEY_COURIER_COMMENT, ""),
+        savedStateHandle.getStateFlow(KEY_PAYMENT_METHOD, PaymentMethod.Card),
+    ) { street, apartment, courierComment, paymentMethod ->
+        FormState(street, apartment, courierComment, paymentMethod)
+    }
     private val isSubmitting = MutableStateFlow(false)
 
     private val _effects = Channel<CheckoutEffect>(Channel.BUFFERED)
@@ -35,7 +44,10 @@ class CheckoutViewModel @Inject constructor(
     ) { cart, form, submitting ->
         CheckoutUiState(
             items = cart.items,
+            subtotal = cart.subtotal(),
+            discount = cart.discount(),
             totalPrice = cart.totalPrice(),
+            promoCode = cart.promoCode,
             street = form.street,
             apartment = form.apartment,
             courierComment = form.courierComment,
@@ -51,16 +63,16 @@ class CheckoutViewModel @Inject constructor(
     fun onEvent(event: CheckoutEvent) {
         when (event) {
             is CheckoutEvent.OnStreetChange -> {
-                formState.update { it.copy(street = event.value) }
+                savedStateHandle[KEY_STREET] = event.value
             }
             is CheckoutEvent.OnApartmentChange -> {
-                formState.update { it.copy(apartment = event.value) }
+                savedStateHandle[KEY_APARTMENT] = event.value
             }
             is CheckoutEvent.OnCourierCommentChange -> {
-                formState.update { it.copy(courierComment = event.value) }
+                savedStateHandle[KEY_COURIER_COMMENT] = event.value
             }
             is CheckoutEvent.OnPaymentMethodChange -> {
-                formState.update { it.copy(paymentMethod = event.method) }
+                savedStateHandle[KEY_PAYMENT_METHOD] = event.method
             }
             CheckoutEvent.OnPlaceOrderClick -> submitOrder()
         }
@@ -89,9 +101,16 @@ class CheckoutViewModel @Inject constructor(
     }
 
     private data class FormState(
-        val street: String = "",
-        val apartment: String = "",
-        val courierComment: String = "",
-        val paymentMethod: PaymentMethod = PaymentMethod.Card,
+        val street: String,
+        val apartment: String,
+        val courierComment: String,
+        val paymentMethod: PaymentMethod,
     )
+
+    private companion object {
+        const val KEY_STREET = "street"
+        const val KEY_APARTMENT = "apartment"
+        const val KEY_COURIER_COMMENT = "courier_comment"
+        const val KEY_PAYMENT_METHOD = "payment_method"
+    }
 }

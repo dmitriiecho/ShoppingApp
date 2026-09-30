@@ -43,7 +43,7 @@ fun CartNavigationScope.graph(
 
             LaunchedEffect(promoResult) {
                 promoResult?.let { result ->
-                    viewModel.onPromoApplied(result.promoCode)
+                    viewModel.onPromoApplied(result.toPromoCode())
                     entry.savedStateHandle.remove<CartPromoResult>(CartResults.PROMO_RESULT_KEY)
                 }
             }

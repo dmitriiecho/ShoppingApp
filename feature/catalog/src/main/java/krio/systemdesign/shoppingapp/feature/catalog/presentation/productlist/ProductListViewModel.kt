@@ -22,10 +22,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -46,8 +44,7 @@ class ProductListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _searchQuery = MutableStateFlow(savedStateHandle[LAST_SEARCH_QUERY] ?: "")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+    val searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(LAST_SEARCH_QUERY, "")
 
     val cartQuantities: StateFlow<ImmutableMap<String, Int>> = observeCart()
         .map { cart -> cart.items.associate { it.productId to it.quantity }.toImmutableMap() }
@@ -60,7 +57,7 @@ class ProductListViewModel @Inject constructor(
     private val _effects = Channel<ProductListEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
-    val products: Flow<PagingData<Product>> = _searchQuery
+    val products: Flow<PagingData<Product>> = searchQuery
         .map { it.trim() }
         .debounce { if (it.isEmpty()) 0L else SEARCH_DEBOUNCE_MS }
         .distinctUntilChanged()
@@ -88,19 +85,15 @@ class ProductListViewModel @Inject constructor(
                 }
             }
             is ProductListEvent.OnSearchQueryChanged -> {
-                _searchQuery.value = event.query
+                savedStateHandle[LAST_SEARCH_QUERY] = event.query
             }
             ProductListEvent.OnClearSearch -> {
-                _searchQuery.value = ""
+                savedStateHandle[LAST_SEARCH_QUERY] = ""
             }
             ProductListEvent.OnBackClick -> {
                 send(ProductListEffect.NavigateBack)
             }
         }
-    }
-
-    override fun onCleared() {
-        savedStateHandle[LAST_SEARCH_QUERY] = _searchQuery.value
     }
 
     private fun launchCartAction(action: suspend () -> Result<Unit>) {

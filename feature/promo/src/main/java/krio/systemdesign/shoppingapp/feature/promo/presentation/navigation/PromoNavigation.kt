@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.presentation.promocode.PromoCodeScreen
 
 class PromoNavigationScope(val builder: NavGraphBuilder)
@@ -16,7 +17,7 @@ val NavGraphBuilder.promo: PromoNavigationScope
 fun PromoNavigationScope.graph(
     navController: NavController,
     onClose: () -> Unit,
-    onCloseWithResult: (resultKey: String, result: PromoCodeResult) -> Unit,
+    onCloseWithResult: (resultKey: String, promoCode: PromoCode) -> Unit,
 ) {
     builder.navigation<PromoRoutes.Graph>(
         startDestination = PromoRoutes.PromoCode,
@@ -29,8 +30,8 @@ fun PromoNavigationScope.graph(
 
             PromoCodeScreen(
                 onBack = onClose,
-                onCloseWithResult = { result ->
-                    onCloseWithResult(resultKey, result)
+                onCloseWithResult = { promoCode ->
+                    onCloseWithResult(resultKey, promoCode)
                 },
             )
         }

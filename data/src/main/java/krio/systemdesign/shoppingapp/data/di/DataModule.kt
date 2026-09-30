@@ -5,7 +5,8 @@ import androidx.room.Room
 import krio.systemdesign.shoppingapp.core.config.DatabaseSettings
 import krio.systemdesign.shoppingapp.data.BuildConfig
 import krio.systemdesign.shoppingapp.data.database.ShoppingDatabase
-import krio.systemdesign.shoppingapp.data.database.dao.CartDao
+import krio.systemdesign.shoppingapp.data.database.dao.AppliedPromoCodeDao
+import krio.systemdesign.shoppingapp.data.database.dao.CartItemDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,7 +39,12 @@ internal object DataModule {
     }
 
     @Provides
-    fun provideCartDao(database: ShoppingDatabase): CartDao {
-        return database.cartDao()
+    fun provideCartItemDao(database: ShoppingDatabase): CartItemDao {
+        return database.cartItemDao()
+    }
+
+    @Provides
+    fun provideAppliedPromoCodeDao(database: ShoppingDatabase): AppliedPromoCodeDao {
+        return database.appliedPromoCodeDao()
     }
 }
