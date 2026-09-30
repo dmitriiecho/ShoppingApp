@@ -14,6 +14,7 @@ data class CartUiState(
     val promoCode: PromoCode? = null,
     val issues: ImmutableList<ItemIssue> = persistentListOf(),
     val isValidating: Boolean = false,
+    val isClearCartDialogVisible: Boolean = false,
 ) {
     val isEmpty: Boolean get() = items.isEmpty()
 }

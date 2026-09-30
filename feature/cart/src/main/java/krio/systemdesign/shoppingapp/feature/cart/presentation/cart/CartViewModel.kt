@@ -39,6 +39,7 @@ class CartViewModel @Inject constructor(
 
     private val issuesState = MutableStateFlow<List<ItemIssue>>(emptyList())
     private val isValidating = MutableStateFlow(false)
+    private val isClearCartDialogVisible = MutableStateFlow(false)
 
     private val _effects = Channel<CartEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
@@ -47,7 +48,8 @@ class CartViewModel @Inject constructor(
         observeCart(),
         issuesState,
         isValidating,
-    ) { cart, issues, validating ->
+        isClearCartDialogVisible,
+    ) { cart, issues, validating, clearCartDialogVisible ->
         CartUiState(
             items = cart.items,
             subtotal = cart.subtotal(),
@@ -56,6 +58,7 @@ class CartViewModel @Inject constructor(
             promoCode = cart.promoCode,
             issues = issues.toPersistentList(),
             isValidating = validating,
+            isClearCartDialogVisible = clearCartDialogVisible,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -93,7 +96,12 @@ class CartViewModel @Inject constructor(
             CartEvent.OnCheckoutClick -> checkout()
             CartEvent.OnPromoClick -> send(CartEffect.NavigateToPromo)
             CartEvent.OnRemovePromoClick -> launchCartAction { removePromoCode() }
-            CartEvent.OnClearCartConfirmed -> launchCartAction { clearCart() }
+            CartEvent.OnClearCartClick -> isClearCartDialogVisible.value = true
+            CartEvent.OnClearCartConfirmed -> {
+                isClearCartDialogVisible.value = false
+                launchCartAction { clearCart() }
+            }
+            CartEvent.OnClearCartDismiss -> isClearCartDialogVisible.value = false
             CartEvent.OnAcceptChanges -> acceptPendingChanges()
             CartEvent.OnDismissIssues -> issuesState.value = emptyList()
         }

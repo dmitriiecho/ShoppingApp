@@ -36,10 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,7 +67,6 @@ fun CartScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    var showClearCartDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -84,14 +80,11 @@ fun CartScreen(
         }
     }
 
-    if (showClearCartDialog) {
+    if (uiState.isClearCartDialogVisible) {
         ClearCartDialog(
             hasPromoCode = uiState.promoCode != null,
-            onConfirm = {
-                showClearCartDialog = false
-                viewModel.onEvent(CartEvent.OnClearCartConfirmed)
-            },
-            onDismiss = { showClearCartDialog = false },
+            onConfirm = { viewModel.onEvent(CartEvent.OnClearCartConfirmed) },
+            onDismiss = { viewModel.onEvent(CartEvent.OnClearCartDismiss) },
         )
     }
 
@@ -113,7 +106,7 @@ fun CartScreen(
                         Text("Промокод")
                     }
                     if (!uiState.isEmpty) {
-                        IconButton(onClick = { showClearCartDialog = true }) {
+                        IconButton(onClick = { viewModel.onEvent(CartEvent.OnClearCartClick) }) {
                             Icon(
                                 imageVector = Icons.Outlined.RemoveShoppingCart,
                                 contentDescription = "Очистить корзину",
