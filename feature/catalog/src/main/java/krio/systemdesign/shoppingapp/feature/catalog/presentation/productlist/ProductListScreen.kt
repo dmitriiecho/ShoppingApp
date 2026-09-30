@@ -73,6 +73,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
+import krio.systemdesign.shoppingapp.feature.catalog.presentation.component.OutOfStockButton
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -326,14 +327,18 @@ private fun ProductListItem(
                 }
             }
             Spacer(Modifier.height(12.dp))
-            CartQuantityControl(
-                quantity = quantity,
-                onAdd = onAddToCart,
-                onIncrease = { onUpdateQuantity(quantity + 1) },
-                onDecrease = { onUpdateQuantity(quantity - 1) },
-                onRemoveAll = onRemoveFromCart,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            if (product.isAvailable) {
+                CartQuantityControl(
+                    quantity = quantity,
+                    onAdd = onAddToCart,
+                    onIncrease = { onUpdateQuantity(quantity + 1) },
+                    onDecrease = { onUpdateQuantity(quantity - 1) },
+                    onRemoveAll = onRemoveFromCart,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                OutOfStockButton()
+            }
         }
     }
 }

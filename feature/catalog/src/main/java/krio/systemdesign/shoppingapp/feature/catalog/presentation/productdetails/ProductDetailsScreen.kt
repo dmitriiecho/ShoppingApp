@@ -43,6 +43,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
+import krio.systemdesign.shoppingapp.feature.catalog.presentation.component.OutOfStockButton
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
@@ -143,16 +144,21 @@ private fun ProductDetailsContent(
                 }
             }
         }
-        CartQuantityControl(
-            quantity = quantity,
-            onAdd = { onEvent(ProductDetailsEvent.OnAddToCart()) },
-            onIncrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity + 1)) },
-            onDecrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity - 1)) },
-            onRemoveAll = { onEvent(ProductDetailsEvent.OnRemoveFromCart) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        )
+        val controlModifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+        if (product.isAvailable) {
+            CartQuantityControl(
+                quantity = quantity,
+                onAdd = { onEvent(ProductDetailsEvent.OnAddToCart()) },
+                onIncrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity + 1)) },
+                onDecrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity - 1)) },
+                onRemoveAll = { onEvent(ProductDetailsEvent.OnRemoveFromCart) },
+                modifier = controlModifier,
+            )
+        } else {
+            OutOfStockButton(modifier = controlModifier)
+        }
     }
 }
 
