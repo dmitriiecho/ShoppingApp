@@ -22,6 +22,8 @@ sealed interface CartEvent {
 
     data object OnRemovePromoClick : CartEvent
 
+    data object OnClearCartConfirmed : CartEvent
+
     data object OnAcceptChanges : CartEvent
 
     data object OnDismissIssues : CartEvent

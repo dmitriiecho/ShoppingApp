@@ -11,6 +11,7 @@ import krio.systemdesign.shoppingapp.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.AcceptCartChangesUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ApplyPromoCodeUseCase
+import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ClearCartUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.RemovePromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ValidateCartUseCase
 import kotlinx.collections.immutable.toPersistentList
@@ -33,6 +34,7 @@ class CartViewModel @Inject constructor(
     private val acceptCartChanges: AcceptCartChangesUseCase,
     private val applyPromoCode: ApplyPromoCodeUseCase,
     private val removePromoCode: RemovePromoCodeUseCase,
+    private val clearCart: ClearCartUseCase,
 ) : ViewModel() {
 
     private val issuesState = MutableStateFlow<List<ItemIssue>>(emptyList())
@@ -91,6 +93,7 @@ class CartViewModel @Inject constructor(
             CartEvent.OnCheckoutClick -> checkout()
             CartEvent.OnPromoClick -> send(CartEffect.NavigateToPromo)
             CartEvent.OnRemovePromoClick -> launchCartAction { removePromoCode() }
+            CartEvent.OnClearCartConfirmed -> launchCartAction { clearCart() }
             CartEvent.OnAcceptChanges -> acceptPendingChanges()
             CartEvent.OnDismissIssues -> issuesState.value = emptyList()
         }

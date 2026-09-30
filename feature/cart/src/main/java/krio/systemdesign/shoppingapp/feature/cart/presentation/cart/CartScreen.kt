@@ -16,13 +16,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.RemoveShoppingCart
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -33,7 +36,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,6 +70,7 @@ fun CartScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showClearCartDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -75,6 +82,17 @@ fun CartScreen(
                 is CartEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
             }
         }
+    }
+
+    if (showClearCartDialog) {
+        ClearCartDialog(
+            hasPromoCode = uiState.promoCode != null,
+            onConfirm = {
+                showClearCartDialog = false
+                viewModel.onEvent(CartEvent.OnClearCartConfirmed)
+            },
+            onDismiss = { showClearCartDialog = false },
+        )
     }
 
     if (uiState.issues.isNotEmpty()) {
@@ -93,6 +111,15 @@ fun CartScreen(
                 actions = {
                     TextButton(onClick = { viewModel.onEvent(CartEvent.OnPromoClick) }) {
                         Text("Промокод")
+                    }
+                    if (!uiState.isEmpty) {
+                        IconButton(onClick = { showClearCartDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Outlined.RemoveShoppingCart,
+                                contentDescription = "Очистить корзину",
+                                tint = MaterialTheme.colorScheme.error,
+                            )
+                        }
                     }
                 },
             )
@@ -286,6 +313,42 @@ private fun EmptyCart(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
+}
+
+@Composable
+private fun ClearCartDialog(
+    hasPromoCode: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Очистить корзину?") },
+        text = {
+            Text(
+                if (hasPromoCode) {
+                    "Все товары будут удалены, промокод тоже будет снят."
+                } else {
+                    "Все товары будут удалены."
+                },
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error,
+                ),
+            ) {
+                Text("Очистить")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
+            }
+        },
+    )
 }
 
 @Composable
