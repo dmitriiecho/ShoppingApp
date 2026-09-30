@@ -2,7 +2,8 @@ package krio.systemdesign.shoppingapp.data.source
 
 import androidx.room.withTransaction
 import krio.systemdesign.shoppingapp.data.database.ShoppingDatabase
-import krio.systemdesign.shoppingapp.data.database.dao.CartDao
+import krio.systemdesign.shoppingapp.data.database.dao.AppliedPromoCodeDao
+import krio.systemdesign.shoppingapp.data.database.dao.CartItemDao
 import krio.systemdesign.shoppingapp.data.database.entity.AppliedPromoCodeEntity
 import krio.systemdesign.shoppingapp.data.database.entity.CartItemEntity
 import krio.systemdesign.shoppingapp.domain.model.Cart
@@ -17,13 +18,14 @@ import javax.inject.Inject
 
 class RoomLocalCartDataSource @Inject constructor(
     private val database: ShoppingDatabase,
-    private val cartDao: CartDao,
+    private val cartItemDao: CartItemDao,
+    private val appliedPromoCodeDao: AppliedPromoCodeDao,
 ) : LocalCartDataSource {
 
     override suspend fun add(product: Product, quantity: Int): Result<Unit> = runCatching {
         require(quantity > 0) { "quantity must be positive" }
         database.withTransaction {
-            val existing = cartDao.findItem(product.id)
+            val existing = cartItemDao.find(product.id)
             val entity = existing?.copy(quantity = existing.quantity + quantity)
                 ?: CartItemEntity(
                     productId = product.id,
@@ -32,35 +34,35 @@ class RoomLocalCartDataSource @Inject constructor(
                     price = product.price,
                     quantity = quantity,
                 )
-            cartDao.upsertItem(entity)
+            cartItemDao.upsert(entity)
         }
     }
 
     override suspend fun setQuantity(productId: String, quantity: Int): Result<Unit> = runCatching {
         if (quantity <= 0) {
-            cartDao.deleteItem(productId)
+            cartItemDao.delete(productId)
             return@runCatching
         }
-        val existing = cartDao.findItem(productId)
+        val existing = cartItemDao.find(productId)
             ?: error("Product $productId is not in the cart")
-        cartDao.upsertItem(existing.copy(quantity = quantity))
+        cartItemDao.upsert(existing.copy(quantity = quantity))
     }
 
     override suspend fun remove(productId: String): Result<Unit> = runCatching {
-        cartDao.deleteItem(productId)
+        cartItemDao.delete(productId)
     }
 
     override suspend fun clear(): Result<Unit> = runCatching {
         database.withTransaction {
-            cartDao.deleteAllItems()
-            cartDao.deletePromoCode()
+            cartItemDao.deleteAll()
+            appliedPromoCodeDao.delete()
         }
     }
 
     override fun observe(): Flow<Cart> {
         return combine(
-            cartDao.observeItems(),
-            cartDao.observePromoCode(),
+            cartItemDao.observeAll(),
+            appliedPromoCodeDao.observe(),
         ) { entities, promoCode ->
             Cart(
                 items = entities.map { it.toCartItem() }.toPersistentList(),
@@ -73,10 +75,10 @@ class RoomLocalCartDataSource @Inject constructor(
         database.withTransaction {
             issues.forEach { issue ->
                 when (issue) {
-                    is ItemIssue.Unavailable -> cartDao.deleteItem(issue.productId)
+                    is ItemIssue.Unavailable -> cartItemDao.delete(issue.productId)
                     is ItemIssue.PriceChanged -> {
-                        val existing = cartDao.findItem(issue.productId) ?: return@forEach
-                        cartDao.upsertItem(existing.copy(price = issue.newPrice))
+                        val existing = cartItemDao.find(issue.productId) ?: return@forEach
+                        cartItemDao.upsert(existing.copy(price = issue.newPrice))
                     }
                 }
             }
@@ -84,7 +86,7 @@ class RoomLocalCartDataSource @Inject constructor(
     }
 
     override suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> = runCatching {
-        cartDao.upsertPromoCode(
+        appliedPromoCodeDao.upsert(
             AppliedPromoCodeEntity(
                 code = promoCode.code,
                 discountPercent = promoCode.discountPercent,
@@ -93,7 +95,7 @@ class RoomLocalCartDataSource @Inject constructor(
     }
 
     override suspend fun removePromoCode(): Result<Unit> = runCatching {
-        cartDao.deletePromoCode()
+        appliedPromoCodeDao.delete()
     }
 }
 
