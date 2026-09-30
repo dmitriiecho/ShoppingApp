@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.cart.presentation.cart
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,11 +36,13 @@ class CartViewModel @Inject constructor(
     private val applyPromoCode: ApplyPromoCodeUseCase,
     private val removePromoCode: RemovePromoCodeUseCase,
     private val clearCart: ClearCartUseCase,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val issuesState = MutableStateFlow<List<ItemIssue>>(emptyList())
     private val isValidating = MutableStateFlow(false)
-    private val isClearCartDialogVisible = MutableStateFlow(false)
+    private val isClearCartDialogVisible =
+        savedStateHandle.getStateFlow(KEY_CLEAR_CART_DIALOG_VISIBLE, false)
 
     private val _effects = Channel<CartEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
@@ -96,12 +99,16 @@ class CartViewModel @Inject constructor(
             CartEvent.OnCheckoutClick -> checkout()
             CartEvent.OnPromoClick -> send(CartEffect.NavigateToPromo)
             CartEvent.OnRemovePromoClick -> launchCartAction { removePromoCode() }
-            CartEvent.OnClearCartClick -> isClearCartDialogVisible.value = true
+            CartEvent.OnClearCartClick -> {
+                savedStateHandle[KEY_CLEAR_CART_DIALOG_VISIBLE] = true
+            }
             CartEvent.OnClearCartConfirmed -> {
-                isClearCartDialogVisible.value = false
+                savedStateHandle[KEY_CLEAR_CART_DIALOG_VISIBLE] = false
                 launchCartAction { clearCart() }
             }
-            CartEvent.OnClearCartDismiss -> isClearCartDialogVisible.value = false
+            CartEvent.OnClearCartDismiss -> {
+                savedStateHandle[KEY_CLEAR_CART_DIALOG_VISIBLE] = false
+            }
             CartEvent.OnAcceptChanges -> acceptPendingChanges()
             CartEvent.OnDismissIssues -> issuesState.value = emptyList()
         }
@@ -150,5 +157,9 @@ class CartViewModel @Inject constructor(
 
     private fun send(effect: CartEffect) {
         viewModelScope.launch { _effects.send(effect) }
+    }
+
+    private companion object {
+        const val KEY_CLEAR_CART_DIALOG_VISIBLE = "clear_cart_dialog_visible"
     }
 }
