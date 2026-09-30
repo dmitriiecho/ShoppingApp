@@ -81,15 +81,15 @@ fun AppNavHost(
                     onClose = {
                         navController.popBackStack<PromoRoutes.Graph>(inclusive = true)
                     },
-                    onCloseWithResult = { resultKey, result ->
+                    onCloseWithResult = { resultKey, promoCode ->
                         navController.popBackStack<PromoRoutes.Graph>(inclusive = true)
                         navController.currentBackStackEntry
                             ?.savedStateHandle
                             ?.set(
                                 resultKey,
                                 CartPromoResult(
-                                    promoCode = result.promoCode.code,
-                                    discountPercent = result.promoCode.discountPercent,
+                                    promoCode = promoCode.code,
+                                    discountPercent = promoCode.discountPercent,
                                 ),
                             )
                     },

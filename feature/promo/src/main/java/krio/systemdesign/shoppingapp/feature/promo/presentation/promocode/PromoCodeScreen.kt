@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
-import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.PromoCodeResult
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PromoCodeScreen(
     onBack: () -> Unit,
-    onCloseWithResult: (PromoCodeResult) -> Unit,
+    onCloseWithResult: (PromoCode) -> Unit,
     viewModel: PromoCodeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -41,7 +41,7 @@ fun PromoCodeScreen(
         viewModel.effects.collect { effect ->
             when (effect) {
                 is PromoCodeEffect.CloseWithResult -> {
-                    onCloseWithResult(PromoCodeResult(effect.promoCode))
+                    onCloseWithResult(effect.promoCode)
                 }
             }
         }

@@ -677,7 +677,7 @@ sequenceDiagram
   Cart->>App: onOpenPromo("cart_promo_result")
   App->>Promo: navigate(Graph(resultKey))
   Screen->>Screen: parentEntry.toRoute&lt;Graph&gt;().resultKey
-  Screen->>App: onCloseWithResult(resultKey, PromoCodeResult)
+  Screen->>App: onCloseWithResult(resultKey, PromoCode)
   App->>App: popBackStack&lt;Promo Graph&gt;(inclusive = true)
   App->>Cart: currentBackStackEntry.savedStateHandle[resultKey] = CartPromoResult
   Cart->>Cart: collect getStateFlow(resultKey)
@@ -700,7 +700,7 @@ val resultKey = parentEntry.toRoute&lt;PromoRoutes.Graph&gt;().resultKey</code><
       </p>
       <h3>Контракт результата</h3>
       <ul>
-        <li>Фича promo сначала проверяет код через <span class="mono">PromoApi</span> (в debug — <span class="mono">FakePromoApi</span>) и только потом отдаёт <span class="mono">PromoCodeResult(promoCode: PromoCode)</span> — обычный data class с доменной моделью: код и процент скидки.</li>
+        <li>Фича promo сначала проверяет код через <span class="mono">PromoApi</span> (в debug — <span class="mono">FakePromoApi</span>) и только потом отдаёт доменную модель <span class="mono">PromoCode</span> (код и процент скидки) — обычный data class без обёрток.</li>
         <li>App мапит его в <span class="mono">CartPromoResult(promoCode, discountPercent)</span>, который <span class="mono">Parcelable</span>, потому что SavedStateHandle переживает смерть процесса.</li>
         <li>Корзина слушает <span class="mono">entry.savedStateHandle.getStateFlow&lt;CartPromoResult?&gt;(KEY, null)</span> и после обработки удаляет значение, чтобы не применить промокод повторно при recomposition.</li>
         <li>Обработка — это сохранение через <span class="mono">CartRepository.applyPromoCode</span> в Room, рядом с товарами. Промокод становится частью модели <span class="mono">Cart</span>, поэтому корзина и checkout считают одну и ту же скидку, и она переживает перезапуск приложения. Оформление заказа (<span class="mono">clear()</span>) удаляет товары и промокод в одной транзакции.</li>
@@ -956,7 +956,7 @@ flowchart LR
           </tr>
           <tr>
             <td><span class="mono">feature/promo/.../PromoRoutes.kt</span></td>
-            <td>Graph(resultKey), PromoCode, PromoCodeResult(PromoCode)</td>
+            <td>Graph(resultKey), PromoCode</td>
           </tr>
           <tr>
             <td><span class="mono">feature/promo/.../PromoNavigation.kt</span></td>
