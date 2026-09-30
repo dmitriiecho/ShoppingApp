@@ -87,7 +87,10 @@ fun AppNavHost(
                             ?.savedStateHandle
                             ?.set(
                                 resultKey,
-                                CartPromoResult(promoCode = result.promoCode),
+                                CartPromoResult(
+                                    promoCode = result.promoCode.code,
+                                    discountPercent = result.promoCode.discountPercent,
+                                ),
                             )
                     },
                 )

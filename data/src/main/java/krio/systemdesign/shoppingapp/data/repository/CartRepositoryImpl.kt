@@ -6,6 +6,7 @@ import krio.systemdesign.shoppingapp.domain.model.Cart
 import krio.systemdesign.shoppingapp.domain.model.CartValidationResult
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.Product
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.domain.repository.CartRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -38,4 +39,10 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit> =
         localCart.acceptChanges(issues)
+
+    override suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> =
+        localCart.applyPromoCode(promoCode)
+
+    override suspend fun removePromoCode(): Result<Unit> =
+        localCart.removePromoCode()
 }

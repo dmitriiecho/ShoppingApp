@@ -18,10 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -46,7 +43,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeRow
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
+import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
+import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import kotlinx.collections.immutable.ImmutableList
@@ -77,16 +77,6 @@ fun CartScreen(
         }
     }
 
-    LaunchedEffect(uiState.showPromoSuccess, uiState.appliedPromoCode) {
-        if (uiState.showPromoSuccess) {
-            val promoCode = uiState.appliedPromoCode
-            if (promoCode != null) {
-                snackbarHostState.showSnackbar("Промокод «$promoCode» применён")
-            }
-            viewModel.onEvent(CartEvent.OnPromoSuccessShown)
-        }
-    }
-
     if (uiState.issues.isNotEmpty()) {
         CartIssuesDialog(
             issues = uiState.issues,
@@ -110,11 +100,12 @@ fun CartScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (!uiState.isEmpty) {
-                CartBottomBar(
-                    totalPrice = uiState.totalPrice,
-                    appliedPromoCode = uiState.appliedPromoCode,
-                    isValidating = uiState.isValidating,
-                    onCheckout = { viewModel.onEvent(CartEvent.OnCheckoutClick) },
+                TotalBottomBar(
+                    total = formatPrice(uiState.totalPrice),
+                    actionText = "Оформить заказ",
+                    enabled = !uiState.isValidating,
+                    isLoading = uiState.isValidating,
+                    onAction = { viewModel.onEvent(CartEvent.OnCheckoutClick) },
                 )
             }
         },
@@ -155,6 +146,13 @@ fun CartScreen(
                         onRemove = {
                             viewModel.onEvent(CartEvent.OnRemoveItem(item.productId))
                         },
+                    )
+                }
+                item(key = "totals") {
+                    CartTotals(
+                        uiState = uiState,
+                        onRemovePromo = { viewModel.onEvent(CartEvent.OnRemovePromoClick) },
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                 }
             }
@@ -229,62 +227,34 @@ private fun CartListItem(
 }
 
 @Composable
-private fun CartBottomBar(
-    totalPrice: Long,
-    appliedPromoCode: String?,
-    isValidating: Boolean,
-    onCheckout: () -> Unit,
+private fun CartTotals(
+    uiState: CartUiState,
+    onRemovePromo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        tonalElevation = 3.dp,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            if (appliedPromoCode != null) {
-                Text(
-                    text = "Промокод: $appliedPromoCode",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(Modifier.height(8.dp))
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Итого",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(
-                    text = formatPrice(totalPrice),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
+        HorizontalDivider()
+        Text(
+            text = "Сумма заказа",
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            val promoCode = uiState.promoCode
+            if (promoCode != null) {
+                AppliedPromoCodeRow(
+                    code = promoCode.code,
+                    discountPercent = promoCode.discountPercent,
+                    onRemove = onRemovePromo,
                 )
             }
-            Spacer(Modifier.height(12.dp))
-            HorizontalDivider()
-            Spacer(Modifier.height(12.dp))
-            Button(
-                onClick = onCheckout,
-                enabled = !isValidating,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (isValidating) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                    )
-                } else {
-                    Text("Оформить заказ")
-                }
-            }
+            OrderTotals(
+                subtotal = formatPrice(uiState.subtotal),
+                total = formatPrice(uiState.totalPrice),
+                discount = if (promoCode != null) "−${formatPrice(uiState.discount)}" else null,
+            )
         }
     }
 }

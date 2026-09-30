@@ -1,9 +1,10 @@
 package krio.systemdesign.shoppingapp.feature.promo.presentation.navigation
 
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import kotlinx.serialization.Serializable
 
 data class PromoCodeResult(
-    val promoCode: String,
+    val promoCode: PromoCode,
 )
 
 object PromoRoutes {

@@ -16,10 +16,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,7 +27,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -44,7 +41,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeRow
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
+import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
+import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import java.text.NumberFormat
 import java.util.Locale
@@ -80,11 +80,12 @@ fun CheckoutScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (!uiState.isEmpty || uiState.isSubmitting) {
-                CheckoutBottomBar(
-                    totalPrice = uiState.totalPrice,
-                    canSubmit = uiState.canSubmit,
-                    isSubmitting = uiState.isSubmitting,
-                    onPlaceOrder = { viewModel.onEvent(CheckoutEvent.OnPlaceOrderClick) },
+                TotalBottomBar(
+                    total = formatPrice(uiState.totalPrice),
+                    actionText = "Оформить заказ",
+                    enabled = uiState.canSubmit,
+                    isLoading = uiState.isSubmitting,
+                    onAction = { viewModel.onEvent(CheckoutEvent.OnPlaceOrderClick) },
                 )
             }
         },
@@ -177,6 +178,27 @@ private fun CheckoutContent(
             enabled = !uiState.isSubmitting,
             onSelect = { onEvent(CheckoutEvent.OnPaymentMethodChange(PaymentMethod.Cash)) },
         )
+
+        HorizontalDivider()
+
+        Text(
+            text = "Сумма заказа",
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            val promoCode = uiState.promoCode
+            if (promoCode != null) {
+                AppliedPromoCodeRow(
+                    code = promoCode.code,
+                    discountPercent = promoCode.discountPercent,
+                )
+            }
+            OrderTotals(
+                subtotal = formatPrice(uiState.subtotal),
+                total = formatPrice(uiState.totalPrice),
+                discount = if (promoCode != null) "−${formatPrice(uiState.discount)}" else null,
+            )
+        }
     }
 }
 
@@ -249,59 +271,6 @@ private fun PaymentMethodRow(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
         )
-    }
-}
-
-@Composable
-private fun CheckoutBottomBar(
-    totalPrice: Long,
-    canSubmit: Boolean,
-    isSubmitting: Boolean,
-    onPlaceOrder: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        tonalElevation = 3.dp,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Итого",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(
-                    text = formatPrice(totalPrice),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-            HorizontalDivider()
-            Spacer(Modifier.height(12.dp))
-            Button(
-                onClick = onPlaceOrder,
-                enabled = canSubmit,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (isSubmitting) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                    )
-                } else {
-                    Text("Оформить заказ")
-                }
-            }
-        }
     }
 }
 

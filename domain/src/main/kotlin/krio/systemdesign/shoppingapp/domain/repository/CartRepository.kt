@@ -4,6 +4,7 @@ import krio.systemdesign.shoppingapp.domain.model.Cart
 import krio.systemdesign.shoppingapp.domain.model.CartValidationResult
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.Product
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import kotlinx.coroutines.flow.Flow
 
 interface CartRepository {
@@ -21,4 +22,8 @@ interface CartRepository {
     suspend fun validate(): CartValidationResult
 
     suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit>
+
+    suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit>
+
+    suspend fun removePromoCode(): Result<Unit>
 }

@@ -35,7 +35,10 @@ class CheckoutViewModel @Inject constructor(
     ) { cart, form, submitting ->
         CheckoutUiState(
             items = cart.items,
+            subtotal = cart.subtotal(),
+            discount = cart.discount(),
             totalPrice = cart.totalPrice(),
+            promoCode = cart.promoCode,
             street = form.street,
             apartment = form.apartment,
             courierComment = form.courierComment,

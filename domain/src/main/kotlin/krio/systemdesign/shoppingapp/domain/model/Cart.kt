@@ -4,6 +4,11 @@ import kotlinx.collections.immutable.ImmutableList
 
 data class Cart(
     val items: ImmutableList<CartItem>,
+    val promoCode: PromoCode? = null,
 ) {
-    fun totalPrice(): Long = items.sumOf { it.price * it.quantity }
+    fun subtotal(): Long = items.sumOf { it.price * it.quantity }
+
+    fun discount(): Long = promoCode?.discountFor(subtotal()) ?: 0
+
+    fun totalPrice(): Long = subtotal() - discount()
 }

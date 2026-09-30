@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "494fe1fea0671e3185264d2ffc9eafea",
+    "identityHash": "63b8e660e8e13c6e8fcc1c5a58608a59",
     "entities": [
       {
         "tableName": "cart_items",
@@ -45,11 +45,41 @@
             "productId"
           ]
         }
+      },
+      {
+        "tableName": "applied_promo_code",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `discountPercent` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "discountPercent",
+            "columnName": "discountPercent",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '494fe1fea0671e3185264d2ffc9eafea')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '63b8e660e8e13c6e8fcc1c5a58608a59')"
     ]
   }
 }

@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.domain.model.CartValidationResult
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.AcceptCartChangesUseCase
+import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ApplyPromoCodeUseCase
+import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.RemovePromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ValidateCartUseCase
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
@@ -18,7 +21,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,9 +31,10 @@ class CartViewModel @Inject constructor(
     private val removeFromCart: RemoveFromCartUseCase,
     private val validateCart: ValidateCartUseCase,
     private val acceptCartChanges: AcceptCartChangesUseCase,
+    private val applyPromoCode: ApplyPromoCodeUseCase,
+    private val removePromoCode: RemovePromoCodeUseCase,
 ) : ViewModel() {
 
-    private val promoState = MutableStateFlow(PromoState())
     private val issuesState = MutableStateFlow<List<ItemIssue>>(emptyList())
     private val isValidating = MutableStateFlow(false)
 
@@ -40,15 +43,15 @@ class CartViewModel @Inject constructor(
 
     val uiState: StateFlow<CartUiState> = combine(
         observeCart(),
-        promoState,
         issuesState,
         isValidating,
-    ) { cart, promo, issues, validating ->
+    ) { cart, issues, validating ->
         CartUiState(
             items = cart.items,
+            subtotal = cart.subtotal(),
+            discount = cart.discount(),
             totalPrice = cart.totalPrice(),
-            appliedPromoCode = promo.code,
-            showPromoSuccess = promo.showSuccess,
+            promoCode = cart.promoCode,
             issues = issues.toPersistentList(),
             isValidating = validating,
         )
@@ -58,8 +61,16 @@ class CartViewModel @Inject constructor(
         initialValue = CartUiState(),
     )
 
-    fun onPromoApplied(promoCode: String) {
-        promoState.value = PromoState(code = promoCode, showSuccess = true)
+    fun onPromoApplied(promoCode: PromoCode) {
+        viewModelScope.launch {
+            applyPromoCode(promoCode)
+                .onSuccess {
+                    send(CartEffect.ShowSnackBar("Промокод «${promoCode.code}» применён"))
+                }
+                .onFailure { error ->
+                    send(CartEffect.ShowSnackBar(error.message ?: "Не удалось применить промокод"))
+                }
+        }
     }
 
     fun onEvent(event: CartEvent) {
@@ -79,11 +90,9 @@ class CartViewModel @Inject constructor(
             }
             CartEvent.OnCheckoutClick -> checkout()
             CartEvent.OnPromoClick -> send(CartEffect.NavigateToPromo)
+            CartEvent.OnRemovePromoClick -> launchCartAction { removePromoCode() }
             CartEvent.OnAcceptChanges -> acceptPendingChanges()
             CartEvent.OnDismissIssues -> issuesState.value = emptyList()
-            CartEvent.OnPromoSuccessShown -> {
-                promoState.update { it.copy(showSuccess = false) }
-            }
         }
     }
 
@@ -131,9 +140,4 @@ class CartViewModel @Inject constructor(
     private fun send(effect: CartEffect) {
         viewModelScope.launch { _effects.send(effect) }
     }
-
-    private data class PromoState(
-        val code: String? = null,
-        val showSuccess: Boolean = false,
-    )
 }
