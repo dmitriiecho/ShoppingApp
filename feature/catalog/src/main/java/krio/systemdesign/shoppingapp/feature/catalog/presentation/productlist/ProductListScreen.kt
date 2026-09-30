@@ -71,13 +71,12 @@ import coil3.compose.AsyncImage
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.text.asString
+import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import krio.systemdesign.shoppingapp.feature.catalog.presentation.component.OutOfStockButton
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -554,14 +553,6 @@ private fun AppendError(
             Text(stringResource(R.string.catalog_retry))
         }
     }
-}
-
-private fun formatPrice(amountMinor: Long): String {
-    val format = NumberFormat.getNumberInstance(Locale.forLanguageTag("ru-RU")).apply {
-        minimumFractionDigits = 2
-        maximumFractionDigits = 2
-    }
-    return "${format.format(amountMinor / 100.0)} ₽"
 }
 
 private const val SHIMMER_DURATION_MS = 1200L

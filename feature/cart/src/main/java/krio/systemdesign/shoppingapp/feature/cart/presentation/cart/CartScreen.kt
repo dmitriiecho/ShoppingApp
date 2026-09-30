@@ -53,13 +53,12 @@ import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.text.asString
+import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.feature.cart.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -400,12 +399,4 @@ private fun issueMessage(
         val name = names[issue.productId] ?: stringResource(R.string.cart_issue_unknown_product)
         stringResource(R.string.cart_issue_price_changed, name, formatPrice(issue.newPrice))
     }
-}
-
-private fun formatPrice(amountMinor: Long): String {
-    val format = NumberFormat.getNumberInstance(Locale.forLanguageTag("ru-RU")).apply {
-        minimumFractionDigits = 2
-        maximumFractionDigits = 2
-    }
-    return "${format.format(amountMinor / 100.0)} ₽"
 }
