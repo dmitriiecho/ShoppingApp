@@ -74,6 +74,7 @@ import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -95,7 +96,7 @@ fun ProductListScreen(
                 ProductListEffect.NavigateBack -> onBack()
                 is ProductListEffect.NavigateToDetails -> onOpenProduct(effect.productId, effect.productName)
                 is ProductListEffect.ShowSnackBar -> {
-                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                    launch { snackbarHostState.showSnackbar(effect.message.asString(resources)) }
                 }
             }
         }

@@ -57,6 +57,7 @@ import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.feature.cart.R
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -81,7 +82,7 @@ fun CartScreen(
                 CartEffect.NavigateToPromo -> onOpenPromo()
                 is CartEffect.NavigateToProduct -> onOpenProduct(effect.productId, effect.productName)
                 is CartEffect.ShowSnackBar -> {
-                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                    launch { snackbarHostState.showSnackbar(effect.message.asString(resources)) }
                 }
             }
         }

@@ -50,6 +50,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.feature.checkout.R
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -68,7 +69,7 @@ fun CheckoutScreen(
             when (effect) {
                 CheckoutEffect.Close -> onClose()
                 is CheckoutEffect.ShowSnackBar -> {
-                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                    launch { snackbarHostState.showSnackbar(effect.message.asString(resources)) }
                 }
             }
         }

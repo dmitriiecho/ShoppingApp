@@ -43,6 +43,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -61,7 +62,7 @@ fun ProductDetailsScreen(
             when (effect) {
                 ProductDetailsEffect.NavigateBack -> onBack()
                 is ProductDetailsEffect.ShowSnackBar -> {
-                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                    launch { snackbarHostState.showSnackbar(effect.message.asString(resources)) }
                 }
             }
         }
