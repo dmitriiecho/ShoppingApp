@@ -1,0 +1,28 @@
+package krio.systemdesign.shoppingapp.feature.cart.presentation.cart
+
+sealed interface CartEvent {
+
+    data class OnItemClick(
+        val productId: String,
+        val productName: String,
+    ) : CartEvent
+
+    data class OnUpdateQuantity(
+        val productId: String,
+        val quantity: Int,
+    ) : CartEvent
+
+    data class OnRemoveItem(
+        val productId: String,
+    ) : CartEvent
+
+    data object OnCheckoutClick : CartEvent
+
+    data object OnPromoClick : CartEvent
+
+    data object OnAcceptChanges : CartEvent
+
+    data object OnDismissIssues : CartEvent
+
+    data object OnPromoSuccessShown : CartEvent
+}

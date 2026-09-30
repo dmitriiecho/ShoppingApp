@@ -50,9 +50,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
+import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.domain.model.Product
-import krio.systemdesign.shoppingapp.feature.catalog.presentation.components.CartQuantityControl
 import kotlinx.collections.immutable.ImmutableMap
 import java.text.NumberFormat
 import java.util.Locale
@@ -62,7 +62,6 @@ import java.util.Locale
 fun ProductListScreen(
     onBack: () -> Unit,
     onOpenProduct: (productId: String, productName: String) -> Unit,
-    onOpenCart: () -> Unit,
     viewModel: ProductListViewModel = hiltViewModel(),
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()

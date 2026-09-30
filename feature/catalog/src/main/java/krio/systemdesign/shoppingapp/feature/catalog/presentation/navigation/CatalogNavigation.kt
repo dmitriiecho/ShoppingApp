@@ -17,7 +17,6 @@ val NavGraphBuilder.catalog: CatalogNavigationScope
 fun CatalogNavigationScope.graph(
     navController: NavController,
     onClose: () -> Unit,
-    onOpenCart: () -> Unit
 ) {
     builder.navigation<CatalogRoutes.Graph>(
         startDestination = CatalogRoutes.ProductList,
@@ -31,7 +30,6 @@ fun CatalogNavigationScope.graph(
         ) {
             ProductListScreen(
                 onBack = onClose,
-                onOpenCart = onOpenCart,
                 onOpenProduct = { productId, productName ->
                     navController.navigate(
                         CatalogRoutes.ProductDetails(
