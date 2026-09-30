@@ -5,6 +5,7 @@
     <string name="catalog_search_no_results">Ничего не найдено по запросу «%1$s»</string>
     <string name="catalog_load_error">Не удалось загрузить товары</string>
     <string name="catalog_append_error">Ошибка загрузки</string>
+    <string name="catalog_prepend_error">Не удалось загрузить товары выше</string>
     <string name="catalog_retry">Повторить</string>
 
     <string name="catalog_product_title">Товар</string>

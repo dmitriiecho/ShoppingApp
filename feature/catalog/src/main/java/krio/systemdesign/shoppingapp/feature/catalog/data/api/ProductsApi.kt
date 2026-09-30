@@ -11,6 +11,7 @@ interface ProductsApi {
     suspend fun getProducts(
         @Query("query") query: String,
         @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int,
     ): ProductsPageDTO
 
     @GET("products/{id}")

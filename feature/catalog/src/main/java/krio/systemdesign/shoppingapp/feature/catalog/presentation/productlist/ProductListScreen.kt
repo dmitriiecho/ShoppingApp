@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.presentation.productlist
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,12 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,15 +34,27 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
@@ -58,6 +74,7 @@ import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -68,8 +85,7 @@ fun ProductListScreen(
     onOpenProduct: (productId: String, productName: String) -> Unit,
     viewModel: ProductListViewModel = hiltViewModel(),
 ) {
-    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-    val cartQuantities by viewModel.cartQuantities.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val products = viewModel.products.collectAsLazyPagingItems()
     val snackbarHostState = remember { SnackbarHostState() }
     val resources = LocalResources.current
@@ -80,7 +96,7 @@ fun ProductListScreen(
                 ProductListEffect.NavigateBack -> onBack()
                 is ProductListEffect.NavigateToDetails -> onOpenProduct(effect.productId, effect.productName)
                 is ProductListEffect.ShowSnackBar -> {
-                    snackbarHostState.showSnackbar(effect.message.asString(resources))
+                    launch { snackbarHostState.showSnackbar(effect.message.asString(resources)) }
                 }
             }
         }
@@ -100,14 +116,14 @@ fun ProductListScreen(
                 .padding(innerPadding),
         ) {
             SearchField(
-                query = searchQuery,
+                query = uiState.searchQuery,
                 onQueryChange = { viewModel.onEvent(ProductListEvent.OnSearchQueryChanged(it)) },
                 onClear = { viewModel.onEvent(ProductListEvent.OnClearSearch) },
             )
             ProductListBody(
-                searchQuery = searchQuery,
+                searchQuery = uiState.searchQuery,
                 products = products,
-                cartQuantities = cartQuantities,
+                cartQuantities = uiState.cartQuantities,
                 onEvent = viewModel::onEvent,
             )
         }
@@ -148,7 +164,6 @@ private fun ProductListBody(
     onEvent: (ProductListEvent) -> Unit,
 ) {
     val refresh = products.loadState.refresh
-    val append = products.loadState.append
 
     when {
         refresh is LoadState.Loading -> LoadingContent()
@@ -163,54 +178,100 @@ private fun ProductListBody(
                 stringResource(R.string.catalog_search_no_results, searchQuery)
             },
         )
-        else -> LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(
-                count = products.itemCount,
-                key = products.itemKey { it.id },
-            ) { index ->
-                val product = products[index] ?: return@items
-                ProductListItem(
-                    product = product,
-                    quantity = cartQuantities[product.id] ?: 0,
-                    onClick = { onEvent(ProductListEvent.OnItemClick(product)) },
-                    onAddToCart = {
-                        onEvent(ProductListEvent.OnAddToCart(product))
-                    },
-                    onUpdateQuantity = { quantity ->
-                        onEvent(ProductListEvent.OnUpdateCartQuantity(product.id, quantity))
-                    },
-                    onRemoveFromCart = {
-                        onEvent(ProductListEvent.OnRemoveFromCart(product.id))
-                    },
+        else -> {
+            val listState = rememberLazyListState()
+            LaunchedEffect(listState) {
+                snapshotFlow { listState.firstVisibleItemIndex }
+                    .collect { onEvent(ProductListEvent.OnFirstVisibleItemChanged(it)) }
+            }
+            val isPrependErrorVisible by remember(listState, products) {
+                derivedStateOf {
+                    products.loadState.prepend is LoadState.Error &&
+                        listState.firstVisibleItemIndex < products.itemSnapshotList.placeholdersBefore
+                }
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                ProductList(
+                    listState = listState,
+                    products = products,
+                    cartQuantities = cartQuantities,
+                    onEvent = onEvent,
                 )
+                if (isPrependErrorVisible) {
+                    PrependErrorBanner(
+                        onRetry = { products.retry() },
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
             }
+        }
+    }
+}
 
-            when (append) {
-                is LoadState.Loading -> {
-                    item(key = "append_loading") {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(32.dp))
-                        }
-                    }
-                }
-                is LoadState.Error -> {
-                    item(key = "append_error") {
-                        AppendError(
-                            message = append.error.message ?: stringResource(R.string.catalog_append_error),
-                            onRetry = { products.retry() },
-                        )
-                    }
-                }
-                is LoadState.NotLoading -> Unit
+@Composable
+private fun ProductList(
+    listState: LazyListState,
+    products: LazyPagingItems<Product>,
+    cartQuantities: ImmutableMap<String, Int>,
+    onEvent: (ProductListEvent) -> Unit,
+) {
+    val prepend = products.loadState.prepend
+    val append = products.loadState.append
+
+    LazyColumn(
+        state = listState,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        items(
+            count = products.itemCount,
+            key = products.itemKey { it.id },
+        ) { index ->
+            val product = products[index]
+            if (product == null) {
+                ProductListItemPlaceholder(isLoading = prepend !is LoadState.Error)
+                return@items
             }
+            ProductListItem(
+                product = product,
+                quantity = cartQuantities[product.id] ?: 0,
+                onClick = { onEvent(ProductListEvent.OnItemClick(product)) },
+                onAddToCart = {
+                    onEvent(ProductListEvent.OnAddToCart(product))
+                },
+                onUpdateQuantity = { quantity ->
+                    onEvent(ProductListEvent.OnUpdateCartQuantity(product.id, quantity))
+                },
+                onRemoveFromCart = {
+                    onEvent(ProductListEvent.OnRemoveFromCart(product.id))
+                },
+            )
+        }
+
+        when (append) {
+            is LoadState.Loading -> {
+                item(key = "append_loading") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                    }
+                }
+            }
+            is LoadState.Error -> {
+                item(key = "append_error") {
+                    AppendError(
+                        message = append.error.message ?: stringResource(R.string.catalog_append_error),
+                        onRetry = { products.retry() },
+                    )
+                }
+            }
+            is LoadState.NotLoading -> Unit
         }
     }
 }
@@ -273,6 +334,125 @@ private fun ProductListItem(
                 onRemoveAll = onRemoveFromCart,
                 modifier = Modifier.fillMaxWidth(),
             )
+        }
+    }
+}
+
+// Повторяет размеры ProductListItem, чтобы список не прыгал, когда заглушка сменяется товаром.
+@Composable
+private fun ProductListItemPlaceholder(
+    isLoading: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val baseColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val highlightColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.16f)
+    val maskColor = Color.Black
+    val frameTimeMillis by produceState(0L, isLoading) {
+        if (isLoading) {
+            while (true) withFrameMillis { value = it }
+        }
+    }
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+                .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+                .drawWithContent {
+                    drawContent()
+                    if (!isLoading) {
+                        drawRect(color = baseColor, blendMode = BlendMode.SrcIn)
+                        return@drawWithContent
+                    }
+                    val progress = (frameTimeMillis % SHIMMER_DURATION_MS) / SHIMMER_DURATION_MS.toFloat()
+                    val bandHalfWidth = size.width * 0.4f
+                    val bandCenter = -bandHalfWidth + progress * (size.width + 2 * bandHalfWidth)
+                    drawRect(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(baseColor, highlightColor, baseColor),
+                            startX = bandCenter - bandHalfWidth,
+                            endX = bandCenter + bandHalfWidth,
+                        ),
+                        blendMode = BlendMode.SrcIn,
+                    )
+                },
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(88.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(maskColor),
+                )
+                Spacer(Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(20.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(maskColor),
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(96.dp)
+                            .height(20.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(maskColor),
+                    )
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ButtonDefaults.MinHeight)
+                    .clip(RoundedCornerShape(ButtonDefaults.MinHeight / 2))
+                    .background(maskColor),
+            )
+        }
+    }
+}
+
+@Composable
+private fun PrependErrorBanner(
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.errorContainer,
+        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        shadowElevation = 4.dp,
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.ErrorOutline,
+                contentDescription = null,
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.catalog_prepend_error),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(
+                onClick = onRetry,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                ),
+            ) {
+                Text(stringResource(R.string.catalog_retry))
+            }
         }
     }
 }
@@ -378,3 +558,5 @@ private fun formatPrice(amountMinor: Long): String {
     }
     return "${format.format(amountMinor / 100.0)} ₽"
 }
+
+private const val SHIMMER_DURATION_MS = 1200L

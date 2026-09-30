@@ -16,22 +16,21 @@ import krio.systemdesign.shoppingapp.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import krio.systemdesign.shoppingapp.feature.catalog.domain.usecase.GetProductsUseCase
-import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableMap
-import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,24 +45,36 @@ class ProductListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(LAST_SEARCH_QUERY, "")
+    private val searchQuery = savedStateHandle.getStateFlow(LAST_SEARCH_QUERY, "")
 
-    val cartQuantities: StateFlow<ImmutableMap<String, Int>> = observeCart()
-        .map { cart -> cart.items.associate { it.productId to it.quantity }.toImmutableMap() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = persistentMapOf(),
+    val uiState: StateFlow<ProductListUiState> = combine(
+        searchQuery,
+        observeCart().map { cart -> cart.items.associate { it.productId to it.quantity }.toImmutableMap() },
+    ) { query, cartQuantities ->
+        ProductListUiState(
+            searchQuery = query,
+            cartQuantities = cartQuantities,
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ProductListUiState(searchQuery = searchQuery.value),
+    )
 
     private val _effects = Channel<ProductListEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
+    // После смерти процесса первый список открывается с пачки, на которой остановился пользователь.
+    // Новый поисковый запрос всегда начинается с первой пачки.
     val products: Flow<PagingData<Product>> = searchQuery
         .map { it.trim() }
         .debounce { if (it.isEmpty()) 0L else SEARCH_DEBOUNCE_MS }
         .distinctUntilChanged()
-        .flatMapLatest { productsPager(it).flow }
+        .withIndex()
+        .flatMapLatest { (index, query) ->
+            val initialPage: Int? = if (index == 0) savedStateHandle[FIRST_VISIBLE_PAGE] else null
+            productsPager(query, initialPage).flow
+        }
         .cachedIn(viewModelScope)
 
     fun onEvent(event: ProductListEvent) {
@@ -92,6 +103,10 @@ class ProductListViewModel @Inject constructor(
             ProductListEvent.OnClearSearch -> {
                 savedStateHandle[LAST_SEARCH_QUERY] = ""
             }
+            is ProductListEvent.OnFirstVisibleItemChanged -> {
+                savedStateHandle[FIRST_VISIBLE_PAGE] =
+                    event.index / PAGE_SIZE + ProductPagingSource.START_PAGE
+            }
             ProductListEvent.OnBackClick -> {
                 send(ProductListEffect.NavigateBack)
             }
@@ -110,18 +125,20 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun productsPager(query: String): Pager<Int, Product> = Pager(
+    private fun productsPager(query: String, initialPage: Int?): Pager<Int, Product> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             initialLoadSize = PAGE_SIZE,
             prefetchDistance = PREFETCH_DISTANCE,
-            enablePlaceholders = false,
+            enablePlaceholders = true,
         ),
-        pagingSourceFactory = { ProductPagingSource(getProducts, query) },
+        initialKey = initialPage,
+        pagingSourceFactory = { ProductPagingSource(getProducts, query, PAGE_SIZE) },
     )
 
     private companion object {
         const val LAST_SEARCH_QUERY = "last_search_query"
+        const val FIRST_VISIBLE_PAGE = "first_visible_page"
         const val SEARCH_DEBOUNCE_MS = 300L
         const val PAGE_SIZE = 10
         const val PREFETCH_DISTANCE = 3

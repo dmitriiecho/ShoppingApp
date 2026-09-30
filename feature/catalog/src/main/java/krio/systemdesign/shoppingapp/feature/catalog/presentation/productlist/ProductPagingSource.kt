@@ -8,6 +8,7 @@ import krio.systemdesign.shoppingapp.feature.catalog.domain.usecase.GetProductsU
 class ProductPagingSource(
     private val getProducts: GetProductsUseCase,
     private val query: String,
+    private val pageSize: Int,
 ) : PagingSource<Int, Product>() {
 
     override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
@@ -18,12 +19,13 @@ class ProductPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         val page = params.key ?: START_PAGE
-        return getProducts(query, page).fold(
+        return getProducts(query, page, pageSize).fold(
             onSuccess = { result ->
                 LoadResult.Page(
                     data = result.products,
                     prevKey = if (page == START_PAGE) null else page - 1,
                     nextKey = if (result.endReached) null else page + 1,
+                    itemsBefore = (page - START_PAGE) * pageSize,
                 )
             },
             onFailure = { LoadResult.Error(it) },

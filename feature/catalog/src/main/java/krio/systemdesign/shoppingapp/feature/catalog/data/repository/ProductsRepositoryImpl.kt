@@ -10,9 +10,9 @@ import javax.inject.Inject
 class ProductsRepositoryImpl @Inject constructor(
     private val api: ProductsApi,
 ) : ProductRepository {
-    override suspend fun getProducts(query: String, page: Int): Result<ProductsPage> {
+    override suspend fun getProducts(query: String, page: Int, pageSize: Int): Result<ProductsPage> {
         return try {
-            val dto = api.getProducts(query, page)
+            val dto = api.getProducts(query, page, pageSize)
             Result.success(dto.toDomain())
         } catch (e: Exception) {
             Result.failure(e)
