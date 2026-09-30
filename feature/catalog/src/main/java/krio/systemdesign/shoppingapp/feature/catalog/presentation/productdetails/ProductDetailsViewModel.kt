@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.core.ui.text.UiText
-import krio.systemdesign.shoppingapp.core.ui.text.toUiText
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.domain.usecase.AddToCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.catalog.R
+import krio.systemdesign.shoppingapp.feature.catalog.domain.model.ProductLoadResult
 import krio.systemdesign.shoppingapp.feature.catalog.domain.usecase.GetProductUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,20 +92,19 @@ class ProductDetailsViewModel @Inject constructor(
     private fun loadProduct() {
         viewModelScope.launch {
             productLoad.value = ProductLoad.Loading
-            getProduct(productId)
-                .onSuccess { productLoad.value = ProductLoad.Success(it) }
-                .onFailure { error ->
-                    productLoad.value = ProductLoad.Error(
-                        error.toUiText(R.string.catalog_product_load_error),
-                    )
-                }
+            val result = getProduct(productId)
+            productLoad.value = when (result) {
+                is ProductLoadResult.Success -> ProductLoad.Success(result.product)
+                ProductLoadResult.NotFound -> ProductLoad.Error(UiText.Resource(R.string.catalog_product_not_found))
+                is ProductLoadResult.Error -> ProductLoad.Error(UiText.Resource(R.string.catalog_product_load_error))
+            }
         }
     }
 
     private fun launchCartAction(action: suspend () -> Result<Unit>) {
         viewModelScope.launch {
-            action().onFailure { error ->
-                send(ProductDetailsEffect.ShowSnackBar(error.toUiText(R.string.catalog_cart_update_error)))
+            action().onFailure {
+                send(ProductDetailsEffect.ShowSnackBar(UiText.Resource(R.string.catalog_cart_update_error)))
             }
         }
     }

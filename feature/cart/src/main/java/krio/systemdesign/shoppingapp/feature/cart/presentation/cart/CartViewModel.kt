@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.core.ui.text.UiText
-import krio.systemdesign.shoppingapp.core.ui.text.toUiText
 import krio.systemdesign.shoppingapp.domain.model.CartValidationResult
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
@@ -79,8 +78,8 @@ class CartViewModel @Inject constructor(
                     val message = UiText.Resource(R.string.cart_promo_applied, listOf(promoCode.code))
                     send(CartEffect.ShowSnackBar(message))
                 }
-                .onFailure { error ->
-                    send(CartEffect.ShowSnackBar(error.toUiText(R.string.cart_promo_apply_error)))
+                .onFailure {
+                    send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_promo_apply_error)))
                 }
         }
     }
@@ -125,16 +124,11 @@ class CartViewModel @Inject constructor(
         }
         viewModelScope.launch {
             isValidating.value = true
-            when (val result = validateCart()) {
+            val result = validateCart()
+            when (result) {
                 CartValidationResult.Success -> send(CartEffect.NavigateToCheckout)
                 is CartValidationResult.Invalid -> issuesState.value = result.issues
-                is CartValidationResult.Error -> {
-                    send(
-                        CartEffect.ShowSnackBar(
-                            result.error.toUiText(R.string.cart_validation_error),
-                        ),
-                    )
-                }
+                is CartValidationResult.Error -> send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_validation_error)))
             }
             isValidating.value = false
         }
@@ -145,16 +139,16 @@ class CartViewModel @Inject constructor(
             val issues = issuesState.value
             acceptCartChanges(issues)
                 .onSuccess { issuesState.value = emptyList() }
-                .onFailure { error ->
-                    send(CartEffect.ShowSnackBar(error.toUiText(R.string.cart_update_error)))
+                .onFailure {
+                    send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_update_error)))
                 }
         }
     }
 
     private fun launchCartAction(action: suspend () -> Result<Unit>) {
         viewModelScope.launch {
-            action().onFailure { error ->
-                send(CartEffect.ShowSnackBar(error.toUiText(R.string.cart_update_error)))
+            action().onFailure {
+                send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_update_error)))
             }
         }
     }

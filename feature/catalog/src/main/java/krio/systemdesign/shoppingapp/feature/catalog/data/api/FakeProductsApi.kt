@@ -3,10 +3,13 @@ package krio.systemdesign.shoppingapp.feature.catalog.data.api
 import kotlinx.coroutines.delay
 import krio.systemdesign.shoppingapp.feature.catalog.data.dto.ProductDTO
 import krio.systemdesign.shoppingapp.feature.catalog.data.dto.ProductsPageDTO
+import okhttp3.ResponseBody.Companion.toResponseBody
+import retrofit2.Response
+import java.net.HttpURLConnection.HTTP_NOT_FOUND
 
 internal class FakeProductsApi : ProductsApi {
 
-    override suspend fun getProducts(query: String, page: Int, pageSize: Int): ProductsPageDTO {
+    override suspend fun getProducts(query: String, page: Int, pageSize: Int): Response<ProductsPageDTO> {
         delay(NETWORK_DELAY_MS)
 
         val filtered = if (query.isBlank()) {
@@ -16,25 +19,29 @@ internal class FakeProductsApi : ProductsApi {
         }
 
         if (page < FIRST_PAGE) {
-            return ProductsPageDTO(products = emptyList(), endReached = true)
+            return Response.success(ProductsPageDTO(products = emptyList(), endReached = true))
         }
 
         val fromIndex = (page - FIRST_PAGE) * pageSize
         if (fromIndex >= filtered.size) {
-            return ProductsPageDTO(products = emptyList(), endReached = true)
+            return Response.success(ProductsPageDTO(products = emptyList(), endReached = true))
         }
 
         val toIndex = minOf(fromIndex + pageSize, filtered.size)
-        return ProductsPageDTO(
-            products = filtered.subList(fromIndex, toIndex),
-            endReached = toIndex >= filtered.size,
+        return Response.success(
+            ProductsPageDTO(
+                products = filtered.subList(fromIndex, toIndex),
+                endReached = toIndex >= filtered.size,
+            ),
         )
     }
 
-    override suspend fun getProduct(id: String): ProductDTO {
+    override suspend fun getProduct(id: String): Response<ProductDTO> {
         delay(NETWORK_DELAY_MS)
-        return PRODUCTS.find { it.id == id }
-            ?: error("Товар не найден")
+        // Как настоящий сервер: на неизвестный товар отвечаем 404.
+        val product = PRODUCTS.find { it.id == id }
+            ?: return Response.error(HTTP_NOT_FOUND, "".toResponseBody())
+        return Response.success(product)
     }
 
     private companion object {

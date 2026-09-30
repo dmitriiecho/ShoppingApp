@@ -168,7 +168,7 @@ private fun ProductListBody(
     when {
         refresh is LoadState.Loading -> LoadingContent()
         refresh is LoadState.Error -> ErrorContent(
-            message = refresh.error.message ?: stringResource(R.string.catalog_load_error),
+            message = stringResource(R.string.catalog_load_error),
             onRetry = { products.retry() },
         )
         refresh is LoadState.NotLoading && products.itemCount == 0 -> EmptyContent(
@@ -266,7 +266,7 @@ private fun ProductList(
             is LoadState.Error -> {
                 item(key = "append_error") {
                     AppendError(
-                        message = append.error.message ?: stringResource(R.string.catalog_append_error),
+                        message = stringResource(R.string.catalog_append_error),
                         onRetry = { products.retry() },
                     )
                 }

@@ -26,6 +26,3 @@ fun UiText.asString(): String = when (this) {
     is UiText.Dynamic -> value
     is UiText.Resource -> stringResource(id, *args.toTypedArray())
 }
-
-fun Throwable.toUiText(@StringRes fallback: Int): UiText =
-    message?.let(UiText::Dynamic) ?: UiText.Resource(fallback)

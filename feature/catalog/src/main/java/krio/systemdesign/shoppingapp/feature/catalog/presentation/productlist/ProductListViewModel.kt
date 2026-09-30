@@ -8,7 +8,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import krio.systemdesign.shoppingapp.core.ui.text.toUiText
+import krio.systemdesign.shoppingapp.core.ui.text.UiText
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.domain.usecase.AddToCartUseCase
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveCartUseCase
@@ -115,8 +115,8 @@ class ProductListViewModel @Inject constructor(
 
     private fun launchCartAction(action: suspend () -> Result<Unit>) {
         viewModelScope.launch {
-            action().onFailure { error ->
-                send(ProductListEffect.ShowSnackBar(error.toUiText(R.string.catalog_cart_update_error)))
+            action().onFailure {
+                send(ProductListEffect.ShowSnackBar(UiText.Resource(R.string.catalog_cart_update_error)))
             }
         }
     }
