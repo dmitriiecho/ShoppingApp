@@ -40,6 +40,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -162,8 +163,6 @@ private fun ProductListBody(
     onEvent: (ProductListEvent) -> Unit,
 ) {
     val refresh = products.loadState.refresh
-    val prepend = products.loadState.prepend
-    val append = products.loadState.append
 
     when {
         refresh is LoadState.Loading -> LoadingContent()
@@ -184,15 +183,20 @@ private fun ProductListBody(
                 snapshotFlow { listState.firstVisibleItemIndex }
                     .collect { onEvent(ProductListEvent.OnFirstVisibleItemChanged(it)) }
             }
+            val isPrependErrorVisible by remember(listState, products) {
+                derivedStateOf {
+                    products.loadState.prepend is LoadState.Error &&
+                        listState.firstVisibleItemIndex < products.itemSnapshotList.placeholdersBefore
+                }
+            }
             Box(modifier = Modifier.fillMaxSize()) {
                 ProductList(
                     listState = listState,
                     products = products,
-                    append = append,
                     cartQuantities = cartQuantities,
                     onEvent = onEvent,
                 )
-                if (prepend is LoadState.Error) {
+                if (isPrependErrorVisible) {
                     PrependErrorBanner(
                         onRetry = { products.retry() },
                         modifier = Modifier
@@ -209,10 +213,12 @@ private fun ProductListBody(
 private fun ProductList(
     listState: LazyListState,
     products: LazyPagingItems<Product>,
-    append: LoadState,
     cartQuantities: ImmutableMap<String, Int>,
     onEvent: (ProductListEvent) -> Unit,
 ) {
+    val prepend = products.loadState.prepend
+    val append = products.loadState.append
+
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(16.dp),
@@ -224,7 +230,7 @@ private fun ProductList(
         ) { index ->
             val product = products[index]
             if (product == null) {
-                ProductListItemPlaceholder()
+                ProductListItemPlaceholder(isLoading = prepend !is LoadState.Error)
                 return@items
             }
             ProductListItem(
@@ -333,12 +339,17 @@ private fun ProductListItem(
 
 // Повторяет размеры ProductListItem, чтобы список не прыгал, когда заглушка сменяется товаром.
 @Composable
-private fun ProductListItemPlaceholder(modifier: Modifier = Modifier) {
+private fun ProductListItemPlaceholder(
+    isLoading: Boolean,
+    modifier: Modifier = Modifier,
+) {
     val baseColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
     val highlightColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.16f)
     val maskColor = Color.Black
-    val frameTimeMillis by produceState(0L) {
-        while (true) withFrameMillis { value = it }
+    val frameTimeMillis by produceState(0L, isLoading) {
+        if (isLoading) {
+            while (true) withFrameMillis { value = it }
+        }
     }
 
     Card(
@@ -352,6 +363,10 @@ private fun ProductListItemPlaceholder(modifier: Modifier = Modifier) {
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
                 .drawWithContent {
                     drawContent()
+                    if (!isLoading) {
+                        drawRect(color = baseColor, blendMode = BlendMode.SrcIn)
+                        return@drawWithContent
+                    }
                     val progress = (frameTimeMillis % SHIMMER_DURATION_MS) / SHIMMER_DURATION_MS.toFloat()
                     val bandHalfWidth = size.width * 0.4f
                     val bandCenter = -bandHalfWidth + progress * (size.width + 2 * bandHalfWidth)
