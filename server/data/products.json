@@ -1,0 +1,194 @@
+[
+  {
+    "id": "1",
+    "name": "Wireless Headphones",
+    "price": 7999,
+    "imageUrl": "https://picsum.photos/seed/1/400/400",
+    "description": "Беспроводные наушники с мягкими амбушюрами и стабильным Bluetooth-соединением до 30 часов.",
+    "available": true
+  },
+  {
+    "id": "2",
+    "name": "Mechanical Keyboard",
+    "price": 12999,
+    "imageUrl": "https://picsum.photos/seed/2/400/400",
+    "description": "Механическая клавиатура с тактильным откликом, подсветкой и раскладкой для работы и игр.",
+    "available": true
+  },
+  {
+    "id": "3",
+    "name": "USB-C Hub",
+    "price": 3499,
+    "imageUrl": "https://picsum.photos/seed/3/400/400",
+    "description": "Компактный хаб USB-C с HDMI, USB-A и слотом для карт памяти — один кабель вместо нескольких.",
+    "available": false
+  },
+  {
+    "id": "4",
+    "name": "4K Monitor",
+    "price": 24999,
+    "imageUrl": "https://picsum.photos/seed/4/400/400",
+    "description": "27-дюймовый монитор 4K с точной цветопередачей и тонкой рамкой для работы с графикой.",
+    "available": true
+  },
+  {
+    "id": "5",
+    "name": "Laptop Stand",
+    "price": 4599,
+    "imageUrl": "https://picsum.photos/seed/5/400/400",
+    "description": "Алюминиевая подставка поднимает экран ноутбука до уровня глаз и улучшает вентиляцию.",
+    "available": true
+  },
+  {
+    "id": "6",
+    "name": "Bluetooth Speaker",
+    "price": 5999,
+    "imageUrl": "https://picsum.photos/seed/6/400/400",
+    "description": "Портативная колонка с объёмным звуком, защитой от брызг и зарядкой на весь день.",
+    "available": true
+  },
+  {
+    "id": "7",
+    "name": "Webcam HD",
+    "price": 6999,
+    "imageUrl": "https://picsum.photos/seed/7/400/400",
+    "description": "Веб-камера Full HD с автофокусом и встроенным микрофоном для созвонов и стримов.",
+    "available": true
+  },
+  {
+    "id": "8",
+    "name": "Noise Cancelling Earbuds",
+    "price": 8999,
+    "imageUrl": "https://picsum.photos/seed/8/400/400",
+    "description": "Вкладыши с активным шумоподавлением, удобной посадкой и чехлом с быстрой зарядкой.",
+    "available": true
+  },
+  {
+    "id": "9",
+    "name": "Cotton T-Shirt",
+    "price": 1999,
+    "imageUrl": "https://picsum.photos/seed/9/400/400",
+    "description": "Мягкая хлопковая футболка повседневного кроя, держит форму после стирки.",
+    "available": true
+  },
+  {
+    "id": "10",
+    "name": "Denim Jacket",
+    "price": 8999,
+    "imageUrl": "https://picsum.photos/seed/10/400/400",
+    "description": "Классическая джинсовая куртка средней плотности — поверх футболки или худи.",
+    "available": true
+  },
+  {
+    "id": "11",
+    "name": "Running Shoes",
+    "price": 7499,
+    "imageUrl": "https://picsum.photos/seed/11/400/400",
+    "description": "Лёгкие кроссовки с амортизацией для ежедневных пробежек и ходьбы по городу.",
+    "available": true
+  },
+  {
+    "id": "12",
+    "name": "Wool Sweater",
+    "price": 6499,
+    "imageUrl": "https://picsum.photos/seed/12/400/400",
+    "description": "Тёплый шерстяной свитер свободного силуэта, не колется и хорошо держит тепло.",
+    "available": true
+  },
+  {
+    "id": "13",
+    "name": "Leather Belt",
+    "price": 2999,
+    "imageUrl": "https://picsum.photos/seed/13/400/400",
+    "description": "Ремень из натуральной кожи с металлической пряжкой, подходит к джинсам и брюкам.",
+    "available": true
+  },
+  {
+    "id": "14",
+    "name": "Winter Scarf",
+    "price": 2499,
+    "imageUrl": "https://picsum.photos/seed/14/400/400",
+    "description": "Плотный шарф из мягкой ткани, закрывает шею и не скользит под пальто.",
+    "available": true
+  },
+  {
+    "id": "15",
+    "name": "Casual Sneakers",
+    "price": 5499,
+    "imageUrl": "https://picsum.photos/seed/15/400/400",
+    "description": "Универсальные кеды с гибкой подошвой — на работу, учёбу и прогулки.",
+    "available": true
+  },
+  {
+    "id": "16",
+    "name": "Hoodie",
+    "price": 3999,
+    "imageUrl": "https://picsum.photos/seed/16/400/400",
+    "description": "Худи из плотного футера с капюшоном и карманом-кенгуру, не садится после стирки.",
+    "available": false
+  },
+  {
+    "id": "17",
+    "name": "Ceramic Mug",
+    "price": 1299,
+    "imageUrl": "https://picsum.photos/seed/17/400/400",
+    "description": "Керамическая кружка 350 мл с удобной ручкой, можно мыть в посудомойке.",
+    "available": true
+  },
+  {
+    "id": "18",
+    "name": "Desk Lamp",
+    "price": 3799,
+    "imageUrl": "https://picsum.photos/seed/18/400/400",
+    "description": "Настольная лампа с регулируемой яркостью и гибкой ножкой, не бликует на экране.",
+    "available": true
+  },
+  {
+    "id": "19",
+    "name": "Throw Pillow",
+    "price": 1899,
+    "imageUrl": "https://picsum.photos/seed/19/400/400",
+    "description": "Декоративная подушка с съёмным чехлом — на диван или кресло.",
+    "available": true
+  },
+  {
+    "id": "20",
+    "name": "Wall Clock",
+    "price": 2599,
+    "imageUrl": "https://picsum.photos/seed/20/400/400",
+    "description": "Тихие настенные часы с крупным циферблатом, ход без навязчивого тиканья.",
+    "available": true
+  },
+  {
+    "id": "21",
+    "name": "Scented Candle",
+    "price": 999,
+    "imageUrl": "https://picsum.photos/seed/21/400/400",
+    "description": "Ароматическая свеча с мягким устойчивым запахом примерно на 25 часов горения.",
+    "available": true
+  },
+  {
+    "id": "22",
+    "name": "Kitchen Scale",
+    "price": 2299,
+    "imageUrl": "https://picsum.photos/seed/22/400/400",
+    "description": "Кухонные весы с точностью до 1 г, стеклянной платформой и функцией тары.",
+    "available": true
+  },
+  {
+    "id": "23",
+    "name": "Plant Pot",
+    "price": 1599,
+    "imageUrl": "https://picsum.photos/seed/23/400/400",
+    "description": "Керамический горшок с дренажным отверстием и поддоном для комнатных растений.",
+    "available": true
+  },
+  {
+    "id": "24",
+    "name": "Cutlery Set",
+    "price": 4299,
+    "imageUrl": "https://picsum.photos/seed/24/400/400",
+    "description": "Набор столовых приборов из нержавеющей стали на 4 персоны, не темнеет со временем.",
+    "available": true
+  }
+]
