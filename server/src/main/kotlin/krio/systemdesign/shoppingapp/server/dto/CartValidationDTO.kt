@@ -19,10 +19,13 @@ data class CartItemDTO(
     val quantity: Int,
 )
 
-// Пустой список проблем — корзина в порядке. Соответствует CartValidationResult и ItemIssue в :domain.
+// Корзина в порядке, если список проблем с товарами пуст и промокод действует.
+// Соответствует CartValidationResult и ItemIssue в :domain.
 @Serializable
 data class CartValidationResponseDTO(
     val issues: List<ItemIssueDTO>,
+    // false — присланного промокода больше нет. Если промокод не прислан, true.
+    val promoCodeValid: Boolean,
 )
 
 // В JSON вид проблемы передаётся полем "type": {"type": "priceChanged", "productId": "1", "newPrice": 8999}.

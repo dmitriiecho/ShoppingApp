@@ -30,16 +30,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
+import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
@@ -114,13 +114,14 @@ private fun ProductDetailsContent(
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
         ) {
-            AsyncImage(
-                model = product.imageUrl,
+            ProductImage(
+                imageUrl = product.imageUrl,
                 contentDescription = product.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                contentScale = ContentScale.Crop,
+                shape = RectangleShape,
+                contentPadding = 32.dp,
             )
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(

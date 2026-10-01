@@ -6,6 +6,7 @@ import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
+import io.ktor.server.http.content.staticFiles
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
@@ -13,18 +14,21 @@ import krio.systemdesign.shoppingapp.server.data.ShopData
 import krio.systemdesign.shoppingapp.server.routes.cartRoutes
 import krio.systemdesign.shoppingapp.server.routes.productRoutes
 import krio.systemdesign.shoppingapp.server.routes.promoCodeRoutes
+import java.io.File
+import java.nio.file.Path as NioPath
 import kotlin.io.path.Path
 
 // Порт и папку с данными задаёт systemd-сервис (см. deploy.sh). Значения по умолчанию подходят для запуска из папки server/.
 fun main() {
     val port = System.getenv("PORT")?.toInt() ?: DEFAULT_PORT
-    val data = ShopData.load(Path(System.getenv("DATA_DIR") ?: DEFAULT_DATA_DIR))
+    val dataDir = Path(System.getenv("DATA_DIR") ?: DEFAULT_DATA_DIR)
+    val data = ShopData.load(dataDir)
     embeddedServer(Netty, port = port, host = "0.0.0.0") {
-        module(data)
+        module(data, dataDir.resolve("images"))
     }.start(wait = true)
 }
 
-fun Application.module(data: ShopData) {
+fun Application.module(data: ShopData, imagesDir: NioPath) {
     install(ContentNegotiation) {
         // Те же настройки, что у Json в приложении (NetworkModule в core/network).
         json(
@@ -37,9 +41,11 @@ fun Application.module(data: ShopData) {
     }
     install(CallLogging)
     routing {
+        // Картинки из data/images/. В imageUrl у товара полный адрес этого же сервера.
+        staticFiles("/images", File(imagesDir.toString()), index = null)
         productRoutes(data.products)
         promoCodeRoutes(data.promoCodes)
-        cartRoutes()
+        cartRoutes(data.promoCodes)
     }
 }
 

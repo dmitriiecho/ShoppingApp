@@ -7,8 +7,10 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +43,16 @@ fun AppBottomBar(
 
     val cartItemCount by viewModel.cartItemCount.collectAsStateWithLifecycle()
 
+    // Выбранная вкладка — акцентного цвета на подложке primaryContainer. Со стандартными цветами
+    // (secondaryContainer и почти такая же иконка, как у остальных) выбранную вкладку плохо видно.
+    val itemColors = NavigationBarItemDefaults.colors(
+        selectedIconColor = MaterialTheme.colorScheme.primary,
+        selectedTextColor = MaterialTheme.colorScheme.primary,
+        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+
     NavigationBar(modifier = modifier) {
         NavigationBarItem(
             selected = currentDestination.hierarchy.any {
@@ -49,6 +61,7 @@ fun AppBottomBar(
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CatalogTab) },
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
             label = { Text(stringResource(R.string.app_bottom_bar_catalog)) },
+            colors = itemColors,
         )
         NavigationBarItem(
             selected = currentDestination.hierarchy.any {
@@ -69,6 +82,7 @@ fun AppBottomBar(
                 }
             },
             label = { Text(stringResource(R.string.app_bottom_bar_cart)) },
+            colors = itemColors,
         )
         NavigationBarItem(
             selected = currentDestination.hierarchy.any {
@@ -77,6 +91,7 @@ fun AppBottomBar(
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.SettingsTab) },
             icon = { Icon(Icons.Default.Settings, contentDescription = null) },
             label = { Text(stringResource(R.string.app_bottom_bar_settings)) },
+            colors = itemColors,
         )
     }
 }

@@ -4,14 +4,17 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import krio.systemdesign.shoppingapp.server.data.findPromoCode
 import krio.systemdesign.shoppingapp.server.dto.CartValidationRequestDTO
 import krio.systemdesign.shoppingapp.server.dto.CartValidationResponseDTO
+import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
-fun Route.cartRoutes() {
-    // Пока любая корзина считается правильной. Тело всё равно разбираем,
-    // чтобы на запрос не того формата ответить 400, а не молча согласиться.
+fun Route.cartRoutes(promoCodes: List<PromoCodeDTO>) {
     post("/cart/validate") {
-        call.receive<CartValidationRequestDTO>()
-        call.respond(CartValidationResponseDTO(issues = emptyList()))
+        val request = call.receive<CartValidationRequestDTO>()
+        // Процент у созданного промокода не меняется, поэтому достаточно проверить, что код ещё есть.
+        val promoCodeValid = request.promoCode == null || promoCodes.findPromoCode(request.promoCode) != null
+        // Товары пока не проверяются: любая позиция считается правильной.
+        call.respond(CartValidationResponseDTO(issues = emptyList(), promoCodeValid = promoCodeValid))
     }
 }

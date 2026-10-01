@@ -17,12 +17,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.RemoveShoppingCart
+import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -40,26 +43,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeRow
+import krio.systemdesign.shoppingapp.core.ui.components.AppCard
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
+import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.success
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.cart.R
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,13 +103,10 @@ fun CartScreen(
         )
     }
 
-    if (uiState.issues.isNotEmpty()) {
-        CartIssuesDialog(
-            issues = uiState.issues,
-            items = uiState.items,
-            onAccept = { viewModel.onEvent(CartEvent.OnAcceptChanges) },
-            onDismiss = { viewModel.onEvent(CartEvent.OnDismissIssues) },
-        )
+    // Корзина проверяется каждый раз, когда экран становится видимым, чтобы пометки об изменениях были сразу.
+    LifecycleStartEffect(Unit) {
+        viewModel.onEvent(CartEvent.OnScreenShown)
+        onStopOrDispose { }
     }
 
     Scaffold(
@@ -131,9 +135,21 @@ fun CartScreen(
                 TotalBottomBar(
                     total = formatPrice(uiState.totalPrice),
                     actionText = stringResource(R.string.cart_checkout),
-                    enabled = !uiState.isValidating,
+                    enabled = uiState.canCheckout && !uiState.isValidating,
                     isLoading = uiState.isValidating,
                     onAction = { viewModel.onEvent(CartEvent.OnCheckoutClick) },
+                    header = if (uiState.priceChangeCount > 0 || uiState.unavailableItemCount > 0) {
+                        {
+                            CartChangesActions(
+                                priceChangeCount = uiState.priceChangeCount,
+                                unavailableItemCount = uiState.unavailableItemCount,
+                                onAcceptNewPrices = { viewModel.onEvent(CartEvent.OnAcceptNewPricesClick) },
+                                onRemoveUnavailable = { viewModel.onEvent(CartEvent.OnRemoveUnavailableClick) },
+                            )
+                        }
+                    } else {
+                        null
+                    },
                 )
             }
         },
@@ -141,6 +157,7 @@ fun CartScreen(
         if (uiState.isEmpty) {
             EmptyCart(
                 promoCode = uiState.promoCode,
+                isPromoCodeValid = uiState.isPromoCodeValid,
                 onRemovePromo = { viewModel.onEvent(CartEvent.OnRemovePromoClick) },
                 modifier = Modifier
                     .fillMaxSize()
@@ -160,6 +177,7 @@ fun CartScreen(
                 ) { item ->
                     CartListItem(
                         item = item,
+                        issue = uiState.itemIssues[item.productId],
                         onClick = {
                             viewModel.onEvent(CartEvent.OnItemClick(item.productId, item.name))
                         },
@@ -193,16 +211,17 @@ fun CartScreen(
 @Composable
 private fun CartListItem(
     item: CartItem,
+    // Изменение, которое нашла проверка корзины и которое ещё не исправлено.
+    issue: ItemIssue?,
     onClick: () -> Unit,
     onIncrease: () -> Unit,
     onDecrease: () -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    ) {
+    // Закончившийся товар приглушён, чтобы его было видно сразу, даже не читая плашку.
+    val contentAlpha = if (issue is ItemIssue.Unavailable) UNAVAILABLE_ALPHA else 1f
+    AppCard(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -211,16 +230,14 @@ private fun CartListItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onClick),
+                    .clickable(onClick = onClick)
+                    .alpha(contentAlpha),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                AsyncImage(
-                    model = item.imageUrl,
+                ProductImage(
+                    imageUrl = item.imageUrl,
                     contentDescription = item.name,
-                    modifier = Modifier
-                        .size(88.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(88.dp),
                 )
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -243,6 +260,10 @@ private fun CartListItem(
                     )
                 }
             }
+            if (issue != null) {
+                Spacer(Modifier.height(12.dp))
+                ItemIssueNotice(issue = issue)
+            }
             Spacer(Modifier.height(12.dp))
             CartQuantityControl(
                 quantity = item.quantity,
@@ -251,6 +272,8 @@ private fun CartListItem(
                 onDecrease = onDecrease,
                 onRemoveAll = onRemove,
                 modifier = Modifier.fillMaxWidth(),
+                // Товара больше нет: добавить ещё нельзя, уменьшить и удалить можно.
+                canIncrease = issue !is ItemIssue.Unavailable,
             )
         }
     }
@@ -262,28 +285,32 @@ private fun CartTotals(
     onRemovePromo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        HorizontalDivider()
-        Text(
-            text = stringResource(R.string.cart_order_total),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    // Отдельная карточка, как у товаров: сумма не сливается со списком.
+    AppCard(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            // Тот же стиль, что у строк суммы в OrderTotals, иначе заголовок выглядит другим шрифтом.
+            Text(
+                text = stringResource(R.string.cart_order_total),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+            )
             val promoCode = uiState.promoCode
             if (promoCode != null) {
-                AppliedPromoCodeRow(
-                    code = promoCode.code,
-                    discountPercent = promoCode.discountPercent,
+                CartPromoCode(
+                    promoCode = promoCode,
+                    isValid = uiState.isPromoCodeValid,
                     onRemove = onRemovePromo,
                 )
+                HorizontalDivider()
             }
             OrderTotals(
                 subtotal = formatPrice(uiState.subtotal),
                 total = formatPrice(uiState.totalPrice),
-                discount = if (promoCode != null) "−${formatPrice(uiState.discount)}" else null,
+                discount = if (promoCode != null && uiState.isPromoCodeValid) "−${formatPrice(uiState.discount)}" else null,
             )
         }
     }
@@ -292,6 +319,7 @@ private fun CartTotals(
 @Composable
 private fun EmptyCart(
     promoCode: PromoCode?,
+    isPromoCodeValid: Boolean,
     onRemovePromo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -325,14 +353,180 @@ private fun EmptyCart(
         // Промокод переживает удаление товаров: показываем его, чтобы было видно,
         // что он сработает для следующих покупок, и чтобы его можно было убрать.
         if (promoCode != null) {
-            AppliedPromoCodeRow(
-                code = promoCode.code,
-                discountPercent = promoCode.discountPercent,
+            CartPromoCode(
+                promoCode = promoCode,
+                isValid = isPromoCodeValid,
                 onRemove = onRemovePromo,
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
     }
+}
+
+// Применённый промокод — плашка с кнопкой «Убрать»: зелёная, пока он действует, и красная,
+// если проверка корзины нашла, что он больше не действует, с подсказкой, что сделать.
+@Composable
+private fun CartPromoCode(
+    promoCode: PromoCode,
+    isValid: Boolean,
+    onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (isValid) {
+        CartNoticeWithAction(
+            icon = Icons.Outlined.CheckCircle,
+            title = stringResource(R.string.cart_promo_active, promoCode.code, promoCode.discountPercent),
+            accentColor = MaterialTheme.colorScheme.success,
+            actionText = stringResource(R.string.cart_promo_remove),
+            onAction = onRemove,
+            modifier = modifier,
+        )
+    } else {
+        CartNoticeWithAction(
+            icon = Icons.Outlined.ErrorOutline,
+            title = stringResource(R.string.cart_promo_invalid, promoCode.code),
+            subtitle = stringResource(R.string.cart_promo_invalid_hint),
+            accentColor = MaterialTheme.colorScheme.error,
+            actionText = stringResource(R.string.cart_promo_remove),
+            onAction = onRemove,
+            modifier = modifier,
+        )
+    }
+}
+
+// Плашка в карточке товара: что нашла проверка корзины.
+@Composable
+private fun ItemIssueNotice(
+    issue: ItemIssue,
+    modifier: Modifier = Modifier,
+) {
+    when (issue) {
+        is ItemIssue.Unavailable -> CartNotice(
+            icon = Icons.Outlined.Inventory2,
+            title = stringResource(R.string.cart_item_unavailable),
+            accentColor = MaterialTheme.colorScheme.error,
+            modifier = modifier,
+        )
+        is ItemIssue.PriceChanged -> CartNotice(
+            icon = Icons.Outlined.Sell,
+            // Старая цена видна строкой выше, в плашке только новая.
+            title = stringResource(R.string.cart_item_price_changed, formatPrice(issue.newPrice)),
+            accentColor = MaterialTheme.colorScheme.primary,
+            modifier = modifier,
+        )
+    }
+}
+
+// Плашка с иконкой для пометок на карточках товаров и у промокода.
+// Фон — лёгкий оттенок цвета акцента, текст и иконка — сам цвет акцента.
+@Composable
+private fun CartNotice(
+    icon: ImageVector,
+    title: String,
+    accentColor: Color,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    action: (@Composable () -> Unit)? = null,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = accentColor.copy(alpha = NOTICE_BACKGROUND_ALPHA),
+        contentColor = accentColor,
+    ) {
+        Row(
+            // У кнопки свои отступы и высота, поэтому с ней плашке свои почти не нужны.
+            modifier = if (action != null) {
+                Modifier.padding(start = 12.dp, top = 4.dp, bottom = 4.dp, end = 4.dp)
+            } else {
+                Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
+            },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+            action?.invoke()
+        }
+    }
+}
+
+// Над «Итого» — по плашке на каждый вид изменений: сколько товаров затронуто и кнопка, которая исправляет все сразу.
+// Каждая видна, только когда ей есть что делать.
+@Composable
+private fun CartChangesActions(
+    priceChangeCount: Int,
+    unavailableItemCount: Int,
+    onAcceptNewPrices: () -> Unit,
+    onRemoveUnavailable: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (priceChangeCount > 0) {
+            CartNoticeWithAction(
+                icon = Icons.Outlined.Sell,
+                title = pluralStringResource(R.plurals.cart_price_changes, priceChangeCount, priceChangeCount),
+                accentColor = MaterialTheme.colorScheme.primary,
+                actionText = stringResource(R.string.cart_accept_new_prices),
+                onAction = onAcceptNewPrices,
+            )
+        }
+        if (unavailableItemCount > 0) {
+            CartNoticeWithAction(
+                icon = Icons.Outlined.Inventory2,
+                title = pluralStringResource(R.plurals.cart_unavailable_items, unavailableItemCount, unavailableItemCount),
+                accentColor = MaterialTheme.colorScheme.error,
+                actionText = stringResource(R.string.cart_remove_unavailable),
+                onAction = onRemoveUnavailable,
+            )
+        }
+    }
+}
+
+// Плашка с текстовой кнопкой того же цвета справа.
+@Composable
+private fun CartNoticeWithAction(
+    icon: ImageVector,
+    title: String,
+    accentColor: Color,
+    actionText: String,
+    onAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+) {
+    CartNotice(
+        icon = icon,
+        title = title,
+        accentColor = accentColor,
+        modifier = modifier,
+        subtitle = subtitle,
+        action = {
+            TextButton(
+                onClick = onAction,
+                colors = ButtonDefaults.textButtonColors(contentColor = accentColor),
+            ) {
+                Text(actionText)
+            }
+        },
+    )
 }
 
 @Composable
@@ -362,52 +556,8 @@ private fun ClearCartDialog(
     )
 }
 
-@Composable
-private fun CartIssuesDialog(
-    issues: ImmutableList<ItemIssue>,
-    items: ImmutableList<CartItem>,
-    onAccept: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val names = items.associate { it.productId to it.name }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.cart_issues_dialog_title)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.cart_issues_dialog_message))
-                issues.forEach { issue ->
-                    Text(
-                        text = issueMessage(issue, names),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onAccept) {
-                Text(stringResource(R.string.cart_issues_dialog_accept))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cart_cancel))
-            }
-        },
-    )
-}
+// Прозрачность закончившегося товара в корзине.
+private const val UNAVAILABLE_ALPHA = 0.5f
 
-@Composable
-private fun issueMessage(
-    issue: ItemIssue,
-    names: Map<String, String>,
-): String = when (issue) {
-    is ItemIssue.Unavailable -> {
-        val name = names[issue.productId] ?: stringResource(R.string.cart_issue_unknown_product)
-        stringResource(R.string.cart_issue_unavailable, name)
-    }
-    is ItemIssue.PriceChanged -> {
-        val name = names[issue.productId] ?: stringResource(R.string.cart_issue_unknown_product)
-        stringResource(R.string.cart_issue_price_changed, name, formatPrice(issue.newPrice))
-    }
-}
+// Насыщенность фона плашки относительно её цвета акцента.
+private const val NOTICE_BACKGROUND_ALPHA = 0.14f

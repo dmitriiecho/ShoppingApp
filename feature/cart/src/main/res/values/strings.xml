@@ -12,12 +12,27 @@
     <string name="cart_clear_dialog_message">Все товары будут удалены.</string>
     <string name="cart_clear_dialog_confirm">Очистить</string>
 
-    <string name="cart_issues_dialog_title">Корзина обновилась</string>
-    <string name="cart_issues_dialog_message">Некоторые товары изменились:</string>
-    <string name="cart_issues_dialog_accept">Принять</string>
-    <string name="cart_issue_unknown_product">Товар</string>
-    <string name="cart_issue_unavailable">«%1$s» больше недоступен и будет удалён</string>
-    <string name="cart_issue_price_changed">Цена «%1$s» изменилась: %2$s</string>
+    <string name="cart_changed">Корзина обновилась, проверьте изменения</string>
+    <string name="cart_item_unavailable">Товар закончился</string>
+    <string name="cart_item_price_changed">Цена изменилась: теперь %1$s</string>
+    <string name="cart_promo_active">Промокод %1$s · −%2$d%%</string>
+    <string name="cart_promo_invalid">Промокод %1$s не действует</string>
+    <string name="cart_promo_invalid_hint">Уберите его, чтобы оформить заказ</string>
+    <string name="cart_promo_remove">Убрать</string>
+    <string name="cart_accept_new_prices">Принять</string>
+    <string name="cart_remove_unavailable">Удалить</string>
+    <plurals name="cart_price_changes">
+        <item quantity="one">Изменилась цена %d товара</item>
+        <item quantity="few">Изменились цены %d товаров</item>
+        <item quantity="many">Изменились цены %d товаров</item>
+        <item quantity="other">Изменились цены %d товара</item>
+    </plurals>
+    <plurals name="cart_unavailable_items">
+        <item quantity="one">Закончился %d товар</item>
+        <item quantity="few">Закончились %d товара</item>
+        <item quantity="many">Закончились %d товаров</item>
+        <item quantity="other">Закончились %d товара</item>
+    </plurals>
 
     <string name="cart_promo_applied">Промокод «%1$s» применён</string>
     <string name="cart_promo_apply_error">Не удалось применить промокод</string>

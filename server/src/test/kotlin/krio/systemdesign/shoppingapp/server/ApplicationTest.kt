@@ -6,6 +6,8 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -21,6 +23,8 @@ import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.ProductsPageDTO
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 import kotlin.io.path.Path
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.exists
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -72,13 +76,22 @@ class ApplicationTest {
     }
 
     @Test
-    fun `проверка корзины пока всегда успешна`() = serverTest { client ->
-        val response = client.post("/cart/validate") {
-            contentType(ContentType.Application.Json)
-            setBody(CartValidationRequestDTO(items = listOf(CartItemDTO("3", price = 1, quantity = 2)), promoCode = "SALE10"))
-        }
+    fun `товары в корзине пока не проверяются`() = serverTest { client ->
+        val response = client.validateCart(promoCode = null, items = listOf(CartItemDTO("3", price = 1, quantity = 2)))
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(emptyList(), response.body<CartValidationResponseDTO>().issues)
+        assertEquals(CartValidationResponseDTO(issues = emptyList(), promoCodeValid = true), response.body())
+    }
+
+    @Test
+    fun `промокод в корзине проверяется без учёта регистра`() = serverTest { client ->
+        suspend fun promoCodeValid(code: String?) =
+            client.validateCart(promoCode = code).body<CartValidationResponseDTO>().promoCodeValid
+
+        assertTrue(promoCodeValid("SALE10"))
+        assertTrue(promoCodeValid("sale10"))
+        assertFalse(promoCodeValid("SALE99"))
+        // Нет промокода — нечего проверять.
+        assertTrue(promoCodeValid(null))
     }
 
     @Test
@@ -94,9 +107,10 @@ class ApplicationTest {
     fun `формат проблем в корзине`() {
         val response = CartValidationResponseDTO(
             issues = listOf(ItemIssueDTO.Unavailable("3"), ItemIssueDTO.PriceChanged("1", newPrice = 900)),
+            promoCodeValid = false,
         )
         assertEquals(
-            """{"issues":[{"type":"unavailable","productId":"3"},{"type":"priceChanged","productId":"1","newPrice":900}]}""",
+            """{"issues":[{"type":"unavailable","productId":"3"},{"type":"priceChanged","productId":"1","newPrice":900}],"promoCodeValid":false}""",
             Json.encodeToString(response),
         )
     }
@@ -106,6 +120,25 @@ class ApplicationTest {
         val data = ShopData.load(Path("data"))
         assertTrue(data.products.isNotEmpty())
         assertTrue(data.promoCodes.isNotEmpty())
+    }
+
+    @Test
+    fun `свои картинки лежат в data и отдаются`() = testApplication {
+        val dataDir = Path("data")
+        val data = ShopData.load(dataDir)
+        val hosted = data.products.filter { "/images/" in it.imageUrl }
+        assertEquals(50, hosted.size)
+        hosted.forEach { product ->
+            val fileName = product.imageUrl.substringAfterLast('/').substringBefore('?')
+            assertEquals("${product.id}.png", fileName)
+            assertTrue(dataDir.resolve("images/$fileName").exists(), fileName)
+        }
+
+        application { module(data, dataDir.resolve("images")) }
+        val response = createClient { }.get("/images/1.png")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+        assertTrue(response.bodyAsBytes().isNotEmpty())
     }
 
     @Test
@@ -122,8 +155,16 @@ class ApplicationTest {
     }
 
     private fun serverTest(block: suspend (HttpClient) -> Unit) = testApplication {
-        application { module(TEST_DATA) }
+        application { module(TEST_DATA, createTempDirectory("product-images")) }
         block(createClient { install(ContentNegotiation) { json() } })
+    }
+
+    private suspend fun HttpClient.validateCart(
+        promoCode: String?,
+        items: List<CartItemDTO> = listOf(CartItemDTO("1", price = 1000, quantity = 1)),
+    ): HttpResponse = post("/cart/validate") {
+        contentType(ContentType.Application.Json)
+        setBody(CartValidationRequestDTO(items = items, promoCode = promoCode))
     }
 
     private companion object {

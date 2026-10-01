@@ -20,10 +20,12 @@ internal data class CartItemDTO(
     val quantity: Int,
 )
 
-// Пустой список проблем — корзина в порядке.
+// Корзина в порядке, если список проблем с товарами пуст и промокод действует.
 @Serializable
 internal data class CartValidationResponseDTO(
     val issues: List<ItemIssueDTO>,
+    // false — присланного промокода больше нет. Если промокод не прислан, true.
+    val promoCodeValid: Boolean,
 )
 
 // Вид проблемы сервер передаёт полем "type": {"type": "priceChanged", "productId": "1", "newPrice": 8999}.

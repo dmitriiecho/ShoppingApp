@@ -35,6 +35,10 @@ class ShopData(
     }
 }
 
+// Промокод ищется без учёта регистра: на "sale10" найдётся "SALE10".
+fun List<PromoCodeDTO>.findPromoCode(code: String?): PromoCodeDTO? =
+    find { it.code.equals(code, ignoreCase = true) }
+
 // Файлы читаем строгим Json, без ignoreUnknownKeys: опечатка в названии поля остановит запуск,
 // а не потеряет значение молча.
 private inline fun <reified T> Path.readJson(): T =

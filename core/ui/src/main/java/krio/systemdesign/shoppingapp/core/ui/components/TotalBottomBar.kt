@@ -1,6 +1,8 @@
 package krio.systemdesign.shoppingapp.core.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,45 +30,55 @@ fun TotalBottomBar(
     isLoading: Boolean,
     onAction: () -> Unit,
     modifier: Modifier = Modifier,
+    // Что показать над строкой «Итого» в той же панели, например дополнительные кнопки.
+    header: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
+    // Цвет как у панели вкладок (NavigationBar): внизу экрана они складываются в один блок.
+    // Приподнятая Surface с tonalElevation подмешивала бы акцентный цвет, и панель становилась бы оранжеватой.
     Surface(
         modifier = modifier.fillMaxWidth(),
-        tonalElevation = 3.dp,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         // Отступ от системной навигации, фон Surface при этом остаётся до края экрана.
         // Внутри табов этот отступ уже учла панель вкладок, и здесь он будет нулевым.
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.core_ui_total),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = total,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-            Spacer(Modifier.width(16.dp))
-            Button(
-                onClick = onAction,
-                enabled = enabled,
-                modifier = Modifier.weight(1f),
+            header?.invoke(this)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
+                Column {
+                    Text(
+                        text = stringResource(R.string.core_ui_total),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                } else {
-                    Text(actionText)
+                    Text(
+                        text = total,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                Spacer(Modifier.width(16.dp))
+                Button(
+                    onClick = onAction,
+                    enabled = enabled,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                        )
+                    } else {
+                        Text(actionText)
+                    }
                 }
             }
         }

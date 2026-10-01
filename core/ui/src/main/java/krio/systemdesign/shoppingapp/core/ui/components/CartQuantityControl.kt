@@ -19,7 +19,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,13 +46,16 @@ fun CartQuantityControl(
     onDecrease: () -> Unit,
     onRemoveAll: () -> Unit,
     modifier: Modifier = Modifier,
+    // false — «+» выключен, например у закончившегося товара в корзине. «−» и удаление работают.
+    canIncrease: Boolean = true,
 ) {
     val controlHeight = ButtonDefaults.MinHeight
     val containerColor = MaterialTheme.colorScheme.primary
     val contentColor = MaterialTheme.colorScheme.onPrimary
 
     if (quantity <= 0) {
-        FilledTonalButton(
+        // Залитая кнопка акцентного цвета, как и переключатель количества, который появляется после добавления.
+        Button(
             onClick = onAdd,
             modifier = modifier
                 .fillMaxWidth()
@@ -105,6 +109,7 @@ fun CartQuantityControl(
                     onClick = onIncrease,
                     size = controlHeight,
                     contentColor = contentColor,
+                    enabled = canIncrease,
                 )
             }
         }
@@ -127,20 +132,26 @@ private fun CartControlIconButton(
     size: Dp,
     containerColor: Color = Color.Transparent,
     contentColor: Color = Color.Unspecified,
+    enabled: Boolean = true,
 ) {
     Box(
         modifier = Modifier
             .size(size)
             .clip(CircleShape)
             .background(containerColor)
-            .clickable(role = Role.Button, onClick = onClick),
+            .clickable(enabled = enabled, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = imageVector,
             contentDescription = contentDescription,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier
+                .size(20.dp)
+                .alpha(if (enabled) 1f else DISABLED_ALPHA),
             tint = contentColor,
         )
     }
 }
+
+// Прозрачность выключенных элементов в Material 3.
+private const val DISABLED_ALPHA = 0.38f

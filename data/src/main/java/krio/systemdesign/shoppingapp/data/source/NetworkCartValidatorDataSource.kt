@@ -16,11 +16,14 @@ internal class NetworkCartValidatorDataSource @Inject constructor(
         val result = networkCall { api.validate(cart.toValidationRequest()) }
         return when (result) {
             is NetworkResult.Success -> {
-                val issues = result.body.issues
-                if (issues.isEmpty()) {
+                val body = result.body
+                if (body.issues.isEmpty() && body.promoCodeValid) {
                     CartValidationResult.Success
                 } else {
-                    CartValidationResult.Invalid(issues.map { it.toDomain() })
+                    CartValidationResult.Invalid(
+                        issues = body.issues.map { it.toDomain() },
+                        isPromoCodeValid = body.promoCodeValid,
+                    )
                 }
             }
             is NetworkResult.HttpError -> CartValidationResult.Error(result.error)

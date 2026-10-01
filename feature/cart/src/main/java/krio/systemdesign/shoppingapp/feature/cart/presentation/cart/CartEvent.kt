@@ -28,7 +28,10 @@ sealed interface CartEvent {
 
     data object OnClearCartDismiss : CartEvent
 
-    data object OnAcceptChanges : CartEvent
+    // Экран корзины стал видимым: открыли вкладку или вернулись с другого экрана.
+    data object OnScreenShown : CartEvent
 
-    data object OnDismissIssues : CartEvent
+    data object OnAcceptNewPricesClick : CartEvent
+
+    data object OnRemoveUnavailableClick : CartEvent
 }
