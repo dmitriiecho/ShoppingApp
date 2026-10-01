@@ -14,6 +14,7 @@ sealed interface CartEffect {
     data class NavigateToProduct(
         val productId: String,
         val productName: String,
+        val imageUrl: String,
     ) : CartEffect
 
     data class ShowSnackBar(val message: UiText) : CartEffect

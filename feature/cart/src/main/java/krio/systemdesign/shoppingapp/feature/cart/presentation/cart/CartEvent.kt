@@ -5,6 +5,7 @@ sealed interface CartEvent {
     data class OnItemClick(
         val productId: String,
         val productName: String,
+        val imageUrl: String,
     ) : CartEvent
 
     data class OnUpdateQuantity(

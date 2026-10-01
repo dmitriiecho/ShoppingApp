@@ -7,4 +7,5 @@ import kotlinx.serialization.Serializable
 data class CustomProductRoute(
     override val productId: String,
     override val productName: String = "",
+    override val imageUrl: String = "",
 ) : ProductDetailsRoute

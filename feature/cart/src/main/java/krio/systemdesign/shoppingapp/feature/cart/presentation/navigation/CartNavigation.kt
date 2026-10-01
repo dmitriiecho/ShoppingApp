@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.cart.presentation.navigation
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -10,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
+import krio.systemdesign.shoppingapp.core.ui.animation.LocalNavAnimatedVisibilityScope
 import krio.systemdesign.shoppingapp.feature.cart.presentation.cart.CartScreen
 import krio.systemdesign.shoppingapp.feature.cart.presentation.cart.CartViewModel
 
@@ -25,7 +27,7 @@ fun CartNavigationScope.graph(
     onClose: () -> Unit,
     onOpenCheckout: () -> Unit,
     onOpenPromo: (resultKey: String) -> Unit,
-    onOpenProduct: (productId: String, productName: String) -> Unit,
+    onOpenProduct: (productId: String, productName: String, imageUrl: String) -> Unit,
 ) {
     builder.navigation<CartRoutes.Graph>(
         startDestination = CartRoutes.Cart,
@@ -50,15 +52,18 @@ fun CartNavigationScope.graph(
                 }
             }
 
-            CartScreen(
-                viewModel = viewModel,
-                onBack = onClose,
-                onOpenCheckout = onOpenCheckout,
-                onOpenPromo = {
-                    onOpenPromo(CartResults.PROMO_RESULT_KEY)
-                },
-                onOpenProduct = onOpenProduct,
-            )
+            // Картинки товаров перелетают между корзиной и карточкой товара.
+            CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                CartScreen(
+                    viewModel = viewModel,
+                    onBack = onClose,
+                    onOpenCheckout = onOpenCheckout,
+                    onOpenPromo = {
+                        onOpenPromo(CartResults.PROMO_RESULT_KEY)
+                    },
+                    onOpenProduct = onOpenProduct,
+                )
+            }
         }
     }
 }

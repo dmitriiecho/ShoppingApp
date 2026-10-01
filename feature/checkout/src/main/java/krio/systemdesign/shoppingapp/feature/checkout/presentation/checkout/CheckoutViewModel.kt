@@ -59,7 +59,7 @@ class CheckoutViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = CheckoutUiState(),
+        initialValue = CheckoutUiState(isLoading = true),
     )
 
     fun onEvent(event: CheckoutEvent) {

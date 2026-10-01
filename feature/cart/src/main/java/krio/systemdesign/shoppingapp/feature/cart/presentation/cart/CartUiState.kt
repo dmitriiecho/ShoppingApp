@@ -23,6 +23,8 @@ data class CartUiState(
     val isPromoCodeValid: Boolean = true,
     val isValidating: Boolean = false,
     val isClearCartDialogVisible: Boolean = false,
+    // Корзина ещё не прочитана из базы. Пустой список здесь не значит, что корзина пуста.
+    val isLoading: Boolean = false,
 ) {
     val isEmpty: Boolean get() = items.isEmpty()
 

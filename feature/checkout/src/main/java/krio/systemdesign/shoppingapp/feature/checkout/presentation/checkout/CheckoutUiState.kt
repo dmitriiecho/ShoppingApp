@@ -21,6 +21,8 @@ data class CheckoutUiState(
     val courierComment: String = "",
     val paymentMethod: PaymentMethod = PaymentMethod.Card,
     val isSubmitting: Boolean = false,
+    // Корзина ещё не прочитана из базы. Пустой список здесь не значит, что корзина пуста.
+    val isLoading: Boolean = false,
 ) {
     val isEmpty: Boolean get() = items.isEmpty()
 

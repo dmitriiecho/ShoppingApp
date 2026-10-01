@@ -2,6 +2,7 @@ package krio.systemdesign.shoppingapp.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -139,7 +141,10 @@ private fun CartControlIconButton(
             .size(size)
             .clip(CircleShape)
             .background(containerColor)
-            .clickable(enabled = enabled, role = Role.Button, onClick = onClick),
+            .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+            // Выключенная кнопка всё равно забирает нажатие себе. Иначе оно уходит к тому, что под ней:
+            // нажатие на серый «+» открывало бы карточку товара, на которой лежат кнопки.
+            .then(if (enabled) Modifier else Modifier.pointerInput(Unit) { detectTapGestures {} }),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

@@ -61,6 +61,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
+import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.success
@@ -79,7 +80,7 @@ fun CartScreen(
     onBack: () -> Unit,
     onOpenCheckout: () -> Unit,
     onOpenPromo: () -> Unit,
-    onOpenProduct: (productId: String, productName: String) -> Unit,
+    onOpenProduct: (productId: String, productName: String, imageUrl: String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -91,7 +92,9 @@ fun CartScreen(
                 CartEffect.NavigateBack -> onBack()
                 CartEffect.NavigateToCheckout -> onOpenCheckout()
                 CartEffect.NavigateToPromo -> onOpenPromo()
-                is CartEffect.NavigateToProduct -> onOpenProduct(effect.productId, effect.productName)
+                is CartEffect.NavigateToProduct -> {
+                    onOpenProduct(effect.productId, effect.productName, effect.imageUrl)
+                }
                 is CartEffect.ShowSnackBar -> {
                     launch { snackbarHostState.showSnackbar(effect.message.asString(resources)) }
                 }
@@ -157,6 +160,9 @@ fun CartScreen(
             }
         },
     ) { innerPadding ->
+        // Пока корзина не прочитана из базы (доли секунды при первом открытии), ничего не показываем:
+        // иначе на миг появилось бы «Корзина пуста».
+        if (uiState.isLoading) return@Scaffold
         if (uiState.isEmpty) {
             EmptyCart(
                 promoCode = uiState.promoCode,
@@ -183,7 +189,7 @@ fun CartScreen(
                         issues = uiState.itemIssues[item.productId] ?: persistentListOf(),
                         canIncrease = uiState.canIncrease(item),
                         onClick = {
-                            viewModel.onEvent(CartEvent.OnItemClick(item.productId, item.name))
+                            viewModel.onEvent(CartEvent.OnItemClick(item.productId, item.name, item.imageUrl))
                         },
                         onIncrease = {
                             viewModel.onEvent(
@@ -226,7 +232,10 @@ private fun CartListItem(
 ) {
     // Закончившийся товар приглушён, чтобы его было видно сразу, даже не читая плашку.
     val contentAlpha = if (issues.any { it is ItemIssue.Unavailable }) UNAVAILABLE_ALPHA else 1f
-    AppCard(modifier = modifier.fillMaxWidth()) {
+    AppCard(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -235,7 +244,6 @@ private fun CartListItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onClick)
                     .alpha(contentAlpha),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -243,6 +251,7 @@ private fun CartListItem(
                     imageUrl = item.imageUrl,
                     contentDescription = item.name,
                     modifier = Modifier.size(88.dp),
+                    sharedElementKey = ProductImageKey(item.productId),
                 )
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {

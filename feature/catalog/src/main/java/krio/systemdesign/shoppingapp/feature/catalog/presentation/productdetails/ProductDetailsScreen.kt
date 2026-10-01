@@ -30,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
+import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
@@ -84,27 +84,30 @@ fun ProductDetailsScreen(
         val contentModifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
-        when (val state = uiState) {
-            is ProductDetailsUiState.Loading -> LoadingContent(modifier = contentModifier)
-            is ProductDetailsUiState.Error -> ErrorContent(
-                message = state.message.asString(),
-                onRetry = { viewModel.onEvent(ProductDetailsEvent.OnRetry) },
+        val state = uiState
+        when {
+            // Если картинка известна (её передал список), экран с первого кадра выглядит как с загруженным товаром:
+            // картинка на своём месте, а под ней загрузка или ошибка. Так картинке есть куда перелететь из списка,
+            // и она остаётся на месте, когда товар загрузится.
+            state is ProductDetailsUiState.Content || state.imageUrl.isNotEmpty() -> ProductDetailsContent(
+                state = state,
+                onEvent = viewModel::onEvent,
                 modifier = contentModifier,
             )
-            is ProductDetailsUiState.Content -> ProductDetailsContent(
-                product = state.product,
-                quantity = state.cartQuantity,
-                onEvent = viewModel::onEvent,
+            state is ProductDetailsUiState.Loading -> LoadingContent(modifier = contentModifier)
+            state is ProductDetailsUiState.Error -> ErrorContent(
+                message = state.message.asString(),
+                onRetry = { viewModel.onEvent(ProductDetailsEvent.OnRetry) },
                 modifier = contentModifier,
             )
         }
     }
 }
 
+// Картинка товара сверху и, в зависимости от состояния, описание товара, загрузка или ошибка под ней.
 @Composable
 private fun ProductDetailsContent(
-    product: Product,
-    quantity: Int,
+    state: ProductDetailsUiState,
     onEvent: (ProductDetailsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -115,51 +118,88 @@ private fun ProductDetailsContent(
                 .verticalScroll(rememberScrollState()),
         ) {
             ProductImage(
-                imageUrl = product.imageUrl,
-                contentDescription = product.name,
+                imageUrl = state.imageUrl,
+                contentDescription = state.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                shape = RectangleShape,
+                cornerRadius = 0.dp,
                 contentPadding = 32.dp,
+                sharedElementKey = ProductImageKey(state.productId),
             )
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = product.name,
-                    style = MaterialTheme.typography.headlineSmall,
+            when (state) {
+                is ProductDetailsUiState.Content -> ProductInfo(product = state.product)
+                is ProductDetailsUiState.Loading -> LoadingContent(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
                 )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = formatPrice(product.price),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.primary,
+                is ProductDetailsUiState.Error -> ErrorContent(
+                    message = state.message.asString(),
+                    onRetry = { onEvent(ProductDetailsEvent.OnRetry) },
+                    modifier = Modifier.fillMaxWidth(),
                 )
-                if (product.description.isNotBlank()) {
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = product.description,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
             }
         }
-        val controlModifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-        if (product.isAvailable) {
-            CartQuantityControl(
-                quantity = quantity,
-                onAdd = { onEvent(ProductDetailsEvent.OnAddToCart()) },
-                onIncrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity + 1)) },
-                onDecrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity - 1)) },
-                onRemoveAll = { onEvent(ProductDetailsEvent.OnRemoveFromCart) },
-                modifier = controlModifier,
-                canIncrease = quantity < product.availableQuantity,
+        if (state is ProductDetailsUiState.Content) {
+            CartControl(
+                product = state.product,
+                quantity = state.cartQuantity,
+                onEvent = onEvent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             )
-        } else {
-            OutOfStockButton(modifier = controlModifier)
         }
+    }
+}
+
+@Composable
+private fun ProductInfo(
+    product: Product,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.padding(16.dp)) {
+        Text(
+            text = product.name,
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = formatPrice(product.price),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        if (product.description.isNotBlank()) {
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = product.description,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CartControl(
+    product: Product,
+    quantity: Int,
+    onEvent: (ProductDetailsEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (product.isAvailable) {
+        CartQuantityControl(
+            quantity = quantity,
+            onAdd = { onEvent(ProductDetailsEvent.OnAddToCart()) },
+            onIncrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity + 1)) },
+            onDecrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity - 1)) },
+            onRemoveAll = { onEvent(ProductDetailsEvent.OnRemoveFromCart) },
+            modifier = modifier,
+            canIncrease = quantity < product.availableQuantity,
+        )
+    } else {
+        OutOfStockButton(modifier = modifier)
     }
 }
 

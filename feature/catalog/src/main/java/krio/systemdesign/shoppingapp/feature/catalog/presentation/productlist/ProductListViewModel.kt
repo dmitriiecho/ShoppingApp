@@ -80,7 +80,13 @@ class ProductListViewModel @Inject constructor(
     fun onEvent(event: ProductListEvent) {
         when (event) {
             is ProductListEvent.OnItemClick -> {
-                send(ProductListEffect.NavigateToDetails(event.product.id, event.product.name))
+                send(
+                    ProductListEffect.NavigateToDetails(
+                        productId = event.product.id,
+                        productName = event.product.name,
+                        imageUrl = event.product.imageUrl,
+                    ),
+                )
             }
             is ProductListEvent.OnAddToCart -> {
                 launchCartAction {

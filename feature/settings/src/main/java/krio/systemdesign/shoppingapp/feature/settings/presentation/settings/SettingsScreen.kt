@@ -75,13 +75,16 @@ fun SettingsScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
+        // Пока настройка темы не прочитана (доли секунды), ничего не показываем:
+        // иначе на миг была бы отмечена тема по умолчанию, а потом выбранная.
+        val themeMode = uiState.themeMode ?: return@Scaffold
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
             ThemeModeSelector(
-                selected = uiState.themeMode,
+                selected = themeMode,
                 onSelect = { viewModel.onEvent(SettingsEvent.OnThemeModeChange(it)) },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )

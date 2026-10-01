@@ -42,6 +42,8 @@ class ProductDetailsViewModel @Inject constructor(
     private val productId: String = checkNotNull(savedStateHandle[ProductDetailsRoute::productId.name])
     // В ссылке /product/{productId} названия нет.
     private val productName: String = savedStateHandle[ProductDetailsRoute::productName.name] ?: ""
+    // Картинку передаёт список, чтобы показать её до загрузки товара. В ссылке и в маршруте из корзины её нет.
+    private val imageUrl: String = savedStateHandle[ProductDetailsRoute::imageUrl.name] ?: ""
 
     private val productLoad = MutableStateFlow<ProductLoad>(ProductLoad.Loading)
 
@@ -53,20 +55,22 @@ class ProductDetailsViewModel @Inject constructor(
         observeCart(),
     ) { load, cart ->
         when (load) {
-            ProductLoad.Loading -> ProductDetailsUiState.Loading(title = productName)
+            ProductLoad.Loading -> loadingState()
             is ProductLoad.Success -> ProductDetailsUiState.Content(
                 product = load.product,
                 cartQuantity = cart.items.firstOrNull { it.productId == productId }?.quantity ?: 0,
             )
             is ProductLoad.Error -> ProductDetailsUiState.Error(
+                productId = productId,
                 title = productName,
+                imageUrl = imageUrl,
                 message = load.message,
             )
         }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ProductDetailsUiState.Loading(title = productName),
+        initialValue = loadingState(),
     )
 
     init {
@@ -89,6 +93,12 @@ class ProductDetailsViewModel @Inject constructor(
             ProductDetailsEvent.OnBackClick -> send(ProductDetailsEffect.NavigateBack)
         }
     }
+
+    private fun loadingState() = ProductDetailsUiState.Loading(
+        productId = productId,
+        title = productName,
+        imageUrl = imageUrl,
+    )
 
     private fun currentProduct(): Product? =
         (productLoad.value as? ProductLoad.Success)?.product

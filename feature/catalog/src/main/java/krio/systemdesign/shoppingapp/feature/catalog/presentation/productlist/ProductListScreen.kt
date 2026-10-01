@@ -68,6 +68,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.AppCard
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
+import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
@@ -80,7 +81,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProductListScreen(
     onBack: () -> Unit,
-    onOpenProduct: (productId: String, productName: String) -> Unit,
+    onOpenProduct: (productId: String, productName: String, imageUrl: String) -> Unit,
     viewModel: ProductListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -92,7 +93,9 @@ fun ProductListScreen(
         viewModel.effects.collect { effect ->
             when (effect) {
                 ProductListEffect.NavigateBack -> onBack()
-                is ProductListEffect.NavigateToDetails -> onOpenProduct(effect.productId, effect.productName)
+                is ProductListEffect.NavigateToDetails -> {
+                    onOpenProduct(effect.productId, effect.productName, effect.imageUrl)
+                }
                 is ProductListEffect.ShowSnackBar -> {
                     launch { snackbarHostState.showSnackbar(effect.message.asString(resources)) }
                 }
@@ -284,22 +287,24 @@ private fun ProductListItem(
     onRemoveFromCart: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AppCard(modifier = modifier.fillMaxWidth()) {
+    AppCard(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onClick),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 ProductImage(
                     imageUrl = product.imageUrl,
                     contentDescription = product.name,
                     modifier = Modifier.size(88.dp),
+                    sharedElementKey = ProductImageKey(product.id),
                 )
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {

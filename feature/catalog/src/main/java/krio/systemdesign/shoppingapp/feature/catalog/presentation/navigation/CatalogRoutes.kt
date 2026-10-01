@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 interface ProductDetailsRoute {
     val productId: String
     val productName: String
+    // Картинка известна до загрузки товара, поэтому карточка показывает её сразу. Пустая — значит, неизвестна.
+    val imageUrl: String
 }
 
 object CatalogRoutes {
@@ -18,5 +20,6 @@ object CatalogRoutes {
     internal data class ProductDetails(
         override val productId: String,
         override val productName: String = "",
+        override val imageUrl: String = "",
     ) : ProductDetailsRoute
 }

@@ -7,6 +7,7 @@ sealed interface ProductListEffect {
     data class NavigateToDetails(
         val productId: String,
         val productName: String,
+        val imageUrl: String,
     ) : ProductListEffect
 
     data object NavigateBack : ProductListEffect

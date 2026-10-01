@@ -15,16 +15,19 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AppCard(
     modifier: Modifier = Modifier,
+    // Нажатие на любое место карточки. Кнопки внутри неё обрабатывают свои нажатия сами.
+    onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
     val isDark = colors.background.luminance() < 0.5f
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = if (isDark) colors.surfaceContainerHigh else colors.surfaceContainerLowest,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        content = content,
+    val cardColors = CardDefaults.cardColors(
+        containerColor = if (isDark) colors.surfaceContainerHigh else colors.surfaceContainerLowest,
     )
+    val elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    if (onClick != null) {
+        Card(onClick = onClick, modifier = modifier, colors = cardColors, elevation = elevation, content = content)
+    } else {
+        Card(modifier = modifier, colors = cardColors, elevation = elevation, content = content)
+    }
 }

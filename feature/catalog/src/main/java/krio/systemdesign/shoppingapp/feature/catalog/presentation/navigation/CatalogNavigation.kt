@@ -1,11 +1,13 @@
 package krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
+import krio.systemdesign.shoppingapp.core.ui.animation.LocalNavAnimatedVisibilityScope
 import krio.systemdesign.shoppingapp.feature.catalog.presentation.productdetails.ProductDetailsScreen
 import krio.systemdesign.shoppingapp.feature.catalog.presentation.productlist.ProductListScreen
 
@@ -30,17 +32,21 @@ fun CatalogNavigationScope.graph(
                 ),
             ),
         ) {
-            ProductListScreen(
-                onBack = onClose,
-                onOpenProduct = { productId, productName ->
-                    navController.navigate(
-                        CatalogRoutes.ProductDetails(
-                            productId = productId,
-                            productName = productName,
-                        ),
-                    )
-                }
-            )
+            // Картинки товаров перелетают между списком и карточкой товара.
+            CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                ProductListScreen(
+                    onBack = onClose,
+                    onOpenProduct = { productId, productName, imageUrl ->
+                        navController.navigate(
+                            CatalogRoutes.ProductDetails(
+                                productId = productId,
+                                productName = productName,
+                                imageUrl = imageUrl,
+                            ),
+                        )
+                    }
+                )
+            }
         }
 
         composable<CatalogRoutes.ProductDetails>(
@@ -52,19 +58,24 @@ fun CatalogNavigationScope.graph(
                 },
             ),
         ) {
-            ProductDetailsScreen(
-                onBack = { navController.popBackStack() },
-            )
+            CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                ProductDetailsScreen(
+                    onBack = { navController.popBackStack() },
+                )
+            }
         }
     }
 }
 
+// Карточка товара внутри другой фичи (например, корзины).
 inline fun <reified T> CatalogNavigationScope.productDetailsScreen(
     noinline onBack: () -> Unit,
 ) where T : Any, T : ProductDetailsRoute {
     builder.composable<T> {
-        ProductDetailsScreen(
-            onBack = onBack,
-        )
+        CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+            ProductDetailsScreen(
+                onBack = onBack,
+            )
+        }
     }
 }

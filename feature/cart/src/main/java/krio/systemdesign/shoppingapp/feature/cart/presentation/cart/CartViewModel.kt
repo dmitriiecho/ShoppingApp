@@ -84,7 +84,7 @@ class CartViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = CartUiState(),
+        initialValue = CartUiState(isLoading = true),
     )
 
     fun onPromoApplied(promoCode: PromoCode) {
@@ -103,7 +103,13 @@ class CartViewModel @Inject constructor(
     fun onEvent(event: CartEvent) {
         when (event) {
             is CartEvent.OnItemClick -> {
-                send(CartEffect.NavigateToProduct(event.productId, event.productName))
+                send(
+                    CartEffect.NavigateToProduct(
+                        productId = event.productId,
+                        productName = event.productName,
+                        imageUrl = event.imageUrl,
+                    ),
+                )
             }
             is CartEvent.OnUpdateQuantity -> {
                 launchCartAction {

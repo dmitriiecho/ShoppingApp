@@ -96,6 +96,8 @@ fun CheckoutScreen(
             }
         },
     ) { innerPadding ->
+        // Пока корзина не прочитана из базы (доли секунды), ничего не показываем: иначе на миг появилась бы пустая корзина.
+        if (uiState.isLoading) return@Scaffold
         if (uiState.isEmpty && !uiState.isSubmitting) {
             EmptyCheckout(
                 modifier = Modifier
