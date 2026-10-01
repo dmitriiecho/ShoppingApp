@@ -12,6 +12,15 @@ android {
 
     defaultConfig {
         minSdk = 26
+        buildConfigField(
+            "String",
+            "DEEP_LINK_HOST",
+            "\"${providers.gradleProperty("deepLinkHost").get()}\"",
+        )
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {

@@ -16,6 +16,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.ShoppingAppV2"
             android:windowSoftInputMode="adjustResize"
@@ -31,12 +32,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <!-- Домен задаётся в gradle.properties (deepLinkHost). -->
                 <data
                     android:scheme="https"
-                    android:host="shopping.example.com"
-                    android:pathPrefix="/catalog" />
-                <data android:pathPrefix="/product" />
-                <data android:pathPrefix="/cart" />
+                    android:host="${deepLinkHost}" />
+                <!-- Только адреса, которые приложение умеет открыть: на этом домене живут и другие сайты GitHub Pages. -->
+                <data android:path="/catalog" />
+                <data android:path="/catalog/" />
+                <data android:path="/cart" />
+                <data android:path="/cart/" />
+                <!-- /product/ и id товара: «..*» в pathPattern — один или больше любых символов. -->
+                <data android:pathPattern="/product/..*" />
             </intent-filter>
         </activity>
     </application>
