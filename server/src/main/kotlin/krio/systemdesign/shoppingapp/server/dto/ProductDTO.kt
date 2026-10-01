@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class ProductDTO(
     val id: String,
     val name: String,
+    // Цена в центах: 14999 — это $149.99. Все цены в долларах США.
     val price: Long,
     val imageUrl: String,
     val description: String,
