@@ -8,4 +8,7 @@ object BottomNavRoutes {
 
     @Serializable
     data object CartTab
+
+    @Serializable
+    data object SettingsTab
 }

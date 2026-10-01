@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":feature:cart"))
     implementation(project(":feature:promo"))
     implementation(project(":feature:checkout"))
+    implementation(project(":feature:settings"))
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":core:ui"))

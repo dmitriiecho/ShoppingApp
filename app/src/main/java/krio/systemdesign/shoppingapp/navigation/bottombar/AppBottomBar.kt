@@ -2,6 +2,7 @@ package krio.systemdesign.shoppingapp.navigation.bottombar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -32,7 +33,8 @@ fun AppBottomBar(
 
     val showBottomBar = currentDestination?.hierarchy?.any {
         it.hasRoute<BottomNavRoutes.CatalogTab>() ||
-            it.hasRoute<BottomNavRoutes.CartTab>()
+            it.hasRoute<BottomNavRoutes.CartTab>() ||
+            it.hasRoute<BottomNavRoutes.SettingsTab>()
     } == true
 
     if (!showBottomBar) return
@@ -67,6 +69,14 @@ fun AppBottomBar(
                 }
             },
             label = { Text(stringResource(R.string.app_bottom_bar_cart)) },
+        )
+        NavigationBarItem(
+            selected = currentDestination.hierarchy.any {
+                it.hasRoute<BottomNavRoutes.SettingsTab>()
+            },
+            onClick = { navController.navigateToBottomTab(BottomNavRoutes.SettingsTab) },
+            icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+            label = { Text(stringResource(R.string.app_bottom_bar_settings)) },
         )
     }
 }
