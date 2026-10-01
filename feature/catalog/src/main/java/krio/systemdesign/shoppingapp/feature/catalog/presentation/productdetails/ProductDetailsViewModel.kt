@@ -3,7 +3,6 @@ package krio.systemdesign.shoppingapp.feature.catalog.presentation.productdetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.core.ui.text.UiText
 import krio.systemdesign.shoppingapp.domain.model.Product
@@ -22,7 +21,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.CatalogRoutes
+import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.ProductDetailsRoute
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,9 +34,14 @@ class ProductDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val args = savedStateHandle.toRoute<CatalogRoutes.ProductDetails>()
-    private val productId = args.productId
-    private val productName = args.productName
+    // Карточку открывают разными маршрутами (из каталога и из корзины), поэтому читаем только поля
+    // общего интерфейса ProductDetailsRoute. Прежний вариант собирал CatalogRoutes.ProductDetails целиком:
+    // private val args = savedStateHandle.toRoute<CatalogRoutes.ProductDetails>()
+    // private val productId = args.productId
+    // private val productName = args.productName
+    private val productId: String = checkNotNull(savedStateHandle[ProductDetailsRoute::productId.name])
+    // В ссылке /product/{productId} названия нет.
+    private val productName: String = savedStateHandle[ProductDetailsRoute::productName.name] ?: ""
 
     private val productLoad = MutableStateFlow<ProductLoad>(ProductLoad.Loading)
 
