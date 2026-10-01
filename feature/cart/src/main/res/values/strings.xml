@@ -1,41 +1,37 @@
 <resources>
-    <string name="cart_title">Корзина</string>
-    <string name="cart_promo_code">Промокод</string>
-    <string name="cart_clear">Очистить корзину</string>
-    <string name="cart_checkout">Оформить заказ</string>
-    <string name="cart_order_total">Сумма заказа</string>
-    <string name="cart_empty_title">Корзина пуста</string>
-    <string name="cart_empty_message">Добавьте товары из каталога</string>
-    <string name="cart_cancel">Отмена</string>
+    <string name="cart_title">Cart</string>
+    <string name="cart_promo_code">Promo code</string>
+    <string name="cart_clear">Clear cart</string>
+    <string name="cart_checkout">Checkout</string>
+    <string name="cart_order_total">Order total</string>
+    <string name="cart_empty_title">Your cart is empty</string>
+    <string name="cart_empty_message">Add products from the catalog</string>
+    <string name="cart_cancel">Cancel</string>
 
-    <string name="cart_clear_dialog_title">Очистить корзину?</string>
-    <string name="cart_clear_dialog_message">Все товары будут удалены.</string>
-    <string name="cart_clear_dialog_confirm">Очистить</string>
+    <string name="cart_clear_dialog_title">Clear cart?</string>
+    <string name="cart_clear_dialog_message">All items will be removed.</string>
+    <string name="cart_clear_dialog_confirm">Clear</string>
 
-    <string name="cart_changed">Корзина обновилась, проверьте изменения</string>
-    <string name="cart_item_unavailable">Товар закончился</string>
-    <string name="cart_item_price_changed">Цена изменилась: теперь %1$s</string>
-    <string name="cart_promo_active">Промокод %1$s · −%2$d%%</string>
-    <string name="cart_promo_invalid">Промокод %1$s не действует</string>
-    <string name="cart_promo_invalid_hint">Уберите его, чтобы оформить заказ</string>
-    <string name="cart_promo_remove">Убрать</string>
-    <string name="cart_accept_new_prices">Принять</string>
-    <string name="cart_remove_unavailable">Удалить</string>
+    <string name="cart_changed">Your cart has been updated, please review the changes</string>
+    <string name="cart_item_unavailable">Out of stock</string>
+    <string name="cart_item_price_changed">Price changed: now %1$s</string>
+    <string name="cart_promo_active">Promo code %1$s · −%2$d%%</string>
+    <string name="cart_promo_invalid">Promo code %1$s is no longer valid</string>
+    <string name="cart_promo_invalid_hint">Remove it to place your order</string>
+    <string name="cart_promo_remove">Remove</string>
+    <string name="cart_accept_new_prices">Accept</string>
+    <string name="cart_remove_unavailable">Remove</string>
     <plurals name="cart_price_changes">
-        <item quantity="one">Изменилась цена %d товара</item>
-        <item quantity="few">Изменились цены %d товаров</item>
-        <item quantity="many">Изменились цены %d товаров</item>
-        <item quantity="other">Изменились цены %d товара</item>
+        <item quantity="one">Price changed for %d item</item>
+        <item quantity="other">Prices changed for %d items</item>
     </plurals>
     <plurals name="cart_unavailable_items">
-        <item quantity="one">Закончился %d товар</item>
-        <item quantity="few">Закончились %d товара</item>
-        <item quantity="many">Закончились %d товаров</item>
-        <item quantity="other">Закончились %d товара</item>
+        <item quantity="one">%d item is out of stock</item>
+        <item quantity="other">%d items are out of stock</item>
     </plurals>
 
-    <string name="cart_promo_applied">Промокод «%1$s» применён</string>
-    <string name="cart_promo_apply_error">Не удалось применить промокод</string>
-    <string name="cart_validation_error">Не удалось проверить корзину</string>
-    <string name="cart_update_error">Не удалось обновить корзину</string>
+    <string name="cart_promo_applied">Promo code “%1$s” applied</string>
+    <string name="cart_promo_apply_error">Couldn\'t apply the promo code</string>
+    <string name="cart_validation_error">Couldn\'t check your cart</string>
+    <string name="cart_update_error">Couldn\'t update your cart</string>
 </resources>

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">ShoppingAppV2</string>
-    <string name="app_bottom_bar_catalog">Каталог</string>
-    <string name="app_bottom_bar_cart">Корзина</string>
-    <string name="app_bottom_bar_settings">Настройки</string>
+    <string name="app_name" translatable="false">ShoppingApp</string>
+    <string name="app_bottom_bar_catalog">Catalog</string>
+    <string name="app_bottom_bar_cart">Cart</string>
+    <string name="app_bottom_bar_settings">Settings</string>
 </resources>

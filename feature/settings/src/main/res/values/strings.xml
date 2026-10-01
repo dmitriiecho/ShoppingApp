@@ -1,11 +1,11 @@
 <resources>
-    <string name="settings_title">Настройки</string>
-    <string name="settings_theme">Тема</string>
-    <string name="settings_theme_system">Системная</string>
-    <string name="settings_theme_light">Светлая</string>
-    <string name="settings_theme_dark">Тёмная</string>
-    <string name="settings_theme_save_error">Не удалось сохранить тему</string>
-    <string name="settings_deep_links_page">Диплинки для проверки</string>
-    <string name="settings_deep_links_page_description">Откроется страница со ссылками в браузере</string>
-    <string name="settings_no_browser">Не найден браузер, чтобы открыть страницу</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_save_error">Couldn\'t save the theme</string>
+    <string name="settings_deep_links_page">Deep links for testing</string>
+    <string name="settings_deep_links_page_description">Opens a page with the links in your browser</string>
+    <string name="settings_no_browser">No browser found to open the page</string>
 </resources>

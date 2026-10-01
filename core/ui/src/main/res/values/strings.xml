@@ -1,13 +1,13 @@
 <resources>
-    <string name="core_ui_applied_promo_code">Промокод %1$s · −%2$d%%</string>
-    <string name="core_ui_remove_promo_code">Убрать</string>
-    <string name="core_ui_add_to_cart">В корзину</string>
-    <string name="core_ui_decrease_quantity">Уменьшить количество</string>
-    <string name="core_ui_increase_quantity">Добавить ещё</string>
-    <string name="core_ui_remove_from_cart">Удалить из корзины</string>
-    <string name="core_ui_close">Закрыть</string>
-    <string name="core_ui_navigate_back">Назад</string>
-    <string name="core_ui_subtotal">Товары</string>
-    <string name="core_ui_discount">Скидка</string>
-    <string name="core_ui_total">Итого</string>
+    <string name="core_ui_applied_promo_code">Promo code %1$s · −%2$d%%</string>
+    <string name="core_ui_remove_promo_code">Remove</string>
+    <string name="core_ui_add_to_cart">Add to cart</string>
+    <string name="core_ui_decrease_quantity">Decrease quantity</string>
+    <string name="core_ui_increase_quantity">Increase quantity</string>
+    <string name="core_ui_remove_from_cart">Remove from cart</string>
+    <string name="core_ui_close">Close</string>
+    <string name="core_ui_navigate_back">Back</string>
+    <string name="core_ui_subtotal">Subtotal</string>
+    <string name="core_ui_discount">Discount</string>
+    <string name="core_ui_total">Total</string>
 </resources>
