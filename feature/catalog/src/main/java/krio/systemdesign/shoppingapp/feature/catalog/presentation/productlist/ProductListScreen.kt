@@ -1,5 +1,10 @@
 package krio.systemdesign.shoppingapp.feature.catalog.presentation.productlist
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -36,12 +42,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
@@ -165,45 +175,71 @@ private fun ProductListBody(
     onEvent: (ProductListEvent) -> Unit,
 ) {
     val refresh = products.loadState.refresh
+    // Обновление жестом не убирает список: пока оно идёт, видны прежние товары и индикатор сверху.
+    // Остальные загрузки с нуля (первая, после смены запроса, по «Повторить») показывают индикатор на весь экран.
+    var isPullRefreshing by remember { mutableStateOf(false) }
+    LaunchedEffect(refresh) {
+        if (refresh !is LoadState.Loading) isPullRefreshing = false
+    }
 
-    when {
-        refresh is LoadState.Loading -> LoadingContent()
-        refresh is LoadState.Error -> ErrorContent(
-            message = stringResource(R.string.catalog_load_error),
-            onRetry = { products.retry() },
-        )
-        refresh is LoadState.NotLoading && products.itemCount == 0 -> EmptyContent(
-            message = if (searchQuery.isBlank()) {
-                stringResource(R.string.catalog_empty)
-            } else {
-                stringResource(R.string.catalog_search_no_results, searchQuery)
-            },
-        )
-        else -> {
-            val listState = rememberLazyListState()
-            LaunchedEffect(listState) {
-                snapshotFlow { listState.firstVisibleItemIndex }
-                    .collect { onEvent(ProductListEvent.OnFirstVisibleItemChanged(it)) }
-            }
-            val isPrependErrorVisible by remember(listState, products) {
-                derivedStateOf {
-                    products.loadState.prepend is LoadState.Error &&
-                        listState.firstVisibleItemIndex < products.itemSnapshotList.placeholdersBefore
+    PullToRefreshBox(
+        isRefreshing = isPullRefreshing && refresh is LoadState.Loading,
+        onRefresh = {
+            isPullRefreshing = true
+            products.refresh()
+        },
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        when {
+            refresh is LoadState.Loading && !isPullRefreshing -> LoadingContent()
+            refresh is LoadState.Error -> ErrorContent(
+                message = stringResource(R.string.catalog_load_error),
+                onRetry = { products.retry() },
+            )
+            products.itemCount == 0 -> EmptyContent(
+                message = if (searchQuery.isBlank()) {
+                    stringResource(R.string.catalog_empty)
+                } else {
+                    stringResource(R.string.catalog_search_no_results, searchQuery)
+                },
+            )
+            else -> {
+                val listState = rememberLazyListState()
+                val scope = rememberCoroutineScope()
+                LaunchedEffect(listState) {
+                    snapshotFlow { listState.firstVisibleItemIndex }
+                        .collect { onEvent(ProductListEvent.OnFirstVisibleItemChanged(it)) }
                 }
-            }
-            Box(modifier = Modifier.fillMaxSize()) {
-                ProductList(
-                    listState = listState,
-                    products = products,
-                    cartQuantities = cartQuantities,
-                    onEvent = onEvent,
-                )
-                if (isPrependErrorVisible) {
-                    PrependErrorBanner(
-                        onRetry = { products.retry() },
+                val isPrependErrorVisible by remember(listState, products) {
+                    derivedStateOf {
+                        products.loadState.prepend is LoadState.Error &&
+                            listState.firstVisibleItemIndex < products.itemSnapshotList.placeholdersBefore
+                    }
+                }
+                val isScrollToTopVisible by remember(listState) {
+                    derivedStateOf { listState.firstVisibleItemIndex > 0 }
+                }
+                Box(modifier = Modifier.fillMaxSize()) {
+                    ProductList(
+                        listState = listState,
+                        products = products,
+                        cartQuantities = cartQuantities,
+                        onEvent = onEvent,
+                    )
+                    if (isPrependErrorVisible) {
+                        PrependErrorBanner(
+                            onRetry = { products.retry() },
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                        )
+                    }
+                    ScrollToTopButton(
+                        visible = isScrollToTopVisible,
+                        onClick = { scope.launch { listState.animateScrollToItem(0) } },
                         modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            .align(Alignment.BottomCenter)
+                            .padding(16.dp),
                     )
                 }
             }
@@ -223,7 +259,14 @@ private fun ProductList(
 
     LazyColumn(
         state = listState,
-        contentPadding = PaddingValues(16.dp),
+        // Снизу запас под кнопку «Наверх» (её отступ + высота + зазор),
+        // чтобы в конце списка она не закрывала последнюю карточку.
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            top = 16.dp,
+            end = 16.dp,
+            bottom = 16.dp + ButtonDefaults.MinHeight + 16.dp,
+        ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(
@@ -457,6 +500,28 @@ private fun PrependErrorBanner(
 }
 
 @Composable
+private fun ScrollToTopButton(
+    visible: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        modifier = modifier,
+        enter = fadeIn() + scaleIn(),
+        exit = fadeOut() + scaleOut(),
+    ) {
+        // Высотой как кнопка «В корзину» на карточках (CartQuantityControl).
+        ExtendedFloatingActionButton(
+            onClick = onClick,
+            modifier = Modifier.height(ButtonDefaults.MinHeight),
+        ) {
+            Text(stringResource(R.string.catalog_scroll_to_top))
+        }
+    }
+}
+
+@Composable
 private fun LoadingContent(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -498,31 +563,36 @@ private fun ErrorContent(
     }
 }
 
+// Обёрнут в LazyColumn, потому что потянуть для обновления можно только прокручиваемый экран.
 @Composable
 private fun EmptyContent(
     message: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Inventory2,
-            contentDescription = null,
-            modifier = Modifier.size(56.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        item {
+            Column(
+                modifier = Modifier
+                    .fillParentMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Inventory2,
+                    contentDescription = null,
+                    modifier = Modifier.size(56.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 

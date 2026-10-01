@@ -7,6 +7,7 @@
     <string name="catalog_append_error">Ошибка загрузки</string>
     <string name="catalog_prepend_error">Не удалось загрузить товары выше</string>
     <string name="catalog_retry">Повторить</string>
+    <string name="catalog_scroll_to_top">Наверх</string>
 
     <string name="catalog_product_title">Товар</string>
     <string name="catalog_product_load_error">Не удалось загрузить товар</string>
