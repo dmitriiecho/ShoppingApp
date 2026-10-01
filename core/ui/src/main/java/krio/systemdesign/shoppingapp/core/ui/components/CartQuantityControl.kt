@@ -46,7 +46,7 @@ fun CartQuantityControl(
     onDecrease: () -> Unit,
     onRemoveAll: () -> Unit,
     modifier: Modifier = Modifier,
-    // false — «+» выключен, например у закончившегося товара в корзине. «−» и удаление работают.
+    // false — «+» выключен: в корзине уже весь доступный остаток или товар закончился. «−» и удаление работают.
     canIncrease: Boolean = true,
 ) {
     val controlHeight = ButtonDefaults.MinHeight

@@ -6,4 +6,7 @@ data class CartItem(
     val imageUrl: String,
     val price: Long,
     val quantity: Int,
+    // Сколько штук можно было заказать, когда товар добавили из каталога. Может устареть:
+    // настоящий остаток сообщает проверка корзины (ItemIssue.NotEnoughStock и Unavailable).
+    val availableQuantity: Int,
 )

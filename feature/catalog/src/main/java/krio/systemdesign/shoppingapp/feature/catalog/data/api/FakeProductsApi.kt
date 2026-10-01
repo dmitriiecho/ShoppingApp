@@ -67,7 +67,7 @@ internal class FakeProductsApi : ProductsApi {
                 name = "USB-C Hub",
                 price = 3499,
                 description = "Компактный хаб USB-C с HDMI, USB-A и слотом для карт памяти — один кабель вместо нескольких.",
-                available = false,
+                availableQuantity = 0,
             ),
             product(
                 id = "4",
@@ -146,7 +146,7 @@ internal class FakeProductsApi : ProductsApi {
                 name = "Hoodie",
                 price = 3999,
                 description = "Худи из плотного футера с капюшоном и карманом-кенгуру, не садится после стирки.",
-                available = false,
+                availableQuantity = 0,
             ),
             product(
                 id = "17",
@@ -203,14 +203,14 @@ internal class FakeProductsApi : ProductsApi {
             name: String,
             price: Long,
             description: String,
-            available: Boolean = true,
+            availableQuantity: Int = 10,
         ) = ProductDTO(
             id = id,
             name = name,
             price = price,
             imageUrl = "https://picsum.photos/seed/$id/400/400",
             description = description,
-            available = available,
+            availableQuantity = availableQuantity,
         )
     }
 }

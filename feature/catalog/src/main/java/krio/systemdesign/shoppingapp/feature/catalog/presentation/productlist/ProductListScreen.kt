@@ -326,6 +326,7 @@ private fun ProductListItem(
                     onDecrease = { onUpdateQuantity(quantity - 1) },
                     onRemoveAll = onRemoveFromCart,
                     modifier = Modifier.fillMaxWidth(),
+                    canIncrease = quantity < product.availableQuantity,
                 )
             } else {
                 OutOfStockButton()

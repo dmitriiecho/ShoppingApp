@@ -45,7 +45,7 @@ fun Application.module(data: ShopData, imagesDir: NioPath) {
         staticFiles("/images", File(imagesDir.toString()), index = null)
         productRoutes(data.products)
         promoCodeRoutes(data.promoCodes)
-        cartRoutes(data.promoCodes)
+        cartRoutes(data.products, data.promoCodes)
     }
 }
 

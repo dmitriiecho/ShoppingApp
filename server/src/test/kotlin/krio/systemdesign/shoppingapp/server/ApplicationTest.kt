@@ -76,10 +76,42 @@ class ApplicationTest {
     }
 
     @Test
-    fun `товары в корзине пока не проверяются`() = serverTest { client ->
-        val response = client.validateCart(promoCode = null, items = listOf(CartItemDTO("3", price = 1, quantity = 2)))
+    fun `корзина без расхождений с каталогом`() = serverTest { client ->
+        val response = client.validateCart(promoCode = null, items = listOf(CartItemDTO("1", price = 1000, quantity = 5)))
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals(CartValidationResponseDTO(issues = emptyList(), promoCodeValid = true), response.body())
+    }
+
+    @Test
+    fun `закончившийся и неизвестный товар - unavailable без цены и остатка`() = serverTest { client ->
+        assertEquals(
+            listOf(ItemIssueDTO.Unavailable("3"), ItemIssueDTO.Unavailable("42")),
+            client.cartIssues(CartItemDTO("3", price = 1, quantity = 2), CartItemDTO("42", price = 1000, quantity = 1)),
+        )
+    }
+
+    @Test
+    fun `в корзине больше остатка`() = serverTest { client ->
+        assertEquals(
+            listOf(ItemIssueDTO.NotEnoughStock("2", availableQuantity = 2)),
+            client.cartIssues(CartItemDTO("2", price = 1000, quantity = 3)),
+        )
+    }
+
+    @Test
+    fun `изменилась цена`() = serverTest { client ->
+        assertEquals(
+            listOf(ItemIssueDTO.PriceChanged("1", newPrice = 1000)),
+            client.cartIssues(CartItemDTO("1", price = 900, quantity = 1)),
+        )
+    }
+
+    @Test
+    fun `изменились и цена, и остаток`() = serverTest { client ->
+        assertEquals(
+            listOf(ItemIssueDTO.PriceChanged("2", newPrice = 1000), ItemIssueDTO.NotEnoughStock("2", availableQuantity = 2)),
+            client.cartIssues(CartItemDTO("2", price = 900, quantity = 3)),
+        )
     }
 
     @Test
@@ -106,11 +138,16 @@ class ApplicationTest {
     @Test
     fun `формат проблем в корзине`() {
         val response = CartValidationResponseDTO(
-            issues = listOf(ItemIssueDTO.Unavailable("3"), ItemIssueDTO.PriceChanged("1", newPrice = 900)),
+            issues = listOf(
+                ItemIssueDTO.Unavailable("3"),
+                ItemIssueDTO.PriceChanged("1", newPrice = 900),
+                ItemIssueDTO.NotEnoughStock("2", availableQuantity = 2),
+            ),
             promoCodeValid = false,
         )
         assertEquals(
-            """{"issues":[{"type":"unavailable","productId":"3"},{"type":"priceChanged","productId":"1","newPrice":900}],"promoCodeValid":false}""",
+            """{"issues":[{"type":"unavailable","productId":"3"},{"type":"priceChanged","productId":"1","newPrice":900},""" +
+                """{"type":"notEnoughStock","productId":"2","availableQuantity":2}],"promoCodeValid":false}""",
             Json.encodeToString(response),
         )
     }
@@ -147,6 +184,9 @@ class ApplicationTest {
             ShopData(products = TEST_DATA.products + TEST_DATA.products[0], promoCodes = emptyList())
         }
         assertFailsWith<IllegalArgumentException> {
+            ShopData(products = listOf(product(id = "1", name = "Mug", availableQuantity = -1)), promoCodes = emptyList())
+        }
+        assertFailsWith<IllegalArgumentException> {
             ShopData(products = emptyList(), promoCodes = listOf(PromoCodeDTO("FREE", 0)))
         }
         assertFailsWith<IllegalArgumentException> {
@@ -167,23 +207,26 @@ class ApplicationTest {
         setBody(CartValidationRequestDTO(items = items, promoCode = promoCode))
     }
 
+    private suspend fun HttpClient.cartIssues(vararg items: CartItemDTO): List<ItemIssueDTO> =
+        validateCart(promoCode = null, items = items.toList()).body<CartValidationResponseDTO>().issues
+
     private companion object {
         val TEST_DATA = ShopData(
             products = listOf(
                 product(id = "1", name = "Red Mug"),
-                product(id = "2", name = "Blue Mug"),
-                product(id = "3", name = "Lamp", available = false),
+                product(id = "2", name = "Blue Mug", availableQuantity = 2),
+                product(id = "3", name = "Lamp", availableQuantity = 0),
             ),
             promoCodes = listOf(PromoCodeDTO("SALE10", 10)),
         )
 
-        fun product(id: String, name: String, available: Boolean = true) = ProductDTO(
+        fun product(id: String, name: String, availableQuantity: Int = 10) = ProductDTO(
             id = id,
             name = name,
             price = 1000,
             imageUrl = "https://picsum.photos/seed/$id/400/400",
             description = "",
-            available = available,
+            availableQuantity = availableQuantity,
         )
     }
 }

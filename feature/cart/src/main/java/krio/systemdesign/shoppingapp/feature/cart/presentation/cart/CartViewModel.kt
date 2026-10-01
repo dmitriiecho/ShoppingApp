@@ -18,6 +18,8 @@ import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ApplyPromoCodeU
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ClearCartItemsUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.RemovePromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ValidateCartUseCase
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,8 +71,12 @@ class CartViewModel @Inject constructor(
             // Пометки вычисляются из корзины, поэтому исправленное любым способом исчезает само.
             itemIssues = changes.issues
                 .filter { it.isPending(cart.items) }
-                .associateBy { it.itemId }
+                .groupBy { it.itemId }
+                .mapValues { (_, issues) -> issues.toImmutableList() }
                 .toImmutableMap(),
+            // Из всех найденных изменений, а не только неисправленных: когда пользователь сам уменьшил
+            // количество до остатка, «+» не должен снова дать его превысить.
+            stockLimits = changes.issues.stockLimits(),
             isPromoCodeValid = isPromoCodeValid,
             isValidating = validating,
             isClearCartDialogVisible = clearCartDialogVisible,
@@ -124,10 +130,10 @@ class CartViewModel @Inject constructor(
                 savedStateHandle[KEY_CLEAR_CART_DIALOG_VISIBLE] = false
             }
             CartEvent.OnAcceptNewPricesClick -> launchCartAction {
-                acceptCartChanges(uiState.value.itemIssues.values.filterIsInstance<ItemIssue.PriceChanged>())
+                acceptCartChanges(uiState.value.itemIssues.values.flatten().filterIsInstance<ItemIssue.PriceChanged>())
             }
             CartEvent.OnRemoveUnavailableClick -> launchCartAction {
-                acceptCartChanges(uiState.value.itemIssues.values.filterIsInstance<ItemIssue.Unavailable>())
+                acceptCartChanges(uiState.value.itemIssues.values.flatten().filterIsInstance<ItemIssue.Unavailable>())
             }
         }
     }
@@ -191,14 +197,27 @@ private data class FoundChanges(
     val invalidPromoCode: String? = null,
 )
 
-// Изменение ещё не исправлено: товар по-прежнему в корзине, а для новой цены — цена в корзине ещё старая.
+// Изменение ещё не исправлено: товар по-прежнему в корзине, для новой цены — цена в корзине ещё старая,
+// а для нехватки остатка — в корзине всё ещё больше, чем можно заказать.
 private fun ItemIssue.isPending(items: List<CartItem>): Boolean = when (this) {
     is ItemIssue.Unavailable -> items.any { it.productId == productId }
     is ItemIssue.PriceChanged -> items.any { it.productId == productId && it.price != newPrice }
+    is ItemIssue.NotEnoughStock -> items.any { it.productId == productId && it.quantity > availableQuantity }
 }
 
 private val ItemIssue.itemId: String
     get() = when (this) {
         is ItemIssue.Unavailable -> productId
         is ItemIssue.PriceChanged -> productId
+        is ItemIssue.NotEnoughStock -> productId
     }
+
+// Остатки, о которых сообщила проверка: закончившийся товар — 0. Ключ — productId.
+private fun List<ItemIssue>.stockLimits(): ImmutableMap<String, Int> =
+    mapNotNull { issue ->
+        when (issue) {
+            is ItemIssue.Unavailable -> issue.productId to 0
+            is ItemIssue.NotEnoughStock -> issue.productId to issue.availableQuantity
+            is ItemIssue.PriceChanged -> null
+        }
+    }.toMap().toImmutableMap()

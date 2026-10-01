@@ -155,6 +155,7 @@ private fun ProductDetailsContent(
                 onDecrease = { onEvent(ProductDetailsEvent.OnUpdateCartQuantity(quantity - 1)) },
                 onRemoveAll = { onEvent(ProductDetailsEvent.OnRemoveFromCart) },
                 modifier = controlModifier,
+                canIncrease = quantity < product.availableQuantity,
             )
         } else {
             OutOfStockButton(modifier = controlModifier)

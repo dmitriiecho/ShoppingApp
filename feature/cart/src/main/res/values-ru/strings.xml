@@ -15,6 +15,7 @@
     <string name="cart_changed">Корзина обновилась, проверьте изменения</string>
     <string name="cart_item_unavailable">Товар закончился</string>
     <string name="cart_item_price_changed">Цена изменилась: теперь %1$s</string>
+    <string name="cart_item_not_enough_stock">Теперь для заказа доступно только %1$d шт.</string>
     <string name="cart_promo_active">Промокод %1$s · −%2$d%%</string>
     <string name="cart_promo_invalid">Промокод %1$s не действует</string>
     <string name="cart_promo_invalid_hint">Уберите его, чтобы оформить заказ</string>

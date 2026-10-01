@@ -38,4 +38,9 @@ sealed interface ItemIssueDTO {
     @Serializable
     @SerialName("priceChanged")
     data class PriceChanged(val productId: String, val newPrice: Long) : ItemIssueDTO
+
+    // В корзине больше, чем можно заказать. availableQuantity больше 0: при 0 приходит Unavailable.
+    @Serializable
+    @SerialName("notEnoughStock")
+    data class NotEnoughStock(val productId: String, val availableQuantity: Int) : ItemIssueDTO
 }

@@ -17,6 +17,9 @@ class ShopData(
         products.groupBy { it.id }.forEach { (id, sameId) ->
             require(sameId.size == 1) { "Несколько товаров с id $id" }
         }
+        products.forEach {
+            require(it.availableQuantity >= 0) { "У товара ${it.id} отрицательный остаток" }
+        }
         // Коды проверяются без учёта регистра, поэтому SALE10 и sale10 — один и тот же код.
         promoCodes.groupBy { it.code.uppercase() }.forEach { (code, sameCode) ->
             require(sameCode.size == 1) { "Промокод $code указан несколько раз" }

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.ProductionQuantityLimits
 import androidx.compose.material.icons.outlined.RemoveShoppingCart
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.ShoppingCart
@@ -67,6 +68,8 @@ import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.cart.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,7 +180,8 @@ fun CartScreen(
                 ) { item ->
                     CartListItem(
                         item = item,
-                        issue = uiState.itemIssues[item.productId],
+                        issues = uiState.itemIssues[item.productId] ?: persistentListOf(),
+                        canIncrease = uiState.canIncrease(item),
                         onClick = {
                             viewModel.onEvent(CartEvent.OnItemClick(item.productId, item.name))
                         },
@@ -211,8 +215,9 @@ fun CartScreen(
 @Composable
 private fun CartListItem(
     item: CartItem,
-    // Изменение, которое нашла проверка корзины и которое ещё не исправлено.
-    issue: ItemIssue?,
+    // Изменения, которые нашла проверка корзины и которые ещё не исправлены.
+    issues: ImmutableList<ItemIssue>,
+    canIncrease: Boolean,
     onClick: () -> Unit,
     onIncrease: () -> Unit,
     onDecrease: () -> Unit,
@@ -220,7 +225,7 @@ private fun CartListItem(
     modifier: Modifier = Modifier,
 ) {
     // Закончившийся товар приглушён, чтобы его было видно сразу, даже не читая плашку.
-    val contentAlpha = if (issue is ItemIssue.Unavailable) UNAVAILABLE_ALPHA else 1f
+    val contentAlpha = if (issues.any { it is ItemIssue.Unavailable }) UNAVAILABLE_ALPHA else 1f
     AppCard(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
@@ -260,9 +265,11 @@ private fun CartListItem(
                     )
                 }
             }
-            if (issue != null) {
+            if (issues.isNotEmpty()) {
                 Spacer(Modifier.height(12.dp))
-                ItemIssueNotice(issue = issue)
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    issues.forEach { ItemIssueNotice(issue = it) }
+                }
             }
             Spacer(Modifier.height(12.dp))
             CartQuantityControl(
@@ -272,8 +279,8 @@ private fun CartListItem(
                 onDecrease = onDecrease,
                 onRemoveAll = onRemove,
                 modifier = Modifier.fillMaxWidth(),
-                // Товара больше нет: добавить ещё нельзя, уменьшить и удалить можно.
-                canIncrease = issue !is ItemIssue.Unavailable,
+                // В корзине уже весь остаток или товар закончился: добавить ещё нельзя, уменьшить и удалить можно.
+                canIncrease = canIncrease,
             )
         }
     }
@@ -411,6 +418,13 @@ private fun ItemIssueNotice(
             icon = Icons.Outlined.Sell,
             // Старая цена видна строкой выше, в плашке только новая.
             title = stringResource(R.string.cart_item_price_changed, formatPrice(issue.newPrice)),
+            accentColor = MaterialTheme.colorScheme.primary,
+            modifier = modifier,
+        )
+        // Общей плашки с кнопкой нет: количество пользователь уменьшает сам кнопкой «−».
+        is ItemIssue.NotEnoughStock -> CartNotice(
+            icon = Icons.Outlined.ProductionQuantityLimits,
+            title = stringResource(R.string.cart_item_not_enough_stock, issue.availableQuantity),
             accentColor = MaterialTheme.colorScheme.primary,
             modifier = modifier,
         )

@@ -26,14 +26,22 @@ class RoomLocalCartDataSource @Inject constructor(
         require(quantity > 0) { "quantity must be positive" }
         database.withTransaction {
             val existing = cartItemDao.find(product.id)
-            val entity = existing?.copy(quantity = existing.quantity + quantity)
-                ?: CartItemEntity(
+            val entity = if (existing != null) {
+                // Остаток из каталога свежее запомненного, поэтому обновляем и его.
+                existing.copy(
+                    quantity = existing.quantity + quantity,
+                    availableQuantity = product.availableQuantity,
+                )
+            } else {
+                CartItemEntity(
                     productId = product.id,
                     name = product.name,
                     imageUrl = product.imageUrl,
                     price = product.price,
                     quantity = quantity,
+                    availableQuantity = product.availableQuantity,
                 )
+            }
             cartItemDao.upsert(entity)
         }
     }
@@ -84,6 +92,8 @@ class RoomLocalCartDataSource @Inject constructor(
                         val existing = cartItemDao.find(issue.productId) ?: return@forEach
                         cartItemDao.upsert(existing.copy(price = issue.newPrice))
                     }
+                    // Количество пользователь уменьшает сам, у каждого товара: разом такое изменение не принимается.
+                    is ItemIssue.NotEnoughStock -> Unit
                 }
             }
         }
@@ -109,6 +119,7 @@ private fun CartItemEntity.toCartItem(): CartItem = CartItem(
     imageUrl = imageUrl,
     price = price,
     quantity = quantity,
+    availableQuantity = availableQuantity,
 )
 
 private fun AppliedPromoCodeEntity.toPromoCode(): PromoCode = PromoCode(

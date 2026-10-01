@@ -15,7 +15,10 @@ data class CartUiState(
     val totalPrice: Long = 0,
     val promoCode: PromoCode? = null,
     // Изменения в товарах, которые нашла проверка корзины и которые ещё не исправлены. Ключ — productId.
-    val itemIssues: ImmutableMap<String, ItemIssue> = persistentMapOf(),
+    // У одного товара их может быть несколько, например новая цена и нехватка остатка.
+    val itemIssues: ImmutableMap<String, ImmutableList<ItemIssue>> = persistentMapOf(),
+    // Сколько штук можно заказать по последней проверке, если она сообщила об остатке товара. Ключ — productId.
+    val stockLimits: ImmutableMap<String, Int> = persistentMapOf(),
     // false — проверка нашла, что применённый промокод больше не действует, и его ещё не убрали.
     val isPromoCodeValid: Boolean = true,
     val isValidating: Boolean = false,
@@ -23,10 +26,15 @@ data class CartUiState(
 ) {
     val isEmpty: Boolean get() = items.isEmpty()
 
-    val priceChangeCount: Int get() = itemIssues.values.count { it is ItemIssue.PriceChanged }
+    val priceChangeCount: Int get() = itemIssues.values.sumOf { issues -> issues.count { it is ItemIssue.PriceChanged } }
 
-    val unavailableItemCount: Int get() = itemIssues.values.count { it is ItemIssue.Unavailable }
+    val unavailableItemCount: Int get() = itemIssues.values.sumOf { issues -> issues.count { it is ItemIssue.Unavailable } }
 
     // Оформить заказ можно, только когда все найденные проверкой изменения исправлены.
     val canCheckout: Boolean get() = itemIssues.isEmpty() && isPromoCodeValid
+
+    // «+» работает, пока в корзине меньше остатка: того, что сообщила проверка,
+    // а если она про этот товар ничего не сказала — запомненного при добавлении из каталога.
+    fun canIncrease(item: CartItem): Boolean =
+        item.quantity < (stockLimits[item.productId] ?: item.availableQuantity)
 }

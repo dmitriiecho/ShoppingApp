@@ -38,6 +38,10 @@ internal sealed interface ItemIssueDTO {
     @Serializable
     @SerialName("priceChanged")
     data class PriceChanged(val productId: String, val newPrice: Long) : ItemIssueDTO
+
+    @Serializable
+    @SerialName("notEnoughStock")
+    data class NotEnoughStock(val productId: String, val availableQuantity: Int) : ItemIssueDTO
 }
 
 internal fun Cart.toValidationRequest(): CartValidationRequestDTO = CartValidationRequestDTO(
@@ -48,4 +52,5 @@ internal fun Cart.toValidationRequest(): CartValidationRequestDTO = CartValidati
 internal fun ItemIssueDTO.toDomain(): ItemIssue = when (this) {
     is ItemIssueDTO.Unavailable -> ItemIssue.Unavailable(productId)
     is ItemIssueDTO.PriceChanged -> ItemIssue.PriceChanged(productId, newPrice)
+    is ItemIssueDTO.NotEnoughStock -> ItemIssue.NotEnoughStock(productId, availableQuantity)
 }

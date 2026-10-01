@@ -6,5 +6,8 @@ data class Product(
     val price: Long,
     val imageUrl: String,
     val description: String,
-    val isAvailable: Boolean,
-)
+    // Сколько штук можно заказать. 0 — товар закончился.
+    val availableQuantity: Int,
+) {
+    val isAvailable: Boolean get() = availableQuantity > 0
+}

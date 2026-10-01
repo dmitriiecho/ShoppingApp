@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "63b8e660e8e13c6e8fcc1c5a58608a59",
+    "identityHash": "1a94012fcaf46b44c5d7c17fb591f10a",
     "entities": [
       {
         "tableName": "cart_items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` TEXT NOT NULL, `name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `price` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, PRIMARY KEY(`productId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` TEXT NOT NULL, `name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `price` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, `availableQuantity` INTEGER NOT NULL, PRIMARY KEY(`productId`))",
         "fields": [
           {
             "fieldPath": "productId",
@@ -35,6 +35,12 @@
           {
             "fieldPath": "quantity",
             "columnName": "quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "availableQuantity",
+            "columnName": "availableQuantity",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -79,7 +85,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '63b8e660e8e13c6e8fcc1c5a58608a59')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a94012fcaf46b44c5d7c17fb591f10a')"
     ]
   }
 }
