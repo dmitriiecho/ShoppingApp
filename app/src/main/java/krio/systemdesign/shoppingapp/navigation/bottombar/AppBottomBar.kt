@@ -17,7 +17,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
@@ -72,9 +71,11 @@ fun AppBottomBar(
     }
 }
 
-private fun NavHostController.navigateToBottomTab(route: Any) {
+// Снимаем со стека всё, включая каталог: под открытой вкладкой ничего не лежит,
+// поэтому «Назад» с корня любой вкладки выходит из приложения, а не ведёт в каталог.
+internal fun NavHostController.navigateToBottomTab(route: Any) {
     navigate(route) {
-        popUpTo(graph.findStartDestination().id) {
+        popUpTo(graph.id) {
             saveState = true
         }
         launchSingleTop = true

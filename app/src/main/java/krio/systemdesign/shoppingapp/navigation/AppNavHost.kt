@@ -1,14 +1,19 @@
 package krio.systemdesign.shoppingapp.navigation
 
+import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.NavGraph
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.navigation
@@ -30,9 +35,12 @@ import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.graph
 import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.promo
 import krio.systemdesign.shoppingapp.navigation.bottombar.AppBottomBar
 import krio.systemdesign.shoppingapp.navigation.bottombar.BottomNavRoutes
+import krio.systemdesign.shoppingapp.navigation.bottombar.navigateToBottomTab
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AppNavHost(
+    deepLinks: Flow<Uri>,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
@@ -112,8 +120,39 @@ fun AppNavHost(
                 },
             )
         }
+
+        // Граф задаётся внутри NavHost, поэтому ссылки открываем только после него.
+        LaunchedEffect(navController, deepLinks) {
+            deepLinks.collect { navController.openDeepLink(it) }
+        }
     }
 }
+
+// Открываем ссылку так же, как пользователь открыл бы экран сам.
+// Поэтому с /cart «Назад» выходит из приложения, а с /product/{id} возвращает в каталог.
+private fun NavHostController.openDeepLink(uri: Uri) {
+    // Шаблоны ссылок записаны без слеша в конце, а /cart/ и /product/1/ должны открываться так же.
+    val path = uri.encodedPath?.trimEnd('/')
+    val link = NavDeepLinkRequest.Builder.fromUri(uri.buildUpon().encodedPath(path).build()).build()
+
+    // Ищем вкладку, в которой есть экран для этой ссылки. Если такой нет (например, /catalog/shoes), пропускаем.
+    val tab = listOf(BottomNavRoutes.CatalogTab, BottomNavRoutes.CartTab)
+        .firstOrNull { tabGraph(it).hasDeepLink(link) }
+        ?: return
+    // Первый экран вкладки: список товаров или корзина.
+    val tabRoot = tabGraph(tab).findStartDestination()
+
+    // Переключаемся на вкладку, как при нажатии в нижней панели.
+    navigateToBottomTab(tab)
+    // Закрываем экраны, открытые во вкладке поверх первого.
+    popBackStack(tabRoot.id, inclusive = false)
+    // Если ссылка ведёт не на первый экран вкладки (например, на товар), открываем нужный экран поверх.
+    if (!tabRoot.hasDeepLink(link)) {
+        navigate(link)
+    }
+}
+
+private fun NavHostController.tabGraph(tab: Any): NavGraph = graph.findNode(tab) as NavGraph
 
 // Верхний экран становится RESUMED, только когда анимация перехода к нему закончилась.
 // Проверяем в момент касания, а не при перерисовке: второе нажатие может прийти раньше неё.

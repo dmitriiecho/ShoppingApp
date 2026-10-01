@@ -45,9 +45,11 @@ fun CatalogNavigationScope.graph(
 
         composable<CatalogRoutes.ProductDetails>(
             deepLinks = listOf(
-                navDeepLink<CatalogRoutes.ProductDetails>(
-                    basePath = "${DeepLinkConfig.BASE_URI}/product",
-                ),
+                // Шаблон задан явно, а не собран из полей ProductDetails: формат ссылки публичный и не должен
+                // меняться вместе с маршрутом, а productName из ссылки подставлялся бы в заголовок как есть.
+                navDeepLink {
+                    uriPattern = "${DeepLinkConfig.BASE_URI}/product/{productId}"
+                },
             ),
         ) {
             ProductDetailsScreen(
