@@ -52,6 +52,9 @@ coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref 
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 
+# Для build-logic: типы AGP, которыми convention plugins настраивают блок android.
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -62,4 +65,11 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 room = { id = "androidx.room", version.ref = "room" }
+
+# Плагины проекта из build-logic.
+shoppingapp-android-application = { id = "shoppingapp.android.application" }
+shoppingapp-android-library = { id = "shoppingapp.android.library" }
+shoppingapp-android-compose = { id = "shoppingapp.android.compose" }
+shoppingapp-android-hilt = { id = "shoppingapp.android.hilt" }
+shoppingapp-android-feature = { id = "shoppingapp.android.feature" }
 

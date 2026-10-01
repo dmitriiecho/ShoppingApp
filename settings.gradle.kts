@@ -1,4 +1,6 @@
 pluginManagement {
+    // Общие настройки модулей (convention plugins): compileSdk, minSdk, Compose, Hilt, набор зависимостей фичи.
+    includeBuild("build-logic")
     repositories {
         google {
             content {
