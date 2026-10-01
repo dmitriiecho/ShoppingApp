@@ -14,7 +14,9 @@ object ConfigModule {
     @Provides
     @Singleton
     fun provideNetworkSettings(): NetworkSettings = NetworkSettings(
-        baseUrl = "https://api.example.com/",
+        // Наш сервер (исходники в server/). HTTPS у него нет, поэтому HTTP для этого адреса разрешён
+        // в app/src/main/res/xml/network_security_config.xml: при смене адреса поменяйте его и там.
+        baseUrl = "http://2.56.204.151:8080/",
     )
 
     @Provides

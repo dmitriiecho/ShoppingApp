@@ -1,7 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.promo.di
 
-import krio.systemdesign.shoppingapp.feature.promo.BuildConfig
-import krio.systemdesign.shoppingapp.feature.promo.data.api.FakePromoApi
 import krio.systemdesign.shoppingapp.feature.promo.data.api.PromoApi
 import dagger.Module
 import dagger.Provides
@@ -16,6 +14,5 @@ import javax.inject.Singleton
 internal object PromoModule {
     @Provides
     @Singleton
-    fun providePromoApi(retrofit: Retrofit): PromoApi =
-        if (BuildConfig.DEBUG) FakePromoApi() else retrofit.create()
+    fun providePromoApi(retrofit: Retrofit): PromoApi = retrofit.create()
 }

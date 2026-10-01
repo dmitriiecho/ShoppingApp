@@ -6,6 +6,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.net.HttpURLConnection.HTTP_NOT_FOUND
 
+// Сейчас не используется: приложение ходит на наш сервер (server/), промокоды оттуда — в server/data/promo-codes.json.
 internal class FakePromoApi : PromoApi {
 
     override suspend fun checkPromoCode(code: String): Response<PromoCodeDTO> {

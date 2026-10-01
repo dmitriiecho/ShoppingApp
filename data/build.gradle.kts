@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.shoppingapp.android.library)
     alias(libs.plugins.shoppingapp.android.hilt)
     alias(libs.plugins.room)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -19,6 +20,7 @@ room {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":core:config"))
+    implementation(project(":core:network"))
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

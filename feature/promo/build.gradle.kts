@@ -4,10 +4,6 @@ plugins {
 
 android {
     namespace = "krio.systemdesign.shoppingapp.feature.promo"
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {

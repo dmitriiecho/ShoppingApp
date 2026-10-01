@@ -4,10 +4,6 @@ plugins {
 
 android {
     namespace = "krio.systemdesign.shoppingapp.feature.catalog"
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {

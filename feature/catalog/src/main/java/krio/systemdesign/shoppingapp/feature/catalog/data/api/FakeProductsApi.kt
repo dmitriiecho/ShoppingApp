@@ -7,6 +7,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.net.HttpURLConnection.HTTP_NOT_FOUND
 
+// Сейчас не используется: приложение ходит на наш сервер (server/), товары оттуда — в server/data/products.json.
 internal class FakeProductsApi : ProductsApi {
 
     override suspend fun getProducts(query: String, page: Int, pageSize: Int): Response<ProductsPageDTO> {

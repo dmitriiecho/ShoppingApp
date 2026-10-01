@@ -17,6 +17,9 @@ android {
 
     buildTypes {
         release {
+            // Тестовый стенд: release подписан отладочным ключом, чтобы его можно было поставить на эмулятор.
+            // Для публикации в магазин понадобится свой ключ.
+            signingConfig = signingConfigs.getByName("debug")
             optimization {
                 enable = false
             }

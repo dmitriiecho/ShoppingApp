@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 // Корзина, которую приложение присылает на проверку перед оформлением заказа.
+// Формат совпадает с CartValidationDTO в приложении (:data).
 @Serializable
 data class CartValidationRequestDTO(
     val items: List<CartItemDTO>,

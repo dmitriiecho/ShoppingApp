@@ -17,7 +17,7 @@
   `{"type": "unavailable", "productId": "3"}` и `{"type": "priceChanged", "productId": "1", "newPrice": 8999}`.
   На тело не того формата ответ 400.
 
-Форматы товара и промокода совпадают с `ProductDTO` и `PromoCodeDTO` в приложении.
+Форматы совпадают с DTO в приложении: товар и промокод — с `ProductDTO` и `PromoCodeDTO` в `feature/catalog` и `feature/promo`, проверка корзины — с `CartValidationDTO.kt` в `:data`.
 
 ## Данные
 

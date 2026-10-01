@@ -1,7 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.catalog.di
 
-import krio.systemdesign.shoppingapp.feature.catalog.BuildConfig
-import krio.systemdesign.shoppingapp.feature.catalog.data.api.FakeProductsApi
 import krio.systemdesign.shoppingapp.feature.catalog.data.api.ProductsApi
 import dagger.Module
 import dagger.Provides
@@ -16,6 +14,5 @@ import javax.inject.Singleton
 internal object CatalogModule {
     @Provides
     @Singleton
-    fun provideProductsApi(retrofit: Retrofit): ProductsApi =
-        if (BuildConfig.DEBUG) FakeProductsApi() else retrofit.create()
+    fun provideProductsApi(retrofit: Retrofit): ProductsApi = retrofit.create()
 }
