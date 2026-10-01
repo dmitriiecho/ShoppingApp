@@ -1,6 +1,10 @@
 package krio.systemdesign.shoppingapp.feature.settings.presentation.settings
 
+import krio.systemdesign.shoppingapp.domain.model.ThemeMode
+
 sealed interface SettingsEvent {
+
+    data class OnThemeModeChange(val mode: ThemeMode) : SettingsEvent
 
     data object OnDeepLinksPageClick : SettingsEvent
 

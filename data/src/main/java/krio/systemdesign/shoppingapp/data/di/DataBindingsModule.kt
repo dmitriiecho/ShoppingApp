@@ -1,10 +1,12 @@
 package krio.systemdesign.shoppingapp.data.di
 
+import krio.systemdesign.shoppingapp.data.repository.AppSettingsRepositoryImpl
 import krio.systemdesign.shoppingapp.data.repository.CartRepositoryImpl
 import krio.systemdesign.shoppingapp.data.source.CartValidatorDataSource
 import krio.systemdesign.shoppingapp.data.source.LocalCartDataSource
 import krio.systemdesign.shoppingapp.data.source.NetworkCartValidatorDataSource
 import krio.systemdesign.shoppingapp.data.source.RoomLocalCartDataSource
+import krio.systemdesign.shoppingapp.domain.repository.AppSettingsRepository
 import krio.systemdesign.shoppingapp.domain.repository.CartRepository
 import dagger.Binds
 import dagger.Module
@@ -32,4 +34,10 @@ internal abstract class DataBindingsModule {
     abstract fun bindCartValidatorDataSource(
         impl: NetworkCartValidatorDataSource,
     ): CartValidatorDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindAppSettingsRepository(
+        impl: AppSettingsRepositoryImpl,
+    ): AppSettingsRepository
 }

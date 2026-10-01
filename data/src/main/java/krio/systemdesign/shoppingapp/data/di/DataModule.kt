@@ -1,6 +1,10 @@
 package krio.systemdesign.shoppingapp.data.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import krio.systemdesign.shoppingapp.core.config.DatabaseSettings
 import krio.systemdesign.shoppingapp.data.BuildConfig
@@ -54,4 +58,12 @@ internal object DataModule {
     @Provides
     @Singleton
     fun provideCartApi(retrofit: Retrofit): CartApi = retrofit.create()
+
+    // Настройки, которые выбирает пользователь (например, тема). Один экземпляр на файл: так требует DataStore.
+    @Provides
+    @Singleton
+    fun provideSettingsDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(SETTINGS_FILE_NAME) }
+
+    private const val SETTINGS_FILE_NAME = "settings"
 }
