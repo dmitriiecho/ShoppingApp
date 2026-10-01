@@ -1,0 +1,6 @@
+<resources>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_deep_links_page">Диплинки для проверки</string>
+    <string name="settings_deep_links_page_description">Откроется страница со ссылками в браузере</string>
+    <string name="settings_no_browser">Не найден браузер, чтобы открыть страницу</string>
+</resources>

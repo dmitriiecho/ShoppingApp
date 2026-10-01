@@ -33,6 +33,9 @@ import krio.systemdesign.shoppingapp.feature.checkout.presentation.navigation.gr
 import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.PromoRoutes
 import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.graph as promoGraph
 import krio.systemdesign.shoppingapp.feature.promo.presentation.navigation.promo
+import krio.systemdesign.shoppingapp.feature.settings.presentation.navigation.SettingsRoutes
+import krio.systemdesign.shoppingapp.feature.settings.presentation.navigation.graph as settingsGraph
+import krio.systemdesign.shoppingapp.feature.settings.presentation.navigation.settings
 import krio.systemdesign.shoppingapp.navigation.bottombar.AppBottomBar
 import krio.systemdesign.shoppingapp.navigation.bottombar.BottomNavRoutes
 import krio.systemdesign.shoppingapp.navigation.bottombar.navigateToBottomTab
@@ -110,6 +113,17 @@ fun AppNavHost(
 
                 catalog.productDetailsScreen<CustomProductRoute>(
                     onBack = { navController.popBackStack() },
+                )
+            }
+
+            navigation<BottomNavRoutes.SettingsTab>(
+                startDestination = SettingsRoutes.Graph,
+            ) {
+                settings.settingsGraph(
+                    navController = navController,
+                    onClose = {
+                        // Настройки — корень вкладки, закрывать их некуда.
+                    },
                 )
             }
 

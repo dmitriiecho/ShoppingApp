@@ -37,6 +37,8 @@
                     android:scheme="https"
                     android:host="${deepLinkHost}" />
                 <!-- Только адреса, которые приложение умеет открыть: на этом домене живут и другие сайты GitHub Pages. -->
+                <!-- Ссылки для ручной проверки лежат в docs/deeplinks.html: новый путь добавьте и туда.
+                     Адрес самой этой страницы под фильтр попадать не должен, иначе пункт в настройках откроет приложение, а не браузер. -->
                 <data android:path="/catalog" />
                 <data android:path="/catalog/" />
                 <data android:path="/cart" />
