@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoppingAppV2">
         <!--
-          configChanges="uiMode": при смене темы (в системе или в настройках приложения) активити не пересоздаётся,
-          Compose просто перерисовывается в новых цветах. Иначе экран моргал бы при каждом переключении темы.
+            When the theme is changed (in the system or in the application settings), the activity is not recreated:
+            Compose simply redraws in new colors. Otherwise the screen would flicker each time the theme is changed.
         -->
         <activity
             android:name=".MainActivity"
@@ -37,18 +37,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Домен задаётся в gradle.properties (deepLinkHost). -->
+                <!--
+                    The same domain is specified in DeepLinkConfig.BASE_URL in core/config.
+                    Update both places if it changes.
+                -->
                 <data
                     android:scheme="https"
-                    android:host="${deepLinkHost}" />
-                <!-- Только адреса, которые приложение умеет открыть: на этом домене живут и другие сайты GitHub Pages. -->
-                <!-- Ссылки для ручной проверки лежат в docs/deeplinks.html: новый путь добавьте и туда.
-                     Адрес самой этой страницы под фильтр попадать не должен, иначе пункт в настройках откроет приложение, а не браузер. -->
+                    android:host="dmitriiecho.github.io" />
+
+                <!-- Only addresses that the application can open. -->
                 <data android:path="/catalog" />
                 <data android:path="/catalog/" />
                 <data android:path="/cart" />
                 <data android:path="/cart/" />
-                <!-- /product/ и id товара: «..*» в pathPattern — один или больше любых символов. -->
                 <data android:pathPattern="/product/..*" />
             </intent-filter>
         </activity>

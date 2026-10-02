@@ -49,10 +49,10 @@ class SettingsViewModel @Inject constructor(
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
-            // Тему применяет MainActivity: она следит за сохранённой настройкой, отдельно сообщать ей не нужно.
+            // MainActivity applies the theme: it observes the saved setting, so there is no need to notify it separately.
             is SettingsEvent.OnThemeModeChange -> changeThemeMode(event.mode)
             is SettingsEvent.OnNetworkDelayChange -> changeNetworkDelay(event.delay)
-            SettingsEvent.OnDeepLinksPageClick -> send(SettingsEffect.OpenUrl(DeepLinkConfig.TEST_PAGE_URI))
+            SettingsEvent.OnDeepLinksPageClick -> send(SettingsEffect.OpenUrl(DeepLinkConfig.TEST_PAGE_URL))
             SettingsEvent.OnAddUnavailableProductClick -> addUnavailableProduct()
             SettingsEvent.OnAddNotEnoughStockProductClick -> addNotEnoughStockProduct()
             SettingsEvent.OnAddPriceChangedProductClick -> addPriceChangedProduct()

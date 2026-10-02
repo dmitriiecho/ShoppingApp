@@ -19,7 +19,6 @@ room {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":core:config"))
     implementation(project(":core:network"))
     implementation(libs.okhttp)
 

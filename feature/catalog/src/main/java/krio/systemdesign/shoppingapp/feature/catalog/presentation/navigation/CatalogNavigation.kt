@@ -16,8 +16,8 @@ class CatalogNavigationScope(val builder: NavGraphBuilder)
 val NavGraphBuilder.catalog: CatalogNavigationScope
     get() = CatalogNavigationScope(this)
 
-// onClose — выход из фичи каталога целиком. Каталог может быть корнем вкладки, где закрывать некуда,
-// а может быть встроен во флоу, из которого пользователь возвращается назад.
+// onClose exits the whole catalog feature. The catalog can be the root of a tab, where there is nothing to close,
+// or it can be embedded in a flow the user returns back from.
 fun CatalogNavigationScope.graph(
     navController: NavController,
     onClose: () -> Unit,
@@ -28,11 +28,11 @@ fun CatalogNavigationScope.graph(
         composable<CatalogRoutes.ProductList>(
             deepLinks = listOf(
                 navDeepLink<CatalogRoutes.ProductList>(
-                    basePath = "${DeepLinkConfig.BASE_URI}/catalog",
+                    basePath = "${DeepLinkConfig.BASE_URL}/catalog",
                 ),
             ),
         ) {
-            // Картинки товаров перелетают между списком и карточкой товара.
+            // Product images fly between the list and the product details screen.
             CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
                 ProductListScreen(
                     onBack = onClose,
@@ -51,10 +51,10 @@ fun CatalogNavigationScope.graph(
 
         composable<CatalogRoutes.ProductDetails>(
             deepLinks = listOf(
-                // Шаблон задан явно, а не собран из полей ProductDetails: формат ссылки публичный и не должен
-                // меняться вместе с маршрутом, а productName из ссылки подставлялся бы в заголовок как есть.
+                // The pattern is explicit rather than built from ProductDetails fields: the link format is public
+                // and must not change with the route, and productName from a link would go into the title as is.
                 navDeepLink {
-                    uriPattern = "${DeepLinkConfig.BASE_URI}/product/{productId}"
+                    uriPattern = "${DeepLinkConfig.BASE_URL}/product/{productId}"
                 },
             ),
         ) {
@@ -67,7 +67,7 @@ fun CatalogNavigationScope.graph(
     }
 }
 
-// Карточка товара внутри другой фичи (например, корзины).
+// Product details screen inside another feature (for example, the cart).
 inline fun <reified T> CatalogNavigationScope.productDetailsScreen(
     noinline onBack: () -> Unit,
 ) where T : Any, T : ProductDetailsRoute {

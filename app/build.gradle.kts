@@ -12,7 +12,6 @@ android {
         applicationId = "krio.systemdesign.shoppingapp"
         versionCode = 1
         versionName = "1.0"
-        manifestPlaceholders["deepLinkHost"] = providers.gradleProperty("deepLinkHost").get()
     }
 }
 
@@ -25,7 +24,6 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":core:ui"))
-    implementation(project(":core:config"))
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)

@@ -1,9 +1,10 @@
 package krio.systemdesign.shoppingapp.core.config
 
 object DeepLinkConfig {
-    // Домен задаётся в gradle.properties (deepLinkHost), оттуда же он попадает в манифест.
-    const val BASE_URI = "https://${BuildConfig.DEEP_LINK_HOST}"
+    // The same domain is specified in the intent-filter in app/src/main/AndroidManifest.xml.
+    // Update both places if it changes.
+    const val BASE_URL = "https://dmitriiecho.github.io"
 
-    // Страница со ссылками для ручной проверки: docs/deeplinks.html, её публикует GitHub Pages этого репозитория.
-    const val TEST_PAGE_URI = "$BASE_URI/ShoppingApp/deeplinks.html"
+    // Page with links for manual testing: docs/deeplinks.html.
+    const val TEST_PAGE_URL = "$BASE_URL/ShoppingApp/deeplinks.html"
 }

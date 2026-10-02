@@ -20,8 +20,8 @@ class CartNavigationScope(val builder: NavGraphBuilder)
 val NavGraphBuilder.cart: CartNavigationScope
     get() = CartNavigationScope(this)
 
-// onClose — выход из фичи корзины целиком. Корзина может быть корнем вкладки, где закрывать некуда,
-// а может быть встроена во флоу, из которого пользователь возвращается назад.
+// onClose exits the whole cart feature. The cart can be the root of a tab, where there is nothing to close,
+// or it can be embedded in a flow the user returns back from.
 fun CartNavigationScope.graph(
     navController: NavController,
     onClose: () -> Unit,
@@ -35,7 +35,7 @@ fun CartNavigationScope.graph(
         composable<CartRoutes.Cart>(
             deepLinks = listOf(
                 navDeepLink<CartRoutes.Cart>(
-                    basePath = "${DeepLinkConfig.BASE_URI}/cart",
+                    basePath = "${DeepLinkConfig.BASE_URL}/cart",
                 ),
             ),
         ) { entry ->
@@ -52,7 +52,7 @@ fun CartNavigationScope.graph(
                 }
             }
 
-            // Картинки товаров перелетают между корзиной и карточкой товара.
+            // Product images fly between the cart and the product details screen.
             CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
                 CartScreen(
                     viewModel = viewModel,

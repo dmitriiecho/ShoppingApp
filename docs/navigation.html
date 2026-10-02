@@ -738,7 +738,7 @@ val resultKey = parentEntry.toRoute&lt;PromoRoutes.Graph&gt;().resultKey</code><
       <h2 id="deeplinks">11. Диплинки</h2>
       <p>
         База задана в <span class="mono">core/config</span>:
-        <span class="mono">DeepLinkConfig.BASE_URI = "https://shopping.example.com"</span>.
+        <span class="mono">DeepLinkConfig.BASE_URL = "https://shopping.example.com"</span>.
         Фичи сами вешают <span class="mono">navDeepLink&lt;Route&gt;(basePath = ...)</span>.
         Activity ловит https-интенты в манифесте.
       </p>
@@ -968,7 +968,7 @@ flowchart LR
           </tr>
           <tr>
             <td><span class="mono">core/config/.../DeepLinkConfig.kt</span></td>
-            <td>Общий BASE_URI диплинков</td>
+            <td>Общий BASE_URL диплинков</td>
           </tr>
           <tr>
             <td><span class="mono">app/src/main/AndroidManifest.xml</span></td>

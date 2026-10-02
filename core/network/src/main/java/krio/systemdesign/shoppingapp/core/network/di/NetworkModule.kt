@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.core.network.di
 
-import krio.systemdesign.shoppingapp.core.config.NetworkSettings
+import krio.systemdesign.shoppingapp.core.config.ServerConfig
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 @Module
@@ -29,14 +30,13 @@ internal object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        settings: NetworkSettings,
         @ApplicationInterceptor applicationInterceptors: Set<@JvmSuppressWildcards Interceptor>,
         @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>,
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(settings.connectTimeout.toJavaDuration())
-            .readTimeout(settings.readTimeout.toJavaDuration())
-            .writeTimeout(settings.writeTimeout.toJavaDuration())
+            .connectTimeout(TIMEOUT.toJavaDuration())
+            .readTimeout(TIMEOUT.toJavaDuration())
+            .writeTimeout(TIMEOUT.toJavaDuration())
             .apply {
                 applicationInterceptors.forEach(::addInterceptor)
                 networkInterceptors.forEach(::addNetworkInterceptor)
@@ -47,16 +47,16 @@ internal object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        settings: NetworkSettings,
         json: Json,
         okHttpClient: Lazy<OkHttpClient>,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(settings.baseUrl)
+            .baseUrl(ServerConfig.BASE_URL)
             .callFactory { okHttpClient.get().newCall(it) }
             .addConverterFactory(json.asConverterFactory(JSON_MEDIA_TYPE))
             .build()
     }
 
     private val JSON_MEDIA_TYPE = "application/json; charset=UTF-8".toMediaType()
+    private val TIMEOUT = 30.seconds
 }

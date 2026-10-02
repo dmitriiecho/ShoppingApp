@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import krio.systemdesign.shoppingapp.core.config.DatabaseSettings
 import krio.systemdesign.shoppingapp.data.BuildConfig
 import krio.systemdesign.shoppingapp.data.api.CartApi
 import krio.systemdesign.shoppingapp.data.database.ShoppingDatabase
@@ -29,12 +28,11 @@ internal object DataModule {
     @Singleton
     fun provideDatabase(
         @ApplicationContext context: Context,
-        settings: DatabaseSettings,
     ): ShoppingDatabase {
         return Room.databaseBuilder(
             context,
             ShoppingDatabase::class.java,
-            settings.name,
+            DATABASE_NAME,
         )
             .setQueryCoroutineContext(Dispatchers.IO)
             .apply {
@@ -59,11 +57,12 @@ internal object DataModule {
     @Singleton
     fun provideCartApi(retrofit: Retrofit): CartApi = retrofit.create()
 
-    // Настройки, которые выбирает пользователь (например, тема). Один экземпляр на файл: так требует DataStore.
+    // Settings chosen by the user (for example, the theme). One instance per file: DataStore requires it.
     @Provides
     @Singleton
     fun provideSettingsDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
         PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(SETTINGS_FILE_NAME) }
 
+    private const val DATABASE_NAME = "shopping.db"
     private const val SETTINGS_FILE_NAME = "settings"
 }
