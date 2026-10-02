@@ -11,6 +11,7 @@
   `page` начинается с 1, `pageSize` от 1 до 100, иначе ответ 400.
 - `GET /products/{id}` — один товар или 404.
   У товара есть `availableQuantity` — сколько штук можно заказать. 0 — товар закончился.
+- `GET /promo-codes` — все промокоды в порядке `promo-codes.json`: `[{"code": "SALE10", "discountPercent": 10}, ...]`. Приложение показывает их подсказкой на экране промокода.
 - `GET /promo-codes/{code}` — `{"code": "SALE10", "discountPercent": 10}` или 404. Регистр не важен: на `sale10` вернётся `SALE10`, как код записан в `promo-codes.json`.
 - `GET /images/{file}` — файл картинки из `data/images/`. В `imageUrl` у товара полный адрес этого же сервера, например `http://2.56.204.151:8080/images/1.png`.
 - `POST /cart/validate` — проверка корзины перед оформлением заказа. Тело:

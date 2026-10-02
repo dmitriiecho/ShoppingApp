@@ -3,4 +3,9 @@
     <string name="promo_apply">Применить</string>
     <string name="promo_check_error">Не удалось проверить промокод</string>
     <string name="promo_not_found">Промокод не найден</string>
+    <string name="promo_available_title">Промокоды для проверки</string>
+    <string name="promo_available_hint">Нажмите на код, чтобы подставить его в поле</string>
+    <string name="promo_available_empty">На сервере нет промокодов</string>
+    <string name="promo_available_error">Не удалось загрузить список</string>
+    <string name="promo_retry">Повторить</string>
 </resources>

@@ -76,6 +76,11 @@ class ApplicationTest {
     }
 
     @Test
+    fun `все промокоды списком`() = serverTest { client ->
+        assertEquals(TEST_DATA.promoCodes, client.get("/promo-codes").body<List<PromoCodeDTO>>())
+    }
+
+    @Test
     fun `корзина без расхождений с каталогом`() = serverTest { client ->
         val response = client.validateCart(promoCode = null, items = listOf(CartItemDTO("1", price = 1000, quantity = 5)))
         assertEquals(HttpStatusCode.OK, response.status)
@@ -219,7 +224,7 @@ class ApplicationTest {
                 product(id = "2", name = "Blue Mug", availableQuantity = 2),
                 product(id = "3", name = "Lamp", availableQuantity = 0),
             ),
-            promoCodes = listOf(PromoCodeDTO("SALE10", 10)),
+            promoCodes = listOf(PromoCodeDTO("SALE10", 10), PromoCodeDTO("SALE25", 25)),
         )
 
         fun product(id: String, name: String, availableQuantity: Int = 10) = ProductDTO(

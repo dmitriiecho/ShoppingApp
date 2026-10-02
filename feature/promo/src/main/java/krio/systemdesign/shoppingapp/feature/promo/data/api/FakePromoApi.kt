@@ -17,6 +17,11 @@ internal class FakePromoApi : PromoApi {
         return Response.success(promoCode)
     }
 
+    override suspend fun getPromoCodes(): Response<List<PromoCodeDTO>> {
+        delay(NETWORK_DELAY_MS)
+        return Response.success(PROMO_CODES)
+    }
+
     private companion object {
         const val NETWORK_DELAY_MS = 1500L
 

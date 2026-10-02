@@ -8,6 +8,7 @@ import krio.systemdesign.shoppingapp.core.ui.text.UiText
 import krio.systemdesign.shoppingapp.feature.promo.R
 import krio.systemdesign.shoppingapp.feature.promo.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.feature.promo.domain.usecase.CheckPromoCodeUseCase
+import krio.systemdesign.shoppingapp.feature.promo.domain.usecase.GetPromoCodesUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PromoCodeViewModel @Inject constructor(
     private val checkPromoCode: CheckPromoCodeUseCase,
+    private val getPromoCodes: GetPromoCodesUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -29,15 +31,18 @@ class PromoCodeViewModel @Inject constructor(
     // запрос обрывается вместе с процессом.
     private val promoCode = savedStateHandle.getStateFlow(KEY_PROMO_CODE, "")
     private val requestState = MutableStateFlow(RequestState())
+    private val availablePromoCodes = MutableStateFlow<AvailablePromoCodes>(AvailablePromoCodes.Loading)
 
     val uiState: StateFlow<PromoCodeUiState> = combine(
         promoCode,
         requestState,
-    ) { code, request ->
+        availablePromoCodes,
+    ) { code, request, available ->
         PromoCodeUiState(
             promoCode = code,
             isLoading = request.isLoading,
             error = request.error,
+            availablePromoCodes = available,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -48,13 +53,34 @@ class PromoCodeViewModel @Inject constructor(
     private val _effects = Channel<PromoCodeEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
+    init {
+        loadAvailablePromoCodes()
+    }
+
     fun onEvent(event: PromoCodeEvent) {
         when (event) {
-            is PromoCodeEvent.OnPromoCodeChange -> {
-                savedStateHandle[KEY_PROMO_CODE] = event.value
-                requestState.update { it.copy(error = null) }
-            }
+            is PromoCodeEvent.OnPromoCodeChange -> changePromoCode(event.value)
             PromoCodeEvent.OnApplyClick -> applyPromoCode()
+            is PromoCodeEvent.OnAvailablePromoCodeClick -> {
+                // Пока код проверяется, поле заблокировано — подсказка его тоже не меняет.
+                if (!requestState.value.isLoading) changePromoCode(event.code)
+            }
+            PromoCodeEvent.OnRetryAvailablePromoCodes -> loadAvailablePromoCodes()
+        }
+    }
+
+    private fun changePromoCode(value: String) {
+        savedStateHandle[KEY_PROMO_CODE] = value
+        requestState.update { it.copy(error = null) }
+    }
+
+    private fun loadAvailablePromoCodes() {
+        viewModelScope.launch {
+            availablePromoCodes.value = AvailablePromoCodes.Loading
+            availablePromoCodes.value = getPromoCodes().fold(
+                onSuccess = { AvailablePromoCodes.Content(it) },
+                onFailure = { AvailablePromoCodes.Error },
+            )
         }
     }
 

@@ -10,4 +10,8 @@ interface PromoApi {
     suspend fun checkPromoCode(
         @Path("code") code: String,
     ): Response<PromoCodeDTO>
+
+    // Все коды сервера — для подсказки на экране промокода.
+    @GET("promo-codes")
+    suspend fun getPromoCodes(): Response<List<PromoCodeDTO>>
 }
