@@ -5,6 +5,11 @@
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_dark">Тёмная</string>
     <string name="settings_theme_save_error">Не удалось сохранить тему</string>
+    <string name="settings_network_delay">Задержка сети</string>
+    <string name="settings_network_delay_none">Без задержки</string>
+    <string name="settings_network_delay_three_seconds">3 секунды</string>
+    <string name="settings_network_delay_six_seconds">6 секунд</string>
+    <string name="settings_network_delay_save_error">Не удалось сохранить задержку запросов</string>
     <string name="settings_deep_links_page">Диплинки</string>
     <string name="settings_deep_links_page_description">Откроется страница со ссылками в браузере</string>
     <string name="settings_no_browser">Не найден браузер, чтобы открыть страницу</string>

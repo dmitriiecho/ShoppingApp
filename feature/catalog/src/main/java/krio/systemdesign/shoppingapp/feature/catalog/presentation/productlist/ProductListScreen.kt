@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,21 +47,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -79,6 +69,8 @@ import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
+import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
@@ -389,74 +381,45 @@ private fun ProductListItemPlaceholder(
     isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val baseColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-    val highlightColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.16f)
-    val maskColor = Color.Black
-    val frameTimeMillis by produceState(0L, isLoading) {
-        if (isLoading) {
-            while (true) withFrameMillis { value = it }
-        }
-    }
-
     AppCard(modifier = modifier.fillMaxWidth()) {
-        Column(
+        ShimmerPlaceholder(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
-                .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
-                .drawWithContent {
-                    drawContent()
-                    if (!isLoading) {
-                        drawRect(color = baseColor, blendMode = BlendMode.SrcIn)
-                        return@drawWithContent
-                    }
-                    val progress = (frameTimeMillis % SHIMMER_DURATION_MS) / SHIMMER_DURATION_MS.toFloat()
-                    val bandHalfWidth = size.width * 0.4f
-                    val bandCenter = -bandHalfWidth + progress * (size.width + 2 * bandHalfWidth)
-                    drawRect(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(baseColor, highlightColor, baseColor),
-                            startX = bandCenter - bandHalfWidth,
-                            endX = bandCenter + bandHalfWidth,
-                        ),
-                        blendMode = BlendMode.SrcIn,
-                    )
-                },
+                .padding(12.dp),
+            isAnimating = isLoading,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(88.dp)
+                            .shimmerShape(RoundedCornerShape(12.dp)),
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.7f)
+                                .height(20.dp)
+                                .shimmerShape(RoundedCornerShape(4.dp)),
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .width(96.dp)
+                                .height(20.dp)
+                                .shimmerShape(RoundedCornerShape(4.dp)),
+                        )
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
                 Box(
                     modifier = Modifier
-                        .size(88.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(maskColor),
+                        .fillMaxWidth()
+                        .height(ButtonDefaults.MinHeight)
+                        .shimmerShape(RoundedCornerShape(ButtonDefaults.MinHeight / 2)),
                 )
-                Spacer(Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .height(20.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(maskColor),
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .width(96.dp)
-                            .height(20.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(maskColor),
-                    )
-                }
             }
-            Spacer(Modifier.height(12.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonDefaults.MinHeight)
-                    .clip(RoundedCornerShape(ButtonDefaults.MinHeight / 2))
-                    .background(maskColor),
-            )
         }
     }
 }
@@ -620,4 +583,3 @@ private fun AppendError(
     }
 }
 
-private const val SHIMMER_DURATION_MS = 1200L

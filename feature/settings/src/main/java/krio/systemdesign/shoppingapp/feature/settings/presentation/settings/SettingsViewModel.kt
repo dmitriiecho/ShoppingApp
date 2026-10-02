@@ -4,17 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
+import krio.systemdesign.shoppingapp.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveThemeModeUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddNotEnoughStockProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddPriceChangedNotEnoughStockProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddPriceChangedProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddUnavailableProductToCartUseCase
+import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.ObserveNetworkDelayUseCase
+import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.SetNetworkDelayUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.SetThemeModeUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -24,6 +27,8 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     observeThemeMode: ObserveThemeModeUseCase,
     private val setThemeMode: SetThemeModeUseCase,
+    observeNetworkDelay: ObserveNetworkDelayUseCase,
+    private val setNetworkDelay: SetNetworkDelayUseCase,
     private val addUnavailableProductToCart: AddUnavailableProductToCartUseCase,
     private val addNotEnoughStockProductToCart: AddNotEnoughStockProductToCartUseCase,
     private val addPriceChangedProductToCart: AddPriceChangedProductToCartUseCase,
@@ -33,8 +38,9 @@ class SettingsViewModel @Inject constructor(
     private val _effects = Channel<SettingsEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
-    val uiState: StateFlow<SettingsUiState> = observeThemeMode()
-        .map { SettingsUiState(themeMode = it) }
+    val uiState: StateFlow<SettingsUiState> = combine(observeThemeMode(), observeNetworkDelay()) { themeMode, networkDelay ->
+        SettingsUiState(themeMode = themeMode, networkDelay = networkDelay)
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -45,6 +51,7 @@ class SettingsViewModel @Inject constructor(
         when (event) {
             // Тему применяет MainActivity: она следит за сохранённой настройкой, отдельно сообщать ей не нужно.
             is SettingsEvent.OnThemeModeChange -> changeThemeMode(event.mode)
+            is SettingsEvent.OnNetworkDelayChange -> changeNetworkDelay(event.delay)
             SettingsEvent.OnDeepLinksPageClick -> send(SettingsEffect.OpenUrl(DeepLinkConfig.TEST_PAGE_URI))
             SettingsEvent.OnAddUnavailableProductClick -> addUnavailableProduct()
             SettingsEvent.OnAddNotEnoughStockProductClick -> addNotEnoughStockProduct()
@@ -57,6 +64,12 @@ class SettingsViewModel @Inject constructor(
     private fun changeThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
             setThemeMode(mode).onFailure { send(SettingsEffect.ShowThemeSaveError) }
+        }
+    }
+
+    private fun changeNetworkDelay(delay: NetworkDelay) {
+        viewModelScope.launch {
+            setNetworkDelay(delay).onFailure { send(SettingsEffect.ShowNetworkDelaySaveError) }
         }
     }
 

@@ -1,5 +1,7 @@
 package krio.systemdesign.shoppingapp.data.di
 
+import krio.systemdesign.shoppingapp.core.network.di.ApplicationInterceptor
+import krio.systemdesign.shoppingapp.data.network.NetworkDelayInterceptor
 import krio.systemdesign.shoppingapp.data.repository.AppSettingsRepositoryImpl
 import krio.systemdesign.shoppingapp.data.repository.CartRepositoryImpl
 import krio.systemdesign.shoppingapp.data.source.CartValidatorDataSource
@@ -12,6 +14,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntoSet
+import okhttp3.Interceptor
 import javax.inject.Singleton
 
 @Module
@@ -40,4 +44,11 @@ internal abstract class DataBindingsModule {
     abstract fun bindAppSettingsRepository(
         impl: AppSettingsRepositoryImpl,
     ): AppSettingsRepository
+
+    @Binds
+    @IntoSet
+    @ApplicationInterceptor
+    abstract fun bindNetworkDelayInterceptor(
+        impl: NetworkDelayInterceptor,
+    ): Interceptor
 }

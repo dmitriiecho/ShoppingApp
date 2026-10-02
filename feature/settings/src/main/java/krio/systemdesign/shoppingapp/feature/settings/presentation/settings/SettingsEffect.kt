@@ -6,6 +6,8 @@ sealed interface SettingsEffect {
 
     data object ShowThemeSaveError : SettingsEffect
 
+    data object ShowNetworkDelaySaveError : SettingsEffect
+
     data object ShowUnavailableProductAdded : SettingsEffect
 
     data object ShowNotEnoughStockProductAdded : SettingsEffect

@@ -25,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -53,6 +54,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.AppCard
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
+import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.R
@@ -179,15 +182,7 @@ private fun AvailablePromoCodesHint(
                 }
             }
             when (state) {
-                AvailablePromoCodes.Loading -> Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                    )
-                }
+                AvailablePromoCodes.Loading -> PromoCodeCouponsPlaceholder()
                 is AvailablePromoCodes.Content -> if (state.promoCodes.isEmpty()) {
                     Text(
                         text = stringResource(R.string.promo_available_empty),
@@ -220,6 +215,26 @@ private fun AvailablePromoCodesHint(
                         Text(stringResource(R.string.promo_retry))
                     }
                 }
+            }
+        }
+    }
+}
+
+// Два купона-заглушки, пока коды грузятся. Стоят там же, где встанут купоны, и того же размера,
+// поэтому карточка не меняет высоту, когда коды загрузились.
+@Composable
+private fun PromoCodeCouponsPlaceholder(modifier: Modifier = Modifier) {
+    ShimmerPlaceholder(modifier = modifier) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            repeat(2) {
+                Box(
+                    modifier = Modifier
+                        // Купон — нажимаемый Surface: места он занимает не меньше 48 dp в высоту, а рисуется
+                        // по своему содержимому. Заглушка занимает место так же.
+                        .minimumInteractiveComponentSize()
+                        .size(width = PLACEHOLDER_COUPON_WIDTH, height = PLACEHOLDER_COUPON_HEIGHT)
+                        .shimmerShape(RoundedCornerShape(COUPON_CORNER_RADIUS)),
+                )
             }
         }
     }
@@ -286,3 +301,7 @@ private fun PromoCodeCoupon(
 
 private val COUPON_CORNER_RADIUS = 10.dp
 private val COUPON_BORDER_WIDTH = 1.5.dp
+
+// Размер купона с кодом из шести символов, например SALE10: высота — строка кода и отступы 8 dp сверху и снизу.
+private val PLACEHOLDER_COUPON_WIDTH = 130.dp
+private val PLACEHOLDER_COUPON_HEIGHT = 36.dp
