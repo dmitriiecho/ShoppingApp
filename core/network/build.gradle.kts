@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.shoppingapp.android.library)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.shoppingapp.android.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -11,9 +11,11 @@ android {
 dependencies {
     implementation(project(":core:config"))
 
-    implementation(libs.okhttp)
-    debugImplementation(libs.okhttp.logging)
     api(libs.retrofit)
-    api(libs.retrofit.converter.kotlinx.serialization)
     api(libs.kotlinx.serialization.json)
+
+    implementation(libs.okhttp)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+
+    debugImplementation(libs.okhttp.logging)
 }

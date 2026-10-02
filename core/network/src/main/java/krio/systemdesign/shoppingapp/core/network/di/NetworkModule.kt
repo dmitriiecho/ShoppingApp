@@ -31,16 +31,12 @@ internal object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         @ApplicationInterceptor applicationInterceptors: Set<@JvmSuppressWildcards Interceptor>,
-        @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(TIMEOUT.toJavaDuration())
             .readTimeout(TIMEOUT.toJavaDuration())
             .writeTimeout(TIMEOUT.toJavaDuration())
-            .apply {
-                applicationInterceptors.forEach(::addInterceptor)
-                networkInterceptors.forEach(::addNetworkInterceptor)
-            }
+            .apply { applicationInterceptors.forEach(::addInterceptor) }
             .build()
     }
 

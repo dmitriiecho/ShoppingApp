@@ -9,11 +9,9 @@ import okhttp3.Interceptor
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class NetworkBindingsModule {
+    // The set is never empty now (NetworkDelayInterceptor),
+    // kept @Multibinds in case it becomes empty: Dagger fails on that.
     @Multibinds
     @ApplicationInterceptor
     abstract fun applicationInterceptors(): Set<Interceptor>
-
-    @Multibinds
-    @NetworkInterceptor
-    abstract fun networkInterceptors(): Set<Interceptor>
 }

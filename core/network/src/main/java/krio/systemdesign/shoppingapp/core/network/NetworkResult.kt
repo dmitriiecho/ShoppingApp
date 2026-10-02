@@ -8,14 +8,15 @@ import kotlin.coroutines.cancellation.CancellationException
 sealed interface NetworkResult<out T> {
     data class Success<T>(val body: T) : NetworkResult<T>
 
-    // Сервер ответил, но кодом ошибки: 404, 500…
+    // The server responded with an error code: 404, 500…
     data class HttpError(val code: Int, val error: HttpException) : NetworkResult<Nothing>
 
-    // Ответа нет или его не удалось разобрать: нет сети, таймаут, кривой JSON.
+    // No response or it could not be parsed: no network, timeout, invalid JSON.
     data class Failure(val error: Throwable) : NetworkResult<Nothing>
 }
 
-// Выполняет запрос и превращает любой исход в NetworkResult. Отмену корутины пропускаем дальше.
+// Performs the request and converts any outcome to NetworkResult.
+// Coroutine cancellation is rethrown, not turned into Failure, so that cancellation still works.
 suspend fun <T : Any> networkCall(request: suspend () -> Response<T>): NetworkResult<T> =
     try {
         val response = request()
@@ -27,7 +28,7 @@ suspend fun <T : Any> networkCall(request: suspend () -> Response<T>): NetworkRe
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
-        Log.w(TAG, "Запрос к серверу не удался", e)
+        Log.w(TAG, "Request to the server failed", e)
         NetworkResult.Failure(e)
     }
 

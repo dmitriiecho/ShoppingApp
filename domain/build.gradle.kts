@@ -17,5 +17,6 @@ kotlin {
 dependencies {
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.coroutines.core)
+
     implementation(libs.javax.inject)
 }
