@@ -10,6 +10,12 @@ sealed interface SettingsEvent {
 
     data object OnAddUnavailableProductClick : SettingsEvent
 
+    data object OnAddNotEnoughStockProductClick : SettingsEvent
+
+    data object OnAddPriceChangedProductClick : SettingsEvent
+
+    data object OnAddPriceChangedNotEnoughStockProductClick : SettingsEvent
+
     // Во вкладке кнопки «Назад» нет. Событие нужно, когда экран встроен во флоу, из которого можно выйти.
     data object OnBackClick : SettingsEvent
 }

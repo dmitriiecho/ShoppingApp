@@ -6,6 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveThemeModeUseCase
+import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddNotEnoughStockProductToCartUseCase
+import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddPriceChangedNotEnoughStockProductToCartUseCase
+import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddPriceChangedProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddUnavailableProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.SetThemeModeUseCase
 import kotlinx.coroutines.channels.Channel
@@ -22,6 +25,9 @@ class SettingsViewModel @Inject constructor(
     observeThemeMode: ObserveThemeModeUseCase,
     private val setThemeMode: SetThemeModeUseCase,
     private val addUnavailableProductToCart: AddUnavailableProductToCartUseCase,
+    private val addNotEnoughStockProductToCart: AddNotEnoughStockProductToCartUseCase,
+    private val addPriceChangedProductToCart: AddPriceChangedProductToCartUseCase,
+    private val addPriceChangedNotEnoughStockProductToCart: AddPriceChangedNotEnoughStockProductToCartUseCase,
 ) : ViewModel() {
 
     private val _effects = Channel<SettingsEffect>(Channel.BUFFERED)
@@ -41,6 +47,9 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnThemeModeChange -> changeThemeMode(event.mode)
             SettingsEvent.OnDeepLinksPageClick -> send(SettingsEffect.OpenUrl(DeepLinkConfig.TEST_PAGE_URI))
             SettingsEvent.OnAddUnavailableProductClick -> addUnavailableProduct()
+            SettingsEvent.OnAddNotEnoughStockProductClick -> addNotEnoughStockProduct()
+            SettingsEvent.OnAddPriceChangedProductClick -> addPriceChangedProduct()
+            SettingsEvent.OnAddPriceChangedNotEnoughStockProductClick -> addPriceChangedNotEnoughStockProduct()
             SettingsEvent.OnBackClick -> send(SettingsEffect.NavigateBack)
         }
     }
@@ -55,6 +64,30 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             addUnavailableProductToCart()
                 .onSuccess { send(SettingsEffect.ShowUnavailableProductAdded) }
+                .onFailure { send(SettingsEffect.ShowAddToCartError) }
+        }
+    }
+
+    private fun addNotEnoughStockProduct() {
+        viewModelScope.launch {
+            addNotEnoughStockProductToCart()
+                .onSuccess { send(SettingsEffect.ShowNotEnoughStockProductAdded) }
+                .onFailure { send(SettingsEffect.ShowAddToCartError) }
+        }
+    }
+
+    private fun addPriceChangedProduct() {
+        viewModelScope.launch {
+            addPriceChangedProductToCart()
+                .onSuccess { send(SettingsEffect.ShowPriceChangedProductAdded) }
+                .onFailure { send(SettingsEffect.ShowAddToCartError) }
+        }
+    }
+
+    private fun addPriceChangedNotEnoughStockProduct() {
+        viewModelScope.launch {
+            addPriceChangedNotEnoughStockProductToCart()
+                .onSuccess { send(SettingsEffect.ShowPriceChangedNotEnoughStockProductAdded) }
                 .onFailure { send(SettingsEffect.ShowAddToCartError) }
         }
     }

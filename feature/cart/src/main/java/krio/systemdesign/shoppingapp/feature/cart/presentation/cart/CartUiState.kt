@@ -32,6 +32,8 @@ data class CartUiState(
 
     val unavailableItemCount: Int get() = itemIssues.values.sumOf { issues -> issues.count { it is ItemIssue.Unavailable } }
 
+    val notEnoughStockItemCount: Int get() = itemIssues.values.sumOf { issues -> issues.count { it is ItemIssue.NotEnoughStock } }
+
     // Оформить заказ можно, только когда все найденные проверкой изменения исправлены.
     val canCheckout: Boolean get() = itemIssues.isEmpty() && isPromoCodeValid
 

@@ -5,11 +5,20 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_save_error">Couldn\'t save the theme</string>
-    <string name="settings_deep_links_page">Deep links for testing</string>
+    <string name="settings_deep_links_page">Deep links</string>
     <string name="settings_deep_links_page_description">Opens a page with the links in your browser</string>
     <string name="settings_no_browser">No browser found to open the page</string>
     <string name="settings_add_unavailable_product">Add an out-of-stock item to the cart</string>
     <string name="settings_add_unavailable_product_description">To check how the cart shows an unavailable item</string>
     <string name="settings_unavailable_product_added">Out-of-stock item added to the cart</string>
     <string name="settings_add_to_cart_error">Couldn\'t add the item to the cart</string>
+    <string name="settings_add_not_enough_stock_product">Add more of an item than is in stock</string>
+    <string name="settings_add_not_enough_stock_product_description">To check how the cart shows a stock shortage</string>
+    <string name="settings_not_enough_stock_product_added">More of the item than is in stock added to the cart</string>
+    <string name="settings_add_price_changed_product">Add an item with an outdated price</string>
+    <string name="settings_add_price_changed_product_description">To check how the cart shows a price change</string>
+    <string name="settings_price_changed_product_added">Item with an outdated price added to the cart</string>
+    <string name="settings_add_price_changed_not_enough_stock_product">Add an item with two changes</string>
+    <string name="settings_add_price_changed_not_enough_stock_product_description">Outdated price and more than is in stock</string>
+    <string name="settings_price_changed_not_enough_stock_product_added">Item with two changes added to the cart</string>
 </resources>

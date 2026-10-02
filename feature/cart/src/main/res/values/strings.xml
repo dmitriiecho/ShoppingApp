@@ -30,6 +30,10 @@
         <item quantity="one">%d item is out of stock</item>
         <item quantity="other">%d items are out of stock</item>
     </plurals>
+    <plurals name="cart_not_enough_stock_items">
+        <item quantity="one">Not enough stock for %d item</item>
+        <item quantity="other">Not enough stock for %d items</item>
+    </plurals>
 
     <string name="cart_promo_applied">Promo code “%1$s” applied</string>
     <string name="cart_promo_apply_error">Couldn\'t apply the promo code</string>

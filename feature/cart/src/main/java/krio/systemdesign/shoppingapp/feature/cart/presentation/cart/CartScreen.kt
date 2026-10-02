@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -144,11 +145,12 @@ fun CartScreen(
                     enabled = uiState.canCheckout && !uiState.isValidating,
                     isLoading = uiState.isValidating,
                     onAction = { viewModel.onEvent(CartEvent.OnCheckoutClick) },
-                    header = if (uiState.priceChangeCount > 0 || uiState.unavailableItemCount > 0) {
+                    header = if (uiState.priceChangeCount > 0 || uiState.unavailableItemCount > 0 || uiState.notEnoughStockItemCount > 0) {
                         {
                             CartChangesActions(
                                 priceChangeCount = uiState.priceChangeCount,
                                 unavailableItemCount = uiState.unavailableItemCount,
+                                notEnoughStockItemCount = uiState.notEnoughStockItemCount,
                                 onAcceptNewPrices = { viewModel.onEvent(CartEvent.OnAcceptNewPricesClick) },
                                 onRemoveUnavailable = { viewModel.onEvent(CartEvent.OnRemoveUnavailableClick) },
                             )
@@ -410,7 +412,8 @@ private fun CartPromoCode(
     }
 }
 
-// Плашка в карточке товара: что нашла проверка корзины.
+// Плашка в карточке товара: что нашла проверка корзины. Все такие плашки красные: любое из этих изменений
+// мешает оформить заказ, пока пользователь его не исправит. Различаются они иконкой и текстом.
 @Composable
 private fun ItemIssueNotice(
     issue: ItemIssue,
@@ -427,14 +430,13 @@ private fun ItemIssueNotice(
             icon = Icons.Outlined.Sell,
             // Старая цена видна строкой выше, в плашке только новая.
             title = stringResource(R.string.cart_item_price_changed, formatPrice(issue.newPrice)),
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = MaterialTheme.colorScheme.error,
             modifier = modifier,
         )
-        // Общей плашки с кнопкой нет: количество пользователь уменьшает сам кнопкой «−».
         is ItemIssue.NotEnoughStock -> CartNotice(
             icon = Icons.Outlined.ProductionQuantityLimits,
             title = stringResource(R.string.cart_item_not_enough_stock, issue.availableQuantity),
-            accentColor = MaterialTheme.colorScheme.primary,
+            accentColor = MaterialTheme.colorScheme.error,
             modifier = modifier,
         )
     }
@@ -490,15 +492,19 @@ private fun CartNotice(
 }
 
 // Над «Итого» — по плашке на каждый вид изменений: сколько товаров затронуто и кнопка, которая исправляет все сразу.
-// Каждая видна, только когда ей есть что делать.
+// У нехватки остатка кнопки нет: количество пользователь уменьшает сам кнопкой «−».
+// Каждая плашка видна, только пока такие изменения не исправлены. Цвета у всех красные, как у плашек в карточках.
 @Composable
 private fun CartChangesActions(
     priceChangeCount: Int,
     unavailableItemCount: Int,
+    notEnoughStockItemCount: Int,
     onAcceptNewPrices: () -> Unit,
     onRemoveUnavailable: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Плашка без кнопки ниже плашки с кнопкой, поэтому высота у всех задана одна — как с кнопкой.
+    val noticeModifier = Modifier.heightIn(min = CHANGES_NOTICE_MIN_HEIGHT)
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -507,9 +513,10 @@ private fun CartChangesActions(
             CartNoticeWithAction(
                 icon = Icons.Outlined.Sell,
                 title = pluralStringResource(R.plurals.cart_price_changes, priceChangeCount, priceChangeCount),
-                accentColor = MaterialTheme.colorScheme.primary,
+                accentColor = MaterialTheme.colorScheme.error,
                 actionText = stringResource(R.string.cart_accept_new_prices),
                 onAction = onAcceptNewPrices,
+                modifier = noticeModifier,
             )
         }
         if (unavailableItemCount > 0) {
@@ -519,6 +526,15 @@ private fun CartChangesActions(
                 accentColor = MaterialTheme.colorScheme.error,
                 actionText = stringResource(R.string.cart_remove_unavailable),
                 onAction = onRemoveUnavailable,
+                modifier = noticeModifier,
+            )
+        }
+        if (notEnoughStockItemCount > 0) {
+            CartNotice(
+                icon = Icons.Outlined.ProductionQuantityLimits,
+                title = pluralStringResource(R.plurals.cart_not_enough_stock_items, notEnoughStockItemCount, notEnoughStockItemCount),
+                accentColor = MaterialTheme.colorScheme.error,
+                modifier = noticeModifier,
             )
         }
     }
@@ -584,3 +600,6 @@ private const val UNAVAILABLE_ALPHA = 0.5f
 
 // Насыщенность фона плашки относительно её цвета акцента.
 private const val NOTICE_BACKGROUND_ALPHA = 0.14f
+
+// Высота плашки с кнопкой: кнопка не ниже 48dp, чтобы в неё было легко попасть, плюс отступы плашки по 4dp.
+private val CHANGES_NOTICE_MIN_HEIGHT = 56.dp

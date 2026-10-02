@@ -8,6 +8,12 @@ sealed interface SettingsEffect {
 
     data object ShowUnavailableProductAdded : SettingsEffect
 
+    data object ShowNotEnoughStockProductAdded : SettingsEffect
+
+    data object ShowPriceChangedProductAdded : SettingsEffect
+
+    data object ShowPriceChangedNotEnoughStockProductAdded : SettingsEffect
+
     data object ShowAddToCartError : SettingsEffect
 
     // Во вкладке не отправляется. Нужен, когда экран встроен во флоу, из которого можно выйти.

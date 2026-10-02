@@ -34,6 +34,12 @@
         <item quantity="many">Закончились %d товаров</item>
         <item quantity="other">Закончились %d товара</item>
     </plurals>
+    <plurals name="cart_not_enough_stock_items">
+        <item quantity="one">%d товара нет в нужном количестве</item>
+        <item quantity="few">%d товаров нет в нужном количестве</item>
+        <item quantity="many">%d товаров нет в нужном количестве</item>
+        <item quantity="other">%d товара нет в нужном количестве</item>
+    </plurals>
 
     <string name="cart_promo_applied">Промокод «%1$s» применён</string>
     <string name="cart_promo_apply_error">Не удалось применить промокод</string>

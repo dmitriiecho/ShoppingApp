@@ -2,16 +2,23 @@ package krio.systemdesign.shoppingapp.feature.settings.presentation.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.outlined.AddShoppingCart
+import androidx.compose.material.icons.outlined.BrightnessAuto
+import androidx.compose.material.icons.outlined.Contrast
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.ProductionQuantityLimits
+import androidx.compose.material.icons.outlined.Sell
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -66,6 +74,17 @@ fun SettingsScreen(
                 SettingsEffect.ShowUnavailableProductAdded -> {
                     launch { snackbarHostState.showSnackbar(resources.getString(R.string.settings_unavailable_product_added)) }
                 }
+                SettingsEffect.ShowNotEnoughStockProductAdded -> {
+                    launch { snackbarHostState.showSnackbar(resources.getString(R.string.settings_not_enough_stock_product_added)) }
+                }
+                SettingsEffect.ShowPriceChangedProductAdded -> {
+                    launch { snackbarHostState.showSnackbar(resources.getString(R.string.settings_price_changed_product_added)) }
+                }
+                SettingsEffect.ShowPriceChangedNotEnoughStockProductAdded -> {
+                    launch {
+                        snackbarHostState.showSnackbar(resources.getString(R.string.settings_price_changed_not_enough_stock_product_added))
+                    }
+                }
                 SettingsEffect.ShowAddToCartError -> {
                     launch { snackbarHostState.showSnackbar(resources.getString(R.string.settings_add_to_cart_error)) }
                 }
@@ -88,62 +107,106 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
         ) {
-            ThemeModeSelector(
+            ThemeModeItem(
                 selected = themeMode,
                 onSelect = { viewModel.onEvent(SettingsEvent.OnThemeModeChange(it)) },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_deep_links_page)) },
-                supportingContent = { Text(stringResource(R.string.settings_deep_links_page_description)) },
-                leadingContent = { Icon(Icons.Default.Link, contentDescription = null) },
-                trailingContent = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
-                modifier = Modifier.clickable { viewModel.onEvent(SettingsEvent.OnDeepLinksPageClick) },
+            // Ниже — инструменты для тестирования, линия отделяет их от настройки темы.
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            SettingsItem(
+                icon = Icons.Default.Link,
+                title = stringResource(R.string.settings_deep_links_page),
+                description = stringResource(R.string.settings_deep_links_page_description),
+                onClick = { viewModel.onEvent(SettingsEvent.OnDeepLinksPageClick) },
+                trailingIcon = Icons.AutoMirrored.Filled.OpenInNew,
             )
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_add_unavailable_product)) },
-                supportingContent = { Text(stringResource(R.string.settings_add_unavailable_product_description)) },
-                leadingContent = { Icon(Icons.Outlined.AddShoppingCart, contentDescription = null) },
-                modifier = Modifier.clickable { viewModel.onEvent(SettingsEvent.OnAddUnavailableProductClick) },
+            // Иконки трёх пунктов те же, что у плашек в корзине, которые эти товары вызывают.
+            SettingsItem(
+                icon = Icons.Outlined.Inventory2,
+                title = stringResource(R.string.settings_add_unavailable_product),
+                description = stringResource(R.string.settings_add_unavailable_product_description),
+                onClick = { viewModel.onEvent(SettingsEvent.OnAddUnavailableProductClick) },
+            )
+            SettingsItem(
+                icon = Icons.Outlined.ProductionQuantityLimits,
+                title = stringResource(R.string.settings_add_not_enough_stock_product),
+                description = stringResource(R.string.settings_add_not_enough_stock_product_description),
+                onClick = { viewModel.onEvent(SettingsEvent.OnAddNotEnoughStockProductClick) },
+            )
+            SettingsItem(
+                icon = Icons.Outlined.Sell,
+                title = stringResource(R.string.settings_add_price_changed_product),
+                description = stringResource(R.string.settings_add_price_changed_product_description),
+                onClick = { viewModel.onEvent(SettingsEvent.OnAddPriceChangedProductClick) },
+            )
+            SettingsItem(
+                // Своей плашки у сочетания проблем в корзине нет, поэтому иконка общая: «с товаром несколько проблем».
+                icon = Icons.Outlined.Warning,
+                title = stringResource(R.string.settings_add_price_changed_not_enough_stock_product),
+                description = stringResource(R.string.settings_add_price_changed_not_enough_stock_product_description),
+                onClick = { viewModel.onEvent(SettingsEvent.OnAddPriceChangedNotEnoughStockProductClick) },
             )
         }
     }
 }
 
-// Тема приложения: как в системе, светлая или тёмная.
+@Composable
+private fun SettingsItem(
+    icon: ImageVector,
+    title: String,
+    description: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    trailingIcon: ImageVector? = null,
+) {
+    ListItem(
+        headlineContent = { Text(title) },
+        supportingContent = { Text(description) },
+        leadingContent = { Icon(icon, contentDescription = null) },
+        trailingContent = trailingIcon?.let { { Icon(it, contentDescription = null) } },
+        modifier = modifier.clickable(onClick = onClick),
+    )
+}
+
+// Тема приложения: как в системе, светлая или тёмная. Строка такая же, как остальные пункты:
+// под заголовком выбранная тема словами, а справа переключатель из трёх иконок — тема меняется одним нажатием.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ThemeModeSelector(
+private fun ThemeModeItem(
     selected: ThemeMode,
     onSelect: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(R.string.settings_theme),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Spacer(Modifier.height(12.dp))
-        // Выбранный вариант того же цвета, что и выбранная вкладка в нижней панели.
-        val colors = SegmentedButtonDefaults.colors(
-            activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        )
-        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-            ThemeMode.entries.forEachIndexed { index, mode ->
-                SegmentedButton(
-                    selected = mode == selected,
-                    onClick = { onSelect(mode) },
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = ThemeMode.entries.size),
-                    colors = colors,
-                ) {
-                    Text(stringResource(mode.titleRes))
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.settings_theme)) },
+        supportingContent = { Text(stringResource(selected.titleRes)) },
+        leadingContent = { Icon(Icons.Outlined.Contrast, contentDescription = null) },
+        trailingContent = {
+            // Выбранный вариант того же цвета, что и выбранная вкладка в нижней панели.
+            val colors = SegmentedButtonDefaults.colors(
+                activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+            SingleChoiceSegmentedButtonRow {
+                ThemeMode.entries.forEachIndexed { index, mode ->
+                    SegmentedButton(
+                        selected = mode == selected,
+                        onClick = { onSelect(mode) },
+                        shape = SegmentedButtonDefaults.itemShape(index = index, count = ThemeMode.entries.size),
+                        colors = colors,
+                        // Без галочки: выбранную кнопку видно по цвету, а галочка не помещается рядом с иконкой.
+                        icon = {},
+                    ) {
+                        Icon(mode.icon, contentDescription = stringResource(mode.titleRes))
+                    }
                 }
             }
-        }
-    }
+        },
+        modifier = modifier,
+    )
 }
 
 private val ThemeMode.titleRes: Int
@@ -151,4 +214,11 @@ private val ThemeMode.titleRes: Int
         ThemeMode.System -> R.string.settings_theme_system
         ThemeMode.Light -> R.string.settings_theme_light
         ThemeMode.Dark -> R.string.settings_theme_dark
+    }
+
+private val ThemeMode.icon: ImageVector
+    get() = when (this) {
+        ThemeMode.System -> Icons.Outlined.BrightnessAuto
+        ThemeMode.Light -> Icons.Outlined.LightMode
+        ThemeMode.Dark -> Icons.Outlined.DarkMode
     }
