@@ -7,8 +7,8 @@
     <string name="settings_theme_save_error">Couldn\'t save the theme</string>
     <string name="settings_network_delay">Request delay</string>
     <string name="settings_network_delay_none">No delay</string>
-    <string name="settings_network_delay_three_seconds">3 seconds</string>
-    <string name="settings_network_delay_six_seconds">6 seconds</string>
+    <string name="settings_network_delay_two_seconds">2 seconds</string>
+    <string name="settings_network_delay_four_seconds">4 seconds</string>
     <string name="settings_network_delay_save_error">Couldn\'t save the request delay</string>
     <string name="settings_deep_links_page">Deep links</string>
     <string name="settings_deep_links_page_description">Opens a page with the links in your browser</string>

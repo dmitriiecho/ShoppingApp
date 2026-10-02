@@ -7,6 +7,6 @@ import kotlin.time.Duration.Companion.seconds
 // пока ждут ответа.
 enum class NetworkDelay(val duration: Duration) {
     None(Duration.ZERO),
-    ThreeSeconds(3.seconds),
-    SixSeconds(6.seconds),
+    TwoSeconds(2.seconds),
+    FourSeconds(4.seconds),
 }

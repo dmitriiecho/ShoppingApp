@@ -263,8 +263,8 @@ private val ChoiceButtonsWidth = 168.dp
 private val NetworkDelay.descriptionRes: Int
     get() = when (this) {
         NetworkDelay.None -> R.string.settings_network_delay_none
-        NetworkDelay.ThreeSeconds -> R.string.settings_network_delay_three_seconds
-        NetworkDelay.SixSeconds -> R.string.settings_network_delay_six_seconds
+        NetworkDelay.TwoSeconds -> R.string.settings_network_delay_two_seconds
+        NetworkDelay.FourSeconds -> R.string.settings_network_delay_four_seconds
     }
 
 private val ThemeMode.titleRes: Int
