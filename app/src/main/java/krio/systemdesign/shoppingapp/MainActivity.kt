@@ -2,6 +2,7 @@ package krio.systemdesign.shoppingapp
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -60,11 +61,17 @@ class MainActivity : ComponentActivity() {
                         lightScrim = android.graphics.Color.TRANSPARENT,
                         darkScrim = android.graphics.Color.TRANSPARENT,
                     ) { darkTheme },
+                    // Без подложки: фон под кнопками навигации (в режиме трёх кнопок) рисует само приложение,
+                    // например панель вкладок продолжается под ними своим цветом.
                     navigationBarStyle = SystemBarStyle.auto(
-                        lightScrim = LIGHT_NAVIGATION_BAR_SCRIM,
-                        darkScrim = DARK_NAVIGATION_BAR_SCRIM,
+                        lightScrim = android.graphics.Color.TRANSPARENT,
+                        darkScrim = android.graphics.Color.TRANSPARENT,
                     ) { darkTheme },
                 )
+                // Иначе система сама подложит под кнопки полупрозрачный фон.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    window.isNavigationBarContrastEnforced = false
+                }
                 onDispose {}
             }
             ShoppingAppTheme(darkTheme = darkTheme) {
@@ -82,7 +89,3 @@ class MainActivity : ComponentActivity() {
         intent.data?.let { _deepLinks.trySend(it) }
     }
 }
-
-// Подложка под кнопками навигации (в режиме трёх кнопок) — та же, что по умолчанию в enableEdgeToEdge.
-private val LIGHT_NAVIGATION_BAR_SCRIM = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
-private val DARK_NAVIGATION_BAR_SCRIM = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)

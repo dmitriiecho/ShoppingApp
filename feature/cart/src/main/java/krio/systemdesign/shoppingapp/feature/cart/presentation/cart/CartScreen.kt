@@ -16,9 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.ProductionQuantityLimits
@@ -35,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -46,8 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -58,14 +53,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.AppCard
+import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeNotice
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
+import krio.systemdesign.shoppingapp.core.ui.components.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
-import krio.systemdesign.shoppingapp.core.ui.theme.success
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
@@ -391,16 +388,14 @@ private fun CartPromoCode(
     modifier: Modifier = Modifier,
 ) {
     if (isValid) {
-        CartNoticeWithAction(
-            icon = Icons.Outlined.CheckCircle,
-            title = stringResource(R.string.cart_promo_active, promoCode.code, promoCode.discountPercent),
-            accentColor = MaterialTheme.colorScheme.success,
-            actionText = stringResource(R.string.cart_promo_remove),
-            onAction = onRemove,
+        AppliedPromoCodeNotice(
+            code = promoCode.code,
+            discountPercent = promoCode.discountPercent,
+            onRemove = onRemove,
             modifier = modifier,
         )
     } else {
-        CartNoticeWithAction(
+        NoticeWithAction(
             icon = Icons.Outlined.ErrorOutline,
             title = stringResource(R.string.cart_promo_invalid, promoCode.code),
             subtitle = stringResource(R.string.cart_promo_invalid_hint),
@@ -420,20 +415,20 @@ private fun ItemIssueNotice(
     modifier: Modifier = Modifier,
 ) {
     when (issue) {
-        is ItemIssue.Unavailable -> CartNotice(
+        is ItemIssue.Unavailable -> Notice(
             icon = Icons.Outlined.Inventory2,
             title = stringResource(R.string.cart_item_unavailable),
             accentColor = MaterialTheme.colorScheme.error,
             modifier = modifier,
         )
-        is ItemIssue.PriceChanged -> CartNotice(
+        is ItemIssue.PriceChanged -> Notice(
             icon = Icons.Outlined.Sell,
             // Старая цена видна строкой выше, в плашке только новая.
             title = stringResource(R.string.cart_item_price_changed, formatPrice(issue.newPrice)),
             accentColor = MaterialTheme.colorScheme.error,
             modifier = modifier,
         )
-        is ItemIssue.NotEnoughStock -> CartNotice(
+        is ItemIssue.NotEnoughStock -> Notice(
             icon = Icons.Outlined.ProductionQuantityLimits,
             title = stringResource(R.string.cart_item_not_enough_stock, issue.availableQuantity),
             accentColor = MaterialTheme.colorScheme.error,
@@ -442,54 +437,6 @@ private fun ItemIssueNotice(
     }
 }
 
-// Плашка с иконкой для пометок на карточках товаров и у промокода.
-// Фон — лёгкий оттенок цвета акцента, текст и иконка — сам цвет акцента.
-@Composable
-private fun CartNotice(
-    icon: ImageVector,
-    title: String,
-    accentColor: Color,
-    modifier: Modifier = Modifier,
-    subtitle: String? = null,
-    action: (@Composable () -> Unit)? = null,
-) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        color = accentColor.copy(alpha = NOTICE_BACKGROUND_ALPHA),
-        contentColor = accentColor,
-    ) {
-        Row(
-            // У кнопки свои отступы и высота, поэтому с ней плашке свои почти не нужны.
-            modifier = if (action != null) {
-                Modifier.padding(start = 12.dp, top = 4.dp, bottom = 4.dp, end = 4.dp)
-            } else {
-                Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
-            },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-            )
-            Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                if (subtitle != null) {
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-            }
-            action?.invoke()
-        }
-    }
-}
 
 // Над «Итого» — по плашке на каждый вид изменений: сколько товаров затронуто и кнопка, которая исправляет все сразу.
 // У нехватки остатка кнопки нет: количество пользователь уменьшает сам кнопкой «−».
@@ -510,7 +457,7 @@ private fun CartChangesActions(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (priceChangeCount > 0) {
-            CartNoticeWithAction(
+            NoticeWithAction(
                 icon = Icons.Outlined.Sell,
                 title = pluralStringResource(R.plurals.cart_price_changes, priceChangeCount, priceChangeCount),
                 accentColor = MaterialTheme.colorScheme.error,
@@ -520,7 +467,7 @@ private fun CartChangesActions(
             )
         }
         if (unavailableItemCount > 0) {
-            CartNoticeWithAction(
+            NoticeWithAction(
                 icon = Icons.Outlined.Inventory2,
                 title = pluralStringResource(R.plurals.cart_unavailable_items, unavailableItemCount, unavailableItemCount),
                 accentColor = MaterialTheme.colorScheme.error,
@@ -530,7 +477,7 @@ private fun CartChangesActions(
             )
         }
         if (notEnoughStockItemCount > 0) {
-            CartNotice(
+            Notice(
                 icon = Icons.Outlined.ProductionQuantityLimits,
                 title = pluralStringResource(R.plurals.cart_not_enough_stock_items, notEnoughStockItemCount, notEnoughStockItemCount),
                 accentColor = MaterialTheme.colorScheme.error,
@@ -540,33 +487,6 @@ private fun CartChangesActions(
     }
 }
 
-// Плашка с текстовой кнопкой того же цвета справа.
-@Composable
-private fun CartNoticeWithAction(
-    icon: ImageVector,
-    title: String,
-    accentColor: Color,
-    actionText: String,
-    onAction: () -> Unit,
-    modifier: Modifier = Modifier,
-    subtitle: String? = null,
-) {
-    CartNotice(
-        icon = icon,
-        title = title,
-        accentColor = accentColor,
-        modifier = modifier,
-        subtitle = subtitle,
-        action = {
-            TextButton(
-                onClick = onAction,
-                colors = ButtonDefaults.textButtonColors(contentColor = accentColor),
-            ) {
-                Text(actionText)
-            }
-        },
-    )
-}
 
 @Composable
 private fun ClearCartDialog(
@@ -599,7 +519,6 @@ private fun ClearCartDialog(
 private const val UNAVAILABLE_ALPHA = 0.5f
 
 // Насыщенность фона плашки относительно её цвета акцента.
-private const val NOTICE_BACKGROUND_ALPHA = 0.14f
 
 // Высота плашки с кнопкой: кнопка не ниже 48dp, чтобы в неё было легко попасть, плюс отступы плашки по 4dp.
 private val CHANGES_NOTICE_MIN_HEIGHT = 56.dp

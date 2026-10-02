@@ -3,8 +3,7 @@
     <string name="checkout_place_order">Place order</string>
     <string name="checkout_order_items">Order items</string>
     <string name="checkout_delivery_address">Delivery address</string>
-    <string name="checkout_street">Street</string>
-    <string name="checkout_required">Required</string>
+    <string name="checkout_street">Street *</string>
     <string name="checkout_apartment">Apartment</string>
     <string name="checkout_courier_comment">Comment for the courier</string>
     <string name="checkout_payment">Payment</string>
@@ -14,4 +13,5 @@
     <string name="checkout_empty_title">Your cart is empty</string>
     <string name="checkout_empty_message">Add products from the catalog</string>
     <string name="checkout_place_order_error">Couldn\'t place the order</string>
+    <string name="checkout_demo_order_notice">This is a demo app: the order isn\'t sent anywhere. Placing it clears the cart and the promo code</string>
 </resources>

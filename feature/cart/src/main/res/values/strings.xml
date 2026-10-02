@@ -16,7 +16,6 @@
     <string name="cart_item_unavailable">Out of stock</string>
     <string name="cart_item_price_changed">Price changed: now %1$s</string>
     <string name="cart_item_not_enough_stock">Only %1$d available to order now</string>
-    <string name="cart_promo_active">Promo code %1$s · −%2$d%%</string>
     <string name="cart_promo_invalid">Promo code %1$s is no longer valid</string>
     <string name="cart_promo_invalid_hint">Remove it to place your order</string>
     <string name="cart_promo_remove">Remove</string>
