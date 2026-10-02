@@ -6,6 +6,10 @@ sealed interface SettingsEffect {
 
     data object ShowThemeSaveError : SettingsEffect
 
+    data object ShowUnavailableProductAdded : SettingsEffect
+
+    data object ShowAddToCartError : SettingsEffect
+
     // Во вкладке не отправляется. Нужен, когда экран встроен во флоу, из которого можно выйти.
     data object NavigateBack : SettingsEffect
 }

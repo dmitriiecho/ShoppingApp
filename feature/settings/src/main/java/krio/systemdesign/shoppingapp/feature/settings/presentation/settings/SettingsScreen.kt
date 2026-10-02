@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.outlined.AddShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -62,6 +63,12 @@ fun SettingsScreen(
                 SettingsEffect.ShowThemeSaveError -> {
                     launch { snackbarHostState.showSnackbar(resources.getString(R.string.settings_theme_save_error)) }
                 }
+                SettingsEffect.ShowUnavailableProductAdded -> {
+                    launch { snackbarHostState.showSnackbar(resources.getString(R.string.settings_unavailable_product_added)) }
+                }
+                SettingsEffect.ShowAddToCartError -> {
+                    launch { snackbarHostState.showSnackbar(resources.getString(R.string.settings_add_to_cart_error)) }
+                }
                 SettingsEffect.NavigateBack -> onBack()
             }
         }
@@ -94,6 +101,12 @@ fun SettingsScreen(
                 leadingContent = { Icon(Icons.Default.Link, contentDescription = null) },
                 trailingContent = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
                 modifier = Modifier.clickable { viewModel.onEvent(SettingsEvent.OnDeepLinksPageClick) },
+            )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_add_unavailable_product)) },
+                supportingContent = { Text(stringResource(R.string.settings_add_unavailable_product_description)) },
+                leadingContent = { Icon(Icons.Outlined.AddShoppingCart, contentDescription = null) },
+                modifier = Modifier.clickable { viewModel.onEvent(SettingsEvent.OnAddUnavailableProductClick) },
             )
         }
     }

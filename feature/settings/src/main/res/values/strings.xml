@@ -8,4 +8,8 @@
     <string name="settings_deep_links_page">Deep links for testing</string>
     <string name="settings_deep_links_page_description">Opens a page with the links in your browser</string>
     <string name="settings_no_browser">No browser found to open the page</string>
+    <string name="settings_add_unavailable_product">Add an out-of-stock item to the cart</string>
+    <string name="settings_add_unavailable_product_description">To check how the cart shows an unavailable item</string>
+    <string name="settings_unavailable_product_added">Out-of-stock item added to the cart</string>
+    <string name="settings_add_to_cart_error">Couldn\'t add the item to the cart</string>
 </resources>

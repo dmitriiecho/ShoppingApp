@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.domain.usecase.ObserveThemeModeUseCase
+import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.AddUnavailableProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.domain.usecase.SetThemeModeUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     observeThemeMode: ObserveThemeModeUseCase,
     private val setThemeMode: SetThemeModeUseCase,
+    private val addUnavailableProductToCart: AddUnavailableProductToCartUseCase,
 ) : ViewModel() {
 
     private val _effects = Channel<SettingsEffect>(Channel.BUFFERED)
@@ -38,6 +40,7 @@ class SettingsViewModel @Inject constructor(
             // Тему применяет MainActivity: она следит за сохранённой настройкой, отдельно сообщать ей не нужно.
             is SettingsEvent.OnThemeModeChange -> changeThemeMode(event.mode)
             SettingsEvent.OnDeepLinksPageClick -> send(SettingsEffect.OpenUrl(DeepLinkConfig.TEST_PAGE_URI))
+            SettingsEvent.OnAddUnavailableProductClick -> addUnavailableProduct()
             SettingsEvent.OnBackClick -> send(SettingsEffect.NavigateBack)
         }
     }
@@ -45,6 +48,14 @@ class SettingsViewModel @Inject constructor(
     private fun changeThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
             setThemeMode(mode).onFailure { send(SettingsEffect.ShowThemeSaveError) }
+        }
+    }
+
+    private fun addUnavailableProduct() {
+        viewModelScope.launch {
+            addUnavailableProductToCart()
+                .onSuccess { send(SettingsEffect.ShowUnavailableProductAdded) }
+                .onFailure { send(SettingsEffect.ShowAddToCartError) }
         }
     }
 
