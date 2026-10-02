@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp
 
+import android.app.UiModeManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -12,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -74,6 +76,7 @@ class MainActivity : ComponentActivity() {
                 }
                 onDispose {}
             }
+            LaunchedEffect(mode) { rememberThemeForSplashScreen(mode) }
             ShoppingAppTheme(darkTheme = darkTheme) {
                 AppNavHost(
                     deepLinks = deepLinks,
@@ -81,6 +84,19 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    // Стартовый экран Android 12+ рисует система ещё до запуска приложения, по своей теме.
+    // Сообщаем ей тему, выбранную в настройках приложения: система её запомнит,
+    // и при следующем запуске стартовый экран будет уже в ней.
+    private fun rememberThemeForSplashScreen(mode: ThemeMode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        val nightMode = when (mode) {
+            ThemeMode.System -> UiModeManager.MODE_NIGHT_AUTO
+            ThemeMode.Light -> UiModeManager.MODE_NIGHT_NO
+            ThemeMode.Dark -> UiModeManager.MODE_NIGHT_YES
+        }
+        getSystemService(UiModeManager::class.java).setApplicationNightMode(nightMode)
     }
 
     // Ссылка пришла, когда приложение уже открыто (launchMode="singleTop").
