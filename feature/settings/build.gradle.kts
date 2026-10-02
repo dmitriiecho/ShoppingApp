@@ -8,5 +8,6 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":core:ui"))
     implementation(project(":core:config"))
 }

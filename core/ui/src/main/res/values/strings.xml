@@ -10,4 +10,9 @@
     <string name="core_ui_subtotal">Subtotal</string>
     <string name="core_ui_discount">Discount</string>
     <string name="core_ui_total">Total</string>
+    <string name="core_ui_out_of_stock">Out of stock</string>
+    <string name="core_ui_discount_percent" translatable="false">−%1$d%%</string>
+    <string name="core_ui_retry">Retry</string>
+    <string name="core_ui_cancel">Cancel</string>
+    <string name="core_ui_scroll_to_top">Back to top</string>
 </resources>

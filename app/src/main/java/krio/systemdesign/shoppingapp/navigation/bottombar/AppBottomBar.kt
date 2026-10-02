@@ -4,14 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,6 +16,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
+import krio.systemdesign.shoppingapp.core.ui.components.AppNavigationBarItem
 
 @Composable
 fun AppBottomBar(
@@ -43,55 +37,31 @@ fun AppBottomBar(
 
     val cartItemCount by viewModel.cartItemCount.collectAsStateWithLifecycle()
 
-    // Выбранная вкладка — акцентного цвета на подложке primaryContainer. Со стандартными цветами
-    // (secondaryContainer и почти такая же иконка, как у остальных) выбранную вкладку плохо видно.
-    val itemColors = NavigationBarItemDefaults.colors(
-        selectedIconColor = MaterialTheme.colorScheme.primary,
-        selectedTextColor = MaterialTheme.colorScheme.primary,
-        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-
     NavigationBar(modifier = modifier) {
-        NavigationBarItem(
+        AppNavigationBarItem(
             selected = currentDestination.hierarchy.any {
                 it.hasRoute<BottomNavRoutes.CatalogTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CatalogTab) },
-            icon = { Icon(Icons.Default.Home, contentDescription = null) },
-            label = { Text(stringResource(R.string.app_bottom_bar_catalog)) },
-            colors = itemColors,
+            icon = Icons.Default.Home,
+            label = stringResource(R.string.app_bottom_bar_catalog),
         )
-        NavigationBarItem(
+        AppNavigationBarItem(
             selected = currentDestination.hierarchy.any {
                 it.hasRoute<BottomNavRoutes.CartTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CartTab) },
-            icon = {
-                BadgedBox(
-                    badge = {
-                        if (cartItemCount > 0) {
-                            Badge {
-                                Text(if (cartItemCount > 99) "99+" else cartItemCount.toString())
-                            }
-                        }
-                    },
-                ) {
-                    Icon(Icons.Default.ShoppingCart, contentDescription = null)
-                }
-            },
-            label = { Text(stringResource(R.string.app_bottom_bar_cart)) },
-            colors = itemColors,
+            icon = Icons.Default.ShoppingCart,
+            label = stringResource(R.string.app_bottom_bar_cart),
+            badgeCount = cartItemCount,
         )
-        NavigationBarItem(
+        AppNavigationBarItem(
             selected = currentDestination.hierarchy.any {
                 it.hasRoute<BottomNavRoutes.SettingsTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.SettingsTab) },
-            icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-            label = { Text(stringResource(R.string.app_bottom_bar_settings)) },
-            colors = itemColors,
+            icon = Icons.Default.Settings,
+            label = stringResource(R.string.app_bottom_bar_settings),
         )
     }
 }

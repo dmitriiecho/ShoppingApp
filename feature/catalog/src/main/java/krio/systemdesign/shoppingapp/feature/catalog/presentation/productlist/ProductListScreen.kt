@@ -1,44 +1,27 @@
 package krio.systemdesign.shoppingapp.feature.catalog.presentation.productlist
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -55,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -63,18 +45,20 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import krio.systemdesign.shoppingapp.core.ui.components.AppCard
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
-import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
-import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
+import krio.systemdesign.shoppingapp.core.ui.components.EmptyState
+import krio.systemdesign.shoppingapp.core.ui.components.ErrorBanner
+import krio.systemdesign.shoppingapp.core.ui.components.ErrorState
+import krio.systemdesign.shoppingapp.core.ui.components.OutOfStockButton
+import krio.systemdesign.shoppingapp.core.ui.components.ProductCard
+import krio.systemdesign.shoppingapp.core.ui.components.ProductCardPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
-import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
-import krio.systemdesign.shoppingapp.core.ui.components.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.components.ScrollToTopButton
+import krio.systemdesign.shoppingapp.core.ui.components.SearchField
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
-import krio.systemdesign.shoppingapp.feature.catalog.presentation.component.OutOfStockButton
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 
@@ -121,6 +105,10 @@ fun ProductListScreen(
                 query = uiState.searchQuery,
                 onQueryChange = { viewModel.onEvent(ProductListEvent.OnSearchQueryChanged(it)) },
                 onClear = { viewModel.onEvent(ProductListEvent.OnClearSearch) },
+                placeholder = stringResource(R.string.catalog_search_placeholder),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             )
             ProductListBody(
                 searchQuery = uiState.searchQuery,
@@ -130,32 +118,6 @@ fun ProductListScreen(
             )
         }
     }
-}
-
-@Composable
-private fun SearchField(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    onClear: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedTextField(
-        value = query,
-        onValueChange = onQueryChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        placeholder = { Text(stringResource(R.string.catalog_search_placeholder)) },
-        leadingIcon = {
-            Icon(Icons.Default.Search, contentDescription = null)
-        },
-        trailingIcon = {
-            if (query.isNotEmpty()) {
-                CloseIconButton(onClick = onClear)
-            }
-        },
-        singleLine = true,
-    )
 }
 
 @Composable
@@ -183,9 +145,10 @@ private fun ProductListBody(
     ) {
         when {
             refresh is LoadState.Loading && !isPullRefreshing -> LoadingContent()
-            refresh is LoadState.Error -> ErrorContent(
+            refresh is LoadState.Error -> ErrorState(
                 message = stringResource(R.string.catalog_load_error),
                 onRetry = { products.retry() },
+                modifier = Modifier.fillMaxSize(),
             )
             products.itemCount == 0 -> EmptyContent(
                 message = if (searchQuery.isBlank()) {
@@ -218,7 +181,8 @@ private fun ProductListBody(
                         onEvent = onEvent,
                     )
                     if (isPrependErrorVisible) {
-                        PrependErrorBanner(
+                        ErrorBanner(
+                            message = stringResource(R.string.catalog_prepend_error),
                             onRetry = { products.retry() },
                             modifier = Modifier
                                 .align(Alignment.TopCenter)
@@ -259,7 +223,7 @@ private fun ProductList(
         ) { index ->
             val product = products[index]
             if (product == null) {
-                ProductListItemPlaceholder(isLoading = prepend !is LoadState.Error)
+                ProductCardPlaceholder(isLoading = prepend !is LoadState.Error)
                 return@items
             }
             ProductListItem(
@@ -281,7 +245,7 @@ private fun ProductList(
         when (append) {
             is LoadState.Loading -> {
                 item(key = "append_loading") {
-                    ProductListItemPlaceholder(isLoading = true)
+                    ProductCardPlaceholder()
                 }
             }
             is LoadState.Error -> {
@@ -307,164 +271,26 @@ private fun ProductListItem(
     onRemoveFromCart: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AppCard(
-        modifier = modifier.fillMaxWidth(),
+    ProductCard(
+        name = product.name,
+        imageUrl = product.imageUrl,
+        price = formatPrice(product.price),
         onClick = onClick,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                ProductImage(
-                    imageUrl = product.imageUrl,
-                    contentDescription = product.name,
-                    modifier = Modifier.size(88.dp),
-                    sharedElementKey = ProductImageKey(product.id),
-                )
-                Spacer(Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = product.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = formatPrice(product.price),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-            }
-            Spacer(Modifier.height(12.dp))
-            if (product.isAvailable) {
-                CartQuantityControl(
-                    quantity = quantity,
-                    onAdd = onAddToCart,
-                    onIncrease = { onUpdateQuantity(quantity + 1) },
-                    onDecrease = { onUpdateQuantity(quantity - 1) },
-                    onRemoveAll = onRemoveFromCart,
-                    modifier = Modifier.fillMaxWidth(),
-                    canIncrease = quantity < product.availableQuantity,
-                )
-            } else {
-                OutOfStockButton()
-            }
-        }
-    }
-}
-
-// Повторяет размеры ProductListItem, чтобы список не прыгал, когда заглушка сменяется товаром.
-@Composable
-private fun ProductListItemPlaceholder(
-    isLoading: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    AppCard(modifier = modifier.fillMaxWidth()) {
-        ShimmerPlaceholder(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            isAnimating = isLoading,
-        ) {
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(88.dp)
-                            .shimmerShape(RoundedCornerShape(12.dp)),
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .height(20.dp)
-                                .shimmerShape(RoundedCornerShape(4.dp)),
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .width(96.dp)
-                                .height(20.dp)
-                                .shimmerShape(RoundedCornerShape(4.dp)),
-                        )
-                    }
-                }
-                Spacer(Modifier.height(12.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(ButtonDefaults.MinHeight)
-                        .shimmerShape(RoundedCornerShape(ButtonDefaults.MinHeight / 2)),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PrependErrorBanner(
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.errorContainer,
-        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        shadowElevation = 4.dp,
-    ) {
-        Row(
-            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ErrorOutline,
-                contentDescription = null,
-            )
-            Spacer(Modifier.width(12.dp))
-            Text(
-                text = stringResource(R.string.catalog_prepend_error),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f),
-            )
-            TextButton(
-                onClick = onRetry,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                ),
-            ) {
-                Text(stringResource(R.string.catalog_retry))
-            }
-        }
-    }
-}
-
-@Composable
-private fun ScrollToTopButton(
-    visible: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AnimatedVisibility(
-        visible = visible,
         modifier = modifier,
-        enter = fadeIn() + scaleIn(),
-        exit = fadeOut() + scaleOut(),
+        sharedElementKey = ProductImageKey(product.id),
     ) {
-        // Высотой как кнопка «В корзину» на карточках (CartQuantityControl).
-        ExtendedFloatingActionButton(
-            onClick = onClick,
-            modifier = Modifier.height(ButtonDefaults.MinHeight),
-        ) {
-            Text(stringResource(R.string.catalog_scroll_to_top))
+        if (product.isAvailable) {
+            CartQuantityControl(
+                quantity = quantity,
+                onAdd = onAddToCart,
+                onIncrease = { onUpdateQuantity(quantity + 1) },
+                onDecrease = { onUpdateQuantity(quantity - 1) },
+                onRemoveAll = onRemoveFromCart,
+                modifier = Modifier.fillMaxWidth(),
+                canIncrease = quantity < product.availableQuantity,
+            )
+        } else {
+            OutOfStockButton()
         }
     }
 }
@@ -480,39 +306,7 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
         userScrollEnabled = false,
     ) {
         items(LOADING_PLACEHOLDER_COUNT) {
-            ProductListItemPlaceholder(isLoading = true)
-        }
-    }
-}
-
-@Composable
-private fun ErrorContent(
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.ErrorOutline,
-            contentDescription = null,
-            modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.error,
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text(stringResource(R.string.catalog_retry))
+            ProductCardPlaceholder()
         }
     }
 }
@@ -525,27 +319,11 @@ private fun EmptyContent(
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         item {
-            Column(
-                modifier = Modifier
-                    .fillParentMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Inventory2,
-                    contentDescription = null,
-                    modifier = Modifier.size(56.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            EmptyState(
+                icon = Icons.Outlined.Inventory2,
+                message = message,
+                modifier = Modifier.fillParentMaxSize(),
+            )
         }
     }
 }

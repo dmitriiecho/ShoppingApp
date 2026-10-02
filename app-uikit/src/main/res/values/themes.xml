@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--
+      Фон окна тот же, что у основного приложения: его видно, пока Compose не нарисовал первый кадр.
+      Значки строки состояния и панели навигации тёмные, как на светлом фоне; при смене темы их перекрашивает UiKitActivity.
+    -->
+    <style name="Theme.ShoppingAppUiKit" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/core_ui_window_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+</resources>

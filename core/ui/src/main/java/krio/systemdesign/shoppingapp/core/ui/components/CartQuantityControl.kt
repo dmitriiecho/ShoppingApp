@@ -126,6 +126,18 @@ fun CartQuantityControl(
     }
 }
 
+// Заглушка CartQuantityControl внутри ShimmerPlaceholder: фигура того же размера и формы, что кнопка «В корзину».
+@Composable
+fun CartQuantityControlPlaceholder(modifier: Modifier = Modifier) {
+    val controlHeight = ButtonDefaults.MinHeight
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(controlHeight)
+            .shimmerShape(RoundedCornerShape(controlHeight / 2)),
+    )
+}
+
 @Composable
 private fun CartControlIconButton(
     imageVector: ImageVector,

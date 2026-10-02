@@ -7,12 +7,10 @@
     <string name="catalog_append_error">Loading error</string>
     <string name="catalog_prepend_error">Couldn\'t load the products above</string>
     <string name="catalog_retry">Retry</string>
-    <string name="catalog_scroll_to_top">Back to top</string>
 
     <string name="catalog_product_title">Product</string>
     <string name="catalog_product_load_error">Couldn\'t load the product</string>
     <string name="catalog_product_not_found">Product not found</string>
 
-    <string name="catalog_out_of_stock">Out of stock</string>
     <string name="catalog_cart_update_error">Couldn\'t update your cart</string>
 </resources>

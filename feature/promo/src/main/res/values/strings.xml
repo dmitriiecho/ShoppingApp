@@ -8,5 +8,4 @@
     <string name="promo_available_empty">There are no promo codes on the server</string>
     <string name="promo_available_error">Couldn\'t load the list</string>
     <string name="promo_retry">Retry</string>
-    <string name="promo_discount_percent" translatable="false">−%1$d%%</string>
 </resources>

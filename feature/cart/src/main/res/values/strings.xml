@@ -6,7 +6,6 @@
     <string name="cart_order_total">Order total</string>
     <string name="cart_empty_title">Your cart is empty</string>
     <string name="cart_empty_message">Add products from the catalog</string>
-    <string name="cart_cancel">Cancel</string>
 
     <string name="cart_clear_dialog_title">Clear cart?</string>
     <string name="cart_clear_dialog_message">All items will be removed.</string>

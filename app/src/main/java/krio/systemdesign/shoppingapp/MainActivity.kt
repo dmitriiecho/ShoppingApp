@@ -6,9 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +14,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
@@ -35,7 +34,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // Приложение рисует и под системными панелями. Фон под ними прозрачный и без подложки:
+        // например, панель вкладок продолжается под кнопками навигации своим цветом.
+        // Не enableEdgeToEdge() из androidx.activity: при каждой смене конфигурации (например, темы)
+        // она заново применяет стили своего первого вызова и возвращает под кнопки навигации полупрозрачную подложку.
+        WindowCompat.enableEdgeToEdge(window)
         // После пересоздания активити ссылка уже открыта, её экраны восстановит NavController.
         // А из списка недавних Android запускает приложение с той ссылкой, с которой оно когда-то открылось,
         // хотя пользователь мог давно уйти с её экрана.
@@ -58,21 +61,9 @@ class MainActivity : ComponentActivity() {
             // Значки строки состояния и панели навигации — под тему приложения, а не системы:
             // иначе при тёмной теме приложения и светлой системе часы и батарея были бы тёмными на тёмном фоне.
             DisposableEffect(darkTheme) {
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        lightScrim = android.graphics.Color.TRANSPARENT,
-                        darkScrim = android.graphics.Color.TRANSPARENT,
-                    ) { darkTheme },
-                    // Без подложки: фон под кнопками навигации (в режиме трёх кнопок) рисует само приложение,
-                    // например панель вкладок продолжается под ними своим цветом.
-                    navigationBarStyle = SystemBarStyle.auto(
-                        lightScrim = android.graphics.Color.TRANSPARENT,
-                        darkScrim = android.graphics.Color.TRANSPARENT,
-                    ) { darkTheme },
-                )
-                // Иначе система сама подложит под кнопки полупрозрачный фон.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    window.isNavigationBarContrastEnforced = false
+                WindowCompat.getInsetsController(window, window.decorView).apply {
+                    isAppearanceLightStatusBars = !darkTheme
+                    isAppearanceLightNavigationBars = !darkTheme
                 }
                 onDispose {}
             }

@@ -1,19 +1,13 @@
 package krio.systemdesign.shoppingapp.feature.cart.presentation.cart
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -23,8 +17,6 @@ import androidx.compose.material.icons.outlined.ProductionQuantityLimits
 import androidx.compose.material.icons.outlined.RemoveShoppingCart
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,24 +34,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.AppCard
 import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeNotice
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
+import krio.systemdesign.shoppingapp.core.ui.components.ConfirmationDialog
+import krio.systemdesign.shoppingapp.core.ui.components.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.components.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
-import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
+import krio.systemdesign.shoppingapp.core.ui.components.ProductCard
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
@@ -101,9 +92,13 @@ fun CartScreen(
     }
 
     if (uiState.isClearCartDialogVisible) {
-        ClearCartDialog(
+        ConfirmationDialog(
+            title = stringResource(R.string.cart_clear_dialog_title),
+            text = stringResource(R.string.cart_clear_dialog_message),
+            confirmText = stringResource(R.string.cart_clear_dialog_confirm),
             onConfirm = { viewModel.onEvent(CartEvent.OnClearCartConfirmed) },
             onDismiss = { viewModel.onEvent(CartEvent.OnClearCartDismiss) },
+            isDestructive = true,
         )
     }
 
@@ -229,68 +224,31 @@ private fun CartListItem(
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Закончившийся товар приглушён, чтобы его было видно сразу, даже не читая плашку.
-    val contentAlpha = if (issues.any { it is ItemIssue.Unavailable }) UNAVAILABLE_ALPHA else 1f
-    AppCard(
-        modifier = modifier.fillMaxWidth(),
+    ProductCard(
+        name = item.name,
+        imageUrl = item.imageUrl,
+        price = formatPrice(item.price * item.quantity),
         onClick = onClick,
+        modifier = modifier,
+        unitPrice = formatPrice(item.price),
+        sharedElementKey = ProductImageKey(item.productId),
+        isDimmed = issues.any { it is ItemIssue.Unavailable },
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .alpha(contentAlpha),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                ProductImage(
-                    imageUrl = item.imageUrl,
-                    contentDescription = item.name,
-                    modifier = Modifier.size(88.dp),
-                    sharedElementKey = ProductImageKey(item.productId),
-                )
-                Spacer(Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = item.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = formatPrice(item.price),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = formatPrice(item.price * item.quantity),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+        if (issues.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                issues.forEach { ItemIssueNotice(issue = it) }
             }
-            if (issues.isNotEmpty()) {
-                Spacer(Modifier.height(12.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    issues.forEach { ItemIssueNotice(issue = it) }
-                }
-            }
-            Spacer(Modifier.height(12.dp))
-            CartQuantityControl(
-                quantity = item.quantity,
-                onAdd = onIncrease,
-                onIncrease = onIncrease,
-                onDecrease = onDecrease,
-                onRemoveAll = onRemove,
-                modifier = Modifier.fillMaxWidth(),
-                // В корзине уже весь остаток или товар закончился: добавить ещё нельзя, уменьшить и удалить можно.
-                canIncrease = canIncrease,
-            )
         }
+        CartQuantityControl(
+            quantity = item.quantity,
+            onAdd = onIncrease,
+            onIncrease = onIncrease,
+            onDecrease = onDecrease,
+            onRemoveAll = onRemove,
+            modifier = Modifier.fillMaxWidth(),
+            // В корзине уже весь остаток или товар закончился: добавить ещё нельзя, уменьшить и удалить можно.
+            canIncrease = canIncrease,
+        )
     }
 }
 
@@ -340,31 +298,13 @@ private fun EmptyCart(
 ) {
     // Box, а не Column: надпись стоит по центру всего экрана и не сдвигается,
     // когда строка промокода появляется или исчезает.
-    Box(modifier = modifier.padding(24.dp)) {
-        Column(
+    Box(modifier = modifier) {
+        EmptyState(
+            icon = Icons.Outlined.ShoppingCart,
+            title = stringResource(R.string.cart_empty_title),
+            message = stringResource(R.string.cart_empty_message),
             modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ShoppingCart,
-                contentDescription = null,
-                modifier = Modifier.size(56.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = stringResource(R.string.cart_empty_title),
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.cart_empty_message),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        )
         // Промокод переживает удаление товаров: показываем его, чтобы было видно,
         // что он сработает для следующих покупок, и чтобы его можно было убрать.
         if (promoCode != null) {
@@ -372,7 +312,9 @@ private fun EmptyCart(
                 promoCode = promoCode,
                 isValid = isPromoCodeValid,
                 onRemove = onRemovePromo,
-                modifier = Modifier.align(Alignment.BottomCenter),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(24.dp),
             )
         }
     }
@@ -487,36 +429,6 @@ private fun CartChangesActions(
     }
 }
 
-
-@Composable
-private fun ClearCartDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.cart_clear_dialog_title)) },
-        text = { Text(stringResource(R.string.cart_clear_dialog_message)) },
-        confirmButton = {
-            TextButton(
-                onClick = onConfirm,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error,
-                ),
-            ) {
-                Text(stringResource(R.string.cart_clear_dialog_confirm))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cart_cancel))
-            }
-        },
-    )
-}
-
-// Прозрачность закончившегося товара в корзине.
-private const val UNAVAILABLE_ALPHA = 0.5f
 
 // Насыщенность фона плашки относительно её цвета акцента.
 

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!--
-      Фон окна: его видно на стартовом экране и в первые мгновения, пока Compose не нарисовал первый кадр.
-      Совпадает с фоном приложения (BackgroundLight и BackgroundDark в core/ui Color.kt), тёмный вариант в values-night.
-    -->
-    <color name="window_background">#FFF6F4F2</color>
-</resources>

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Стартовый экран Android 12+ берёт фон из windowBackground, а значок — иконку приложения. -->
+    <!--
+      Стартовый экран Android 12+ берёт фон из windowBackground, а значок — иконку приложения.
+      Значки строки состояния и панели навигации тёмные, как на светлом фоне, пока приложение не прочитало тему;
+      дальше их цвет по теме приложения задаёт MainActivity.
+    -->
     <style name="Theme.ShoppingAppV2" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:windowBackground">@color/core_ui_window_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 </resources>

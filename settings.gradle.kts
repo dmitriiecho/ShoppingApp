@@ -32,6 +32,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "ShoppingAppV2"
 include(":app")
+include(":app-uikit")
 include(":domain")
 include(":data")
 include(":core:ui")

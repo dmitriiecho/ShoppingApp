@@ -1,0 +1,103 @@
+<resources>
+    <string name="uikit_app_name" translatable="false">ShoppingApp UI Kit</string>
+    <string name="uikit_title" translatable="false">UI Kit</string>
+    <string name="uikit_switch_to_dark_theme">Switch to dark theme</string>
+    <string name="uikit_switch_to_light_theme">Switch to light theme</string>
+
+    <!-- Разделы -->
+    <string name="uikit_section_theme">Theme</string>
+    <string name="uikit_section_theme_description">Colors and typography</string>
+    <string name="uikit_section_buttons">Buttons</string>
+    <string name="uikit_section_buttons_description">Cart buttons, loading button, choice buttons</string>
+    <string name="uikit_section_notices">Notices</string>
+    <string name="uikit_section_notices_description">Notices on cards and error banners</string>
+    <string name="uikit_section_cards">Cards and lists</string>
+    <string name="uikit_section_cards_description">Product cards, order rows, list items, coupons</string>
+    <string name="uikit_section_inputs">Text fields</string>
+    <string name="uikit_section_inputs_description">Text fields and search</string>
+    <string name="uikit_section_loading">Loading</string>
+    <string name="uikit_section_loading_description">Placeholders and product images</string>
+    <string name="uikit_section_screen_states">Screen states</string>
+    <string name="uikit_section_screen_states_description">Empty screen and error</string>
+    <string name="uikit_section_bars">Bars and dialogs</string>
+    <string name="uikit_section_bars_description">Bottom bars and confirmation dialog</string>
+
+    <!-- Подписи к примерам -->
+    <string name="uikit_variant_interactive_cart">Tap “Add to cart”, then “+”: at 3 the “+” turns off</string>
+    <string name="uikit_variant_tap_to_load">Tap it: loading takes 2 seconds</string>
+    <string name="uikit_variant_disabled">Disabled</string>
+    <string name="uikit_variant_icon_and_text">Icon and text, full width</string>
+    <string name="uikit_variant_fixed_width">Fixed width, as in settings</string>
+    <string name="uikit_variant_error">Error</string>
+    <string name="uikit_variant_neutral">Neutral: an explanation, not a problem</string>
+    <string name="uikit_variant_with_subtitle">With a subtitle</string>
+    <string name="uikit_variant_with_action">With a button</string>
+    <string name="uikit_variant_with_remove">With “Remove”, as in the cart</string>
+    <string name="uikit_variant_read_only">Without a button, as at checkout</string>
+    <string name="uikit_variant_clickable">Clickable</string>
+    <string name="uikit_variant_catalog">As in the catalog</string>
+    <string name="uikit_variant_catalog_out_of_stock">As in the catalog: out of stock</string>
+    <string name="uikit_variant_cart_dimmed">As in the cart: out of stock, dimmed</string>
+    <string name="uikit_variant_as_in_checkout">As at checkout</string>
+    <string name="uikit_variant_with_discount">With a discount</string>
+    <string name="uikit_variant_without_discount">Without a discount</string>
+    <string name="uikit_variant_trailing_icon">Clickable, with an icon on the right</string>
+    <string name="uikit_variant_trailing_choice">With choice buttons on the right</string>
+    <string name="uikit_variant_inside_card">Inside a card</string>
+    <string name="uikit_variant_custom_shapes">Shapes laid out like the real content</string>
+    <string name="uikit_variant_coupons_placeholder">Two coupons while the codes load</string>
+    <string name="uikit_variant_cart_buttons_placeholder">Cart buttons</string>
+    <string name="uikit_variant_loaded">Loaded</string>
+    <string name="uikit_variant_load_failed">Couldn\'t load</string>
+    <string name="uikit_variant_with_title">With a title</string>
+    <string name="uikit_variant_without_title">Without a title</string>
+    <string name="uikit_variant_retry">“Retry” shows loading for a moment</string>
+    <string name="uikit_variant_with_header">With a notice above the total</string>
+    <string name="uikit_variant_badge">Item count on the cart tab</string>
+    <string name="uikit_variant_badge_overflow">More than 99 items</string>
+    <string name="uikit_variant_destructive">Can\'t be undone: the confirm button is red</string>
+    <string name="uikit_variant_regular">Regular action</string>
+    <string name="uikit_animation">Animation</string>
+    <string name="uikit_visible">Visible</string>
+    <string name="uikit_show_dialog">Show the dialog</string>
+
+    <!-- Содержимое примеров: те же тексты, что на экранах приложения -->
+    <string name="uikit_sample_product_headphones" translatable="false">Wireless Headphones</string>
+    <string name="uikit_sample_product_keyboard" translatable="false">Mechanical Keyboard</string>
+    <string name="uikit_sample_card_content">Card content</string>
+    <string name="uikit_sample_place_order">Place order</string>
+    <string name="uikit_sample_payment_card">Card</string>
+    <string name="uikit_sample_payment_cash">Cash</string>
+    <string name="uikit_sample_out_of_stock">Out of stock</string>
+    <string name="uikit_sample_price_changed">Price changed: now %1$s</string>
+    <string name="uikit_sample_demo_order">This is a demo app: the order isn\'t sent anywhere. Placing it clears the cart and the promo code</string>
+    <string name="uikit_sample_promo_invalid">Promo code %1$s is no longer valid</string>
+    <string name="uikit_sample_promo_invalid_hint">Remove it to place your order</string>
+    <string name="uikit_sample_price_changes">Price changed for 1 item</string>
+    <string name="uikit_sample_remove">Remove</string>
+    <string name="uikit_sample_accept">Accept</string>
+    <string name="uikit_sample_prepend_error">Couldn\'t load the products above</string>
+    <string name="uikit_sample_order_items">Order items</string>
+    <string name="uikit_sample_promo_codes">Promo codes for testing</string>
+    <string name="uikit_sample_promo_codes_hint">Tap a code to put it in the field</string>
+    <string name="uikit_sample_deep_links">Deep links</string>
+    <string name="uikit_sample_deep_links_description">Opens a page with the links in your browser</string>
+    <string name="uikit_sample_request_delay">Request delay</string>
+    <string name="uikit_sample_seconds">%1$d s</string>
+    <string name="uikit_sample_street">Street *</string>
+    <string name="uikit_sample_courier_comment">Comment for the courier</string>
+    <string name="uikit_sample_search_products">Search products</string>
+    <string name="uikit_sample_cart_empty_title">Your cart is empty</string>
+    <string name="uikit_sample_cart_empty_message">Add products from the catalog</string>
+    <string name="uikit_sample_nothing_found">Nothing found for “%1$s”</string>
+    <string name="uikit_sample_load_error">Couldn\'t load products</string>
+    <string name="uikit_sample_checkout">Checkout</string>
+    <string name="uikit_sample_tab_catalog">Catalog</string>
+    <string name="uikit_sample_tab_cart">Cart</string>
+    <string name="uikit_sample_tab_settings">Settings</string>
+    <string name="uikit_sample_clear_cart_title">Clear cart?</string>
+    <string name="uikit_sample_clear_cart_message">All items will be removed.</string>
+    <string name="uikit_sample_clear_cart_confirm">Clear</string>
+    <string name="uikit_sample_accept_prices_title">Accept new prices?</string>
+    <string name="uikit_sample_accept_prices_message">The cart will use the current prices.</string>
+</resources>

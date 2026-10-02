@@ -10,4 +10,8 @@
     <string name="core_ui_subtotal">Товары</string>
     <string name="core_ui_discount">Скидка</string>
     <string name="core_ui_total">Итого</string>
+    <string name="core_ui_out_of_stock">Закончилось</string>
+    <string name="core_ui_retry">Повторить</string>
+    <string name="core_ui_cancel">Отмена</string>
+    <string name="core_ui_scroll_to_top">Наверх</string>
 </resources>

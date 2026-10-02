@@ -12,6 +12,15 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 configureAndroid(this)
                 defaultConfig.targetSdk = AndroidConfig.TARGET_SDK
+
+                buildTypes.getByName("release") {
+                    // Приложения проекта — демонстрационные стенды: release подписан отладочным ключом,
+                    // чтобы его можно было поставить на эмулятор. Для публикации в магазин понадобится свой ключ.
+                    signingConfig = signingConfigs.getByName("debug")
+                    optimization {
+                        enable = false
+                    }
+                }
             }
         }
     }

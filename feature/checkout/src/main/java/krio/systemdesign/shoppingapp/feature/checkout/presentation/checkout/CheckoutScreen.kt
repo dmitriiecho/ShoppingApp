@@ -2,18 +2,15 @@ package krio.systemdesign.shoppingapp.feature.checkout.presentation.checkout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
@@ -29,14 +26,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,25 +36,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import krio.systemdesign.shoppingapp.core.ui.components.AppCard
+import krio.systemdesign.shoppingapp.core.ui.components.AppTextField
 import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeNotice
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
+import krio.systemdesign.shoppingapp.core.ui.components.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.components.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.OrderItemRow
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
-import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
+import krio.systemdesign.shoppingapp.core.ui.components.SectionCard
+import krio.systemdesign.shoppingapp.core.ui.components.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
-import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.feature.checkout.R
 import kotlinx.coroutines.launch
 
@@ -122,7 +113,10 @@ fun CheckoutScreen(
         // Пока корзина не прочитана из базы (доли секунды), ничего не показываем: иначе на миг появилась бы пустая корзина.
         if (uiState.isLoading) return@Scaffold
         if (uiState.isEmpty && !uiState.isSubmitting) {
-            EmptyCheckout(
+            EmptyState(
+                icon = Icons.Outlined.ShoppingCart,
+                title = stringResource(R.string.checkout_empty_title),
+                message = stringResource(R.string.checkout_empty_message),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
@@ -152,29 +146,35 @@ private fun CheckoutContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        CheckoutSection(
+        SectionCard(
             icon = Icons.Outlined.ShoppingBag,
             title = stringResource(R.string.checkout_order_items),
         ) {
             uiState.items.forEach { item ->
-                OrderSummaryItem(item = item)
+                OrderItemRow(
+                    name = item.name,
+                    imageUrl = item.imageUrl,
+                    quantity = item.quantity,
+                    unitPrice = formatPrice(item.price),
+                    total = formatPrice(item.price * item.quantity),
+                )
             }
         }
 
-        CheckoutSection(
+        SectionCard(
             icon = Icons.Outlined.LocationOn,
             title = stringResource(R.string.checkout_delivery_address),
         ) {
             // Улица и квартира в одну строку: квартира короткая, отдельная строка для неё — пустое место.
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CheckoutTextField(
+                AppTextField(
                     value = uiState.street,
                     onValueChange = { onEvent(CheckoutEvent.OnStreetChange(it)) },
                     label = stringResource(R.string.checkout_street),
                     enabled = !uiState.isSubmitting,
                     modifier = Modifier.weight(1f),
                 )
-                CheckoutTextField(
+                AppTextField(
                     value = uiState.apartment,
                     onValueChange = { onEvent(CheckoutEvent.OnApartmentChange(it)) },
                     label = stringResource(R.string.checkout_apartment),
@@ -182,7 +182,7 @@ private fun CheckoutContent(
                     modifier = Modifier.width(APARTMENT_FIELD_WIDTH),
                 )
             }
-            CheckoutTextField(
+            AppTextField(
                 value = uiState.courierComment,
                 onValueChange = { onEvent(CheckoutEvent.OnCourierCommentChange(it)) },
                 label = stringResource(R.string.checkout_courier_comment),
@@ -192,18 +192,32 @@ private fun CheckoutContent(
             )
         }
 
-        CheckoutSection(
+        SectionCard(
             icon = Icons.Outlined.AccountBalanceWallet,
             title = stringResource(R.string.checkout_payment),
         ) {
-            PaymentMethodButtons(
+            // Переключатель на всю ширину, как выбор темы в настройках.
+            SingleChoiceButtons(
+                options = PaymentMethod.entries,
                 selected = uiState.paymentMethod,
-                enabled = !uiState.isSubmitting,
                 onSelect = { onEvent(CheckoutEvent.OnPaymentMethodChange(it)) },
-            )
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isSubmitting,
+            ) { method ->
+                // Содержимое кнопки само в ряд не выстраивается: без Row иконка и текст лягут друг на друга.
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = method.icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(method.titleRes))
+                }
+            }
         }
 
-        CheckoutSection(
+        SectionCard(
             icon = Icons.Outlined.Receipt,
             title = stringResource(R.string.checkout_order_total),
         ) {
@@ -225,145 +239,6 @@ private fun CheckoutContent(
     }
 }
 
-// Поле ввода внутри карточки: залитое, без рамки и со скруглением, как у плашек и карточек.
-// Обычное OutlinedTextField с острыми углами и рамкой в скруглённой карточке выглядит чужим.
-@Composable
-private fun CheckoutTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-    singleLine: Boolean = true,
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        label = { Text(label) },
-        enabled = enabled,
-        singleLine = singleLine,
-        // Многострочное поле растёт вместе с текстом, но не больше трёх строк, дальше прокручивается.
-        maxLines = if (singleLine) 1 else 3,
-        shape = RoundedCornerShape(12.dp),
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
-    )
-}
-
-// Блок экрана: карточка с заголовком, как карточка с промокодами на экране промокода.
-@Composable
-private fun CheckoutSection(
-    icon: ImageVector,
-    title: String,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    AppCard(modifier = modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp),
-                )
-                Spacer(Modifier.width(12.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            }
-            content()
-        }
-    }
-}
-
-// Строка товара: картинка, название, цена за штуку и количество, а справа сумма — как в корзине,
-// только без кнопок: здесь заказ уже не меняют.
-@Composable
-private fun OrderSummaryItem(
-    item: CartItem,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        ProductImage(
-            imageUrl = item.imageUrl,
-            contentDescription = item.name,
-            modifier = Modifier.size(56.dp),
-            cornerRadius = 8.dp,
-        )
-        Spacer(Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = "${item.quantity} × ${formatPrice(item.price)}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Spacer(Modifier.width(12.dp))
-        Text(
-            text = formatPrice(item.price * item.quantity),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-        )
-    }
-}
-
-// Способ оплаты — переключатель на всю ширину, как выбор темы в настройках.
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PaymentMethodButtons(
-    selected: PaymentMethod,
-    enabled: Boolean,
-    onSelect: (PaymentMethod) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    // Выбранный вариант того же цвета, что и выбранная вкладка в нижней панели.
-    val colors = SegmentedButtonDefaults.colors(
-        activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-    )
-    SingleChoiceSegmentedButtonRow(modifier = modifier.fillMaxWidth()) {
-        PaymentMethod.entries.forEachIndexed { index, method ->
-            SegmentedButton(
-                selected = method == selected,
-                onClick = { onSelect(method) },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = PaymentMethod.entries.size),
-                enabled = enabled,
-                colors = colors,
-                icon = {},
-            ) {
-                // Содержимое кнопки само в ряд не выстраивается: без Row иконка и текст лягут друг на друга.
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = method.icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(method.titleRes))
-                }
-            }
-        }
-    }
-}
-
 private val APARTMENT_FIELD_WIDTH = 120.dp
 
 private val PaymentMethod.titleRes: Int
@@ -377,32 +252,3 @@ private val PaymentMethod.icon: ImageVector
         PaymentMethod.Card -> Icons.Outlined.CreditCard
         PaymentMethod.Cash -> Icons.Outlined.Payments
     }
-
-@Composable
-private fun EmptyCheckout(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.ShoppingCart,
-            contentDescription = null,
-            modifier = Modifier.size(56.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = stringResource(R.string.checkout_empty_title),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.checkout_empty_message),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}

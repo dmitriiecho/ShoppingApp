@@ -14,17 +14,6 @@ android {
         versionName = "1.0"
         manifestPlaceholders["deepLinkHost"] = providers.gradleProperty("deepLinkHost").get()
     }
-
-    buildTypes {
-        release {
-            // Тестовый стенд: release подписан отладочным ключом, чтобы его можно было поставить на эмулятор.
-            // Для публикации в магазин понадобится свой ключ.
-            signingConfig = signingConfigs.getByName("debug")
-            optimization {
-                enable = false
-            }
-        }
-    }
 }
 
 dependencies {

@@ -6,7 +6,6 @@
     <string name="cart_order_total">Сумма заказа</string>
     <string name="cart_empty_title">Корзина пуста</string>
     <string name="cart_empty_message">Добавьте товары из каталога</string>
-    <string name="cart_cancel">Отмена</string>
 
     <string name="cart_clear_dialog_title">Очистить корзину?</string>
     <string name="cart_clear_dialog_message">Все товары будут удалены.</string>
