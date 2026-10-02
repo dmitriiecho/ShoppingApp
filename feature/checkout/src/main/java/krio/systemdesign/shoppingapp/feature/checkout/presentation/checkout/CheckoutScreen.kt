@@ -15,16 +15,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.ShoppingBag
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -47,13 +44,16 @@ import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeNotice
 import krio.systemdesign.shoppingapp.core.ui.components.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.components.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.components.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.OrderItemRow
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.SectionCard
 import krio.systemdesign.shoppingapp.core.ui.components.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.feature.checkout.R
 import kotlinx.coroutines.launch
 
@@ -101,9 +101,9 @@ fun CheckoutScreen(
                         // Приложение демонстрационное: заказ никуда не уходит, оформление только сбрасывает корзину.
                         // Серая плашка, а не цветная: это пояснение, а не предупреждение о проблеме.
                         Notice(
-                            icon = Icons.Outlined.Info,
+                            icon = AppIcons.Info,
                             title = stringResource(R.string.checkout_demo_order_notice),
-                            accentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = NoticeStyle.Neutral,
                         )
                     },
                 )
@@ -114,7 +114,7 @@ fun CheckoutScreen(
         if (uiState.isLoading) return@Scaffold
         if (uiState.isEmpty && !uiState.isSubmitting) {
             EmptyState(
-                icon = Icons.Outlined.ShoppingCart,
+                icon = AppIcons.EmptyCart,
                 title = stringResource(R.string.checkout_empty_title),
                 message = stringResource(R.string.checkout_empty_message),
                 modifier = Modifier
@@ -143,8 +143,8 @@ private fun CheckoutContent(
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(Spacing.ScreenPadding),
+        verticalArrangement = Arrangement.spacedBy(Spacing.SectionSpacing),
     ) {
         SectionCard(
             icon = Icons.Outlined.ShoppingBag,

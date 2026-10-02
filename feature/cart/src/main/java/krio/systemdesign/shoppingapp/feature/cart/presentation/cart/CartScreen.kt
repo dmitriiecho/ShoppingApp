@@ -11,12 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ErrorOutline
-import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material.icons.outlined.ProductionQuantityLimits
 import androidx.compose.material.icons.outlined.RemoveShoppingCart
-import androidx.compose.material.icons.outlined.Sell
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -37,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,13 +41,17 @@ import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.ConfirmationDialog
 import krio.systemdesign.shoppingapp.core.ui.components.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.components.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.components.ProductCard
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
+import krio.systemdesign.shoppingapp.core.ui.theme.totalsEmphasized
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
@@ -171,8 +169,8 @@ fun CartScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(Spacing.ScreenPadding),
+                verticalArrangement = Arrangement.spacedBy(Spacing.CardSpacing),
             ) {
                 items(
                     items = uiState.items,
@@ -263,13 +261,13 @@ private fun CartTotals(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Spacing.CardPadding),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            // Тот же стиль, что у строк суммы в OrderTotals, иначе заголовок выглядит другим шрифтом.
+            // Тот же стиль, что у «Итого» в OrderTotals, иначе заголовок выглядит другим шрифтом.
             Text(
                 text = stringResource(R.string.cart_order_total),
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                style = MaterialTheme.typography.totalsEmphasized,
             )
             val promoCode = uiState.promoCode
             if (promoCode != null) {
@@ -300,7 +298,7 @@ private fun EmptyCart(
     // когда строка промокода появляется или исчезает.
     Box(modifier = modifier) {
         EmptyState(
-            icon = Icons.Outlined.ShoppingCart,
+            icon = AppIcons.EmptyCart,
             title = stringResource(R.string.cart_empty_title),
             message = stringResource(R.string.cart_empty_message),
             modifier = Modifier.align(Alignment.Center),
@@ -338,10 +336,10 @@ private fun CartPromoCode(
         )
     } else {
         NoticeWithAction(
-            icon = Icons.Outlined.ErrorOutline,
+            icon = AppIcons.Error,
             title = stringResource(R.string.cart_promo_invalid, promoCode.code),
             subtitle = stringResource(R.string.cart_promo_invalid_hint),
-            accentColor = MaterialTheme.colorScheme.error,
+            style = NoticeStyle.Error,
             actionText = stringResource(R.string.cart_promo_remove),
             onAction = onRemove,
             modifier = modifier,
@@ -358,22 +356,22 @@ private fun ItemIssueNotice(
 ) {
     when (issue) {
         is ItemIssue.Unavailable -> Notice(
-            icon = Icons.Outlined.Inventory2,
+            icon = AppIcons.OutOfStock,
             title = stringResource(R.string.cart_item_unavailable),
-            accentColor = MaterialTheme.colorScheme.error,
+            style = NoticeStyle.Error,
             modifier = modifier,
         )
         is ItemIssue.PriceChanged -> Notice(
-            icon = Icons.Outlined.Sell,
+            icon = AppIcons.PriceChanged,
             // Старая цена видна строкой выше, в плашке только новая.
             title = stringResource(R.string.cart_item_price_changed, formatPrice(issue.newPrice)),
-            accentColor = MaterialTheme.colorScheme.error,
+            style = NoticeStyle.Error,
             modifier = modifier,
         )
         is ItemIssue.NotEnoughStock -> Notice(
-            icon = Icons.Outlined.ProductionQuantityLimits,
+            icon = AppIcons.NotEnoughStock,
             title = stringResource(R.string.cart_item_not_enough_stock, issue.availableQuantity),
-            accentColor = MaterialTheme.colorScheme.error,
+            style = NoticeStyle.Error,
             modifier = modifier,
         )
     }
@@ -400,9 +398,9 @@ private fun CartChangesActions(
     ) {
         if (priceChangeCount > 0) {
             NoticeWithAction(
-                icon = Icons.Outlined.Sell,
+                icon = AppIcons.PriceChanged,
                 title = pluralStringResource(R.plurals.cart_price_changes, priceChangeCount, priceChangeCount),
-                accentColor = MaterialTheme.colorScheme.error,
+                style = NoticeStyle.Error,
                 actionText = stringResource(R.string.cart_accept_new_prices),
                 onAction = onAcceptNewPrices,
                 modifier = noticeModifier,
@@ -410,9 +408,9 @@ private fun CartChangesActions(
         }
         if (unavailableItemCount > 0) {
             NoticeWithAction(
-                icon = Icons.Outlined.Inventory2,
+                icon = AppIcons.OutOfStock,
                 title = pluralStringResource(R.plurals.cart_unavailable_items, unavailableItemCount, unavailableItemCount),
-                accentColor = MaterialTheme.colorScheme.error,
+                style = NoticeStyle.Error,
                 actionText = stringResource(R.string.cart_remove_unavailable),
                 onAction = onRemoveUnavailable,
                 modifier = noticeModifier,
@@ -420,9 +418,9 @@ private fun CartChangesActions(
         }
         if (notEnoughStockItemCount > 0) {
             Notice(
-                icon = Icons.Outlined.ProductionQuantityLimits,
+                icon = AppIcons.NotEnoughStock,
                 title = pluralStringResource(R.plurals.cart_not_enough_stock_items, notEnoughStockItemCount, notEnoughStockItemCount),
-                accentColor = MaterialTheme.colorScheme.error,
+                style = NoticeStyle.Error,
                 modifier = noticeModifier,
             )
         }

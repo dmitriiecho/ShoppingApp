@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -25,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 
 // Примеры раздела: группы по компонентам (sampleGroup), у каждой группы заголовок с именем компонента.
 // innerPadding — отступы от верхней панели и системных панелей, которые даёт Scaffold экрана.
@@ -58,7 +58,7 @@ fun LazyListScope.sampleGroup(
     }
     item {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(Spacing.ScreenPadding),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             content = content,
         )
@@ -76,7 +76,7 @@ private fun SampleGroupHeader(name: String) {
             text = name,
             style = MaterialTheme.typography.titleSmall,
             fontFamily = FontFamily.Monospace,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = Spacing.ScreenPadding, vertical = 12.dp),
         )
     }
 }
@@ -90,7 +90,7 @@ fun SampleVariant(
     contentPadding: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = MaterialTheme.shapes.medium
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (caption != null) {
             Text(

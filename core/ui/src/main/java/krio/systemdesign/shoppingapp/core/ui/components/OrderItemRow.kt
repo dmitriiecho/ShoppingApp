@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.theme.ShapeRadius
 
 // Строка товара в заказе: картинка, название, количество и цена за штуку, а справа сумма — как карточка
 // в корзине, только без кнопок: здесь заказ уже не меняют. Суммы всего заказа показывает OrderTotals.
@@ -33,7 +34,7 @@ fun OrderItemRow(
             imageUrl = imageUrl,
             contentDescription = name,
             modifier = Modifier.size(56.dp),
-            cornerRadius = 8.dp,
+            cornerRadius = ShapeRadius.Small,
         )
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {

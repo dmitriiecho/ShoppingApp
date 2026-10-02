@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.AppCard
 import krio.systemdesign.shoppingapp.core.ui.components.AppTextField
 import krio.systemdesign.shoppingapp.core.ui.components.SearchField
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
 import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
@@ -31,7 +32,7 @@ fun InputsSection(innerPadding: PaddingValues) {
                 var comment by rememberSaveable { mutableStateOf("") }
                 AppCard(modifier = Modifier.fillMaxWidth()) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(Spacing.CardPadding),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         AppTextField(
@@ -59,7 +60,7 @@ fun InputsSection(innerPadding: PaddingValues) {
                         enabled = false,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(Spacing.CardPadding),
                     )
                 }
             }

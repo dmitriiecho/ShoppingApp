@@ -12,8 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ConfirmationNumber
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -38,7 +36,9 @@ import krio.systemdesign.shoppingapp.core.ui.components.PromoCodeCoupon
 import krio.systemdesign.shoppingapp.core.ui.components.PromoCodeCouponPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.SectionCard
 import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.asString
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.R
 
@@ -80,8 +80,8 @@ fun PromoCodeScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(Spacing.ScreenPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.SectionSpacing),
         ) {
             OutlinedTextField(
                 value = uiState.promoCode,
@@ -132,7 +132,7 @@ private fun AvailablePromoCodesHint(
     modifier: Modifier = Modifier,
 ) {
     SectionCard(
-        icon = Icons.Outlined.ConfirmationNumber,
+        icon = AppIcons.PromoCode,
         title = stringResource(R.string.promo_available_title),
         subtitle = stringResource(R.string.promo_available_hint),
         modifier = modifier,

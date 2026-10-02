@@ -9,14 +9,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.outlined.BrightnessAuto
 import androidx.compose.material.icons.outlined.Contrast
-import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.HourglassEmpty
-import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material.icons.outlined.ProductionQuantityLimits
-import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -40,6 +34,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.AppListItem
 import krio.systemdesign.shoppingapp.core.ui.components.SingleChoiceButtons
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.feature.settings.R
@@ -132,21 +127,21 @@ fun SettingsScreen(
                 onClick = { viewModel.onEvent(SettingsEvent.OnDeepLinksPageClick) },
                 trailing = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
             )
-            // Иконки трёх пунктов те же, что у плашек в корзине, которые эти товары вызывают.
+            // Значки трёх пунктов те же, что у плашек в корзине, которые эти товары вызывают.
             AppListItem(
-                icon = Icons.Outlined.Inventory2,
+                icon = AppIcons.OutOfStock,
                 title = stringResource(R.string.settings_add_unavailable_product),
                 description = stringResource(R.string.settings_add_unavailable_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddUnavailableProductClick) },
             )
             AppListItem(
-                icon = Icons.Outlined.ProductionQuantityLimits,
+                icon = AppIcons.NotEnoughStock,
                 title = stringResource(R.string.settings_add_not_enough_stock_product),
                 description = stringResource(R.string.settings_add_not_enough_stock_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddNotEnoughStockProductClick) },
             )
             AppListItem(
-                icon = Icons.Outlined.Sell,
+                icon = AppIcons.PriceChanged,
                 title = stringResource(R.string.settings_add_price_changed_product),
                 description = stringResource(R.string.settings_add_price_changed_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddPriceChangedProductClick) },
@@ -240,7 +235,7 @@ private val ThemeMode.titleRes: Int
 
 private val ThemeMode.icon: ImageVector
     get() = when (this) {
-        ThemeMode.System -> Icons.Outlined.BrightnessAuto
-        ThemeMode.Light -> Icons.Outlined.LightMode
-        ThemeMode.Dark -> Icons.Outlined.DarkMode
+        ThemeMode.System -> AppIcons.SystemTheme
+        ThemeMode.Light -> AppIcons.LightTheme
+        ThemeMode.Dark -> AppIcons.DarkTheme
     }

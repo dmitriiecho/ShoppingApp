@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -109,7 +108,7 @@ fun ProductCardPlaceholder(
                     Box(
                         modifier = Modifier
                             .size(PRODUCT_CARD_IMAGE_SIZE)
-                            .shimmerShape(RoundedCornerShape(12.dp)),
+                            .shimmerShape(MaterialTheme.shapes.medium),
                     )
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
@@ -117,14 +116,14 @@ fun ProductCardPlaceholder(
                             modifier = Modifier
                                 .fillMaxWidth(0.7f)
                                 .height(20.dp)
-                                .shimmerShape(RoundedCornerShape(4.dp)),
+                                .shimmerShape(MaterialTheme.shapes.extraSmall),
                         )
                         Spacer(Modifier.height(8.dp))
                         Box(
                             modifier = Modifier
                                 .width(96.dp)
                                 .height(20.dp)
-                                .shimmerShape(RoundedCornerShape(4.dp)),
+                                .shimmerShape(MaterialTheme.shapes.extraSmall),
                         )
                     }
                 }

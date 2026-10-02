@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -22,10 +23,12 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -56,39 +59,42 @@ fun CartQuantityControl(
     val contentColor = MaterialTheme.colorScheme.onPrimary
 
     if (quantity <= 0) {
-        // Залитая кнопка акцентного цвета, как и переключатель количества, который появляется после добавления.
-        Button(
-            onClick = onAdd,
-            modifier = modifier
-                .fillMaxWidth()
-                .height(controlHeight),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ShoppingCart,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(stringResource(R.string.core_ui_add_to_cart))
+        WithoutTouchTargetReserve {
+            // Залитая кнопка акцентного цвета, как и переключатель количества, который появляется после добавления.
+            Button(
+                onClick = onAdd,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .heightIn(min = controlHeight),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ShoppingCart,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.core_ui_add_to_cart))
+            }
         }
         return
     }
 
+    // Высота не меньше controlHeight, а не ровно она: с крупным шрифтом в настройках телефона число растёт,
+    // и переключатель растёт вместе с ним, а не обрезает его.
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(controlHeight),
+            .heightIn(min = controlHeight),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Surface(
-            shape = RoundedCornerShape(controlHeight / 2),
+            shape = RoundedCornerShape(percent = 50),
             color = containerColor,
             contentColor = contentColor,
-            modifier = Modifier.height(controlHeight),
         ) {
             Row(
-                modifier = Modifier.height(controlHeight),
+                modifier = Modifier.heightIn(min = controlHeight),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 CartControlIconButton(
@@ -129,13 +135,20 @@ fun CartQuantityControl(
 // Заглушка CartQuantityControl внутри ShimmerPlaceholder: фигура того же размера и формы, что кнопка «В корзину».
 @Composable
 fun CartQuantityControlPlaceholder(modifier: Modifier = Modifier) {
-    val controlHeight = ButtonDefaults.MinHeight
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(controlHeight)
-            .shimmerShape(RoundedCornerShape(controlHeight / 2)),
+            .height(ButtonDefaults.MinHeight)
+            .shimmerShape(RoundedCornerShape(percent = 50)),
     )
+}
+
+// Кнопки корзины рисуются высотой 40 dp и места занимают столько же. Обычно кнопка Material занимает 48 dp
+// с запасом под палец, и карточка товара от этого стала бы выше. Нажимать без запаса не труднее:
+// Compose сам расширяет зону нажатия элементов меньше 48 dp, если рядом нет других нажимаемых элементов.
+@Composable
+internal fun WithoutTouchTargetReserve(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp, content = content)
 }
 
 @Composable

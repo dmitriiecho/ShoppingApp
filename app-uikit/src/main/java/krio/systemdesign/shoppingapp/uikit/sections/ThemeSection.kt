@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,7 +17,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.theme.success
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
 import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
@@ -30,6 +29,11 @@ fun ThemeSection(innerPadding: PaddingValues) {
         sampleGroup("MaterialTheme.colorScheme") {
             SampleVariant {
                 colorRoles().forEach { ColorSwatch(it) }
+            }
+        }
+        sampleGroup("ShoppingAppTheme.colors") {
+            SampleVariant {
+                appColorRoles().forEach { ColorSwatch(it) }
             }
         }
         sampleGroup("MaterialTheme.typography") {
@@ -57,8 +61,6 @@ private fun colorRoles(): List<ColorRole> {
         ColorRole("tertiaryContainer", colors.tertiaryContainer, colors.onTertiaryContainer),
         ColorRole("error", colors.error, colors.onError),
         ColorRole("errorContainer", colors.errorContainer, colors.onErrorContainer),
-        // Своего on-цвета у success нет: в приложении он — цвет текста и значка на светлом оттенке самого себя.
-        ColorRole("success", colors.success, colors.background),
         ColorRole("background", colors.background, colors.onBackground),
         ColorRole("surfaceContainerLowest", colors.surfaceContainerLowest, colors.onSurface),
         ColorRole("surfaceContainerLow", colors.surfaceContainerLow, colors.onSurface),
@@ -72,12 +74,26 @@ private fun colorRoles(): List<ColorRole> {
     )
 }
 
+// Цвета сверх схемы Material. Своих on-цветов у них нет: текст на образце — цвет, с которым они встречаются в приложении.
+@Composable
+private fun appColorRoles(): List<ColorRole> {
+    val colors = MaterialTheme.colorScheme
+    val appColors = ShoppingAppTheme.colors
+    return listOf(
+        // В приложении success — цвет текста и значка на светлом оттенке самого себя.
+        ColorRole("success", appColors.success, colors.background),
+        ColorRole("cardContainer", appColors.cardContainer, colors.onSurface),
+        ColorRole("productImageCenter", appColors.productImageCenter, colors.onSurface),
+        ColorRole("productImageEdge", appColors.productImageEdge, colors.onSurface),
+    )
+}
+
 // Образец цвета: название роли и её значение. Рамка — чтобы фоновые цвета не сливались со страницей.
 @Composable
 private fun ColorSwatch(role: ColorRole) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
+        shape = MaterialTheme.shapes.small,
         color = role.color,
         contentColor = role.contentColor,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),

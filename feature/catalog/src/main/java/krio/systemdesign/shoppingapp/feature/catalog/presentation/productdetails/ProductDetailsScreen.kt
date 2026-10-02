@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +40,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import kotlinx.coroutines.launch
@@ -148,7 +148,7 @@ private fun ProductDetailsContent(
         }
         val cartControlModifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(Spacing.ScreenPadding)
         when (state) {
             is ProductDetailsUiState.Content -> CartControl(
                 product = state.product,
@@ -169,7 +169,7 @@ private fun ProductInfo(
     product: Product,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(16.dp)) {
+    Column(modifier = modifier.padding(Spacing.ScreenPadding)) {
         Text(
             text = product.name,
             style = MaterialTheme.typography.headlineSmall,
@@ -219,21 +219,21 @@ private fun ProductInfoPlaceholder(modifier: Modifier = Modifier) {
     ShimmerPlaceholder(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(Spacing.ScreenPadding),
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(28.dp)
-                    .shimmerShape(RoundedCornerShape(4.dp)),
+                    .shimmerShape(MaterialTheme.shapes.extraSmall),
             )
             Spacer(Modifier.height(8.dp))
             Box(
                 modifier = Modifier
                     .width(120.dp)
                     .height(28.dp)
-                    .shimmerShape(RoundedCornerShape(4.dp)),
+                    .shimmerShape(MaterialTheme.shapes.extraSmall),
             )
             Spacer(Modifier.height(16.dp))
             listOf(1f, 1f, 0.6f).forEach { widthFraction ->
@@ -242,7 +242,7 @@ private fun ProductInfoPlaceholder(modifier: Modifier = Modifier) {
                         .padding(vertical = 3.dp)
                         .fillMaxWidth(widthFraction)
                         .height(18.dp)
-                        .shimmerShape(RoundedCornerShape(4.dp)),
+                        .shimmerShape(MaterialTheme.shapes.extraSmall),
                 )
             }
         }

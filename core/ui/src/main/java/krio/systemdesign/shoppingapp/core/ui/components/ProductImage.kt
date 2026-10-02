@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -27,8 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -40,6 +37,8 @@ import coil3.request.ImageRequest
 import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.animation.LocalNavAnimatedVisibilityScope
 import krio.systemdesign.shoppingapp.core.ui.animation.LocalSharedTransitionScope
+import krio.systemdesign.shoppingapp.core.ui.theme.ShapeRadius
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 // Картинка товара. У картинок с сервера прозрачный фон, поэтому под ней своя плитка:
 // светлое пятно в центре и чуть тонированные края, как на студийной фотографии.
@@ -47,24 +46,24 @@ import krio.systemdesign.shoppingapp.core.ui.animation.LocalSharedTransitionScop
 // Пока картинка грузится, по плитке бежит блик (шиммер). Если загрузить не удалось,
 // на плитке остаётся значок «картинки нет»: рамка с пейзажем, перечёркнутая наискосок.
 // Черта — акцентный цвет темы. В тёмной теме он светлее, поэтому значок другой.
+// Цвета плитки — ShoppingAppTheme.colors.productImageCenter и productImageEdge.
 @Composable
 fun ProductImage(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    cornerRadius: Dp = 12.dp,
+    cornerRadius: Dp = ShapeRadius.Medium,
     // У самих картинок поля уже есть, поэтому в маленькой плитке отступ почти не нужен.
     contentPadding: Dp = 2.dp,
     // Плитки с одним ключом на двух экранах — один общий элемент: при переходе между экранами
     // плитка перелетает с места на одном экране на место на другом (см. LocalSharedTransitionScope).
     sharedElementKey: Any? = null,
 ) {
-    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
-    val colors = productImageColors(isDark)
+    val colors = ShoppingAppTheme.colors
     var isLoading by remember { mutableStateOf(false) }
     val shared = sharedElement(sharedElementKey, cornerRadius)
     val placeholder = painterResource(
-        if (isDark) R.drawable.product_image_placeholder_dark else R.drawable.product_image_placeholder,
+        if (colors.isDark) R.drawable.product_image_placeholder_dark else R.drawable.product_image_placeholder,
     )
     val context = LocalPlatformContext.current
     val request = remember(context, imageUrl) {
@@ -79,12 +78,12 @@ fun ProductImage(
         modifier = modifier
             .then(shared.tile)
             .clip(RoundedCornerShape(shared.cornerRadius))
-            .background(Brush.radialGradient(listOf(colors.center, colors.edge))),
+            .background(Brush.radialGradient(listOf(colors.productImageCenter, colors.productImageEdge))),
     ) {
         if (isLoading) {
             Shimmer(
-                base = colors.edge,
-                highlight = colors.center,
+                base = colors.productImageEdge,
+                highlight = colors.productImageCenter,
                 modifier = Modifier.matchParentSize(),
             )
         }
@@ -174,28 +173,6 @@ private class TileCornerRadius(val value: Dp)
 private data class SharedTileKey(val key: Any)
 
 private data class SharedImageKey(val key: Any)
-
-private class ProductImageColors(val center: Color, val edge: Color)
-
-// Цвета берутся из темы. Тёмная тема или светлая, определяется по фону самой схемы.
-// В светлой: белый центр и чуть тонированные края.
-// В тёмной вся плитка светлее карточки (у AppCard фон surfaceContainerHigh), а центр — заметно:
-// иначе плитка теряется на карточке, а чёрные товары (наушники, клавиатура) сливаются с фоном.
-@Composable
-private fun productImageColors(isDark: Boolean): ProductImageColors {
-    val colors = MaterialTheme.colorScheme
-    return if (isDark) {
-        ProductImageColors(
-            center = lerp(colors.surfaceContainerHighest, Color.White, 0.30f),
-            edge = lerp(lerp(colors.surfaceContainerHighest, Color.White, 0.06f), colors.primary, 0.03f),
-        )
-    } else {
-        ProductImageColors(
-            center = Color.White,
-            edge = lerp(colors.surfaceContainerHigh, colors.primary, 0.04f),
-        )
-    }
-}
 
 // Светлая полоса шириной с плитку, которая раз за разом проходит по ней слева направо.
 // В начале и в конце прохода полоса целиком за краем, поэтому новый проход начинается без рывка.

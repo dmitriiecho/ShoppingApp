@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +26,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.components.PromoCodeCouponPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
@@ -43,7 +44,7 @@ fun LoadingSection(innerPadding: PaddingValues) {
                 label = stringResource(R.string.uikit_animation),
                 checked = isAnimating,
                 onCheckedChange = { isAnimating = it },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.padding(horizontal = Spacing.ScreenPadding, vertical = 8.dp),
             )
         }
         sampleGroup("ShimmerPlaceholder · Modifier.shimmerShape") {
@@ -69,13 +70,13 @@ fun LoadingSection(innerPadding: PaddingValues) {
                                 modifier = Modifier
                                     .fillMaxWidth(0.8f)
                                     .height(16.dp)
-                                    .shimmerShape(RoundedCornerShape(4.dp)),
+                                    .shimmerShape(MaterialTheme.shapes.extraSmall),
                             )
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.5f)
                                     .height(16.dp)
-                                    .shimmerShape(RoundedCornerShape(4.dp)),
+                                    .shimmerShape(MaterialTheme.shapes.extraSmall),
                             )
                         }
                     }

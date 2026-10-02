@@ -11,12 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.theme.totalsEmphasized
 
-// Все строки одним стилем текста, «Итого» выделено только жирностью. Если взять для «Итого» другой стиль
-// (например, titleMedium), у него другой межбуквенный интервал, и строки выглядят набранными разными шрифтами.
+// Строки сумм: обычные — bodyLarge, «Итого» — totalsEmphasized (почему так — см. его описание).
 @Composable
 fun OrderTotals(
     subtotal: String,
@@ -42,7 +42,7 @@ fun OrderTotals(
         PriceRow(
             label = stringResource(R.string.core_ui_total),
             value = total,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.totalsEmphasized,
         )
     }
 }
@@ -53,9 +53,8 @@ private fun PriceRow(
     value: String,
     modifier: Modifier = Modifier,
     valueColor: Color = Color.Unspecified,
-    fontWeight: FontWeight? = null,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
-    val style = MaterialTheme.typography.bodyLarge.copy(fontWeight = fontWeight)
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

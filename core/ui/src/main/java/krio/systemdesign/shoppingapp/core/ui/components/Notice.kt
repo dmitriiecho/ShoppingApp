@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,21 +19,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 // Плашка с иконкой для пометок на карточках товаров и у промокода.
-// Фон — лёгкий оттенок цвета акцента, текст и иконка — сам цвет акцента.
+// Фон — лёгкий оттенок цвета вида плашки (style), текст и иконка — сам этот цвет.
 @Composable
 fun Notice(
     icon: ImageVector,
     title: String,
-    accentColor: Color,
+    style: NoticeStyle,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     action: (@Composable () -> Unit)? = null,
 ) {
+    val accentColor = style.accentColor()
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         color = accentColor.copy(alpha = NOTICE_BACKGROUND_ALPHA),
         contentColor = accentColor,
     ) {
@@ -75,7 +76,7 @@ fun Notice(
 fun NoticeWithAction(
     icon: ImageVector,
     title: String,
-    accentColor: Color,
+    style: NoticeStyle,
     actionText: String,
     onAction: () -> Unit,
     modifier: Modifier = Modifier,
@@ -84,18 +85,38 @@ fun NoticeWithAction(
     Notice(
         icon = icon,
         title = title,
-        accentColor = accentColor,
+        style = style,
         modifier = modifier,
         subtitle = subtitle,
         action = {
             TextButton(
                 onClick = onAction,
-                colors = ButtonDefaults.textButtonColors(contentColor = accentColor),
+                colors = ButtonDefaults.textButtonColors(contentColor = style.accentColor()),
             ) {
                 Text(actionText)
             }
         },
     )
+}
+
+// Что сообщает плашка. Цвет по виду выбирает сама плашка, а не экран, поэтому одинаковые по смыслу плашки
+// на разных экранах одного цвета.
+enum class NoticeStyle {
+    // Что-то мешает и требует действия: товар закончился, цена изменилась, промокод не действует.
+    Error,
+
+    // Всё в порядке, например действующий промокод.
+    Success,
+
+    // Пояснение, а не проблема: например, что заказ в демо-приложении никуда не уходит.
+    Neutral,
+}
+
+@Composable
+private fun NoticeStyle.accentColor(): Color = when (this) {
+    NoticeStyle.Error -> MaterialTheme.colorScheme.error
+    NoticeStyle.Success -> ShoppingAppTheme.colors.success
+    NoticeStyle.Neutral -> MaterialTheme.colorScheme.onSurfaceVariant
 }
 
 private const val NOTICE_BACKGROUND_ALPHA = 0.14f

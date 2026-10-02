@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -55,8 +54,10 @@ import krio.systemdesign.shoppingapp.core.ui.components.ProductCardPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
 import krio.systemdesign.shoppingapp.core.ui.components.ScrollToTopButton
 import krio.systemdesign.shoppingapp.core.ui.components.SearchField
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import kotlinx.collections.immutable.ImmutableMap
@@ -108,7 +109,7 @@ fun ProductListScreen(
                 placeholder = stringResource(R.string.catalog_search_placeholder),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = Spacing.ScreenPadding),
             )
             ProductListBody(
                 searchQuery = uiState.searchQuery,
@@ -150,13 +151,17 @@ private fun ProductListBody(
                 onRetry = { products.retry() },
                 modifier = Modifier.fillMaxSize(),
             )
-            products.itemCount == 0 -> EmptyContent(
-                message = if (searchQuery.isBlank()) {
-                    stringResource(R.string.catalog_empty)
-                } else {
-                    stringResource(R.string.catalog_search_no_results, searchQuery)
-                },
-            )
+            products.itemCount == 0 -> if (searchQuery.isBlank()) {
+                EmptyContent(
+                    icon = AppIcons.EmptyCatalog,
+                    message = stringResource(R.string.catalog_empty),
+                )
+            } else {
+                EmptyContent(
+                    icon = AppIcons.NothingFound,
+                    message = stringResource(R.string.catalog_search_no_results, searchQuery),
+                )
+            }
             else -> {
                 val listState = rememberLazyListState()
                 val scope = rememberCoroutineScope()
@@ -186,7 +191,7 @@ private fun ProductListBody(
                             onRetry = { products.retry() },
                             modifier = Modifier
                                 .align(Alignment.TopCenter)
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                                .padding(horizontal = Spacing.ScreenPadding, vertical = 8.dp),
                         )
                     }
                     ScrollToTopButton(
@@ -194,7 +199,7 @@ private fun ProductListBody(
                         onClick = { scope.launch { listState.animateScrollToItem(0) } },
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(16.dp),
+                            .padding(Spacing.ScreenPadding),
                     )
                 }
             }
@@ -215,7 +220,7 @@ private fun ProductList(
     LazyColumn(
         state = listState,
         contentPadding = PRODUCT_LIST_CONTENT_PADDING,
-        verticalArrangement = Arrangement.spacedBy(PRODUCT_LIST_ITEM_SPACING),
+        verticalArrangement = Arrangement.spacedBy(Spacing.CardSpacing),
     ) {
         items(
             count = products.itemCount,
@@ -302,7 +307,7 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PRODUCT_LIST_CONTENT_PADDING,
-        verticalArrangement = Arrangement.spacedBy(PRODUCT_LIST_ITEM_SPACING),
+        verticalArrangement = Arrangement.spacedBy(Spacing.CardSpacing),
         userScrollEnabled = false,
     ) {
         items(LOADING_PLACEHOLDER_COUNT) {
@@ -314,13 +319,14 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
 // Обёрнут в LazyColumn, потому что потянуть для обновления можно только прокручиваемый экран.
 @Composable
 private fun EmptyContent(
+    icon: ImageVector,
     message: String,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         item {
             EmptyState(
-                icon = Icons.Outlined.Inventory2,
+                icon = icon,
                 message = message,
                 modifier = Modifier.fillParentMaxSize(),
             )
@@ -355,10 +361,9 @@ private fun AppendError(
 // Снизу запас под кнопку «Наверх» (её отступ + высота + зазор),
 // чтобы в конце списка она не закрывала последнюю карточку.
 private val PRODUCT_LIST_CONTENT_PADDING = PaddingValues(
-    start = 16.dp,
-    top = 16.dp,
-    end = 16.dp,
-    bottom = 16.dp + ButtonDefaults.MinHeight + 16.dp,
+    start = Spacing.ScreenPadding,
+    top = Spacing.ScreenPadding,
+    end = Spacing.ScreenPadding,
+    bottom = Spacing.ScreenPadding + ButtonDefaults.MinHeight + Spacing.ScreenPadding,
 )
-private val PRODUCT_LIST_ITEM_SPACING = 12.dp
 private const val LOADING_PLACEHOLDER_COUNT = 8

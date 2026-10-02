@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.components.ErrorState
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
@@ -36,7 +34,7 @@ fun ScreenStatesSection(innerPadding: PaddingValues) {
             SampleVariant(stringResource(R.string.uikit_variant_with_title)) {
                 ScreenArea {
                     EmptyState(
-                        icon = Icons.Outlined.ShoppingCart,
+                        icon = AppIcons.EmptyCart,
                         title = stringResource(R.string.uikit_sample_cart_empty_title),
                         message = stringResource(R.string.uikit_sample_cart_empty_message),
                         modifier = Modifier.fillMaxSize(),
@@ -46,7 +44,7 @@ fun ScreenStatesSection(innerPadding: PaddingValues) {
             SampleVariant(stringResource(R.string.uikit_variant_without_title)) {
                 ScreenArea {
                     EmptyState(
-                        icon = Icons.Outlined.Inventory2,
+                        icon = AppIcons.NothingFound,
                         message = stringResource(R.string.uikit_sample_nothing_found, SAMPLE_SEARCH_QUERY),
                         modifier = Modifier.fillMaxSize(),
                     )

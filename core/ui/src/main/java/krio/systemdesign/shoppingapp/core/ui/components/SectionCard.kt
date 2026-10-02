@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 
 // Блок экрана: карточка с заголовком и значком акцентного цвета, под ними содержимое.
 // Так собраны экран оформления заказа и карточка с промокодами на экране промокода.
@@ -31,7 +32,7 @@ fun SectionCard(
 ) {
     AppCard(modifier = modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(Spacing.CardPadding),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {

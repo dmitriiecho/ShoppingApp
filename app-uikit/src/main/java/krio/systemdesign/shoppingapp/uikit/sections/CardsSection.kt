@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.outlined.ConfirmationNumber
 import androidx.compose.material.icons.outlined.HourglassEmpty
-import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +27,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.AppCard
 import krio.systemdesign.shoppingapp.core.ui.components.AppListItem
 import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.OrderItemRow
 import krio.systemdesign.shoppingapp.core.ui.components.OrderTotals
 import krio.systemdesign.shoppingapp.core.ui.components.OutOfStockButton
@@ -36,7 +35,9 @@ import krio.systemdesign.shoppingapp.core.ui.components.ProductCard
 import krio.systemdesign.shoppingapp.core.ui.components.PromoCodeCoupon
 import krio.systemdesign.shoppingapp.core.ui.components.SectionCard
 import krio.systemdesign.shoppingapp.core.ui.components.SingleChoiceButtons
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
@@ -96,9 +97,9 @@ fun CardsSection(innerPadding: PaddingValues) {
                     isDimmed = true,
                 ) {
                     Notice(
-                        icon = Icons.Outlined.Inventory2,
+                        icon = AppIcons.OutOfStock,
                         title = stringResource(R.string.uikit_sample_out_of_stock),
-                        accentColor = MaterialTheme.colorScheme.error,
+                        style = NoticeStyle.Error,
                     )
                     CartQuantityControl(
                         quantity = 2,
@@ -122,7 +123,7 @@ fun CardsSection(innerPadding: PaddingValues) {
             }
             SampleVariant(stringResource(R.string.uikit_variant_with_subtitle)) {
                 SectionCard(
-                    icon = Icons.Outlined.ConfirmationNumber,
+                    icon = AppIcons.PromoCode,
                     title = stringResource(R.string.uikit_sample_promo_codes),
                     subtitle = stringResource(R.string.uikit_sample_promo_codes_hint),
                 ) {
@@ -231,7 +232,7 @@ private fun SampleCoupons() {
 
 @Composable
 private fun CardText() {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.padding(Spacing.CardPadding)) {
         Text(
             text = stringResource(R.string.uikit_sample_card_content),
             style = MaterialTheme.typography.bodyLarge,

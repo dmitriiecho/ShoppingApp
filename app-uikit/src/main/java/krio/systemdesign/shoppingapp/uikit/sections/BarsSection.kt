@@ -5,9 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +20,9 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.AppNavigationBarItem
 import krio.systemdesign.shoppingapp.core.ui.components.ConfirmationDialog
 import krio.systemdesign.shoppingapp.core.ui.components.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.TotalBottomBar
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
@@ -60,9 +60,9 @@ fun BarsSection(innerPadding: PaddingValues) {
                     onAction = {},
                     header = {
                         Notice(
-                            icon = Icons.Outlined.Info,
+                            icon = AppIcons.Info,
                             title = stringResource(R.string.uikit_sample_demo_order),
-                            accentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = NoticeStyle.Neutral,
                         )
                     },
                 )

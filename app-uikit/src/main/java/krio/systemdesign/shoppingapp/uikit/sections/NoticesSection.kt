@@ -1,18 +1,14 @@
 package krio.systemdesign.shoppingapp.uikit.sections
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ErrorOutline
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material.icons.outlined.Sell
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeNotice
 import krio.systemdesign.shoppingapp.core.ui.components.ErrorBanner
 import krio.systemdesign.shoppingapp.core.ui.components.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.NoticeWithAction
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
@@ -27,40 +23,40 @@ fun NoticesSection(innerPadding: PaddingValues) {
         sampleGroup("Notice") {
             SampleVariant(stringResource(R.string.uikit_variant_error)) {
                 Notice(
-                    icon = Icons.Outlined.Inventory2,
+                    icon = AppIcons.OutOfStock,
                     title = stringResource(R.string.uikit_sample_out_of_stock),
-                    accentColor = MaterialTheme.colorScheme.error,
+                    style = NoticeStyle.Error,
                 )
                 Notice(
-                    icon = Icons.Outlined.Sell,
+                    icon = AppIcons.PriceChanged,
                     title = stringResource(R.string.uikit_sample_price_changed, formatPrice(SampleData.KEYBOARD_PRICE)),
-                    accentColor = MaterialTheme.colorScheme.error,
+                    style = NoticeStyle.Error,
                 )
             }
             SampleVariant(stringResource(R.string.uikit_variant_neutral)) {
                 Notice(
-                    icon = Icons.Outlined.Info,
+                    icon = AppIcons.Info,
                     title = stringResource(R.string.uikit_sample_demo_order),
-                    accentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = NoticeStyle.Neutral,
                 )
             }
         }
         sampleGroup("NoticeWithAction") {
             SampleVariant(stringResource(R.string.uikit_variant_with_action)) {
                 NoticeWithAction(
-                    icon = Icons.Outlined.Sell,
+                    icon = AppIcons.PriceChanged,
                     title = stringResource(R.string.uikit_sample_price_changes),
-                    accentColor = MaterialTheme.colorScheme.error,
+                    style = NoticeStyle.Error,
                     actionText = stringResource(R.string.uikit_sample_accept),
                     onAction = {},
                 )
             }
             SampleVariant(stringResource(R.string.uikit_variant_with_subtitle)) {
                 NoticeWithAction(
-                    icon = Icons.Outlined.ErrorOutline,
+                    icon = AppIcons.Error,
                     title = stringResource(R.string.uikit_sample_promo_invalid, SampleData.PROMO_CODE),
                     subtitle = stringResource(R.string.uikit_sample_promo_invalid_hint),
-                    accentColor = MaterialTheme.colorScheme.error,
+                    style = NoticeStyle.Error,
                     actionText = stringResource(R.string.uikit_sample_remove),
                     onAction = {},
                 )
