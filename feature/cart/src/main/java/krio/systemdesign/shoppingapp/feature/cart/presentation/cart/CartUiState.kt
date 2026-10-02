@@ -21,7 +21,8 @@ data class CartUiState(
     val stockLimits: ImmutableMap<String, Int> = persistentMapOf(),
     // false — проверка нашла, что применённый промокод больше не действует, и его ещё не убрали.
     val isPromoCodeValid: Boolean = true,
-    val isValidating: Boolean = false,
+    // Пользователь нажал «Оформить заказ», и корзина проверяется перед оформлением.
+    val isCheckingOut: Boolean = false,
     val isClearCartDialogVisible: Boolean = false,
     // Корзина ещё не прочитана из базы. Пустой список здесь не значит, что корзина пуста.
     val isLoading: Boolean = false,

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import krio.systemdesign.shoppingapp.core.ui.text.UiText
+import krio.systemdesign.shoppingapp.domain.model.Cart
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.CartValidationResult
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
@@ -21,6 +22,8 @@ import krio.systemdesign.shoppingapp.feature.cart.domain.usecase.ValidateCartUse
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,7 +49,10 @@ class CartViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val foundChanges = MutableStateFlow(FoundChanges())
-    private val isValidating = MutableStateFlow(false)
+    private val isCheckingOut = MutableStateFlow(false)
+    // Идущая проверка корзины. Нажатие «Оформить заказ» во время проверки при показе экрана дожидается её,
+    // а не запускает вторую.
+    private var validation: Deferred<Validation?>? = null
     private val isClearCartDialogVisible =
         savedStateHandle.getStateFlow(KEY_CLEAR_CART_DIALOG_VISIBLE, false)
 
@@ -56,9 +62,9 @@ class CartViewModel @Inject constructor(
     val uiState: StateFlow<CartUiState> = combine(
         observeCart(),
         foundChanges,
-        isValidating,
+        isCheckingOut,
         isClearCartDialogVisible,
-    ) { cart, changes, validating, clearCartDialogVisible ->
+    ) { cart, changes, checkingOut, clearCartDialogVisible ->
         val isPromoCodeValid = changes.invalidPromoCode == null ||
             cart.promoCode?.code != changes.invalidPromoCode
         CartUiState(
@@ -78,7 +84,7 @@ class CartViewModel @Inject constructor(
             // количество до остатка, «+» не должен снова дать его превысить.
             stockLimits = changes.issues.stockLimits(),
             isPromoCodeValid = isPromoCodeValid,
-            isValidating = validating,
+            isCheckingOut = checkingOut,
             isClearCartDialogVisible = clearCartDialogVisible,
         )
     }.stateIn(
@@ -121,8 +127,8 @@ class CartViewModel @Inject constructor(
                     removeFromCart(event.productId)
                 }
             }
-            CartEvent.OnCheckoutClick -> validate(isCheckout = true)
-            CartEvent.OnScreenShown -> validate(isCheckout = false)
+            CartEvent.OnCheckoutClick -> checkout()
+            CartEvent.OnScreenShown -> validate()
             CartEvent.OnPromoClick -> send(CartEffect.NavigateToPromo)
             CartEvent.OnRemovePromoClick -> launchCartAction { removePromoCode() }
             CartEvent.OnClearCartClick -> {
@@ -144,37 +150,44 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    // Проверяет корзину на сервере. При показе экрана — молча: только обновляет пометки.
-    // При оформлении — сообщает о результате, а если всё в порядке, открывает оформление.
-    private fun validate(isCheckout: Boolean) {
-        if (isValidating.value) return
-        isValidating.value = true
+    // Проверяет корзину на сервере и обновляет пометки об изменениях, не показывая ни загрузки, ни сообщений.
+    // Если проверка уже идёт, возвращает её. null — корзина пуста, проверять нечего.
+    private fun validate(): Deferred<Validation?> =
+        validation?.takeIf { it.isActive } ?: viewModelScope.async {
+            val cart = observeCart().first()
+            if (cart.items.isEmpty()) return@async null
+            val result = validateCart()
+            when (result) {
+                CartValidationResult.Success -> foundChanges.value = FoundChanges()
+                is CartValidationResult.Invalid -> foundChanges.value = FoundChanges(
+                    issues = result.issues,
+                    // Запоминаем сам код: если потом применят другой, пометка к нему не относится.
+                    invalidPromoCode = cart.promoCode?.code.takeUnless { result.isPromoCodeValid },
+                )
+                is CartValidationResult.Error -> Unit
+            }
+            Validation(cart, result)
+        }.also { validation = it }
+
+    // Проверяет корзину и, если всё в порядке, открывает оформление; иначе сообщает, что не так.
+    private fun checkout() {
+        if (isCheckingOut.value) return
+        isCheckingOut.value = true
         viewModelScope.launch {
             try {
-                val cart = observeCart().first()
-                if (cart.items.isEmpty()) {
-                    if (isCheckout) send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_empty_title)))
-                    return@launch
-                }
-                when (val result = validateCart()) {
-                    CartValidationResult.Success -> {
-                        foundChanges.value = FoundChanges()
-                        if (isCheckout) send(CartEffect.NavigateToCheckout)
-                    }
-                    is CartValidationResult.Invalid -> {
-                        foundChanges.value = FoundChanges(
-                            issues = result.issues,
-                            // Запоминаем сам код: если потом применят другой, пометка к нему не относится.
-                            invalidPromoCode = cart.promoCode?.code.takeUnless { result.isPromoCodeValid },
-                        )
-                        if (isCheckout) send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_changed)))
-                    }
+                var checked = validate().await()
+                // Пока шла проверка, начатая при показе экрана, корзину могли изменить: её результат уже не про неё.
+                if (checked != null && checked.cart != observeCart().first()) checked = validate().await()
+                when (checked?.result) {
+                    null -> send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_empty_title)))
+                    CartValidationResult.Success -> send(CartEffect.NavigateToCheckout)
+                    is CartValidationResult.Invalid -> send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_changed)))
                     is CartValidationResult.Error -> {
-                        if (isCheckout) send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_validation_error)))
+                        send(CartEffect.ShowSnackBar(UiText.Resource(R.string.cart_validation_error)))
                     }
                 }
             } finally {
-                isValidating.value = false
+                isCheckingOut.value = false
             }
         }
     }
@@ -195,6 +208,9 @@ class CartViewModel @Inject constructor(
         const val KEY_CLEAR_CART_DIALOG_VISIBLE = "clear_cart_dialog_visible"
     }
 }
+
+// Результат проверки и корзина, которую она проверяла.
+private data class Validation(val cart: Cart, val result: CartValidationResult)
 
 // Что нашла последняя проверка корзины.
 private data class FoundChanges(

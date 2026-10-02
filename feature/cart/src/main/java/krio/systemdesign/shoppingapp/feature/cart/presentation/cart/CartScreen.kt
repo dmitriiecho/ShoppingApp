@@ -142,8 +142,8 @@ fun CartScreen(
                 TotalBottomBar(
                     total = formatPrice(uiState.totalPrice),
                     actionText = stringResource(R.string.cart_checkout),
-                    enabled = uiState.canCheckout && !uiState.isValidating,
-                    isLoading = uiState.isValidating,
+                    enabled = uiState.canCheckout && !uiState.isCheckingOut,
+                    isLoading = uiState.isCheckingOut,
                     onAction = { viewModel.onEvent(CartEvent.OnCheckoutClick) },
                     header = if (uiState.priceChangeCount > 0 || uiState.unavailableItemCount > 0 || uiState.notEnoughStockItemCount > 0) {
                         {
