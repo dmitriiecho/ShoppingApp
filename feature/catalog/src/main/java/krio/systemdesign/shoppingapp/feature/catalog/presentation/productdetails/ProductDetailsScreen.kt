@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +43,8 @@ import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.components.ProductImageKey
+import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.domain.model.Product
@@ -85,26 +90,26 @@ fun ProductDetailsScreen(
             .fillMaxSize()
             .padding(innerPadding)
         val state = uiState
-        when {
-            // Если картинка известна (её передал список), экран с первого кадра выглядит как с загруженным товаром:
-            // картинка на своём месте, а под ней загрузка или ошибка. Так картинке есть куда перелететь из списка,
-            // и она остаётся на месте, когда товар загрузится.
-            state is ProductDetailsUiState.Content || state.imageUrl.isNotEmpty() -> ProductDetailsContent(
-                state = state,
-                onEvent = viewModel::onEvent,
-                modifier = contentModifier,
-            )
-            state is ProductDetailsUiState.Loading -> LoadingContent(modifier = contentModifier)
-            state is ProductDetailsUiState.Error -> ErrorContent(
+        // Экран с первого кадра выглядит как с загруженным товаром: картинка на своём месте (или заглушка на её месте,
+        // если картинка неизвестна), а под ней заглушки описания или ошибка. Так картинке есть куда перелететь
+        // из списка, и ничего не сдвигается, когда товар загрузится.
+        if (state is ProductDetailsUiState.Error && state.imageUrl.isEmpty()) {
+            ErrorContent(
                 message = state.message.asString(),
                 onRetry = { viewModel.onEvent(ProductDetailsEvent.OnRetry) },
+                modifier = contentModifier,
+            )
+        } else {
+            ProductDetailsContent(
+                state = state,
+                onEvent = viewModel::onEvent,
                 modifier = contentModifier,
             )
         }
     }
 }
 
-// Картинка товара сверху и, в зависимости от состояния, описание товара, загрузка или ошибка под ней.
+// Картинка товара сверху и, в зависимости от состояния, описание товара, заглушки или ошибка под ней.
 @Composable
 private fun ProductDetailsContent(
     state: ProductDetailsUiState,
@@ -117,23 +122,30 @@ private fun ProductDetailsContent(
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
         ) {
-            ProductImage(
-                imageUrl = state.imageUrl,
-                contentDescription = state.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-                cornerRadius = 0.dp,
-                contentPadding = 32.dp,
-                sharedElementKey = ProductImageKey(state.productId),
-            )
+            val imageModifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+            if (state.imageUrl.isNotEmpty()) {
+                ProductImage(
+                    imageUrl = state.imageUrl,
+                    contentDescription = state.title,
+                    modifier = imageModifier,
+                    cornerRadius = 0.dp,
+                    contentPadding = 32.dp,
+                    sharedElementKey = ProductImageKey(state.productId),
+                )
+            } else {
+                ShimmerPlaceholder(modifier = imageModifier) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .shimmerShape(RectangleShape),
+                    )
+                }
+            }
             when (state) {
                 is ProductDetailsUiState.Content -> ProductInfo(product = state.product)
-                is ProductDetailsUiState.Loading -> LoadingContent(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                )
+                is ProductDetailsUiState.Loading -> ProductInfoPlaceholder()
                 is ProductDetailsUiState.Error -> ErrorContent(
                     message = state.message.asString(),
                     onRetry = { onEvent(ProductDetailsEvent.OnRetry) },
@@ -141,15 +153,25 @@ private fun ProductDetailsContent(
                 )
             }
         }
-        if (state is ProductDetailsUiState.Content) {
-            CartControl(
+        val cartControlModifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+        when (state) {
+            is ProductDetailsUiState.Content -> CartControl(
                 product = state.product,
                 quantity = state.cartQuantity,
                 onEvent = onEvent,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = cartControlModifier,
             )
+            is ProductDetailsUiState.Loading -> ShimmerPlaceholder(modifier = cartControlModifier) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonDefaults.MinHeight)
+                        .shimmerShape(RoundedCornerShape(ButtonDefaults.MinHeight / 2)),
+                )
+            }
+            is ProductDetailsUiState.Error -> Unit
         }
     }
 }
@@ -203,13 +225,39 @@ private fun CartControl(
     }
 }
 
+// Повторяет раскладку ProductInfo: название, цена и несколько строк описания.
 @Composable
-private fun LoadingContent(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
+private fun ProductInfoPlaceholder(modifier: Modifier = Modifier) {
+    ShimmerPlaceholder(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
     ) {
-        CircularProgressIndicator()
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(28.dp)
+                    .shimmerShape(RoundedCornerShape(4.dp)),
+            )
+            Spacer(Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(28.dp)
+                    .shimmerShape(RoundedCornerShape(4.dp)),
+            )
+            Spacer(Modifier.height(16.dp))
+            listOf(1f, 1f, 0.6f).forEach { widthFraction ->
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 3.dp)
+                        .fillMaxWidth(widthFraction)
+                        .height(18.dp)
+                        .shimmerShape(RoundedCornerShape(4.dp)),
+                )
+            }
+        }
     }
 }
 

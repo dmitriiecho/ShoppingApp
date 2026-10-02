@@ -28,7 +28,6 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -168,7 +167,7 @@ private fun ProductListBody(
 ) {
     val refresh = products.loadState.refresh
     // Обновление жестом не убирает список: пока оно идёт, видны прежние товары и индикатор сверху.
-    // Остальные загрузки с нуля (первая, после смены запроса, по «Повторить») показывают индикатор на весь экран.
+    // Остальные загрузки с нуля (первая, после смены запроса, по «Повторить») показывают вместо списка карточки-заглушки.
     var isPullRefreshing by remember { mutableStateOf(false) }
     LaunchedEffect(refresh) {
         if (refresh !is LoadState.Loading) isPullRefreshing = false
@@ -251,15 +250,8 @@ private fun ProductList(
 
     LazyColumn(
         state = listState,
-        // Снизу запас под кнопку «Наверх» (её отступ + высота + зазор),
-        // чтобы в конце списка она не закрывала последнюю карточку.
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            top = 16.dp,
-            end = 16.dp,
-            bottom = 16.dp + ButtonDefaults.MinHeight + 16.dp,
-        ),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PRODUCT_LIST_CONTENT_PADDING,
+        verticalArrangement = Arrangement.spacedBy(PRODUCT_LIST_ITEM_SPACING),
     ) {
         items(
             count = products.itemCount,
@@ -289,14 +281,7 @@ private fun ProductList(
         when (append) {
             is LoadState.Loading -> {
                 item(key = "append_loading") {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
-                    }
+                    ProductListItemPlaceholder(isLoading = true)
                 }
             }
             is LoadState.Error -> {
@@ -484,13 +469,19 @@ private fun ScrollToTopButton(
     }
 }
 
+// Карточки-заглушки там же, где встанет список, поэтому товары появляются на их месте без сдвига.
+// Карточек с запасом на весь экран; прокручивать их незачем.
 @Composable
 private fun LoadingContent(modifier: Modifier = Modifier) {
-    Box(
+    LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+        contentPadding = PRODUCT_LIST_CONTENT_PADDING,
+        verticalArrangement = Arrangement.spacedBy(PRODUCT_LIST_ITEM_SPACING),
+        userScrollEnabled = false,
     ) {
-        CircularProgressIndicator()
+        items(LOADING_PLACEHOLDER_COUNT) {
+            ProductListItemPlaceholder(isLoading = true)
+        }
     }
 }
 
@@ -583,3 +574,13 @@ private fun AppendError(
     }
 }
 
+// Снизу запас под кнопку «Наверх» (её отступ + высота + зазор),
+// чтобы в конце списка она не закрывала последнюю карточку.
+private val PRODUCT_LIST_CONTENT_PADDING = PaddingValues(
+    start = 16.dp,
+    top = 16.dp,
+    end = 16.dp,
+    bottom = 16.dp + ButtonDefaults.MinHeight + 16.dp,
+)
+private val PRODUCT_LIST_ITEM_SPACING = 12.dp
+private const val LOADING_PLACEHOLDER_COUNT = 8
