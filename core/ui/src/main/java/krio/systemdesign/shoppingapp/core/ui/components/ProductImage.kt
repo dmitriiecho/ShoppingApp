@@ -30,19 +30,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.animation.LocalNavAnimatedVisibilityScope
 import krio.systemdesign.shoppingapp.core.ui.animation.LocalSharedTransitionScope
 
 // Картинка товара. У картинок с сервера прозрачный фон, поэтому под ней своя плитка:
 // светлое пятно в центре и чуть тонированные края, как на студийной фотографии.
 // Товар вписывается целиком, с отступом от краёв плитки.
-// Пока картинка грузится, по плитке бежит блик (шиммер). Если загрузить не удалось, остаётся пустая плитка.
+// Пока картинка грузится, по плитке бежит блик (шиммер). Если загрузить не удалось,
+// на плитке остаётся значок «картинки нет»: рамка с пейзажем, перечёркнутая наискосок.
+// Черта — акцентный цвет темы. В тёмной теме он светлее, поэтому значок другой.
 @Composable
 fun ProductImage(
     imageUrl: String,
@@ -55,9 +59,13 @@ fun ProductImage(
     // плитка перелетает с места на одном экране на место на другом (см. LocalSharedTransitionScope).
     sharedElementKey: Any? = null,
 ) {
-    val colors = productImageColors()
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val colors = productImageColors(isDark)
     var isLoading by remember { mutableStateOf(false) }
     val shared = sharedElement(sharedElementKey, cornerRadius)
+    val placeholder = painterResource(
+        if (isDark) R.drawable.product_image_placeholder_dark else R.drawable.product_image_placeholder,
+    )
     val context = LocalPlatformContext.current
     val request = remember(context, imageUrl) {
         ImageRequest.Builder(context)
@@ -88,6 +96,11 @@ fun ProductImage(
                 .padding(contentPadding)
                 .then(shared.image),
             contentScale = ContentScale.Fit,
+            // error и onState у AsyncImage в разных перегрузках, поэтому заглушку подставляем сами:
+            // у состояния ошибки появляется картинка, и Coil рисует её так же, как успешную.
+            transform = { state ->
+                if (state is AsyncImagePainter.State.Error) state.copy(painter = placeholder) else state
+            },
             // Если картинка из памяти уже видна, шиммер не нужен.
             onState = { isLoading = it is AsyncImagePainter.State.Loading && it.painter == null },
         )
@@ -169,9 +182,8 @@ private class ProductImageColors(val center: Color, val edge: Color)
 // В тёмной вся плитка светлее карточки (у AppCard фон surfaceContainerHigh), а центр — заметно:
 // иначе плитка теряется на карточке, а чёрные товары (наушники, клавиатура) сливаются с фоном.
 @Composable
-private fun productImageColors(): ProductImageColors {
+private fun productImageColors(isDark: Boolean): ProductImageColors {
     val colors = MaterialTheme.colorScheme
-    val isDark = colors.background.luminance() < 0.5f
     return if (isDark) {
         ProductImageColors(
             center = lerp(colors.surfaceContainerHighest, Color.White, 0.30f),
