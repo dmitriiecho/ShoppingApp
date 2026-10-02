@@ -168,7 +168,9 @@ class ApplicationTest {
         hosted.forEach { product ->
             val fileName = product.imageUrl.substringAfterLast('/').substringBefore('?')
             assertEquals("${product.id}.png", fileName)
-            assertTrue(dataDir.resolve("images/$fileName").exists(), fileName)
+            val file = dataDir.resolve("images/$fileName")
+            // У хаба файла нет нарочно: приложение запрашивает его и показывает заглушку.
+            if (product.id == "3") assertFalse(file.exists(), fileName) else assertTrue(file.exists(), fileName)
         }
 
         application { module(data, dataDir.resolve("images")) }
