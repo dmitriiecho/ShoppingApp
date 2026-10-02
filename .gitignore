@@ -11,3 +11,4 @@ build/
 *.aab
 *.dex
 .kotlin/
+CLAUDE.local.md
