@@ -7,7 +7,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // The app's text styles: Material 3 defaults with the system font.
-// bodyLarge, the main text, has no extra space above and below the lines, so card paddings are measured from the text.
+// bodyLarge has no extra space above the first line and below the last: card paddings rely on it.
 internal val AppTypography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,

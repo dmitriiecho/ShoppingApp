@@ -4,7 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
-// The app's corner radii. Shapes are taken from MaterialTheme.shapes.
+// Radii as numbers, for code that animates them (ProductImage). Shapes come from MaterialTheme.shapes.
 object ShapeRadius {
     val ExtraSmall = 4.dp
     val Small = 8.dp
