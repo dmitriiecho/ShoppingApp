@@ -8,17 +8,16 @@ import okhttp3.Response
 import java.io.IOException
 import javax.inject.Inject
 
-// Перед каждым запросом к серверу ждёт столько, сколько выбрано в настройках («Задержка запросов»).
+// Waits before every server request for the delay chosen in the settings.
 class NetworkDelayInterceptor @Inject constructor(
     private val appSettingsRepository: AppSettingsRepository,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        // Перехватчик работает в потоке OkHttp, а не в главном, поэтому подождать чтения настройки здесь можно.
-        // DataStore держит прочитанные настройки в памяти, так что файл читается только при первом запросе.
+        // Blocking is fine: this runs on an OkHttp thread, and DataStore reads the file only once.
         val delay = runBlocking { appSettingsRepository.observeNetworkDelay().first() }
         var remainingMillis = delay.duration.inWholeMilliseconds
-        // Ждём частями, чтобы запрос, который отменили (например, ушли с экрана), не висел до конца паузы.
+        // Sleeps in steps so a canceled request doesn't wait out the whole delay.
         while (remainingMillis > 0) {
             if (chain.call().isCanceled()) throw IOException("Canceled")
             val step = minOf(remainingMillis, STEP_MILLIS)

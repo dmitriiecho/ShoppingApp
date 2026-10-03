@@ -27,7 +27,7 @@ class RoomLocalCartDataSource @Inject constructor(
         database.withTransaction {
             val existing = cartItemDao.find(product.id)
             val entity = if (existing != null) {
-                // The stock level from the catalog is more recent than the stored one, so we update it as well.
+                // The catalog stock is fresher than the stored one.
                 existing.copy(
                     quantity = existing.quantity + quantity,
                     availableQuantity = product.availableQuantity,
