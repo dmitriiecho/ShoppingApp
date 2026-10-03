@@ -19,8 +19,8 @@ internal val AppTypography = Typography(
     ),
 )
 
-// The emphasized line in a totals block: "Total" and the cart totals header. The same bodyLarge as the other lines,
-// only bolder: another style (e.g. titleMedium) has different letter spacing,
-// and the lines would look set in different fonts.
-val Typography.totalsEmphasized: TextStyle
+// bodyLarge, only bolder: for a line that stands out among bodyLarge lines, e.g. "Total" in OrderTotals.
+// Another style (e.g. titleMedium) has different letter spacing, and the lines would look set in different fonts.
+// Newer Material 3 versions have their own bodyLargeEmphasized; this one has another name so the two don't clash.
+val Typography.bodyLargeStrong: TextStyle
     get() = bodyLarge.copy(fontWeight = FontWeight.SemiBold)

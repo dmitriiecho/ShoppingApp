@@ -51,7 +51,7 @@ import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
-import krio.systemdesign.shoppingapp.core.ui.theme.totalsEmphasized
+import krio.systemdesign.shoppingapp.core.ui.theme.bodyLargeStrong
 import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
@@ -267,7 +267,7 @@ private fun CartTotals(
             // Тот же стиль, что у «Итого» в OrderTotals, иначе заголовок выглядит другим шрифтом.
             Text(
                 text = stringResource(R.string.cart_order_total),
-                style = MaterialTheme.typography.totalsEmphasized,
+                style = MaterialTheme.typography.bodyLargeStrong,
             )
             val promoCode = uiState.promoCode
             if (promoCode != null) {

@@ -21,7 +21,7 @@ import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
-import krio.systemdesign.shoppingapp.core.ui.theme.totalsEmphasized
+import krio.systemdesign.shoppingapp.core.ui.theme.bodyLargeStrong
 
 @Composable
 fun OrderTotals(
@@ -48,7 +48,7 @@ fun OrderTotals(
         PriceRow(
             label = stringResource(R.string.core_ui_total),
             value = total,
-            style = MaterialTheme.typography.totalsEmphasized,
+            style = MaterialTheme.typography.bodyLargeStrong,
         )
     }
 }

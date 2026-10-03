@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
-import krio.systemdesign.shoppingapp.core.ui.theme.totalsEmphasized
+import krio.systemdesign.shoppingapp.core.ui.theme.bodyLargeStrong
 
 @Composable
 fun AppCard(
@@ -54,7 +54,7 @@ private fun AppCardPreview() {
                 ) {
                     Text(
                         text = "Order total",
-                        style = MaterialTheme.typography.totalsEmphasized,
+                        style = MaterialTheme.typography.bodyLargeStrong,
                     )
                     OrderTotals(
                         subtotal = formatPrice(40_993L),
