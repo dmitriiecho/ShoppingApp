@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.configure
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("com.android.application")
+            pluginManager.apply(libs.plugins.android.application.get().pluginId)
 
             extensions.configure<ApplicationExtension> {
                 configureAndroid(this)

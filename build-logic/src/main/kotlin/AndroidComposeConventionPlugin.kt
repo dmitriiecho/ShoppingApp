@@ -8,20 +8,20 @@ import org.gradle.kotlin.dsl.dependencies
 class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+            pluginManager.apply(libs.plugins.kotlin.compose.get().pluginId)
 
             extensions.configure<CommonExtension> {
                 buildFeatures.compose = true
             }
 
             dependencies {
-                "implementation"(platform(libs.findLibrary("androidx-compose-bom").get()))
-                "implementation"(libs.findLibrary("androidx-compose-material3").get())
-                "implementation"(libs.findLibrary("androidx-compose-material-icons-extended").get())
-                "implementation"(libs.findLibrary("androidx-compose-ui").get())
-                "implementation"(libs.findLibrary("androidx-compose-ui-graphics").get())
-                "implementation"(libs.findLibrary("androidx-compose-ui-tooling-preview").get())
-                "debugImplementation"(libs.findLibrary("androidx-compose-ui-tooling").get())
+                "implementation"(platform(libs.androidx.compose.bom))
+                "implementation"(libs.androidx.compose.material3)
+                "implementation"(libs.androidx.compose.material.icons.extended)
+                "implementation"(libs.androidx.compose.ui.asProvider())
+                "implementation"(libs.androidx.compose.ui.graphics)
+                "implementation"(libs.androidx.compose.ui.tooling.preview)
+                "debugImplementation"(libs.androidx.compose.ui.tooling.asProvider())
             }
         }
     }

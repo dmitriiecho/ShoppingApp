@@ -10,16 +10,16 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             apply<AndroidLibraryConventionPlugin>()
             apply<AndroidComposeConventionPlugin>()
-            pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
+            pluginManager.apply(libs.plugins.kotlin.serialization.get().pluginId)
             apply<AndroidHiltConventionPlugin>()
 
             dependencies {
-                "implementation"(libs.findLibrary("androidx-hilt-navigation-compose").get())
-                "implementation"(libs.findLibrary("androidx-navigation-compose").get())
-                "implementation"(libs.findLibrary("androidx-lifecycle-runtime-compose").get())
-                "implementation"(libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
-                "implementation"(libs.findLibrary("kotlinx-serialization-json").get())
-                "implementation"(libs.findLibrary("kotlinx-coroutines-android").get())
+                "implementation"(libs.androidx.hilt.navigation.compose)
+                "implementation"(libs.androidx.navigation.compose)
+                "implementation"(libs.androidx.lifecycle.runtime.compose)
+                "implementation"(libs.androidx.lifecycle.viewmodel.compose)
+                "implementation"(libs.kotlinx.serialization.json)
+                "implementation"(libs.kotlinx.coroutines.android)
             }
         }
     }

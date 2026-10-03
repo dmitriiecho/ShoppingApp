@@ -8,7 +8,7 @@ import org.gradle.kotlin.dsl.dependencies
 class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("com.android.library")
+            pluginManager.apply(libs.plugins.android.library.get().pluginId)
 
             extensions.configure<LibraryExtension> {
                 configureAndroid(this)

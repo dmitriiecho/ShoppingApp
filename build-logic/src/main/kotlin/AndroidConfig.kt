@@ -1,9 +1,8 @@
 import com.android.build.api.dsl.CommonExtension
+import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalog
-import org.gradle.api.artifacts.VersionCatalogsExtension
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.the
 
 // Числа, общие для всех Android-модулей проекта: изменение здесь доходит до каждого модуля.
 internal object AndroidConfig {
@@ -23,5 +22,5 @@ internal fun configureAndroid(android: CommonExtension) {
     android.compileOptions.targetCompatibility = AndroidConfig.JAVA_VERSION
 }
 
-internal val Project.libs: VersionCatalog
-    get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
+internal val Project.libs: LibrariesForLibs
+    get() = the<LibrariesForLibs>()
