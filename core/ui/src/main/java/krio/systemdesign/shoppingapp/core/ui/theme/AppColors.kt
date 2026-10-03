@@ -4,8 +4,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-// Цвета приложения по смыслу, которых нет в схеме Material (MaterialTheme.colorScheme).
-// Берутся через ShoppingAppTheme.colors.
+// App colors by meaning that the Material scheme (MaterialTheme.colorScheme) doesn't have.
+// Accessed via ShoppingAppTheme.colors.
 @Immutable
 class AppColors(
     val success: Color,
@@ -25,5 +25,5 @@ internal val DarkAppColors = AppColors(
     cardContainer = SurfaceContainerHighDark,
 )
 
-// Без ShoppingAppTheme (например, в чужой теме) — светлый набор.
+// Without ShoppingAppTheme above (e.g. a preview or test that doesn't wrap in it) — the light set.
 internal val LocalAppColors = staticCompositionLocalOf { LightAppColors }
