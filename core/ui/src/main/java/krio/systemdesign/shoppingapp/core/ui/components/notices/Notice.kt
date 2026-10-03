@@ -1,9 +1,12 @@
 package krio.systemdesign.shoppingapp.core.ui.components.notices
 
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,11 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
-// Плашка с иконкой для пометок на карточках товаров и у промокода.
-// Фон — лёгкий оттенок цвета вида плашки (style), текст и иконка — сам этот цвет.
 @Composable
 fun Notice(
     icon: ImageVector,
@@ -40,7 +43,7 @@ fun Notice(
         contentColor = accentColor,
     ) {
         Row(
-            // У кнопки свои отступы и высота, поэтому с ней плашке свои почти не нужны.
+            // The button brings its own padding and height, so the notice needs very little.
             modifier = if (action != null) {
                 Modifier.padding(start = 12.dp, top = 4.dp, bottom = 4.dp, end = 4.dp)
             } else {
@@ -71,7 +74,6 @@ fun Notice(
     }
 }
 
-// Плашка с текстовой кнопкой того же цвета справа.
 @Composable
 fun NoticeWithAction(
     icon: ImageVector,
@@ -99,16 +101,10 @@ fun NoticeWithAction(
     )
 }
 
-// Что сообщает плашка. Цвет по виду выбирает сама плашка, а не экран, поэтому одинаковые по смыслу плашки
-// на разных экранах одного цвета.
+
 enum class NoticeStyle {
-    // Что-то мешает и требует действия: товар закончился, цена изменилась, промокод не действует.
     Error,
-
-    // Всё в порядке, например действующий промокод.
     Success,
-
-    // Пояснение, а не проблема: например, что заказ в демо-приложении никуда не уходит.
     Neutral,
 }
 
@@ -120,3 +116,122 @@ private fun NoticeStyle.accentColor(): Color = when (this) {
 }
 
 private const val NOTICE_BACKGROUND_ALPHA = 0.14f
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun NoticeProductIssuesPreview() {
+    ShoppingAppTheme {
+        Surface(color = ShoppingAppTheme.colors.cardContainer) {
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Notice(
+                    icon = AppIcons.OutOfStock,
+                    title = "Out of stock",
+                    style = NoticeStyle.Error,
+                )
+                Notice(
+                    icon = AppIcons.PriceChanged,
+                    title = "Price changed: now $149.99",
+                    style = NoticeStyle.Error,
+                )
+                Notice(
+                    icon = AppIcons.NotEnoughStock,
+                    title = "Only 1 available to order now",
+                    style = NoticeStyle.Error,
+                )
+            }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun NoticePromoCodePreview() {
+    ShoppingAppTheme {
+        Surface(color = ShoppingAppTheme.colors.cardContainer) {
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                NoticeWithAction(
+                    icon = AppIcons.Error,
+                    title = "Promo code SALE10 is no longer valid",
+                    style = NoticeStyle.Error,
+                    actionText = "Remove",
+                    onAction = {},
+                    subtitle = "Remove it to place your order",
+                )
+                NoticeWithAction(
+                    icon = AppIcons.PromoCodeApplied,
+                    title = "Promo code SALE10 · −10%",
+                    style = NoticeStyle.Success,
+                    actionText = "Remove",
+                    onAction = {},
+                )
+                Notice(
+                    icon = AppIcons.PromoCodeApplied,
+                    title = "Promo code SALE25 · −25%",
+                    style = NoticeStyle.Success,
+                )
+            }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun NoticeCartBarPreview() {
+    ShoppingAppTheme {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                NoticeWithAction(
+                    icon = AppIcons.PriceChanged,
+                    title = "Price changed for 1 item",
+                    style = NoticeStyle.Error,
+                    actionText = "Accept",
+                    onAction = {},
+                    modifier = Modifier.heightIn(min = 56.dp),
+                )
+                NoticeWithAction(
+                    icon = AppIcons.OutOfStock,
+                    title = "1 item is out of stock",
+                    style = NoticeStyle.Error,
+                    actionText = "Remove",
+                    onAction = {},
+                    modifier = Modifier.heightIn(min = 56.dp),
+                )
+                Notice(
+                    icon = AppIcons.NotEnoughStock,
+                    title = "Not enough stock for 1 item",
+                    style = NoticeStyle.Error,
+                    modifier = Modifier.heightIn(min = 56.dp),
+                )
+            }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun NoticeCheckoutPreview() {
+    ShoppingAppTheme {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+            Notice(
+                icon = AppIcons.Info,
+                title = "This is a demo app: the order isn't sent anywhere. " +
+                    "Placing it clears the cart and the promo code",
+                style = NoticeStyle.Neutral,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            )
+        }
+    }
+}

@@ -9,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import krio.systemdesign.shoppingapp.core.ui.R
 
-// Вопрос «точно сделать это?» с кнопкой подтверждения и кнопкой «Отмена».
-// isDestructive — действие не отменить, например очистку корзины: кнопка подтверждения красная.
 @Composable
 fun ConfirmationDialog(
     title: String,
@@ -22,8 +20,6 @@ fun ConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = { Text(text) },
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
@@ -41,5 +37,7 @@ fun ConfirmationDialog(
                 Text(stringResource(R.string.core_ui_cancel))
             }
         },
+        title = { Text(title) },
+        text = { Text(text) },
     )
 }

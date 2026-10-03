@@ -1,5 +1,7 @@
 package krio.systemdesign.shoppingapp.uikit.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -29,6 +31,9 @@ fun UiKitNavHost(
         navController = navController,
         startDestination = SectionListRoute,
         modifier = modifier,
+        // Экраны сменяются сразу, без анимации: плавная смена по умолчанию в NavHost делала переходы медленными.
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
     ) {
         composable<SectionListRoute> {
             SectionListScreen(

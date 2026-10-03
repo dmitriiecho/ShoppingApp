@@ -4,7 +4,6 @@ import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Locale
 
-// Цена в центах → «$1,234.56». Все цены в приложении в долларах США, поэтому формат
-// американский и не зависит от языка телефона.
+// Cents as "$1,234.56" in US format. Prices are USD, so it ignores the phone language.
 fun formatPrice(amountCents: Long): String =
     NumberFormat.getCurrencyInstance(Locale.US).format(BigDecimal.valueOf(amountCents, 2))

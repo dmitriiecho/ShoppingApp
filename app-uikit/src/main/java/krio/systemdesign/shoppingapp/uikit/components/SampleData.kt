@@ -9,6 +9,11 @@ import krio.systemdesign.shoppingapp.uikit.R
 object SampleData {
     const val HEADPHONES_PRICE = 14_999L
     const val KEYBOARD_PRICE = 10_995L
+    const val HUB_PRICE = 2_999L
+    const val CUTTING_BOARD_OLD_PRICE = 4_900L
+    const val CUTTING_BOARD_PRICE = 5_400L
+    const val NOTEBOOK_OLD_PRICE = 995L
+    const val NOTEBOOK_PRICE = 1_295L
     const val PROMO_CODE = "SALE10"
     const val PROMO_DISCOUNT_PERCENT = 10
     const val SECOND_PROMO_CODE = "SALE25"

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +34,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.buttons.NavigateBackIcon
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.OutOfStockButton
 import krio.systemdesign.shoppingapp.core.ui.components.images.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.components.images.ProductImageKey
+import krio.systemdesign.shoppingapp.core.ui.components.loading.ProductInfoPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.ErrorState
@@ -138,7 +138,13 @@ private fun ProductDetailsContent(
             }
             when (state) {
                 is ProductDetailsUiState.Content -> ProductInfo(product = state.product)
-                is ProductDetailsUiState.Loading -> ProductInfoPlaceholder()
+                is ProductDetailsUiState.Loading -> ShimmerPlaceholder(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Spacing.ScreenPadding),
+                ) {
+                    ProductInfoPlaceholder()
+                }
                 is ProductDetailsUiState.Error -> ErrorState(
                     message = state.message.asString(),
                     onRetry = { onEvent(ProductDetailsEvent.OnRetry) },
@@ -210,41 +216,5 @@ private fun CartControl(
         )
     } else {
         OutOfStockButton(modifier = modifier)
-    }
-}
-
-// Повторяет раскладку ProductInfo: название, цена и несколько строк описания.
-@Composable
-private fun ProductInfoPlaceholder(modifier: Modifier = Modifier) {
-    ShimmerPlaceholder(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(Spacing.ScreenPadding),
-    ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(28.dp)
-                    .shimmerShape(MaterialTheme.shapes.extraSmall),
-            )
-            Spacer(Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(28.dp)
-                    .shimmerShape(MaterialTheme.shapes.extraSmall),
-            )
-            Spacer(Modifier.height(16.dp))
-            listOf(1f, 1f, 0.6f).forEach { widthFraction ->
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = 3.dp)
-                        .fillMaxWidth(widthFraction)
-                        .height(18.dp)
-                        .shimmerShape(MaterialTheme.shapes.extraSmall),
-                )
-            }
-        }
     }
 }

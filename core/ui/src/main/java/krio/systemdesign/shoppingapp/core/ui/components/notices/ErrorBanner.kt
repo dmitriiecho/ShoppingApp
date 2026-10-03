@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.core.ui.components.notices
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,12 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
-// Плашка ошибки поверх содержимого с кнопкой «Повторить», например над списком,
-// когда не загрузились товары выше. Тень отделяет её от того, что под ней.
 @Composable
 fun ErrorBanner(
     message: String,
@@ -45,8 +46,8 @@ fun ErrorBanner(
             Spacer(Modifier.width(12.dp))
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium,
             )
             TextButton(
                 onClick = onRetry,
@@ -56,6 +57,21 @@ fun ErrorBanner(
             ) {
                 Text(stringResource(R.string.core_ui_retry))
             }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ErrorBannerPreview() {
+    ShoppingAppTheme {
+        Surface {
+            ErrorBanner(
+                message = "Couldn't load the products above",
+                onRetry = {},
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
         }
     }
 }

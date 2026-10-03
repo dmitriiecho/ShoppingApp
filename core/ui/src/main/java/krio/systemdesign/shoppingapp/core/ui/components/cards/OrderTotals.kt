@@ -1,10 +1,13 @@
 package krio.systemdesign.shoppingapp.core.ui.components.cards
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,11 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.core.ui.theme.totalsEmphasized
 
-// Строки сумм: обычные — bodyLarge, «Итого» — totalsEmphasized (почему так — см. его описание).
 @Composable
 fun OrderTotals(
     subtotal: String,
@@ -61,13 +67,49 @@ private fun PriceRow(
     ) {
         Text(
             text = label,
-            style = style,
             modifier = Modifier.weight(1f),
+            style = style,
         )
         Text(
             text = value,
-            style = style,
             color = valueColor,
+            style = style,
         )
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun OrderTotalsPreview() {
+    ShoppingAppTheme {
+        Surface {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = ShoppingAppTheme.colors.cardContainer,
+                ) {
+                    OrderTotals(
+                        subtotal = formatPrice(40_993L),
+                        total = formatPrice(36_894L),
+                        modifier = Modifier.padding(Spacing.CardPadding),
+                        discount = "−${formatPrice(4_099L)}",
+                    )
+                }
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = ShoppingAppTheme.colors.cardContainer,
+                ) {
+                    OrderTotals(
+                        subtotal = formatPrice(40_993L),
+                        total = formatPrice(40_993L),
+                        modifier = Modifier.padding(Spacing.CardPadding),
+                    )
+                }
+            }
+        }
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.CartQuantityControlPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.cards.ProductCardPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.cards.PromoCodeCouponPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.loading.ProductInfoPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -94,6 +95,16 @@ fun LoadingSection(innerPadding: PaddingValues) {
                             PromoCodeCouponPlaceholder()
                         }
                     }
+                }
+            }
+        }
+        sampleGroup("ProductInfoPlaceholder") {
+            SampleVariant(stringResource(R.string.uikit_variant_product_info_placeholder)) {
+                ShimmerPlaceholder(
+                    modifier = Modifier.fillMaxWidth(),
+                    isAnimating = isAnimating,
+                ) {
+                    ProductInfoPlaceholder()
                 }
             }
         }

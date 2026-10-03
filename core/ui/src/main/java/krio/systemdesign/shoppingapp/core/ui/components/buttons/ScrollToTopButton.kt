@@ -1,20 +1,25 @@
 package krio.systemdesign.shoppingapp.core.ui.components.buttons
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
-// Кнопка «Наверх» над длинным списком. Появляется и исчезает плавно, когда меняется visible.
 @Composable
 fun ScrollToTopButton(
     visible: Boolean,
@@ -27,7 +32,6 @@ fun ScrollToTopButton(
         enter = fadeIn() + scaleIn(),
         exit = fadeOut() + scaleOut(),
     ) {
-        // Высотой как кнопка «В корзину» на карточках (CartQuantityControl); с крупным шрифтом растёт вместе с текстом.
         WithoutTouchTargetReserve {
             ExtendedFloatingActionButton(
                 onClick = onClick,
@@ -35,6 +39,21 @@ fun ScrollToTopButton(
             ) {
                 Text(stringResource(R.string.core_ui_scroll_to_top))
             }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ScrollToTopButtonPreview() {
+    ShoppingAppTheme {
+        Surface {
+            ScrollToTopButton(
+                visible = true,
+                onClick = {},
+                modifier = Modifier.padding(8.dp),
+            )
         }
     }
 }

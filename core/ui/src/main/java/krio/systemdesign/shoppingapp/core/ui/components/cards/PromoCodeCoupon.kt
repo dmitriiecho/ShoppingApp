@@ -1,7 +1,10 @@
 package krio.systemdesign.shoppingapp.core.ui.components.cards
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -24,12 +27,15 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
-// Промокод в виде купона: пунктирная рамка, моноширинный код и плашка со скидкой.
+
 @Composable
 fun PromoCodeCoupon(
     code: String,
@@ -42,15 +48,15 @@ fun PromoCodeCoupon(
     val shape = RoundedCornerShape(COUPON_CORNER_RADIUS)
     Surface(
         onClick = onClick,
-        enabled = enabled,
         modifier = modifier,
+        enabled = enabled,
         shape = shape,
         color = colors.primaryContainer,
         contentColor = colors.onPrimaryContainer,
     ) {
         Row(
             modifier = Modifier
-                // Рамка рисуется внутри Surface, поверх его фона. Сдвиг на полтолщины — чтобы линия не обрезалась по краю.
+                // Drawn over the Surface background, inset by half the stroke so the edge isn't clipped.
                 .drawBehind {
                     val strokeWidth = COUPON_BORDER_WIDTH.toPx()
                     val radius = COUPON_CORNER_RADIUS.toPx() - strokeWidth / 2
@@ -65,37 +71,36 @@ fun PromoCodeCoupon(
                         ),
                     )
                 }
-                .padding(start = 14.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                .padding(start = 14.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = code,
-                style = MaterialTheme.typography.titleSmall,
-                fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
                 letterSpacing = 1.sp,
+                style = MaterialTheme.typography.titleSmall,
             )
             Spacer(Modifier.width(10.dp))
             Text(
                 text = stringResource(R.string.core_ui_discount_percent, discountPercent),
-                style = MaterialTheme.typography.labelMedium,
-                color = colors.onPrimary,
                 modifier = Modifier
                     .background(colors.primary, RoundedCornerShape(6.dp))
                     .padding(horizontal = 6.dp, vertical = 2.dp),
+                color = colors.onPrimary,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }
 }
 
-// Заглушка купона внутри ShimmerPlaceholder, пока коды грузятся. Того же размера, что купон с кодом
-// из шести символов, поэтому место под купонами не меняет высоту, когда коды загрузились.
+// Coupon placeholder while codes load. Same size as a coupon with a six-character code,
+// so the layout doesn't jump when the codes appear.
 @Composable
 fun PromoCodeCouponPlaceholder(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            // Купон — нажимаемый Surface: места он занимает не меньше 48 dp в высоту, а рисуется
-            // по своему содержимому. Заглушка занимает место так же.
+            // Like the clickable coupon, take at least 48 dp of height but draw at the coupon's size.
             .minimumInteractiveComponentSize()
             .size(width = PLACEHOLDER_COUPON_WIDTH, height = PLACEHOLDER_COUPON_HEIGHT)
             .shimmerShape(RoundedCornerShape(COUPON_CORNER_RADIUS)),
@@ -105,6 +110,32 @@ fun PromoCodeCouponPlaceholder(modifier: Modifier = Modifier) {
 private val COUPON_CORNER_RADIUS = 10.dp
 private val COUPON_BORDER_WIDTH = 1.5.dp
 
-// Размер купона с кодом из шести символов, например SALE10: высота — строка кода и отступы 8 dp сверху и снизу.
+// Size of a coupon with a six-character code, e.g. SALE10.
 private val PLACEHOLDER_COUPON_WIDTH = 130.dp
 private val PLACEHOLDER_COUPON_HEIGHT = 36.dp
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun PromoCodeCouponPreview() {
+    ShoppingAppTheme {
+        Surface(color = ShoppingAppTheme.colors.cardContainer) {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    PromoCodeCoupon(code = "SALE10", discountPercent = 10, onClick = {})
+                    PromoCodeCoupon(code = "SALE25", discountPercent = 25, onClick = {})
+                }
+                ShimmerPlaceholder {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        repeat(2) {
+                            PromoCodeCouponPlaceholder()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

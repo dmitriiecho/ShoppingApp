@@ -59,7 +59,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                 }
             }
         }
-        sampleGroup("ProductCard") {
+        sampleGroup("ProductCard · catalog") {
             SampleVariant(stringResource(R.string.uikit_variant_catalog)) {
                 var quantity by rememberSaveable { mutableIntStateOf(0) }
                 ProductCard(
@@ -79,21 +79,42 @@ fun CardsSection(innerPadding: PaddingValues) {
             }
             SampleVariant(stringResource(R.string.uikit_variant_catalog_out_of_stock)) {
                 ProductCard(
-                    name = stringResource(R.string.uikit_sample_product_keyboard),
-                    imageUrl = SampleData.keyboardImageUrl,
-                    price = formatPrice(SampleData.KEYBOARD_PRICE),
+                    name = stringResource(R.string.uikit_sample_product_hub),
+                    imageUrl = SampleData.missingImageUrl,
+                    price = formatPrice(SampleData.HUB_PRICE),
                     onClick = {},
                 ) {
                     OutOfStockButton()
                 }
             }
+        }
+        sampleGroup("ProductCard · cart") {
+            SampleVariant(stringResource(R.string.uikit_variant_cart)) {
+                ProductCard(
+                    name = stringResource(R.string.uikit_sample_product_headphones),
+                    imageUrl = SampleData.headphonesImageUrl,
+                    price = formatPrice(SampleData.HEADPHONES_PRICE * 2),
+                    onClick = {},
+                    unitPrice = formatPrice(SampleData.HEADPHONES_PRICE),
+                ) {
+                    CartQuantityControl(
+                        quantity = 2,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                    )
+                }
+            }
+        }
+        sampleGroup("ProductCard · cart, one issue") {
             SampleVariant(stringResource(R.string.uikit_variant_cart_dimmed)) {
                 ProductCard(
-                    name = stringResource(R.string.uikit_sample_product_keyboard),
-                    imageUrl = SampleData.keyboardImageUrl,
-                    price = formatPrice(SampleData.KEYBOARD_PRICE * 2),
+                    name = stringResource(R.string.uikit_sample_product_hub),
+                    imageUrl = SampleData.missingImageUrl,
+                    price = formatPrice(SampleData.HUB_PRICE),
                     onClick = {},
-                    unitPrice = formatPrice(SampleData.KEYBOARD_PRICE),
+                    unitPrice = formatPrice(SampleData.HUB_PRICE),
                     isDimmed = true,
                 ) {
                     Notice(
@@ -102,7 +123,90 @@ fun CardsSection(innerPadding: PaddingValues) {
                         style = NoticeStyle.Error,
                     )
                     CartQuantityControl(
+                        quantity = 1,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        canIncrease = false,
+                    )
+                }
+            }
+            SampleVariant(stringResource(R.string.uikit_variant_price_changed)) {
+                ProductCard(
+                    name = stringResource(R.string.uikit_sample_product_cutting_board),
+                    imageUrl = SampleData.missingImageUrl,
+                    price = formatPrice(SampleData.CUTTING_BOARD_OLD_PRICE),
+                    onClick = {},
+                    unitPrice = formatPrice(SampleData.CUTTING_BOARD_OLD_PRICE),
+                ) {
+                    Notice(
+                        icon = AppIcons.PriceChanged,
+                        title = stringResource(
+                            R.string.uikit_sample_price_changed,
+                            formatPrice(SampleData.CUTTING_BOARD_PRICE),
+                        ),
+                        style = NoticeStyle.Error,
+                    )
+                    CartQuantityControl(
+                        quantity = 1,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                    )
+                }
+            }
+            SampleVariant(stringResource(R.string.uikit_variant_not_enough_stock)) {
+                ProductCard(
+                    name = stringResource(R.string.uikit_sample_product_keyboard),
+                    imageUrl = SampleData.keyboardImageUrl,
+                    price = formatPrice(SampleData.KEYBOARD_PRICE * 2),
+                    onClick = {},
+                    unitPrice = formatPrice(SampleData.KEYBOARD_PRICE),
+                ) {
+                    Notice(
+                        icon = AppIcons.NotEnoughStock,
+                        title = stringResource(R.string.uikit_sample_only_available, 1),
+                        style = NoticeStyle.Error,
+                    )
+                    CartQuantityControl(
                         quantity = 2,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        canIncrease = false,
+                    )
+                }
+            }
+        }
+        sampleGroup("ProductCard · cart, several issues") {
+            SampleVariant(stringResource(R.string.uikit_variant_several_issues)) {
+                ProductCard(
+                    name = stringResource(R.string.uikit_sample_product_notebook),
+                    imageUrl = SampleData.missingImageUrl,
+                    price = formatPrice(SampleData.NOTEBOOK_OLD_PRICE * 10),
+                    onClick = {},
+                    unitPrice = formatPrice(SampleData.NOTEBOOK_OLD_PRICE),
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Notice(
+                            icon = AppIcons.PriceChanged,
+                            title = stringResource(
+                                R.string.uikit_sample_price_changed,
+                                formatPrice(SampleData.NOTEBOOK_PRICE),
+                            ),
+                            style = NoticeStyle.Error,
+                        )
+                        Notice(
+                            icon = AppIcons.NotEnoughStock,
+                            title = stringResource(R.string.uikit_sample_only_available, 5),
+                            style = NoticeStyle.Error,
+                        )
+                    }
+                    CartQuantityControl(
+                        quantity = 10,
                         onAdd = {},
                         onIncrease = {},
                         onDecrease = {},

@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 
-// Текст для экрана, который ViewModel может собрать без доступа к ресурсам.
+// Screen text a ViewModel can build without access to resources.
 sealed interface UiText {
 
     data class Dynamic(val value: String) : UiText

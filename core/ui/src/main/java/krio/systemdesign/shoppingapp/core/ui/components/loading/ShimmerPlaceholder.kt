@@ -1,8 +1,17 @@
 package krio.systemdesign.shoppingapp.core.ui.components.loading
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -14,13 +23,15 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.components.buttons.CartQuantityControlPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.cards.PromoCodeCouponPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
-// Заглушка на время загрузки. В content раскладываются фигуры (Modifier.shimmerShape) по размерам настоящего
-// содержимого, а заглушка закрашивает их ровным серым, и по ним раз за разом проходит светлая полоса слева направо.
-// Полоса одна на всю заглушку, поэтому по соседним фигурам она идёт как по одной.
-// isAnimating = false — полоса стоит, остаётся только серое: например, когда загрузка не удалась.
 @Composable
 fun ShimmerPlaceholder(
     modifier: Modifier = Modifier,
@@ -37,9 +48,9 @@ fun ShimmerPlaceholder(
 
     Box(
         modifier = modifier
-            // Отдельный слой нужен для BlendMode.SrcIn: он красит только там, где фигуры уже нарисованы.
+            // A separate layer for BlendMode.SrcIn, so the band paints only over the shapes.
             .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
-            // Время кадра читается только при рисовании: каждый кадр перерисовывает заглушку без перекомпоновки.
+            // Frame time is read only in draw, so frames redraw without recomposition.
             .drawWithContent {
                 drawContent()
                 if (!isAnimating) {
@@ -63,7 +74,46 @@ fun ShimmerPlaceholder(
     }
 }
 
-// Фигура внутри ShimmerPlaceholder. Цвет у неё неважен: заглушка всё равно перекрашивает её, важна только форма.
+// A shape inside ShimmerPlaceholder. Only the shape matters: the placeholder repaints its color.
 fun Modifier.shimmerShape(shape: Shape): Modifier = clip(shape).background(Color.Black)
 
 private const val SHIMMER_DURATION_MS = 1200L
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ShimmerPlaceholderPreview() {
+    ShoppingAppTheme {
+        Surface {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ShimmerPlaceholder(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .shimmerShape(RectangleShape),
+                    )
+                }
+                ShimmerPlaceholder(modifier = Modifier.fillMaxWidth()) {
+                    ProductInfoPlaceholder()
+                }
+                ShimmerPlaceholder(modifier = Modifier.fillMaxWidth()) {
+                    CartQuantityControlPlaceholder()
+                }
+                ShimmerPlaceholder {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        repeat(2) {
+                            PromoCodeCouponPlaceholder()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.core.ui.components.cards
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,20 +13,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.components.buttons.CartQuantityControl
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.CartQuantityControlPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.buttons.OutOfStockButton
 import krio.systemdesign.shoppingapp.core.ui.components.images.ProductImage
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
-// Карточка товара в списке: картинка, название и цена, под ними content — например, кнопки корзины.
-// Одна и та же в каталоге и в корзине, а что положить вниз, решает экран.
 @Composable
 fun ProductCard(
     name: String,
@@ -33,12 +41,11 @@ fun ProductCard(
     price: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    // Цена за штуку. Показывается над price, когда price — сумма за несколько штук, как в корзине.
     unitPrice: String? = null,
-    // Ключ общего элемента картинки: с ним она перелетает на карточку товара (см. ProductImage).
+    // With this key the image flies to the product screen (see ProductImage).
     sharedElementKey: Any? = null,
-    // Приглушить картинку, название и цену, например у закончившегося товара:
-    // так его видно сразу, даже не читая плашку. Содержимое снизу не приглушается.
+    // Dims the image, name and price, e.g. for a sold-out product.
+    // The content below isn't dimmed.
     isDimmed: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -68,22 +75,22 @@ fun ProductCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = name,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(Modifier.height(8.dp))
                     if (unitPrice != null) {
                         Text(
                             text = unitPrice,
-                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                     Text(
                         text = price,
-                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
             }
@@ -92,9 +99,8 @@ fun ProductCard(
     }
 }
 
-// Заглушка карточки товара с кнопками корзины на время загрузки. Повторяет размеры ProductCard без unitPrice,
-// чтобы список не прыгал, когда заглушка сменяется товаром.
-// isLoading = false — блик стоит, остаётся только серое: например, когда загрузка не удалась.
+// Loading placeholder for a product card with cart buttons. Same size as ProductCard without unitPrice,
+// so the list doesn't jump when products load. isLoading = false stops the shimmer, e.g. when loading failed.
 @Composable
 fun ProductCardPlaceholder(
     modifier: Modifier = Modifier,
@@ -140,5 +146,211 @@ fun ProductCardPlaceholder(
 private val PRODUCT_CARD_PADDING = 12.dp
 private val PRODUCT_CARD_IMAGE_SIZE = 88.dp
 
-// Прозрачность приглушённой части карточки.
+// Alpha of the dimmed part of the card.
 private const val DIMMED_ALPHA = 0.5f
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProductCardCatalogPreview() {
+    ShoppingAppTheme {
+        Surface {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ProductCardPlaceholder()
+                ProductCard(
+                    name = "Wireless Headphones",
+                    imageUrl = "",
+                    price = formatPrice(14_999L),
+                    onClick = {},
+                ) {
+                    CartQuantityControl(
+                        quantity = 0,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                ProductCard(
+                    name = "Wireless Headphones",
+                    imageUrl = "",
+                    price = formatPrice(14_999L),
+                    onClick = {},
+                ) {
+                    CartQuantityControl(
+                        quantity = 2,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                ProductCard(
+                    name = "USB-C Hub",
+                    imageUrl = "http://2.56.204.151:8080/images/3.png",
+                    price = formatPrice(2_999L),
+                    onClick = {},
+                ) {
+                    OutOfStockButton()
+                }
+            }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProductCardCartPreview() {
+    ShoppingAppTheme {
+        Surface {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ProductCard(
+                    name = "Wireless Headphones",
+                    imageUrl = "",
+                    price = formatPrice(14_999L * 2),
+                    onClick = {},
+                    unitPrice = formatPrice(14_999L),
+                ) {
+                    CartQuantityControl(
+                        quantity = 2,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProductCardCartSingleIssuePreview() {
+    ShoppingAppTheme {
+        Surface {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ProductCard(
+                    name = "USB-C Hub",
+                    imageUrl = "http://2.56.204.151:8080/images/3.png",
+                    price = formatPrice(2_999L),
+                    onClick = {},
+                    unitPrice = formatPrice(2_999L),
+                    isDimmed = true,
+                ) {
+                    Notice(
+                        icon = AppIcons.OutOfStock,
+                        title = "Out of stock",
+                        style = NoticeStyle.Error,
+                    )
+                    CartQuantityControl(
+                        quantity = 1,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        modifier = Modifier.fillMaxWidth(),
+                        canIncrease = false,
+                    )
+                }
+                ProductCard(
+                    name = "Cutting Board",
+                    imageUrl = "http://2.56.204.151:8080/images/40.png",
+                    price = formatPrice(4_900L),
+                    onClick = {},
+                    unitPrice = formatPrice(4_900L),
+                ) {
+                    Notice(
+                        icon = AppIcons.PriceChanged,
+                        title = "Price changed: now ${formatPrice(5_400L)}",
+                        style = NoticeStyle.Error,
+                    )
+                    CartQuantityControl(
+                        quantity = 1,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                ProductCard(
+                    name = "Mechanical Keyboard",
+                    imageUrl = "",
+                    price = formatPrice(10_995L * 2),
+                    onClick = {},
+                    unitPrice = formatPrice(10_995L),
+                ) {
+                    Notice(
+                        icon = AppIcons.NotEnoughStock,
+                        title = "Only 1 available to order now",
+                        style = NoticeStyle.Error,
+                    )
+                    CartQuantityControl(
+                        quantity = 2,
+                        onAdd = {},
+                        onIncrease = {},
+                        onDecrease = {},
+                        onRemoveAll = {},
+                        modifier = Modifier.fillMaxWidth(),
+                        canIncrease = false,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProductCardCartMultipleIssuesPreview() {
+    ShoppingAppTheme {
+        Surface {
+            ProductCard(
+                name = "Notebook",
+                imageUrl = "http://2.56.204.151:8080/images/32.png",
+                price = formatPrice(995L * 10),
+                onClick = {},
+                modifier = Modifier.padding(8.dp),
+                unitPrice = formatPrice(995L),
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Notice(
+                        icon = AppIcons.PriceChanged,
+                        title = "Price changed: now ${formatPrice(1_295L)}",
+                        style = NoticeStyle.Error,
+                    )
+                    Notice(
+                        icon = AppIcons.NotEnoughStock,
+                        title = "Only 5 available to order now",
+                        style = NoticeStyle.Error,
+                    )
+                }
+                CartQuantityControl(
+                    quantity = 10,
+                    onAdd = {},
+                    onIncrease = {},
+                    onDecrease = {},
+                    onRemoveAll = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    canIncrease = false,
+                )
+            }
+        }
+    }
+}

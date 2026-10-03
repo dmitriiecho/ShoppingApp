@@ -42,6 +42,10 @@
     <string name="uikit_variant_catalog">As in the catalog</string>
     <string name="uikit_variant_catalog_out_of_stock">As in the catalog: out of stock</string>
     <string name="uikit_variant_cart_dimmed">As in the cart: out of stock, dimmed</string>
+    <string name="uikit_variant_cart">As in the cart</string>
+    <string name="uikit_variant_price_changed">Price changed</string>
+    <string name="uikit_variant_not_enough_stock">Not enough stock</string>
+    <string name="uikit_variant_several_issues">Price changed and not enough stock</string>
     <string name="uikit_variant_as_in_checkout">As at checkout</string>
     <string name="uikit_variant_with_discount">With a discount</string>
     <string name="uikit_variant_without_discount">Without a discount</string>
@@ -51,6 +55,7 @@
     <string name="uikit_variant_custom_shapes">Shapes laid out like the real content</string>
     <string name="uikit_variant_coupons_placeholder">Two coupons while the codes load</string>
     <string name="uikit_variant_cart_buttons_placeholder">Cart buttons</string>
+    <string name="uikit_variant_product_info_placeholder">Name, price and description</string>
     <string name="uikit_variant_loaded">Loaded</string>
     <string name="uikit_variant_load_failed">Couldn\'t load</string>
     <string name="uikit_variant_with_title">With a title</string>
@@ -68,6 +73,9 @@
     <!-- Содержимое примеров: те же тексты, что на экранах приложения -->
     <string name="uikit_sample_product_headphones" translatable="false">Wireless Headphones</string>
     <string name="uikit_sample_product_keyboard" translatable="false">Mechanical Keyboard</string>
+    <string name="uikit_sample_product_hub" translatable="false">USB-C Hub</string>
+    <string name="uikit_sample_product_cutting_board" translatable="false">Cutting Board</string>
+    <string name="uikit_sample_product_notebook" translatable="false">Notebook</string>
     <string name="uikit_sample_card_content">Card content</string>
     <string name="uikit_sample_place_order">Place order</string>
     <string name="uikit_sample_payment_card">Card</string>
@@ -78,6 +86,9 @@
     <string name="uikit_sample_promo_invalid">Promo code %1$s is no longer valid</string>
     <string name="uikit_sample_promo_invalid_hint">Remove it to place your order</string>
     <string name="uikit_sample_price_changes">Price changed for 1 item</string>
+    <string name="uikit_sample_only_available">Only %1$d available to order now</string>
+    <string name="uikit_sample_item_out_of_stock">1 item is out of stock</string>
+    <string name="uikit_sample_not_enough_stock_items">Not enough stock for 1 item</string>
     <string name="uikit_sample_remove">Remove</string>
     <string name="uikit_sample_accept">Accept</string>
     <string name="uikit_sample_prepend_error">Couldn\'t load the products above</string>

@@ -1,19 +1,25 @@
 package krio.systemdesign.shoppingapp.core.ui.components.buttons
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
-// Кнопка действия, которое выполняется не сразу, например оформление заказа или проверка промокода:
-// пока оно идёт, вместо текста крутится индикатор.
 @Composable
 fun LoadingButton(
     text: String,
@@ -22,8 +28,7 @@ fun LoadingButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    // Button сам не анимирует смену фона при enabled, поэтому фон анимируется здесь
-    // и передаётся одинаковым для обоих состояний.
+    // Button doesn't animate its background when enabled changes, so we animate it here for both states.
     val defaultColors = ButtonDefaults.buttonColors()
     val containerColor by animateColorAsState(
         targetValue = if (enabled) defaultColors.containerColor else defaultColors.disabledContainerColor,
@@ -32,8 +37,8 @@ fun LoadingButton(
     )
     Button(
         onClick = onClick,
-        enabled = enabled,
         modifier = modifier,
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             disabledContainerColor = containerColor,
@@ -51,3 +56,38 @@ fun LoadingButton(
 }
 
 private const val CONTAINER_COLOR_DURATION_MS = 400
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun LoadingButtonPreview() {
+    ShoppingAppTheme {
+        Surface {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                LoadingButton(
+                    text = "Apply",
+                    isLoading = false,
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                LoadingButton(
+                    text = "Apply",
+                    isLoading = false,
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = false,
+                )
+                LoadingButton(
+                    text = "Apply",
+                    isLoading = true,
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = false,
+                )
+            }
+        }
+    }
+}

@@ -40,6 +40,10 @@
     <string name="uikit_variant_catalog">Как в каталоге</string>
     <string name="uikit_variant_catalog_out_of_stock">Как в каталоге: товар закончился</string>
     <string name="uikit_variant_cart_dimmed">Как в корзине: товар закончился, карточка приглушена</string>
+    <string name="uikit_variant_cart">Как в корзине</string>
+    <string name="uikit_variant_price_changed">Изменилась цена</string>
+    <string name="uikit_variant_not_enough_stock">Не хватает остатка</string>
+    <string name="uikit_variant_several_issues">Изменилась цена и не хватает остатка</string>
     <string name="uikit_variant_as_in_checkout">Как при оформлении заказа</string>
     <string name="uikit_variant_with_discount">Со скидкой</string>
     <string name="uikit_variant_without_discount">Без скидки</string>
@@ -49,6 +53,7 @@
     <string name="uikit_variant_custom_shapes">Фигуры разложены как настоящее содержимое</string>
     <string name="uikit_variant_coupons_placeholder">Два купона, пока коды грузятся</string>
     <string name="uikit_variant_cart_buttons_placeholder">Кнопки корзины</string>
+    <string name="uikit_variant_product_info_placeholder">Название, цена и описание</string>
     <string name="uikit_variant_loaded">Загружена</string>
     <string name="uikit_variant_load_failed">Не загрузилась</string>
     <string name="uikit_variant_with_title">С заголовком</string>
@@ -74,6 +79,9 @@
     <string name="uikit_sample_promo_invalid">Промокод %1$s не действует</string>
     <string name="uikit_sample_promo_invalid_hint">Уберите его, чтобы оформить заказ</string>
     <string name="uikit_sample_price_changes">Цена изменилась у 1 товара</string>
+    <string name="uikit_sample_only_available">Теперь для заказа доступно только %1$d шт.</string>
+    <string name="uikit_sample_item_out_of_stock">Закончился 1 товар</string>
+    <string name="uikit_sample_not_enough_stock_items">1 товара нет в нужном количестве</string>
     <string name="uikit_sample_remove">Убрать</string>
     <string name="uikit_sample_accept">Принять</string>
     <string name="uikit_sample_prepend_error">Не удалось загрузить товары выше</string>
