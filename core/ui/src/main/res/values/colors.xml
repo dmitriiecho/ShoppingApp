@@ -2,7 +2,7 @@
 <resources>
     <!--
         Window background, visible on the splash screen until Compose draws the first frame.
-        Matches BackgroundLight in theme/Color.kt; the dark variant is in values-night.
+        Matches BackgroundLight in theme/MaterialColors.kt; the dark variant is in values-night.
     -->
     <color name="core_ui_window_background">#FFF6F4F2</color>
 </resources>
