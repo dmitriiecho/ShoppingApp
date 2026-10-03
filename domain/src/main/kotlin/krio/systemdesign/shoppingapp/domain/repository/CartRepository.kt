@@ -15,10 +15,9 @@ interface CartRepository {
 
     suspend fun removeItem(productId: String): Result<Unit>
 
-    // Удаляет товары, промокод остаётся: пользователь очистил корзину, но код ещё может пригодиться.
     suspend fun clearItems(): Result<Unit>
 
-    // Возвращает корзину в начальное состояние: удаляет товары и промокод разом.
+    // Resets the cart to its initial state: removes items and the promo code at once.
     suspend fun reset(): Result<Unit>
 
     fun observe(): Flow<Cart>
