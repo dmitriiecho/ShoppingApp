@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import krio.systemdesign.shoppingapp.domain.model.Cart
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 
+// Same format as CartValidationDTO.kt in server/.
 @Serializable
 internal data class CartValidationRequestDTO(
     val items: List<CartItemDTO>,
