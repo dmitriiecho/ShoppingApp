@@ -2,17 +2,17 @@ package krio.systemdesign.shoppingapp.core.ui.theme
 
 import androidx.compose.ui.unit.dp
 
-// Отступы, которые повторяются на разных экранах.
+// Spacing repeated across screens.
 object Spacing {
-    // От края экрана до содержимого: списки, формы, нижняя панель.
+    // From the screen edge to the content: lists, forms, the bottom bar.
     val ScreenPadding = 16.dp
 
-    // Между карточками в списке, например товарами в каталоге и корзине.
+    // Between cards in a list, e.g. products in the catalog and the cart.
     val CardSpacing = 12.dp
 
-    // Между блоками экрана, например карточками оформления заказа.
+    // Between screen sections, e.g. the checkout cards.
     val SectionSpacing = 16.dp
 
-    // Внутри карточки-блока: SectionCard, итоги корзины.
+    // Inside a section card: SectionCard, the cart totals.
     val CardPadding = 16.dp
 }

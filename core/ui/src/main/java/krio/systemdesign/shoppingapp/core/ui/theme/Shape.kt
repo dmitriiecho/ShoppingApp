@@ -4,7 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
-// Скругления углов приложения. Фигуры берутся из MaterialTheme.shapes.
+// The app's corner radii. Shapes are taken from MaterialTheme.shapes.
 object ShapeRadius {
     val ExtraSmall = 4.dp
     val Small = 8.dp
@@ -13,7 +13,7 @@ object ShapeRadius {
     val ExtraLarge = 28.dp
 }
 
-// Значения те же, что у Material 3 по умолчанию; заданы явно, чтобы их было видно и менять в одном месте.
+// Same values as the Material 3 defaults; set explicitly so they are visible and changed in one place.
 internal val AppShapes = Shapes(
     extraSmall = RoundedCornerShape(ShapeRadius.ExtraSmall),
     small = RoundedCornerShape(ShapeRadius.Small),

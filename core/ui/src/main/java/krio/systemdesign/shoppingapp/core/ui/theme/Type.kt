@@ -6,8 +6,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Шрифты приложения — шкала Material 3 со шрифтом системы, своего фирменного шрифта у приложения нет.
-// Своё только у bodyLarge, основного текста.
+// The app's type scale: Material 3 with the system font, the app has no brand font of its own.
+// Only bodyLarge, the main text, is custom: it has no LineHeightStyle, so there is no extra space above the first line
+// and below the last one. Card and section paddings are tuned for that.
 internal val AppTypography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -18,8 +19,8 @@ internal val AppTypography = Typography(
     ),
 )
 
-// Выделенная строка в блоке суммы: «Итого» и заголовок итогов корзины. Тот же bodyLarge, что у остальных строк,
-// только жирнее: у другого стиля (например, titleMedium) другой межбуквенный интервал,
-// и строки выглядели бы набранными разными шрифтами.
+// The emphasized line in a totals block: "Total" and the cart totals header. The same bodyLarge as the other lines,
+// only bolder: another style (e.g. titleMedium) has different letter spacing,
+// and the lines would look set in different fonts.
 val Typography.totalsEmphasized: TextStyle
     get() = bodyLarge.copy(fontWeight = FontWeight.SemiBold)
