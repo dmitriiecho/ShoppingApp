@@ -33,7 +33,6 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
@@ -219,7 +218,7 @@ fun CardsSection(innerPadding: PaddingValues) {
         sampleGroup("SectionCard") {
             SampleVariant(stringResource(R.string.uikit_variant_as_in_checkout)) {
                 SectionCard(
-                    icon = MaterialSymbols.ShoppingBag,
+                    icon = AppIcons.ShoppingBag,
                     title = stringResource(R.string.uikit_sample_order_items),
                 ) {
                     SampleOrderItems()
@@ -266,17 +265,17 @@ fun CardsSection(innerPadding: PaddingValues) {
         sampleGroup("AppListItem") {
             SampleVariant(stringResource(R.string.uikit_variant_trailing_icon), contentPadding = 0.dp) {
                 AppListItem(
-                    icon = MaterialSymbols.Link,
+                    icon = AppIcons.Link,
                     title = stringResource(R.string.uikit_sample_deep_links),
                     description = stringResource(R.string.uikit_sample_deep_links_description),
                     onClick = {},
-                    trailing = { Icon(MaterialSymbols.OpenInNew, contentDescription = null) },
+                    trailing = { Icon(AppIcons.OpenInNew, contentDescription = null) },
                 )
             }
             SampleVariant(stringResource(R.string.uikit_variant_trailing_choice), contentPadding = 0.dp) {
                 var selectedSeconds by rememberSaveable { mutableIntStateOf(0) }
                 AppListItem(
-                    icon = MaterialSymbols.HourglassEmpty,
+                    icon = AppIcons.HourglassEmpty,
                     title = stringResource(R.string.uikit_sample_request_delay),
                     description = stringResource(R.string.uikit_sample_seconds, selectedSeconds),
                     trailing = {

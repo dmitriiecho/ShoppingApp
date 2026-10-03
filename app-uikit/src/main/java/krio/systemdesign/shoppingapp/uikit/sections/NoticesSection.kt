@@ -6,13 +6,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.R as CoreUiR
 import krio.systemdesign.shoppingapp.core.ui.components.notices.AppliedPromoCodeNotice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.ErrorBanner
 import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeWithAction
-import krio.systemdesign.shoppingapp.core.ui.R as CoreUiR
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Error
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData

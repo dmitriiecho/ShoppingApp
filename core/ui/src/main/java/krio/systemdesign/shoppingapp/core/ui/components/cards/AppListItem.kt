@@ -18,7 +18,6 @@ import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
@@ -48,7 +47,7 @@ private fun AppListItemPreview() {
         Surface {
             Column {
                 AppListItem(
-                    icon = MaterialSymbols.Contrast,
+                    icon = AppIcons.Contrast,
                     title = "Theme",
                     description = "System",
                     trailing = {
@@ -63,7 +62,7 @@ private fun AppListItemPreview() {
                     },
                 )
                 AppListItem(
-                    icon = MaterialSymbols.HourglassEmpty,
+                    icon = AppIcons.HourglassEmpty,
                     title = "Request delay",
                     description = "No delay",
                     trailing = {
@@ -78,11 +77,11 @@ private fun AppListItemPreview() {
                     },
                 )
                 AppListItem(
-                    icon = MaterialSymbols.Link,
+                    icon = AppIcons.Link,
                     title = "Deep links",
                     description = "Opens a page with the links in your browser",
                     onClick = {},
-                    trailing = { Icon(MaterialSymbols.OpenInNew, contentDescription = null) },
+                    trailing = { Icon(AppIcons.OpenInNew, contentDescription = null) },
                 )
                 AppListItem(
                     icon = AppIcons.OutOfStock,

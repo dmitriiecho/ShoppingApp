@@ -5,8 +5,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-val MaterialSymbols.ArrowBack: ImageVector by lazy {
+val AppIcons.ArrowBack: ImageVector by lazy {
     ImageVector.Builder(
         name = "ArrowBack",
         defaultWidth = 24.dp,

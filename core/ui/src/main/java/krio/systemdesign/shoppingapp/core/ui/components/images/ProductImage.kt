@@ -48,8 +48,8 @@ import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HeadphonesFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.theme.ShapeRadius
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
@@ -168,7 +168,7 @@ private fun Shimmer(
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ProductImagePreview() {
-    val loadedImage = rememberVectorPainter(MaterialSymbols.HeadphonesFilled)
+    val loadedImage = rememberVectorPainter(AppIcons.HeadphonesFilled)
     ShoppingAppTheme {
         Surface {
             Row(

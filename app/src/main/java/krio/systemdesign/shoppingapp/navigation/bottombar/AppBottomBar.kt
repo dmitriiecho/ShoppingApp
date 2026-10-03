@@ -13,8 +13,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
 import krio.systemdesign.shoppingapp.core.ui.components.bars.AppNavigationBarItem
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HomeFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 
@@ -43,7 +43,7 @@ fun AppBottomBar(
                 it.hasRoute<BottomNavRoutes.CatalogTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CatalogTab) },
-            icon = MaterialSymbols.HomeFilled,
+            icon = AppIcons.HomeFilled,
             label = stringResource(R.string.app_bottom_bar_catalog),
         )
         AppNavigationBarItem(
@@ -51,7 +51,7 @@ fun AppBottomBar(
                 it.hasRoute<BottomNavRoutes.CartTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CartTab) },
-            icon = MaterialSymbols.ShoppingCartFilled,
+            icon = AppIcons.ShoppingCartFilled,
             label = stringResource(R.string.app_bottom_bar_cart),
             badgeCount = cartItemCount,
         )
@@ -60,7 +60,7 @@ fun AppBottomBar(
                 it.hasRoute<BottomNavRoutes.SettingsTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.SettingsTab) },
-            icon = MaterialSymbols.SettingsFilled,
+            icon = AppIcons.SettingsFilled,
             label = stringResource(R.string.app_bottom_bar_settings),
         )
     }

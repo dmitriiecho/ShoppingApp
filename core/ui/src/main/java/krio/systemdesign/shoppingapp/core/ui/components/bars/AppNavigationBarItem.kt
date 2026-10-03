@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HomeFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
@@ -82,7 +82,7 @@ private fun AppNavigationBarItemPreview() {
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = MaterialSymbols.HomeFilled,
+                            icon = AppIcons.HomeFilled,
                             label = "Catalog",
                         )
                     },
@@ -90,7 +90,7 @@ private fun AppNavigationBarItemPreview() {
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = MaterialSymbols.ShoppingCartFilled,
+                            icon = AppIcons.ShoppingCartFilled,
                             label = "Cart",
                         )
                     },
@@ -98,7 +98,7 @@ private fun AppNavigationBarItemPreview() {
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = MaterialSymbols.ShoppingCartFilled,
+                            icon = AppIcons.ShoppingCartFilled,
                             label = "Cart",
                             badgeCount = 3,
                         )
@@ -107,7 +107,7 @@ private fun AppNavigationBarItemPreview() {
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = MaterialSymbols.ShoppingCartFilled,
+                            icon = AppIcons.ShoppingCartFilled,
                             label = "Cart",
                             badgeCount = 120,
                         )
@@ -116,7 +116,7 @@ private fun AppNavigationBarItemPreview() {
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = MaterialSymbols.SettingsFilled,
+                            icon = AppIcons.SettingsFilled,
                             label = "Settings",
                         )
                     },

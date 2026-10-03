@@ -11,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ArrowBack
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable
@@ -22,7 +22,7 @@ fun NavigateBackIconButton(
 ) {
     IconButton(onClick = onClick, modifier = modifier) {
         Icon(
-            imageVector = MaterialSymbols.ArrowBack,
+            imageVector = AppIcons.ArrowBack,
             contentDescription = stringResource(R.string.core_ui_navigate_back),
         )
     }

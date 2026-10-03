@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Add
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DeleteFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Remove
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
@@ -71,7 +71,7 @@ fun CartQuantityControl(
                     .heightIn(min = controlHeight),
             ) {
                 Icon(
-                    imageVector = MaterialSymbols.ShoppingCartFilled,
+                    imageVector = AppIcons.ShoppingCartFilled,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                 )
@@ -99,7 +99,7 @@ fun CartQuantityControl(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 CartControlIconButton(
-                    imageVector = MaterialSymbols.Remove,
+                    imageVector = AppIcons.Remove,
                     contentDescription = stringResource(R.string.core_ui_decrease_quantity),
                     onClick = onDecrease,
                     size = controlHeight,
@@ -113,7 +113,7 @@ fun CartQuantityControl(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 CartControlIconButton(
-                    imageVector = MaterialSymbols.Add,
+                    imageVector = AppIcons.Add,
                     contentDescription = stringResource(R.string.core_ui_increase_quantity),
                     onClick = onIncrease,
                     size = controlHeight,
@@ -123,7 +123,7 @@ fun CartQuantityControl(
             }
         }
         CartControlIconButton(
-            imageVector = MaterialSymbols.DeleteFilled,
+            imageVector = AppIcons.DeleteFilled,
             contentDescription = stringResource(R.string.core_ui_remove_from_cart),
             onClick = onRemoveAll,
             size = controlHeight,

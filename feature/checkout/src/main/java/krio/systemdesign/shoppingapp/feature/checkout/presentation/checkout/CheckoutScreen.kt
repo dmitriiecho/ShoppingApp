@@ -46,8 +46,8 @@ import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.AccountBalanceWallet
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LocationOn
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Receipt
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
@@ -147,7 +147,7 @@ private fun CheckoutContent(
         verticalArrangement = Arrangement.spacedBy(Spacing.SectionSpacing),
     ) {
         SectionCard(
-            icon = MaterialSymbols.ShoppingBag,
+            icon = AppIcons.ShoppingBag,
             title = stringResource(R.string.checkout_order_items),
         ) {
             uiState.items.forEach { item ->
@@ -162,7 +162,7 @@ private fun CheckoutContent(
         }
 
         SectionCard(
-            icon = MaterialSymbols.LocationOn,
+            icon = AppIcons.LocationOn,
             title = stringResource(R.string.checkout_delivery_address),
         ) {
             // Улица и квартира в одну строку: квартира короткая, отдельная строка для неё — пустое место.
@@ -193,7 +193,7 @@ private fun CheckoutContent(
         }
 
         SectionCard(
-            icon = MaterialSymbols.AccountBalanceWallet,
+            icon = AppIcons.AccountBalanceWallet,
             title = stringResource(R.string.checkout_payment),
         ) {
             // Переключатель на всю ширину, как выбор темы в настройках.
@@ -218,7 +218,7 @@ private fun CheckoutContent(
         }
 
         SectionCard(
-            icon = MaterialSymbols.Receipt,
+            icon = AppIcons.Receipt,
             title = stringResource(R.string.checkout_order_total),
         ) {
             // Как в корзине: плашка промокода, под ней линия, потом суммы.
@@ -249,6 +249,6 @@ private val PaymentMethod.titleRes: Int
 
 private val PaymentMethod.icon: ImageVector
     get() = when (this) {
-        PaymentMethod.Card -> MaterialSymbols.CreditCard
-        PaymentMethod.Cash -> MaterialSymbols.Payments
+        PaymentMethod.Card -> AppIcons.CreditCard
+        PaymentMethod.Cash -> AppIcons.Payments
     }

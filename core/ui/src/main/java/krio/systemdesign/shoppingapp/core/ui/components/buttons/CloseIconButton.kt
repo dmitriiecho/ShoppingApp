@@ -12,8 +12,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Close
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable
@@ -23,7 +23,7 @@ fun CloseIconButton(
 ) {
     IconButton(onClick = onClick, modifier = modifier) {
         Icon(
-            imageVector = MaterialSymbols.Close,
+            imageVector = AppIcons.Close,
             contentDescription = stringResource(R.string.core_ui_close),
         )
     }

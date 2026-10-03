@@ -17,7 +17,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HomeFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
@@ -85,20 +85,20 @@ private fun SampleNavigationBar(cartItemCount: Int) {
         AppNavigationBarItem(
             selected = selectedTab == 0,
             onClick = { selectedTab = 0 },
-            icon = MaterialSymbols.HomeFilled,
+            icon = AppIcons.HomeFilled,
             label = stringResource(R.string.uikit_sample_tab_catalog),
         )
         AppNavigationBarItem(
             selected = selectedTab == 1,
             onClick = { selectedTab = 1 },
-            icon = MaterialSymbols.ShoppingCartFilled,
+            icon = AppIcons.ShoppingCartFilled,
             label = stringResource(R.string.uikit_sample_tab_cart),
             badgeCount = cartItemCount,
         )
         AppNavigationBarItem(
             selected = selectedTab == 2,
             onClick = { selectedTab = 2 },
-            icon = MaterialSymbols.SettingsFilled,
+            icon = AppIcons.SettingsFilled,
             label = stringResource(R.string.uikit_sample_tab_settings),
         )
     }

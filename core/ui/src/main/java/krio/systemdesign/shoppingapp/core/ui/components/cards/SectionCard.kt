@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
@@ -78,7 +77,7 @@ private fun SectionCardPreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 SectionCard(
-                    icon = MaterialSymbols.ShoppingBag,
+                    icon = AppIcons.ShoppingBag,
                     title = "Order items",
                 ) {
                     OrderItemRow(

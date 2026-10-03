@@ -28,8 +28,8 @@ import krio.systemdesign.shoppingapp.core.ui.components.buttons.NavigateBackIcon
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.OutOfStockButton
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.ScrollToTopButton
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
@@ -148,8 +148,8 @@ fun ButtonsSection(innerPadding: PaddingValues) {
 }
 
 private enum class SamplePaymentMethod(val icon: ImageVector, @StringRes val titleRes: Int) {
-    Card(MaterialSymbols.CreditCard, R.string.uikit_sample_payment_card),
-    Cash(MaterialSymbols.Payments, R.string.uikit_sample_payment_cash),
+    Card(AppIcons.CreditCard, R.string.uikit_sample_payment_card),
+    Cash(AppIcons.Payments, R.string.uikit_sample_payment_cash),
 }
 
 // Сколько товара на складе в примере CartQuantityControl: на этом числе «+» выключается.

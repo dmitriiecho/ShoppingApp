@@ -32,7 +32,6 @@ import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Warning
 import krio.systemdesign.shoppingapp.domain.model.NetworkDelay
@@ -121,11 +120,11 @@ fun SettingsScreen(
             // Задержка — отдельный блок: она меняет все запросы, а пункты ниже — действия с корзиной и ссылками.
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             AppListItem(
-                icon = MaterialSymbols.Link,
+                icon = AppIcons.Link,
                 title = stringResource(R.string.settings_deep_links_page),
                 description = stringResource(R.string.settings_deep_links_page_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnDeepLinksPageClick) },
-                trailing = { Icon(MaterialSymbols.OpenInNew, contentDescription = null) },
+                trailing = { Icon(AppIcons.OpenInNew, contentDescription = null) },
             )
             // Значки трёх пунктов те же, что у плашек в корзине, которые эти товары вызывают.
             AppListItem(
@@ -148,7 +147,7 @@ fun SettingsScreen(
             )
             AppListItem(
                 // Своей плашки у сочетания проблем в корзине нет, поэтому иконка общая: «с товаром несколько проблем».
-                icon = MaterialSymbols.Warning,
+                icon = AppIcons.Warning,
                 title = stringResource(R.string.settings_add_price_changed_not_enough_stock_product),
                 description = stringResource(R.string.settings_add_price_changed_not_enough_stock_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddPriceChangedNotEnoughStockProductClick) },
@@ -166,7 +165,7 @@ private fun ThemeModeItem(
     modifier: Modifier = Modifier,
 ) {
     AppListItem(
-        icon = MaterialSymbols.Contrast,
+        icon = AppIcons.Contrast,
         title = stringResource(R.string.settings_theme),
         description = stringResource(selected.titleRes),
         modifier = modifier,
@@ -187,7 +186,7 @@ private fun NetworkDelayItem(
     modifier: Modifier = Modifier,
 ) {
     AppListItem(
-        icon = MaterialSymbols.HourglassEmpty,
+        icon = AppIcons.HourglassEmpty,
         title = stringResource(R.string.settings_network_delay),
         description = stringResource(selected.descriptionRes),
         modifier = modifier,

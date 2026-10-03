@@ -5,8 +5,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-val MaterialSymbols.ProductionQuantityLimits: ImageVector by lazy {
+val AppIcons.ProductionQuantityLimits: ImageVector by lazy {
     ImageVector.Builder(
         name = "ProductionQuantityLimits",
         defaultWidth = 24.dp,
