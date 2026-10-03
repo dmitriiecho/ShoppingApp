@@ -6,7 +6,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Material 3 scale with the system font. bodyLarge has no LineHeightStyle: card paddings are tuned for that.
+// The app's text styles: Material 3 defaults with the system font.
+// bodyLarge, the main text, has no extra space above and below the lines, so card paddings are measured from the text.
 internal val AppTypography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -17,6 +18,6 @@ internal val AppTypography = Typography(
     ),
 )
 
-// Bold bodyLarge, e.g. "Total" in OrderTotals. Not named bodyLargeEmphasized: newer Material 3 has its own.
+// A line that stands out among bodyLarge lines, e.g. the order total: the same text, only bolder.
 val Typography.bodyLargeStrong: TextStyle
     get() = bodyLarge.copy(fontWeight = FontWeight.SemiBold)
