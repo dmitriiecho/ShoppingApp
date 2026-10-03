@@ -1,10 +1,9 @@
 package krio.systemdesign.shoppingapp.core.ui.theme
 
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 // The app's Material color scheme: one constant per role in each theme, as in a Material Theme Builder export.
+// The schemes built from them are in MaterialColorSchemes.kt.
 // App colors beyond the scheme are in AppColors.kt.
 // Palette colors are visible only inside :core:ui: screens take colors by meaning,
 // from MaterialTheme.colorScheme and ShoppingAppTheme.colors, not from here.
@@ -94,81 +93,3 @@ internal val SurfaceContainerLowDark = Color(0xFF1B1B1E)
 internal val SurfaceContainerDark = Color(0xFF202023)
 internal val SurfaceContainerHighDark = Color(0xFF2A2A2E)
 internal val SurfaceContainerHighestDark = Color(0xFF353539)
-
-// The schemes use the app's own palette, not one from the wallpaper (dynamic color on Android 12+):
-// the app looks the same on every device, and colors stay saturated and contrasting.
-internal val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    onPrimary = OnPrimaryLight,
-    primaryContainer = PrimaryContainerLight,
-    onPrimaryContainer = OnPrimaryContainerLight,
-    inversePrimary = InversePrimaryLight,
-    secondary = SecondaryLight,
-    onSecondary = OnSecondaryLight,
-    secondaryContainer = SecondaryContainerLight,
-    onSecondaryContainer = OnSecondaryContainerLight,
-    tertiary = TertiaryLight,
-    onTertiary = OnTertiaryLight,
-    tertiaryContainer = TertiaryContainerLight,
-    onTertiaryContainer = OnTertiaryContainerLight,
-    error = ErrorLight,
-    onError = OnErrorLight,
-    errorContainer = ErrorContainerLight,
-    onErrorContainer = OnErrorContainerLight,
-    background = BackgroundLight,
-    onBackground = OnBackgroundLight,
-    surface = SurfaceLight,
-    onSurface = OnSurfaceLight,
-    surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = OnSurfaceVariantLight,
-    surfaceTint = SurfaceTintLight,
-    inverseSurface = InverseSurfaceLight,
-    inverseOnSurface = InverseOnSurfaceLight,
-    outline = OutlineLight,
-    outlineVariant = OutlineVariantLight,
-    surfaceBright = SurfaceBrightLight,
-    surfaceDim = SurfaceDimLight,
-    surfaceContainerLowest = SurfaceContainerLowestLight,
-    surfaceContainerLow = SurfaceContainerLowLight,
-    surfaceContainer = SurfaceContainerLight,
-    surfaceContainerHigh = SurfaceContainerHighLight,
-    surfaceContainerHighest = SurfaceContainerHighestLight,
-)
-
-internal val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    onPrimary = OnPrimaryDark,
-    primaryContainer = PrimaryContainerDark,
-    onPrimaryContainer = OnPrimaryContainerDark,
-    inversePrimary = InversePrimaryDark,
-    secondary = SecondaryDark,
-    onSecondary = OnSecondaryDark,
-    secondaryContainer = SecondaryContainerDark,
-    onSecondaryContainer = OnSecondaryContainerDark,
-    tertiary = TertiaryDark,
-    onTertiary = OnTertiaryDark,
-    tertiaryContainer = TertiaryContainerDark,
-    onTertiaryContainer = OnTertiaryContainerDark,
-    error = ErrorDark,
-    onError = OnErrorDark,
-    errorContainer = ErrorContainerDark,
-    onErrorContainer = OnErrorContainerDark,
-    background = BackgroundDark,
-    onBackground = OnBackgroundDark,
-    surface = SurfaceDark,
-    onSurface = OnSurfaceDark,
-    surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = OnSurfaceVariantDark,
-    surfaceTint = SurfaceTintDark,
-    inverseSurface = InverseSurfaceDark,
-    inverseOnSurface = InverseOnSurfaceDark,
-    outline = OutlineDark,
-    outlineVariant = OutlineVariantDark,
-    surfaceBright = SurfaceBrightDark,
-    surfaceDim = SurfaceDimDark,
-    surfaceContainerLowest = SurfaceContainerLowestDark,
-    surfaceContainerLow = SurfaceContainerLowDark,
-    surfaceContainer = SurfaceContainerDark,
-    surfaceContainerHigh = SurfaceContainerHighDark,
-    surfaceContainerHighest = SurfaceContainerHighestDark,
-)
