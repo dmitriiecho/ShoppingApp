@@ -1,8 +1,5 @@
 pluginManagement {
     repositories {
-        maven {
-            url = uri("https://maven-central.storage-download.googleapis.com/maven2/")
-        }
         mavenCentral()
         gradlePluginPortal()
     }
@@ -11,9 +8,6 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         google()
-        maven {
-            url = uri("https://maven-central.storage-download.googleapis.com/maven2/")
-        }
         mavenCentral()
     }
     // Тот же каталог версий, что у приложения: версии библиотек и плагинов задаются в одном месте.
