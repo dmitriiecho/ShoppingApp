@@ -1,7 +1,6 @@
 package krio.systemdesign.shoppingapp.core.ui.theme
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 // App colors by meaning that the Material scheme (MaterialTheme.colorScheme) doesn't have.
@@ -24,6 +23,3 @@ internal val DarkAppColors = AppColors(
     success = SuccessDark,
     cardContainer = SurfaceContainerHighDark,
 )
-
-// Without ShoppingAppTheme above (e.g. a preview or test that doesn't wrap in it) — the light set.
-internal val LocalAppColors = staticCompositionLocalOf { LightAppColors }

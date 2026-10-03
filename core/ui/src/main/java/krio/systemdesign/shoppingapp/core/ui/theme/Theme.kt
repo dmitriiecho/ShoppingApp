@@ -42,3 +42,6 @@ object ShoppingAppTheme {
 // The theme is switched in the app settings, so the system night mode
 // (isSystemInDarkTheme, -night resources) may not match it.
 private val LocalDarkTheme = staticCompositionLocalOf { false }
+
+// Without ShoppingAppTheme above (e.g. a preview or test that doesn't wrap in it) — the light set.
+private val LocalAppColors = staticCompositionLocalOf { LightAppColors }
