@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.theme.ShapeRadius
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 
@@ -45,7 +45,8 @@ fun PromoCodeCoupon(
     enabled: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(COUPON_CORNER_RADIUS)
+    // The border below is drawn with ShapeRadius.Small: the radius of shapes.small.
+    val shape = MaterialTheme.shapes.small
     Surface(
         onClick = onClick,
         modifier = modifier,
@@ -59,7 +60,7 @@ fun PromoCodeCoupon(
                 // Drawn over the Surface background, inset by half the stroke so the edge isn't clipped.
                 .drawBehind {
                     val strokeWidth = COUPON_BORDER_WIDTH.toPx()
-                    val radius = COUPON_CORNER_RADIUS.toPx() - strokeWidth / 2
+                    val radius = ShapeRadius.Small.toPx() - strokeWidth / 2
                     drawRoundRect(
                         color = colors.primary,
                         topLeft = Offset(strokeWidth / 2, strokeWidth / 2),
@@ -85,7 +86,7 @@ fun PromoCodeCoupon(
             Text(
                 text = stringResource(R.string.core_ui_discount_percent, discountPercent),
                 modifier = Modifier
-                    .background(colors.primary, RoundedCornerShape(6.dp))
+                    .background(colors.primary, MaterialTheme.shapes.extraSmall)
                     .padding(horizontal = 6.dp, vertical = 2.dp),
                 color = colors.onPrimary,
                 style = MaterialTheme.typography.labelMedium,
@@ -103,11 +104,10 @@ fun PromoCodeCouponPlaceholder(modifier: Modifier = Modifier) {
             // Like the clickable coupon, take at least 48 dp of height but draw at the coupon's size.
             .minimumInteractiveComponentSize()
             .size(width = PLACEHOLDER_COUPON_WIDTH, height = PLACEHOLDER_COUPON_HEIGHT)
-            .shimmerShape(RoundedCornerShape(COUPON_CORNER_RADIUS)),
+            .shimmerShape(MaterialTheme.shapes.small),
     )
 }
 
-private val COUPON_CORNER_RADIUS = 10.dp
 private val COUPON_BORDER_WIDTH = 1.5.dp
 
 // Size of a coupon with a six-character code, e.g. SALE10.
