@@ -15,6 +15,7 @@ interface CartRepository {
 
     suspend fun removeItem(productId: String): Result<Unit>
 
+    // Removes the items but keeps the promo code.
     suspend fun clearItems(): Result<Unit>
 
     // Resets the cart to its initial state: removes items and the promo code at once.
