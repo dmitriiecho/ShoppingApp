@@ -1,3 +1,6 @@
+// Works around a false IDE error on @Serializable classes; the Gradle build doesn't need it.
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
+
 package krio.systemdesign.shoppingapp.data.dto
 
 import kotlinx.serialization.SerialName
