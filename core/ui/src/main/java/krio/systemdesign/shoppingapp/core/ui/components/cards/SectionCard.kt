@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ConfirmationNumber
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -95,7 +97,7 @@ private fun SectionCardPreview() {
                     )
                 }
                 SectionCard(
-                    icon = AppIcons.PromoCode,
+                    icon = AppIcons.ConfirmationNumber,
                     title = "Promo codes for testing",
                     subtitle = "Tap a code to put it in the field",
                 ) {

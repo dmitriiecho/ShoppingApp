@@ -15,6 +15,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.BrightnessAuto
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DarkMode
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Inventory2
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LightMode
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable
@@ -48,8 +56,8 @@ private fun AppListItemPreview() {
                     description = "System",
                     trailing = {
                         SingleChoiceButtons(
-                            options = listOf(AppIcons.SystemTheme, AppIcons.LightTheme, AppIcons.DarkTheme),
-                            selected = AppIcons.SystemTheme,
+                            options = listOf(AppIcons.BrightnessAuto, AppIcons.LightMode, AppIcons.DarkMode),
+                            selected = AppIcons.BrightnessAuto,
                             onSelect = {},
                             modifier = Modifier.width(168.dp),
                         ) { icon ->
@@ -80,7 +88,7 @@ private fun AppListItemPreview() {
                     trailing = { Icon(AppIcons.OpenInNew, contentDescription = null) },
                 )
                 AppListItem(
-                    icon = AppIcons.OutOfStock,
+                    icon = AppIcons.Inventory2,
                     title = "Add an out-of-stock item to the cart",
                     description = "To check how the cart shows an unavailable item",
                     onClick = {},

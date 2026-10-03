@@ -13,6 +13,12 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CheckCircle
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Error
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Inventory2
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ProductionQuantityLimits
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Sell
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
@@ -28,12 +34,12 @@ fun NoticesSection(innerPadding: PaddingValues) {
         sampleGroup("Notice · product card") {
             SampleVariant {
                 Notice(
-                    icon = AppIcons.OutOfStock,
+                    icon = AppIcons.Inventory2,
                     title = stringResource(R.string.uikit_sample_out_of_stock),
                     style = NoticeStyle.Error,
                 )
                 Notice(
-                    icon = AppIcons.PriceChanged,
+                    icon = AppIcons.Sell,
                     title = stringResource(
                         R.string.uikit_sample_price_changed,
                         formatPrice(SampleData.HEADPHONES_PRICE),
@@ -41,7 +47,7 @@ fun NoticesSection(innerPadding: PaddingValues) {
                     style = NoticeStyle.Error,
                 )
                 Notice(
-                    icon = AppIcons.NotEnoughStock,
+                    icon = AppIcons.ProductionQuantityLimits,
                     title = stringResource(R.string.uikit_sample_only_available, 1),
                     style = NoticeStyle.Error,
                 )
@@ -58,7 +64,7 @@ fun NoticesSection(innerPadding: PaddingValues) {
                     onAction = {},
                 )
                 NoticeWithAction(
-                    icon = AppIcons.PromoCodeApplied,
+                    icon = AppIcons.CheckCircle,
                     title = stringResource(
                         CoreUiR.string.core_ui_applied_promo_code,
                         SampleData.PROMO_CODE,
@@ -69,7 +75,7 @@ fun NoticesSection(innerPadding: PaddingValues) {
                     onAction = {},
                 )
                 Notice(
-                    icon = AppIcons.PromoCodeApplied,
+                    icon = AppIcons.CheckCircle,
                     title = stringResource(
                         CoreUiR.string.core_ui_applied_promo_code,
                         SampleData.SECOND_PROMO_CODE,
@@ -82,7 +88,7 @@ fun NoticesSection(innerPadding: PaddingValues) {
         sampleGroup("Notice · cart bar") {
             SampleVariant {
                 NoticeWithAction(
-                    icon = AppIcons.PriceChanged,
+                    icon = AppIcons.Sell,
                     title = stringResource(R.string.uikit_sample_price_changes),
                     style = NoticeStyle.Error,
                     actionText = stringResource(R.string.uikit_sample_accept),
@@ -90,7 +96,7 @@ fun NoticesSection(innerPadding: PaddingValues) {
                     modifier = Modifier.heightIn(min = 56.dp),
                 )
                 NoticeWithAction(
-                    icon = AppIcons.OutOfStock,
+                    icon = AppIcons.Inventory2,
                     title = stringResource(R.string.uikit_sample_item_out_of_stock),
                     style = NoticeStyle.Error,
                     actionText = stringResource(R.string.uikit_sample_remove),
@@ -98,7 +104,7 @@ fun NoticesSection(innerPadding: PaddingValues) {
                     modifier = Modifier.heightIn(min = 56.dp),
                 )
                 Notice(
-                    icon = AppIcons.NotEnoughStock,
+                    icon = AppIcons.ProductionQuantityLimits,
                     title = stringResource(R.string.uikit_sample_not_enough_stock_items),
                     style = NoticeStyle.Error,
                     modifier = Modifier.heightIn(min = 56.dp),

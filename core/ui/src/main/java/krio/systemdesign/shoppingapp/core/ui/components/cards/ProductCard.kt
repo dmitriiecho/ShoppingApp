@@ -31,6 +31,9 @@ import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Inventory2
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ProductionQuantityLimits
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Sell
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
@@ -253,7 +256,7 @@ private fun ProductCardCartSingleIssuePreview() {
                     isDimmed = true,
                 ) {
                     Notice(
-                        icon = AppIcons.OutOfStock,
+                        icon = AppIcons.Inventory2,
                         title = "Out of stock",
                         style = NoticeStyle.Error,
                     )
@@ -275,7 +278,7 @@ private fun ProductCardCartSingleIssuePreview() {
                     unitPrice = formatPrice(4_900L),
                 ) {
                     Notice(
-                        icon = AppIcons.PriceChanged,
+                        icon = AppIcons.Sell,
                         title = "Price changed: now ${formatPrice(5_400L)}",
                         style = NoticeStyle.Error,
                     )
@@ -296,7 +299,7 @@ private fun ProductCardCartSingleIssuePreview() {
                     unitPrice = formatPrice(10_995L),
                 ) {
                     Notice(
-                        icon = AppIcons.NotEnoughStock,
+                        icon = AppIcons.ProductionQuantityLimits,
                         title = "Only 1 available to order now",
                         style = NoticeStyle.Error,
                     )
@@ -331,12 +334,12 @@ private fun ProductCardCartMultipleIssuesPreview() {
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Notice(
-                        icon = AppIcons.PriceChanged,
+                        icon = AppIcons.Sell,
                         title = "Price changed: now ${formatPrice(1_295L)}",
                         style = NoticeStyle.Error,
                     )
                     Notice(
-                        icon = AppIcons.NotEnoughStock,
+                        icon = AppIcons.ProductionQuantityLimits,
                         title = "Only 5 available to order now",
                         style = NoticeStyle.Error,
                     )

@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CheckCircle
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable
@@ -24,7 +25,7 @@ fun AppliedPromoCodeNotice(
     val title = stringResource(R.string.core_ui_applied_promo_code, code, discountPercent)
     if (onRemove != null) {
         NoticeWithAction(
-            icon = AppIcons.PromoCodeApplied,
+            icon = AppIcons.CheckCircle,
             title = title,
             style = NoticeStyle.Success,
             actionText = stringResource(R.string.core_ui_remove_promo_code),
@@ -33,7 +34,7 @@ fun AppliedPromoCodeNotice(
         )
     } else {
         Notice(
-            icon = AppIcons.PromoCodeApplied,
+            icon = AppIcons.CheckCircle,
             title = title,
             style = NoticeStyle.Success,
             modifier = modifier,

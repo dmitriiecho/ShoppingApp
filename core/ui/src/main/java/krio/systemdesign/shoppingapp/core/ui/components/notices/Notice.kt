@@ -24,6 +24,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CheckCircle
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Error
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Inventory2
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ProductionQuantityLimits
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Sell
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable
@@ -128,17 +134,17 @@ private fun NoticeProductIssuesPreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Notice(
-                    icon = AppIcons.OutOfStock,
+                    icon = AppIcons.Inventory2,
                     title = "Out of stock",
                     style = NoticeStyle.Error,
                 )
                 Notice(
-                    icon = AppIcons.PriceChanged,
+                    icon = AppIcons.Sell,
                     title = "Price changed: now $149.99",
                     style = NoticeStyle.Error,
                 )
                 Notice(
-                    icon = AppIcons.NotEnoughStock,
+                    icon = AppIcons.ProductionQuantityLimits,
                     title = "Only 1 available to order now",
                     style = NoticeStyle.Error,
                 )
@@ -166,14 +172,14 @@ private fun NoticePromoCodePreview() {
                     subtitle = "Remove it to place your order",
                 )
                 NoticeWithAction(
-                    icon = AppIcons.PromoCodeApplied,
+                    icon = AppIcons.CheckCircle,
                     title = "Promo code SALE10 · −10%",
                     style = NoticeStyle.Success,
                     actionText = "Remove",
                     onAction = {},
                 )
                 Notice(
-                    icon = AppIcons.PromoCodeApplied,
+                    icon = AppIcons.CheckCircle,
                     title = "Promo code SALE25 · −25%",
                     style = NoticeStyle.Success,
                 )
@@ -193,7 +199,7 @@ private fun NoticeCartBarPreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 NoticeWithAction(
-                    icon = AppIcons.PriceChanged,
+                    icon = AppIcons.Sell,
                     title = "Price changed for 1 item",
                     style = NoticeStyle.Error,
                     actionText = "Accept",
@@ -201,7 +207,7 @@ private fun NoticeCartBarPreview() {
                     modifier = Modifier.heightIn(min = 56.dp),
                 )
                 NoticeWithAction(
-                    icon = AppIcons.OutOfStock,
+                    icon = AppIcons.Inventory2,
                     title = "1 item is out of stock",
                     style = NoticeStyle.Error,
                     actionText = "Remove",
@@ -209,7 +215,7 @@ private fun NoticeCartBarPreview() {
                     modifier = Modifier.heightIn(min = 56.dp),
                 )
                 Notice(
-                    icon = AppIcons.NotEnoughStock,
+                    icon = AppIcons.ProductionQuantityLimits,
                     title = "Not enough stock for 1 item",
                     style = NoticeStyle.Error,
                     modifier = Modifier.heightIn(min = 56.dp),

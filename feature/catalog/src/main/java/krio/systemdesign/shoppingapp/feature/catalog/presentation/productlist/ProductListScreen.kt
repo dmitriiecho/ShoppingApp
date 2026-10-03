@@ -55,6 +55,8 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.ErrorBanner
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.ErrorState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SearchOff
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Storefront
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -153,12 +155,12 @@ private fun ProductListBody(
             )
             products.itemCount == 0 -> if (searchQuery.isBlank()) {
                 EmptyContent(
-                    icon = AppIcons.EmptyCatalog,
+                    icon = AppIcons.Storefront,
                     message = stringResource(R.string.catalog_empty),
                 )
             } else {
                 EmptyContent(
-                    icon = AppIcons.NothingFound,
+                    icon = AppIcons.SearchOff,
                     message = stringResource(R.string.catalog_search_no_results, searchQuery),
                 )
             }

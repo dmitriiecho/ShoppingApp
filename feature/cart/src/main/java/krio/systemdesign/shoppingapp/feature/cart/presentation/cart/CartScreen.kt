@@ -46,6 +46,12 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Error
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Inventory2
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ProductionQuantityLimits
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.RemoveShoppingCart
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Sell
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCart
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -296,7 +302,7 @@ private fun EmptyCart(
     // когда строка промокода появляется или исчезает.
     Box(modifier = modifier) {
         EmptyState(
-            icon = AppIcons.EmptyCart,
+            icon = AppIcons.ShoppingCart,
             title = stringResource(R.string.cart_empty_title),
             message = stringResource(R.string.cart_empty_message),
             modifier = Modifier.align(Alignment.Center),
@@ -354,20 +360,20 @@ private fun ItemIssueNotice(
 ) {
     when (issue) {
         is ItemIssue.Unavailable -> Notice(
-            icon = AppIcons.OutOfStock,
+            icon = AppIcons.Inventory2,
             title = stringResource(R.string.cart_item_unavailable),
             style = NoticeStyle.Error,
             modifier = modifier,
         )
         is ItemIssue.PriceChanged -> Notice(
-            icon = AppIcons.PriceChanged,
+            icon = AppIcons.Sell,
             // Старая цена видна строкой выше, в плашке только новая.
             title = stringResource(R.string.cart_item_price_changed, formatPrice(issue.newPrice)),
             style = NoticeStyle.Error,
             modifier = modifier,
         )
         is ItemIssue.NotEnoughStock -> Notice(
-            icon = AppIcons.NotEnoughStock,
+            icon = AppIcons.ProductionQuantityLimits,
             title = stringResource(R.string.cart_item_not_enough_stock, issue.availableQuantity),
             style = NoticeStyle.Error,
             modifier = modifier,
@@ -396,7 +402,7 @@ private fun CartChangesActions(
     ) {
         if (priceChangeCount > 0) {
             NoticeWithAction(
-                icon = AppIcons.PriceChanged,
+                icon = AppIcons.Sell,
                 title = pluralStringResource(R.plurals.cart_price_changes, priceChangeCount, priceChangeCount),
                 style = NoticeStyle.Error,
                 actionText = stringResource(R.string.cart_accept_new_prices),
@@ -406,7 +412,7 @@ private fun CartChangesActions(
         }
         if (unavailableItemCount > 0) {
             NoticeWithAction(
-                icon = AppIcons.OutOfStock,
+                icon = AppIcons.Inventory2,
                 title = pluralStringResource(R.plurals.cart_unavailable_items, unavailableItemCount, unavailableItemCount),
                 style = NoticeStyle.Error,
                 actionText = stringResource(R.string.cart_remove_unavailable),
@@ -416,7 +422,7 @@ private fun CartChangesActions(
         }
         if (notEnoughStockItemCount > 0) {
             Notice(
-                icon = AppIcons.NotEnoughStock,
+                icon = AppIcons.ProductionQuantityLimits,
                 title = pluralStringResource(R.plurals.cart_not_enough_stock_items, notEnoughStockItemCount, notEnoughStockItemCount),
                 style = NoticeStyle.Error,
                 modifier = noticeModifier,

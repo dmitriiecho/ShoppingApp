@@ -31,6 +31,14 @@ import krio.systemdesign.shoppingapp.core.ui.components.cards.SectionCard
 import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ConfirmationNumber
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Inventory2
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ProductionQuantityLimits
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Sell
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
@@ -113,7 +121,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                     isDimmed = true,
                 ) {
                     Notice(
-                        icon = AppIcons.OutOfStock,
+                        icon = AppIcons.Inventory2,
                         title = stringResource(R.string.uikit_sample_out_of_stock),
                         style = NoticeStyle.Error,
                     )
@@ -136,7 +144,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                     unitPrice = formatPrice(SampleData.CUTTING_BOARD_OLD_PRICE),
                 ) {
                     Notice(
-                        icon = AppIcons.PriceChanged,
+                        icon = AppIcons.Sell,
                         title = stringResource(
                             R.string.uikit_sample_price_changed,
                             formatPrice(SampleData.CUTTING_BOARD_PRICE),
@@ -161,7 +169,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                     unitPrice = formatPrice(SampleData.KEYBOARD_PRICE),
                 ) {
                     Notice(
-                        icon = AppIcons.NotEnoughStock,
+                        icon = AppIcons.ProductionQuantityLimits,
                         title = stringResource(R.string.uikit_sample_only_available, 1),
                         style = NoticeStyle.Error,
                     )
@@ -187,7 +195,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Notice(
-                            icon = AppIcons.PriceChanged,
+                            icon = AppIcons.Sell,
                             title = stringResource(
                                 R.string.uikit_sample_price_changed,
                                 formatPrice(SampleData.NOTEBOOK_PRICE),
@@ -195,7 +203,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                             style = NoticeStyle.Error,
                         )
                         Notice(
-                            icon = AppIcons.NotEnoughStock,
+                            icon = AppIcons.ProductionQuantityLimits,
                             title = stringResource(R.string.uikit_sample_only_available, 5),
                             style = NoticeStyle.Error,
                         )
@@ -222,7 +230,7 @@ fun CardsSection(innerPadding: PaddingValues) {
             }
             SampleVariant(stringResource(R.string.uikit_variant_with_subtitle)) {
                 SectionCard(
-                    icon = AppIcons.PromoCode,
+                    icon = AppIcons.ConfirmationNumber,
                     title = stringResource(R.string.uikit_sample_promo_codes),
                     subtitle = stringResource(R.string.uikit_sample_promo_codes_hint),
                 ) {

@@ -5,8 +5,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-internal val MaterialSymbols.Link: ImageVector by lazy {
+val AppIcons.Link: ImageVector by lazy {
     ImageVector.Builder(
         name = "Link",
         defaultWidth = 24.dp,

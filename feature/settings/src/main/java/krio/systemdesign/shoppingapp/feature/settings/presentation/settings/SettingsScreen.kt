@@ -29,6 +29,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.BrightnessAuto
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DarkMode
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Inventory2
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LightMode
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ProductionQuantityLimits
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Sell
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Warning
 import krio.systemdesign.shoppingapp.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.feature.settings.R
@@ -123,19 +134,19 @@ fun SettingsScreen(
             )
             // Значки трёх пунктов те же, что у плашек в корзине, которые эти товары вызывают.
             AppListItem(
-                icon = AppIcons.OutOfStock,
+                icon = AppIcons.Inventory2,
                 title = stringResource(R.string.settings_add_unavailable_product),
                 description = stringResource(R.string.settings_add_unavailable_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddUnavailableProductClick) },
             )
             AppListItem(
-                icon = AppIcons.NotEnoughStock,
+                icon = AppIcons.ProductionQuantityLimits,
                 title = stringResource(R.string.settings_add_not_enough_stock_product),
                 description = stringResource(R.string.settings_add_not_enough_stock_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddNotEnoughStockProductClick) },
             )
             AppListItem(
-                icon = AppIcons.PriceChanged,
+                icon = AppIcons.Sell,
                 title = stringResource(R.string.settings_add_price_changed_product),
                 description = stringResource(R.string.settings_add_price_changed_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddPriceChangedProductClick) },
@@ -229,7 +240,7 @@ private val ThemeMode.titleRes: Int
 
 private val ThemeMode.icon: ImageVector
     get() = when (this) {
-        ThemeMode.System -> AppIcons.SystemTheme
-        ThemeMode.Light -> AppIcons.LightTheme
-        ThemeMode.Dark -> AppIcons.DarkTheme
+        ThemeMode.System -> AppIcons.BrightnessAuto
+        ThemeMode.Light -> AppIcons.LightMode
+        ThemeMode.Dark -> AppIcons.DarkMode
     }

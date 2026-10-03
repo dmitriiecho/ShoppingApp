@@ -5,8 +5,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-internal val MaterialSymbols.LocationOn: ImageVector by lazy {
+val AppIcons.LocationOn: ImageVector by lazy {
     ImageVector.Builder(
         name = "LocationOn",
         defaultWidth = 24.dp,

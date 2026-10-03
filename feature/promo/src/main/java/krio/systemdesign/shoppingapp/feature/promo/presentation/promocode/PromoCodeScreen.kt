@@ -37,6 +37,7 @@ import krio.systemdesign.shoppingapp.core.ui.components.cards.PromoCodeCouponPla
 import krio.systemdesign.shoppingapp.core.ui.components.cards.SectionCard
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ConfirmationNumber
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
@@ -132,7 +133,7 @@ private fun AvailablePromoCodesHint(
     modifier: Modifier = Modifier,
 ) {
     SectionCard(
-        icon = AppIcons.PromoCode,
+        icon = AppIcons.ConfirmationNumber,
         title = stringResource(R.string.promo_available_title),
         subtitle = stringResource(R.string.promo_available_hint),
         modifier = modifier,

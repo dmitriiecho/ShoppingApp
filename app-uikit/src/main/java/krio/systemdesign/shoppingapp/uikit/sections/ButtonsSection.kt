@@ -29,6 +29,8 @@ import krio.systemdesign.shoppingapp.core.ui.components.buttons.OutOfStockButton
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.ScrollToTopButton
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
 import krio.systemdesign.shoppingapp.uikit.components.SampleList

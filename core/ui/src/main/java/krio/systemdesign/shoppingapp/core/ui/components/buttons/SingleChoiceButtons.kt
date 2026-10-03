@@ -23,6 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.BrightnessAuto
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DarkMode
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LightMode
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,9 +71,9 @@ private fun SingleChoiceButtonsPreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val themes = listOf(
-                    AppIcons.SystemTheme to "System",
-                    AppIcons.LightTheme to "Light",
-                    AppIcons.DarkTheme to "Dark",
+                    AppIcons.BrightnessAuto to "System",
+                    AppIcons.LightMode to "Light",
+                    AppIcons.DarkMode to "Dark",
                 )
                 SingleChoiceButtons(
                     options = themes,

@@ -5,6 +5,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DarkMode
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LightMode
 import krio.systemdesign.shoppingapp.uikit.R
 
 // Переключает каталог между светлой и тёмной темой. На кнопке тема, которая включится, —
@@ -16,9 +18,9 @@ fun ThemeToggleButton(
 ) {
     IconButton(onClick = onToggle) {
         if (darkTheme) {
-            Icon(AppIcons.LightTheme, contentDescription = stringResource(R.string.uikit_switch_to_light_theme))
+            Icon(AppIcons.LightMode, contentDescription = stringResource(R.string.uikit_switch_to_light_theme))
         } else {
-            Icon(AppIcons.DarkTheme, contentDescription = stringResource(R.string.uikit_switch_to_dark_theme))
+            Icon(AppIcons.DarkMode, contentDescription = stringResource(R.string.uikit_switch_to_dark_theme))
         }
     }
 }

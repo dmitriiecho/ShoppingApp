@@ -5,8 +5,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-internal val MaterialSymbols.CheckCircle: ImageVector by lazy {
+val AppIcons.CheckCircle: ImageVector by lazy {
     ImageVector.Builder(
         name = "CheckCircle",
         defaultWidth = 24.dp,

@@ -44,6 +44,14 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.AccountBalanceWallet
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LocationOn
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Receipt
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCart
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -107,7 +115,7 @@ fun CheckoutScreen(
         if (uiState.isLoading) return@Scaffold
         if (uiState.isEmpty && !uiState.isSubmitting) {
             EmptyState(
-                icon = AppIcons.EmptyCart,
+                icon = AppIcons.ShoppingCart,
                 title = stringResource(R.string.checkout_empty_title),
                 message = stringResource(R.string.checkout_empty_message),
                 modifier = Modifier

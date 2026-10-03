@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.ErrorState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SearchOff
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCart
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
@@ -34,7 +36,7 @@ fun ScreenStatesSection(innerPadding: PaddingValues) {
             SampleVariant(stringResource(R.string.uikit_variant_with_title)) {
                 ScreenArea {
                     EmptyState(
-                        icon = AppIcons.EmptyCart,
+                        icon = AppIcons.ShoppingCart,
                         title = stringResource(R.string.uikit_sample_cart_empty_title),
                         message = stringResource(R.string.uikit_sample_cart_empty_message),
                         modifier = Modifier.fillMaxSize(),
@@ -44,7 +46,7 @@ fun ScreenStatesSection(innerPadding: PaddingValues) {
             SampleVariant(stringResource(R.string.uikit_variant_without_title)) {
                 ScreenArea {
                     EmptyState(
-                        icon = AppIcons.NothingFound,
+                        icon = AppIcons.SearchOff,
                         message = stringResource(R.string.uikit_sample_nothing_found, SAMPLE_SEARCH_QUERY),
                         modifier = Modifier.fillMaxSize(),
                     )
