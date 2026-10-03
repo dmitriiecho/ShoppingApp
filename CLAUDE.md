@@ -1,6 +1,6 @@
 # ShoppingApp
 
-Android app (Kotlin, Jetpack Compose, Hilt, Room, KSP). Gradle 9.4, AGP 9.2, JDK 21, compileSdk 37.
+Android app (Kotlin, Jetpack Compose, Hilt, Room, KSP). Gradle 9.8, AGP 9.4, JDK 21, compileSdk 37.
 applicationId: `krio.systemdesign.shoppingapp`, launcher activity: `.MainActivity`.
 
 ## Modules
