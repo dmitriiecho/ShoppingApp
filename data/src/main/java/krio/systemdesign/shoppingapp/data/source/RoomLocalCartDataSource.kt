@@ -4,6 +4,7 @@ import androidx.room.withTransaction
 import krio.systemdesign.shoppingapp.data.database.ShoppingDatabase
 import krio.systemdesign.shoppingapp.data.database.dao.AppliedPromoCodeDao
 import krio.systemdesign.shoppingapp.data.database.dao.CartItemDao
+import krio.systemdesign.shoppingapp.data.database.databaseCall
 import krio.systemdesign.shoppingapp.data.database.entity.toCartItemEntity
 import krio.systemdesign.shoppingapp.data.database.entity.toDomain
 import krio.systemdesign.shoppingapp.data.database.entity.toEntity
@@ -22,7 +23,7 @@ internal class RoomLocalCartDataSource @Inject constructor(
     private val appliedPromoCodeDao: AppliedPromoCodeDao,
 ) : LocalCartDataSource {
 
-    override suspend fun addItem(product: Product, quantity: Int): Result<Unit> = suspendRunCatching {
+    override suspend fun addItem(product: Product, quantity: Int): Result<Unit> = databaseCall {
         require(quantity > 0) { "quantity must be positive" }
         database.withTransaction {
             val existing = cartItemDao.find(product.id)
@@ -39,25 +40,25 @@ internal class RoomLocalCartDataSource @Inject constructor(
         }
     }
 
-    override suspend fun setQuantity(productId: String, quantity: Int): Result<Unit> = suspendRunCatching {
+    override suspend fun setQuantity(productId: String, quantity: Int): Result<Unit> = databaseCall {
         if (quantity <= 0) {
             cartItemDao.delete(productId)
-            return@suspendRunCatching
+            return@databaseCall
         }
         val existing = cartItemDao.find(productId)
             ?: error("Product $productId is not in the cart")
         cartItemDao.upsert(existing.copy(quantity = quantity))
     }
 
-    override suspend fun removeItem(productId: String): Result<Unit> = suspendRunCatching {
+    override suspend fun removeItem(productId: String): Result<Unit> = databaseCall {
         cartItemDao.delete(productId)
     }
 
-    override suspend fun clearItems(): Result<Unit> = suspendRunCatching {
+    override suspend fun clearItems(): Result<Unit> = databaseCall {
         cartItemDao.deleteAll()
     }
 
-    override suspend fun reset(): Result<Unit> = suspendRunCatching {
+    override suspend fun reset(): Result<Unit> = databaseCall {
         database.withTransaction {
             cartItemDao.deleteAll()
             appliedPromoCodeDao.delete()
@@ -76,7 +77,7 @@ internal class RoomLocalCartDataSource @Inject constructor(
         }
     }
 
-    override suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit> = suspendRunCatching {
+    override suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit> = databaseCall {
         database.withTransaction {
             issues.forEach { issue ->
                 when (issue) {
@@ -92,11 +93,11 @@ internal class RoomLocalCartDataSource @Inject constructor(
         }
     }
 
-    override suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> = suspendRunCatching {
+    override suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> = databaseCall {
         appliedPromoCodeDao.upsert(promoCode.toEntity())
     }
 
-    override suspend fun removePromoCode(): Result<Unit> = suspendRunCatching {
+    override suspend fun removePromoCode(): Result<Unit> = databaseCall {
         appliedPromoCodeDao.delete()
     }
 }
