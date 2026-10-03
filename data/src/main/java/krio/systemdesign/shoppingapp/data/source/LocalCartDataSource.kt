@@ -6,7 +6,7 @@ import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
 import kotlinx.coroutines.flow.Flow
 
-interface LocalCartDataSource {
+internal interface LocalCartDataSource {
 
     suspend fun addItem(product: Product, quantity: Int): Result<Unit>
 

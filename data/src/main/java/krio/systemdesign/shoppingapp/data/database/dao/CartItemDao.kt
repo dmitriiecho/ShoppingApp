@@ -7,7 +7,7 @@ import krio.systemdesign.shoppingapp.data.database.entity.CartItemEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface CartItemDao {
+internal interface CartItemDao {
     @Query("SELECT * FROM cart_items ORDER BY rowid ASC")
     fun observeAll(): Flow<List<CartItemEntity>>
 

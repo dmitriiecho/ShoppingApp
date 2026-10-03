@@ -6,7 +6,7 @@ import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.Product
 
 @Entity(tableName = "cart_items")
-data class CartItemEntity(
+internal data class CartItemEntity(
     @PrimaryKey val productId: String,
     val name: String,
     val imageUrl: String,

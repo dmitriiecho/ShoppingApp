@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class RoomLocalCartDataSource @Inject constructor(
+internal class RoomLocalCartDataSource @Inject constructor(
     private val database: ShoppingDatabase,
     private val cartItemDao: CartItemDao,
     private val appliedPromoCodeDao: AppliedPromoCodeDao,

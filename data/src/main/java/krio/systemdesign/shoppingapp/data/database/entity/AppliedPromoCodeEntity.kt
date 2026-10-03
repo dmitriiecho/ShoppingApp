@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
 
 @Entity(tableName = "applied_promo_code")
-data class AppliedPromoCodeEntity(
+internal data class AppliedPromoCodeEntity(
     @PrimaryKey val id: Int = SINGLE_ROW_ID,
     val code: String,
     val discountPercent: Int,

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class CartRepositoryImpl @Inject constructor(
+internal class CartRepositoryImpl @Inject constructor(
     private val localCart: LocalCartDataSource,
     private val validator: CartValidatorDataSource,
 ) : CartRepository {

@@ -9,7 +9,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 // Waits before every server request for the delay chosen in the settings.
-class NetworkDelayInterceptor @Inject constructor(
+internal class NetworkDelayInterceptor @Inject constructor(
     private val appSettingsRepository: AppSettingsRepository,
 ) : Interceptor {
 

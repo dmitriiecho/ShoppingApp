@@ -7,7 +7,7 @@ import krio.systemdesign.shoppingapp.data.database.entity.AppliedPromoCodeEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface AppliedPromoCodeDao {
+internal interface AppliedPromoCodeDao {
     @Query("SELECT * FROM applied_promo_code LIMIT 1")
     fun observe(): Flow<AppliedPromoCodeEntity?>
 

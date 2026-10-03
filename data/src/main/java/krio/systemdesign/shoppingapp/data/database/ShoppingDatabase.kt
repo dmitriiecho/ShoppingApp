@@ -12,7 +12,7 @@ import krio.systemdesign.shoppingapp.data.database.entity.CartItemEntity
     version = 1,
     exportSchema = true,
 )
-abstract class ShoppingDatabase : RoomDatabase() {
+internal abstract class ShoppingDatabase : RoomDatabase() {
     abstract fun cartItemDao(): CartItemDao
 
     abstract fun appliedPromoCodeDao(): AppliedPromoCodeDao
