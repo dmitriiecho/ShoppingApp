@@ -57,7 +57,6 @@ internal object DataModule {
     @Singleton
     fun provideCartApi(retrofit: Retrofit): CartApi = retrofit.create()
 
-    // Settings chosen by the user (for example, the theme). One instance per file: DataStore requires it.
     @Provides
     @Singleton
     fun provideSettingsDataStore(@ApplicationContext context: Context): DataStore<Preferences> =

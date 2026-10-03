@@ -10,6 +10,5 @@ data class CartItemEntity(
     val imageUrl: String,
     val price: Long,
     val quantity: Int,
-    // Остаток товара, когда его добавили из каталога (CartItem.availableQuantity).
     val availableQuantity: Int,
 )

@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import krio.systemdesign.shoppingapp.domain.model.Cart
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 
-// Формат совпадает с CartValidationDTO на сервере (server/src/main/kotlin/.../dto/CartValidationDTO.kt).
 @Serializable
 internal data class CartValidationRequestDTO(
     val items: List<CartItemDTO>,
@@ -15,20 +14,16 @@ internal data class CartValidationRequestDTO(
 @Serializable
 internal data class CartItemDTO(
     val productId: String,
-    // Цена, которую видит пользователь: если она устарела, сервер вернёт ItemIssueDTO.PriceChanged.
     val price: Long,
     val quantity: Int,
 )
 
-// Корзина в порядке, если список проблем с товарами пуст и промокод действует.
 @Serializable
 internal data class CartValidationResponseDTO(
     val issues: List<ItemIssueDTO>,
-    // false — присланного промокода больше нет. Если промокод не прислан, true.
     val promoCodeValid: Boolean,
 )
 
-// Вид проблемы сервер передаёт полем "type": {"type": "priceChanged", "productId": "1", "newPrice": 8999}.
 @Serializable
 internal sealed interface ItemIssueDTO {
     @Serializable
