@@ -17,7 +17,7 @@ val AppIcons.ArrowBack: ImageVector by lazy {
         autoMirror = true,
     ).apply {
         path(fill = SolidColor(Color.Black)) {
-            moveToRelative(313f, -440f)
+            moveTo(313f, 520f)
             lineToRelative(224f, 224f)
             lineToRelative(-57f, 56f)
             lineToRelative(-320f, -320f)

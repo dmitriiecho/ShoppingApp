@@ -16,7 +16,7 @@ val AppIcons.Close: ImageVector by lazy {
         viewportHeight = 960f,
     ).apply {
         path(fill = SolidColor(Color.Black)) {
-            moveToRelative(256f, -200f)
+            moveTo(256f, 760f)
             lineToRelative(-56f, -56f)
             lineToRelative(224f, -224f)
             lineToRelative(-224f, -224f)

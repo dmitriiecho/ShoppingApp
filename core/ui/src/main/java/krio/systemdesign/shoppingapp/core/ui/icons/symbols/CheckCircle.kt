@@ -16,7 +16,7 @@ val AppIcons.CheckCircle: ImageVector by lazy {
         viewportHeight = 960f,
     ).apply {
         path(fill = SolidColor(Color.Black)) {
-            moveToRelative(424f, -296f)
+            moveTo(424f, 664f)
             lineToRelative(282f, -282f)
             lineToRelative(-56f, -56f)
             lineToRelative(-226f, 226f)

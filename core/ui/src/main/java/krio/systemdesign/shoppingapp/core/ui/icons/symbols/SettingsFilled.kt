@@ -16,7 +16,7 @@ val AppIcons.SettingsFilled: ImageVector by lazy {
         viewportHeight = 960f,
     ).apply {
         path(fill = SolidColor(Color.Black)) {
-            moveToRelative(370f, -80f)
+            moveTo(370f, 880f)
             lineToRelative(-16f, -128f)
             quadToRelative(-13f, -5f, -24.5f, -12f)
             reflectiveQuadTo(307f, 725f)

@@ -16,7 +16,7 @@ val AppIcons.Warning: ImageVector by lazy {
         viewportHeight = 960f,
     ).apply {
         path(fill = SolidColor(Color.Black)) {
-            moveToRelative(40f, -120f)
+            moveTo(40f, 840f)
             lineToRelative(440f, -760f)
             lineToRelative(440f, 760f)
             horizontalLineTo(40f)
