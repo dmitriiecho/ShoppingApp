@@ -6,14 +6,8 @@ import androidx.compose.ui.graphics.Color
 // App colors beyond the scheme are in AppColors.kt.
 // Palette colors are visible only inside :core:ui: screens take colors by meaning,
 // from MaterialTheme.colorScheme and ShoppingAppTheme.colors, not from here.
-//
-// Акцент — приглушённый оранжевый (терракотовый), нейтральные цвета светлой темы тёплые.
-// Акцент в светлой теме темнее, чем в тёмной: на белом у него контраст 5:1, белый текст на нём читается.
-// Фоны тёмной темы нейтральные графитовые: тёплые (с коричневой примесью) на тёмном выглядят желтоватыми.
-// Ошибки малиновые, а не стандартного красного Material: тот почти того же тона, что акцент, и сливается с ним,
-// а в тёмной теме стандартный слишком бледный.
 
-// Светлая тема
+// Light theme
 internal val PrimaryLight = Color(0xFFB3532A)
 internal val OnPrimaryLight = Color(0xFFFFFFFF)
 internal val PrimaryContainerLight = Color(0xFFF6DDCF)
@@ -56,7 +50,7 @@ internal val SurfaceContainerLight = Color(0xFFECE8E5)
 internal val SurfaceContainerHighLight = Color(0xFFE6E2DE)
 internal val SurfaceContainerHighestLight = Color(0xFFE0DCD8)
 
-// Тёмная тема
+// Dark theme
 internal val PrimaryDark = Color(0xFFE39565)
 internal val OnPrimaryDark = Color(0xFF3A1A08)
 internal val PrimaryContainerDark = Color(0xFF6A3519)
