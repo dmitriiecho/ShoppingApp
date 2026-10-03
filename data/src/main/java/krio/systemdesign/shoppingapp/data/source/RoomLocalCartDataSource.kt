@@ -27,7 +27,7 @@ class RoomLocalCartDataSource @Inject constructor(
         database.withTransaction {
             val existing = cartItemDao.find(product.id)
             val entity = if (existing != null) {
-                // Остаток из каталога свежее запомненного, поэтому обновляем и его.
+                // The stock level from the catalog is more recent than the stored one, so we update it as well.
                 existing.copy(
                     quantity = existing.quantity + quantity,
                     availableQuantity = product.availableQuantity,
@@ -92,8 +92,11 @@ class RoomLocalCartDataSource @Inject constructor(
                         val existing = cartItemDao.find(issue.productId) ?: return@forEach
                         cartItemDao.upsert(existing.copy(price = issue.newPrice))
                     }
-                    // Количество пользователь уменьшает сам, у каждого товара: разом такое изменение не принимается.
-                    is ItemIssue.NotEnoughStock -> Unit
+                    is ItemIssue.NotEnoughStock -> {
+                        // The user reduces the quantity themselves for each item: such a change is not accepted all at once.
+                        val existing = cartItemDao.find(issue.productId) ?: return@forEach
+                        cartItemDao.upsert(existing.copy(availableQuantity = issue.availableQuantity))
+                    }
                 }
             }
         }

@@ -19,17 +19,15 @@ class AppSettingsRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) : AppSettingsRepository {
 
-    // Файл настроек не прочитался — берём значения по умолчанию, а не роняем приложение.
     private val preferences: Flow<Preferences> = dataStore.data
         .catch { e ->
             if (e !is IOException) throw e
-            Log.w(TAG, "Не удалось прочитать настройки", e)
+            Log.w(TAG, "Failed to read settings", e)
             emit(emptyPreferences())
         }
 
     override fun observeThemeMode(): Flow<ThemeMode> = preferences
         .map { preferences ->
-            // Тема хранится по имени: если сохранённого значения нет или оно незнакомое, берём системную.
             val name = preferences[THEME_MODE_KEY]
             ThemeMode.entries.find { it.name == name } ?: ThemeMode.System
         }
@@ -39,13 +37,12 @@ class AppSettingsRepositoryImpl @Inject constructor(
             dataStore.edit { it[THEME_MODE_KEY] = mode.name }
             Result.success(Unit)
         } catch (e: IOException) {
-            Log.w(TAG, "Не удалось сохранить тему", e)
+            Log.w(TAG, "Failed to save theme", e)
             Result.failure(e)
         }
 
     override fun observeNetworkDelay(): Flow<NetworkDelay> = preferences
         .map { preferences ->
-            // Как и тема, хранится по имени. Нет значения или оно незнакомое — без задержки.
             val name = preferences[NETWORK_DELAY_KEY]
             NetworkDelay.entries.find { it.name == name } ?: NetworkDelay.None
         }
@@ -55,7 +52,7 @@ class AppSettingsRepositoryImpl @Inject constructor(
             dataStore.edit { it[NETWORK_DELAY_KEY] = delay.name }
             Result.success(Unit)
         } catch (e: IOException) {
-            Log.w(TAG, "Не удалось сохранить задержку запросов", e)
+            Log.w(TAG, "Failed to save network delay", e)
             Result.failure(e)
         }
 
