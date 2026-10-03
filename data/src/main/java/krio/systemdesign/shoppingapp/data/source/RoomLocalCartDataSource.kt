@@ -4,10 +4,10 @@ import androidx.room.withTransaction
 import krio.systemdesign.shoppingapp.data.database.ShoppingDatabase
 import krio.systemdesign.shoppingapp.data.database.dao.AppliedPromoCodeDao
 import krio.systemdesign.shoppingapp.data.database.dao.CartItemDao
-import krio.systemdesign.shoppingapp.data.database.entity.AppliedPromoCodeEntity
-import krio.systemdesign.shoppingapp.data.database.entity.CartItemEntity
+import krio.systemdesign.shoppingapp.data.database.entity.toCartItemEntity
+import krio.systemdesign.shoppingapp.data.database.entity.toDomain
+import krio.systemdesign.shoppingapp.data.database.entity.toEntity
 import krio.systemdesign.shoppingapp.domain.model.Cart
-import krio.systemdesign.shoppingapp.domain.model.CartItem
 import krio.systemdesign.shoppingapp.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.domain.model.Product
 import krio.systemdesign.shoppingapp.domain.model.PromoCode
@@ -33,14 +33,7 @@ class RoomLocalCartDataSource @Inject constructor(
                     availableQuantity = product.availableQuantity,
                 )
             } else {
-                CartItemEntity(
-                    productId = product.id,
-                    name = product.name,
-                    imageUrl = product.imageUrl,
-                    price = product.price,
-                    quantity = quantity,
-                    availableQuantity = product.availableQuantity,
-                )
+                product.toCartItemEntity(quantity)
             }
             cartItemDao.upsert(entity)
         }
@@ -77,8 +70,8 @@ class RoomLocalCartDataSource @Inject constructor(
             appliedPromoCodeDao.observe(),
         ) { entities, promoCode ->
             Cart(
-                items = entities.map { it.toCartItem() }.toPersistentList(),
-                promoCode = promoCode?.toPromoCode(),
+                items = entities.map { it.toDomain() }.toPersistentList(),
+                promoCode = promoCode?.toDomain(),
             )
         }
     }
@@ -100,29 +93,10 @@ class RoomLocalCartDataSource @Inject constructor(
     }
 
     override suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> = suspendRunCatching {
-        appliedPromoCodeDao.upsert(
-            AppliedPromoCodeEntity(
-                code = promoCode.code,
-                discountPercent = promoCode.discountPercent,
-            ),
-        )
+        appliedPromoCodeDao.upsert(promoCode.toEntity())
     }
 
     override suspend fun removePromoCode(): Result<Unit> = suspendRunCatching {
         appliedPromoCodeDao.delete()
     }
 }
-
-private fun CartItemEntity.toCartItem(): CartItem = CartItem(
-    productId = productId,
-    name = name,
-    imageUrl = imageUrl,
-    price = price,
-    quantity = quantity,
-    availableQuantity = availableQuantity,
-)
-
-private fun AppliedPromoCodeEntity.toPromoCode(): PromoCode = PromoCode(
-    code = code,
-    discountPercent = discountPercent,
-)
