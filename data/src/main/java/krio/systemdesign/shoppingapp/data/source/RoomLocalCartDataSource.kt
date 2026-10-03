@@ -92,11 +92,8 @@ class RoomLocalCartDataSource @Inject constructor(
                         val existing = cartItemDao.find(issue.productId) ?: return@forEach
                         cartItemDao.upsert(existing.copy(price = issue.newPrice))
                     }
-                    is ItemIssue.NotEnoughStock -> {
-                        // The user reduces the quantity themselves for each item: such a change is not accepted all at once.
-                        val existing = cartItemDao.find(issue.productId) ?: return@forEach
-                        cartItemDao.upsert(existing.copy(availableQuantity = issue.availableQuantity))
-                    }
+                    // The user decreases the quantity themselves for each item; such changes are not accepted in bulk.
+                    is ItemIssue.NotEnoughStock -> Unit
                 }
             }
         }
