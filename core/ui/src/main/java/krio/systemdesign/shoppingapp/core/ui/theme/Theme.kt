@@ -7,6 +7,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 
 // Палитра своя, а не от обоев телефона (динамические цвета Android 12+): так приложение выглядит
 // одинаково на всех устройствах, а цвета остаются насыщенными и контрастными.
@@ -91,7 +92,10 @@ fun ShoppingAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    CompositionLocalProvider(LocalAppColors provides if (darkTheme) DarkAppColors else LightAppColors) {
+    CompositionLocalProvider(
+        LocalDarkTheme provides darkTheme,
+        LocalAppColors provides if (darkTheme) DarkAppColors else LightAppColors,
+    ) {
         MaterialTheme(
             colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
             typography = AppTypography,
@@ -101,8 +105,18 @@ fun ShoppingAppTheme(
     }
 }
 
+// Тёмная ли тема. Тема переключается в настройках приложения, поэтому системный ночной режим
+// (isSystemInDarkTheme, ресурсы -night) с ней может не совпадать.
+private val LocalDarkTheme = staticCompositionLocalOf { false }
+
 // То, что тема приложения добавляет к MaterialTheme. Например, ShoppingAppTheme.colors.success.
 object ShoppingAppTheme {
+    // Например, ProductImage берёт по нему свою картинку «картинки нет».
+    val isDark: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDarkTheme.current
+
     val colors: AppColors
         @Composable
         @ReadOnlyComposable

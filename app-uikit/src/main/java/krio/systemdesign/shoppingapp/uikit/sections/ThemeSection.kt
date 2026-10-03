@@ -83,8 +83,6 @@ private fun appColorRoles(): List<ColorRole> {
         // В приложении success — цвет текста и значка на светлом оттенке самого себя.
         ColorRole("success", appColors.success, colors.background),
         ColorRole("cardContainer", appColors.cardContainer, colors.onSurface),
-        ColorRole("productImageCenter", appColors.productImageCenter, colors.onSurface),
-        ColorRole("productImageEdge", appColors.productImageEdge, colors.onSurface),
     )
 }
 

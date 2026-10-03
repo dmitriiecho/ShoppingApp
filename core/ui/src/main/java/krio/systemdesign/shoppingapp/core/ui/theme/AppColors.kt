@@ -3,44 +3,32 @@ package krio.systemdesign.shoppingapp.core.ui.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 
-// Цвета приложения, которых нет в схеме Material (MaterialTheme.colorScheme), — у каждого своё назначение.
-// Светлый или тёмный набор выбирает ShoppingAppTheme по тому же флагу darkTheme, что и схему,
-// поэтому компонентам не нужно угадывать тему по цветам. Берутся через ShoppingAppTheme.colors.
+// Цвета приложения по смыслу, которых нет в схеме Material (MaterialTheme.colorScheme).
+// Здесь только то, что нужно разным компонентам; цвета одного компонента вычисляются рядом с ним из схемы,
+// как у компонентов Material. Светлый или тёмный набор выбирает ShoppingAppTheme. Берутся через ShoppingAppTheme.colors.
 @Immutable
 class AppColors(
-    // Тёмная ли тема: например, ProductImage берёт по ней свою картинку «картинки нет».
-    val isDark: Boolean,
     // «Всё в порядке», например действующий промокод.
     val success: Color,
     // Фон карточек (AppCard). В светлой теме белый на сером фоне страницы, в тёмной светлее фона:
     // так карточки не сливаются со страницей. У стандартной Card фон surfaceContainerHighest —
     // в светлой теме это серый, почти как фон страницы.
     val cardContainer: Color,
-    // Плитка под картинкой товара (ProductImage): светлое пятно в центре и чуть тонированные края,
-    // как на студийной фотографии.
-    val productImageCenter: Color,
-    val productImageEdge: Color,
 )
 
+// Зелёный для success.
+internal val SuccessLight = Color(0xFF2E7D32)
+internal val SuccessDark = Color(0xFF8BD69B)
+
 internal val LightAppColors = AppColors(
-    isDark = false,
     success = SuccessLight,
-    cardContainer = Color.White,
-    // Белый центр и края с лёгким оттенком акцента.
-    productImageCenter = Color.White,
-    productImageEdge = lerp(SurfaceContainerHighLight, PrimaryLight, 0.04f),
+    cardContainer = SurfaceContainerLowestLight,
 )
 
 internal val DarkAppColors = AppColors(
-    isDark = true,
     success = SuccessDark,
     cardContainer = SurfaceContainerHighDark,
-    // Вся плитка светлее карточки, а центр — заметно: иначе плитка теряется на карточке,
-    // а чёрные товары (наушники, клавиатура) сливаются с фоном.
-    productImageCenter = lerp(SurfaceContainerHighestDark, Color.White, 0.30f),
-    productImageEdge = lerp(lerp(SurfaceContainerHighestDark, Color.White, 0.06f), PrimaryDark, 0.03f),
 )
 
 // Без ShoppingAppTheme (например, в чужой теме) — светлый набор.

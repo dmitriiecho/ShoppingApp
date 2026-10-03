@@ -2,7 +2,8 @@ package krio.systemdesign.shoppingapp.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Палитра приложения: по константе на каждую роль схемы Material в каждой теме, как в экспорте Material Theme Builder.
+// Схема Material приложения: по константе на каждую роль в каждой теме, как в экспорте Material Theme Builder.
+// Свои цвета сверх схемы — в AppColors.kt.
 // Светлый и тёмный блоки идут строка в строку, Theme.kt только раскладывает их по ролям.
 // Цвета палитры видны только внутри :core:ui: экраны берут цвета по смыслу, из MaterialTheme.colorScheme
 // и ShoppingAppTheme.colors, а не отсюда.
@@ -98,8 +99,3 @@ internal val SurfaceContainerLowDark = Color(0xFF1B1B1E)
 internal val SurfaceContainerDark = Color(0xFF202023)
 internal val SurfaceContainerHighDark = Color(0xFF2A2A2E)
 internal val SurfaceContainerHighestDark = Color(0xFF353539)
-
-// Цвета AppColors, которых нет в схеме Material.
-// Зелёный для «всё в порядке», например для действующего промокода.
-internal val SuccessLight = Color(0xFF2E7D32)
-internal val SuccessDark = Color(0xFF8BD69B)

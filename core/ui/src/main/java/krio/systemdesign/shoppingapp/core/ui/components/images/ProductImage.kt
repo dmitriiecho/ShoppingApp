@@ -18,9 +18,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Headphones
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -61,11 +64,11 @@ fun ProductImage(
     // (see LocalSharedTransitionScope).
     sharedElementKey: Any? = null,
 ) {
-    val colors = ShoppingAppTheme.colors
+    val colors = productImageColors()
     var isLoading by remember { mutableStateOf(false) }
     val shared = productImageSharedElement(sharedElementKey, cornerRadius)
     val placeholder = painterResource(
-        if (colors.isDark) R.drawable.product_image_placeholder_dark else R.drawable.product_image_placeholder,
+        if (ShoppingAppTheme.isDark) R.drawable.product_image_placeholder_dark else R.drawable.product_image_placeholder,
     )
     val context = LocalPlatformContext.current
     val request = remember(context, imageUrl) {
@@ -80,12 +83,12 @@ fun ProductImage(
         modifier = modifier
             .then(shared.tile)
             .clip(RoundedCornerShape(shared.cornerRadius))
-            .background(Brush.radialGradient(listOf(colors.productImageCenter, colors.productImageEdge))),
+            .background(Brush.radialGradient(listOf(colors.center, colors.edge))),
     ) {
         if (isLoading) {
             Shimmer(
-                base = colors.productImageEdge,
-                highlight = colors.productImageCenter,
+                base = colors.edge,
+                highlight = colors.center,
                 modifier = Modifier.matchParentSize(),
             )
         }
@@ -103,6 +106,29 @@ fun ProductImage(
             // No shimmer if the cached image is already shown.
             onState = { isLoading = it is AsyncImagePainter.State.Loading && it.painter == null },
             contentScale = ContentScale.Fit,
+        )
+    }
+}
+
+// The tile under the image: a light spot in the center and slightly tinted edges, like a studio photo.
+private class ProductImageColors(val center: Color, val edge: Color)
+
+@Composable
+@ReadOnlyComposable
+private fun productImageColors(): ProductImageColors {
+    val scheme = MaterialTheme.colorScheme
+    return if (ShoppingAppTheme.isDark) {
+        // The whole tile is lighter than the card and the center noticeably so: otherwise the tile gets lost on the card
+        // and black products (headphones, keyboard) blend into it.
+        ProductImageColors(
+            center = lerp(scheme.surfaceContainerHighest, Color.White, 0.30f),
+            edge = lerp(lerp(scheme.surfaceContainerHighest, Color.White, 0.06f), scheme.primary, 0.03f),
+        )
+    } else {
+        // A white center and edges with a hint of the accent.
+        ProductImageColors(
+            center = Color.White,
+            edge = lerp(scheme.surfaceContainerHigh, scheme.primary, 0.04f),
         )
     }
 }
