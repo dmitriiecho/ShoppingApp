@@ -3,11 +3,11 @@ package krio.systemdesign.shoppingapp.uikit.sections
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import krio.systemdesign.shoppingapp.core.ui.components.AppliedPromoCodeNotice
-import krio.systemdesign.shoppingapp.core.ui.components.ErrorBanner
-import krio.systemdesign.shoppingapp.core.ui.components.Notice
-import krio.systemdesign.shoppingapp.core.ui.components.NoticeStyle
-import krio.systemdesign.shoppingapp.core.ui.components.NoticeWithAction
+import krio.systemdesign.shoppingapp.core.ui.components.notices.AppliedPromoCodeNotice
+import krio.systemdesign.shoppingapp.core.ui.components.notices.ErrorBanner
+import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
+import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
+import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R

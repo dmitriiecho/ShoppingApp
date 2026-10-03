@@ -13,14 +13,18 @@
     <string name="uikit_section_notices_description">Notices on cards and error banners</string>
     <string name="uikit_section_cards">Cards and lists</string>
     <string name="uikit_section_cards_description">Product cards, order rows, list items, coupons</string>
+    <string name="uikit_section_images">Product images</string>
+    <string name="uikit_section_images_description">Loaded image and load error</string>
     <string name="uikit_section_inputs">Text fields</string>
     <string name="uikit_section_inputs_description">Text fields and search</string>
     <string name="uikit_section_loading">Loading</string>
-    <string name="uikit_section_loading_description">Placeholders and product images</string>
+    <string name="uikit_section_loading_description">Placeholders while content loads</string>
     <string name="uikit_section_screen_states">Screen states</string>
     <string name="uikit_section_screen_states_description">Empty screen and error</string>
-    <string name="uikit_section_bars">Bars and dialogs</string>
-    <string name="uikit_section_bars_description">Bottom bars and confirmation dialog</string>
+    <string name="uikit_section_bars">Bars</string>
+    <string name="uikit_section_bars_description">Total bar and tab bar</string>
+    <string name="uikit_section_dialogs">Dialogs</string>
+    <string name="uikit_section_dialogs_description">Confirmation dialog</string>
 
     <!-- Подписи к примерам -->
     <string name="uikit_variant_interactive_cart">Tap “Add to cart”, then “+”: at 3 the “+” turns off</string>

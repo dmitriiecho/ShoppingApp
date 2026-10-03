@@ -13,6 +13,7 @@ import krio.systemdesign.shoppingapp.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.catalog.R
 import krio.systemdesign.shoppingapp.feature.catalog.domain.model.ProductLoadResult
 import krio.systemdesign.shoppingapp.feature.catalog.domain.usecase.GetProductUseCase
+import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.ProductDetailsRoute
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,7 +22,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.ProductDetailsRoute
 import javax.inject.Inject
 
 @HiltViewModel

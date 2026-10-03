@@ -3,7 +3,9 @@ package krio.systemdesign.shoppingapp.uikit
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Announcement
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Downloading
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.SmartButton
 import androidx.compose.material.icons.outlined.Smartphone
@@ -26,6 +28,7 @@ enum class UiKitSection(
         R.string.uikit_section_notices_description,
     ),
     Cards(Icons.Outlined.ViewAgenda, R.string.uikit_section_cards, R.string.uikit_section_cards_description),
+    Images(Icons.Outlined.Image, R.string.uikit_section_images, R.string.uikit_section_images_description),
     Inputs(Icons.Outlined.TextFields, R.string.uikit_section_inputs, R.string.uikit_section_inputs_description),
     Loading(Icons.Outlined.Downloading, R.string.uikit_section_loading, R.string.uikit_section_loading_description),
     ScreenStates(
@@ -34,4 +37,9 @@ enum class UiKitSection(
         R.string.uikit_section_screen_states_description,
     ),
     Bars(Icons.Outlined.WebAsset, R.string.uikit_section_bars, R.string.uikit_section_bars_description),
+    Dialogs(
+        Icons.Outlined.ChatBubbleOutline,
+        R.string.uikit_section_dialogs,
+        R.string.uikit_section_dialogs_description,
+    ),
 }

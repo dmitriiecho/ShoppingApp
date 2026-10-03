@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.components.EmptyState
-import krio.systemdesign.shoppingapp.core.ui.components.ErrorState
+import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
+import krio.systemdesign.shoppingapp.core.ui.components.screenstates.ErrorState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData

@@ -20,15 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.components.CartQuantityControlPlaceholder
-import krio.systemdesign.shoppingapp.core.ui.components.ProductCardPlaceholder
-import krio.systemdesign.shoppingapp.core.ui.components.ProductImage
-import krio.systemdesign.shoppingapp.core.ui.components.PromoCodeCouponPlaceholder
-import krio.systemdesign.shoppingapp.core.ui.components.ShimmerPlaceholder
-import krio.systemdesign.shoppingapp.core.ui.components.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.components.buttons.CartQuantityControlPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.cards.ProductCardPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.cards.PromoCodeCouponPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
+import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.components.SampleData
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
 import krio.systemdesign.shoppingapp.uikit.components.SampleSwitch
 import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
@@ -106,23 +104,5 @@ fun LoadingSection(innerPadding: PaddingValues) {
                 }
             }
         }
-        sampleGroup("ProductImage") {
-            SampleVariant(stringResource(R.string.uikit_variant_loaded)) {
-                ProductImage(
-                    imageUrl = SampleData.headphonesImageUrl,
-                    contentDescription = stringResource(R.string.uikit_sample_product_headphones),
-                    modifier = Modifier.size(SAMPLE_IMAGE_SIZE),
-                )
-            }
-            SampleVariant(stringResource(R.string.uikit_variant_load_failed)) {
-                ProductImage(
-                    imageUrl = SampleData.missingImageUrl,
-                    contentDescription = null,
-                    modifier = Modifier.size(SAMPLE_IMAGE_SIZE),
-                )
-            }
-        }
     }
 }
-
-private val SAMPLE_IMAGE_SIZE = 120.dp

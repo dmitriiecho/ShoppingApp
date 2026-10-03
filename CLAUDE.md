@@ -6,6 +6,7 @@ applicationId: `krio.systemdesign.shoppingapp`, launcher activity: `.MainActivit
 ## Modules
 - `:app` — entry point, navigation host
 - `:app-uikit` — separate app showing every `:core:ui` component (UI kit catalog); applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity`. Depends only on `:core:ui`: a new reusable component goes into `:core:ui` and gets a sample in `app-uikit/.../sections/`.
+  Packages in `core/ui/.../components/` mirror the UI kit sections one to one (`buttons` ↔ `ButtonsSection`, `cards` ↔ `CardsSection`, ...): a component goes into the package of the section that shows it.
 - `:domain`, `:data`
 - `:core:ui` (shared Compose components and theme), `:core:network`, `:core:config`
 - `:feature:catalog`, `:feature:cart`, `:feature:promo`, `:feature:checkout`, `:feature:settings`

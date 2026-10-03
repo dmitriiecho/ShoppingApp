@@ -16,7 +16,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
-import krio.systemdesign.shoppingapp.core.ui.components.AppNavigationBarItem
+import krio.systemdesign.shoppingapp.core.ui.components.bars.AppNavigationBarItem
 
 @Composable
 fun AppBottomBar(

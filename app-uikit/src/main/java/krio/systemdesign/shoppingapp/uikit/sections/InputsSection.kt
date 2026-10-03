@@ -13,9 +13,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.components.AppCard
-import krio.systemdesign.shoppingapp.core.ui.components.AppTextField
-import krio.systemdesign.shoppingapp.core.ui.components.SearchField
+import krio.systemdesign.shoppingapp.core.ui.components.cards.AppCard
+import krio.systemdesign.shoppingapp.core.ui.components.inputs.AppTextField
+import krio.systemdesign.shoppingapp.core.ui.components.inputs.SearchField
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleList

@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import krio.systemdesign.shoppingapp.core.ui.components.AppListItem
+import krio.systemdesign.shoppingapp.core.ui.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.uikit.components.ThemeToggleButton
 
 @OptIn(ExperimentalMaterial3Api::class)

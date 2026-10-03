@@ -6,11 +6,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import krio.systemdesign.shoppingapp.core.ui.components.NavigateBackIconButton
+import krio.systemdesign.shoppingapp.core.ui.components.buttons.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.uikit.components.ThemeToggleButton
 import krio.systemdesign.shoppingapp.uikit.sections.BarsSection
 import krio.systemdesign.shoppingapp.uikit.sections.ButtonsSection
 import krio.systemdesign.shoppingapp.uikit.sections.CardsSection
+import krio.systemdesign.shoppingapp.uikit.sections.DialogsSection
+import krio.systemdesign.shoppingapp.uikit.sections.ImagesSection
 import krio.systemdesign.shoppingapp.uikit.sections.InputsSection
 import krio.systemdesign.shoppingapp.uikit.sections.LoadingSection
 import krio.systemdesign.shoppingapp.uikit.sections.NoticesSection
@@ -43,10 +45,12 @@ fun SectionScreen(
             UiKitSection.Buttons -> ButtonsSection(innerPadding)
             UiKitSection.Notices -> NoticesSection(innerPadding)
             UiKitSection.Cards -> CardsSection(innerPadding)
+            UiKitSection.Images -> ImagesSection(innerPadding)
             UiKitSection.Inputs -> InputsSection(innerPadding)
             UiKitSection.Loading -> LoadingSection(innerPadding)
             UiKitSection.ScreenStates -> ScreenStatesSection(innerPadding)
             UiKitSection.Bars -> BarsSection(innerPadding)
+            UiKitSection.Dialogs -> DialogsSection(innerPadding)
         }
     }
 }

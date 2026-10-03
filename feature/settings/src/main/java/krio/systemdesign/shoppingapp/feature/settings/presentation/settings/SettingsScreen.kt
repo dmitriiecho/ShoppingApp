@@ -32,8 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import krio.systemdesign.shoppingapp.core.ui.components.AppListItem
-import krio.systemdesign.shoppingapp.core.ui.components.SingleChoiceButtons
+import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
+import krio.systemdesign.shoppingapp.core.ui.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode

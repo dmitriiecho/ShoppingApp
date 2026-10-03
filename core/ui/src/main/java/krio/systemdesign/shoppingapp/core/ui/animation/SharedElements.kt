@@ -5,13 +5,16 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 
-// Общий элемент — один и тот же элемент на двух экранах (например, картинка товара в списке и на карточке товара).
-// Пока один экран сменяет другой, такой элемент перелетает со своего места на первом экране на место на втором.
+// Shared element: the same element on two screens (e.g. the product image in the list and on the product details
+// screen) that flies from one screen to the other during navigation. Modifier.sharedElement needs two scopes.
+// They are created in navigation, but used deep inside screens (ProductImage), so they are passed via
+// CompositionLocal instead of parameters through every screen. Null means the element does not fly,
+// it just appears and disappears with its screen.
 
-// Слой, поверх которого летят общие элементы. Его задаёт AppNavHost вокруг NavHost.
-// Null — сейчас ничего не перелетает (например, пока одна вкладка сменяет другую).
+// The layer elements fly over. Provided by AppNavHost around NavHost.
+// Null while tabs are switching, so that an image does not fly from one tab to another.
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
 
-// Анимация перехода к экрану и от него. Её задаёт экран в графе навигации, если его общие элементы должны перелетать.
-// На экранах без неё элементы не перелетают, а появляются и исчезают вместе с экраном.
+// The enter and exit animation of the current screen. Provided by a screen in the navigation graph
+// (catalog, cart) whose elements should fly. Null on other screens and outside navigation (UI kit).
 val LocalNavAnimatedVisibilityScope = staticCompositionLocalOf<AnimatedVisibilityScope?> { null }

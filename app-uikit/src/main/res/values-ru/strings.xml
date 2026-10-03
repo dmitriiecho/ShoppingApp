@@ -11,14 +11,18 @@
     <string name="uikit_section_notices_description">Пометки на карточках и плашки ошибок</string>
     <string name="uikit_section_cards">Карточки и списки</string>
     <string name="uikit_section_cards_description">Карточки товаров, строки заказа, пункты списка, купоны</string>
+    <string name="uikit_section_images">Картинки товаров</string>
+    <string name="uikit_section_images_description">Загруженная картинка и ошибка загрузки</string>
     <string name="uikit_section_inputs">Поля ввода</string>
     <string name="uikit_section_inputs_description">Поля ввода и поиск</string>
     <string name="uikit_section_loading">Загрузка</string>
-    <string name="uikit_section_loading_description">Заглушки и картинки товаров</string>
+    <string name="uikit_section_loading_description">Заглушки, пока грузится содержимое</string>
     <string name="uikit_section_screen_states">Состояния экрана</string>
     <string name="uikit_section_screen_states_description">Пустой экран и ошибка</string>
-    <string name="uikit_section_bars">Панели и диалоги</string>
-    <string name="uikit_section_bars_description">Нижние панели и диалог подтверждения</string>
+    <string name="uikit_section_bars">Панели</string>
+    <string name="uikit_section_bars_description">Панель с итогом и панель вкладок</string>
+    <string name="uikit_section_dialogs">Диалоги</string>
+    <string name="uikit_section_dialogs_description">Диалог подтверждения</string>
 
     <!-- Подписи к примерам -->
     <string name="uikit_variant_interactive_cart">Нажмите «В корзину», потом «+»: на 3 «+» выключится</string>
