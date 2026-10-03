@@ -6,12 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.outlined.Contrast
-import androidx.compose.material.icons.outlined.HourglassEmpty
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,6 +29,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Warning
 import krio.systemdesign.shoppingapp.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.feature.settings.R
@@ -121,11 +121,11 @@ fun SettingsScreen(
             // Задержка — отдельный блок: она меняет все запросы, а пункты ниже — действия с корзиной и ссылками.
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             AppListItem(
-                icon = Icons.Default.Link,
+                icon = MaterialSymbols.Link,
                 title = stringResource(R.string.settings_deep_links_page),
                 description = stringResource(R.string.settings_deep_links_page_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnDeepLinksPageClick) },
-                trailing = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
+                trailing = { Icon(MaterialSymbols.OpenInNew, contentDescription = null) },
             )
             // Значки трёх пунктов те же, что у плашек в корзине, которые эти товары вызывают.
             AppListItem(
@@ -148,7 +148,7 @@ fun SettingsScreen(
             )
             AppListItem(
                 // Своей плашки у сочетания проблем в корзине нет, поэтому иконка общая: «с товаром несколько проблем».
-                icon = Icons.Outlined.Warning,
+                icon = MaterialSymbols.Warning,
                 title = stringResource(R.string.settings_add_price_changed_not_enough_stock_product),
                 description = stringResource(R.string.settings_add_price_changed_not_enough_stock_product_description),
                 onClick = { viewModel.onEvent(SettingsEvent.OnAddPriceChangedNotEnoughStockProductClick) },
@@ -166,7 +166,7 @@ private fun ThemeModeItem(
     modifier: Modifier = Modifier,
 ) {
     AppListItem(
-        icon = Icons.Outlined.Contrast,
+        icon = MaterialSymbols.Contrast,
         title = stringResource(R.string.settings_theme),
         description = stringResource(selected.titleRes),
         modifier = modifier,
@@ -187,7 +187,7 @@ private fun NetworkDelayItem(
     modifier: Modifier = Modifier,
 ) {
     AppListItem(
-        icon = Icons.Outlined.HourglassEmpty,
+        icon = MaterialSymbols.HourglassEmpty,
         title = stringResource(R.string.settings_network_delay),
         description = stringResource(selected.descriptionRes),
         modifier = modifier,

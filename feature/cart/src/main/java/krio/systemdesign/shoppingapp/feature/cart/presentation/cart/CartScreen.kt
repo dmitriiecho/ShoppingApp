@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.RemoveShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -48,6 +46,8 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.RemoveShoppingCart
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -117,7 +117,7 @@ fun CartScreen(
                     if (!uiState.isEmpty) {
                         IconButton(onClick = { viewModel.onEvent(CartEvent.OnClearCartClick) }) {
                             Icon(
-                                imageVector = Icons.Outlined.RemoveShoppingCart,
+                                imageVector = MaterialSymbols.RemoveShoppingCart,
                                 contentDescription = stringResource(R.string.cart_clear),
                                 tint = MaterialTheme.colorScheme.error,
                             )

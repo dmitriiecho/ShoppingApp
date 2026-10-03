@@ -1,9 +1,5 @@
 package krio.systemdesign.shoppingapp.navigation.bottombar
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +13,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
 import krio.systemdesign.shoppingapp.core.ui.components.bars.AppNavigationBarItem
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HomeFilled
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 
 @Composable
 fun AppBottomBar(
@@ -43,7 +43,7 @@ fun AppBottomBar(
                 it.hasRoute<BottomNavRoutes.CatalogTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CatalogTab) },
-            icon = Icons.Default.Home,
+            icon = MaterialSymbols.HomeFilled,
             label = stringResource(R.string.app_bottom_bar_catalog),
         )
         AppNavigationBarItem(
@@ -51,7 +51,7 @@ fun AppBottomBar(
                 it.hasRoute<BottomNavRoutes.CartTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.CartTab) },
-            icon = Icons.Default.ShoppingCart,
+            icon = MaterialSymbols.ShoppingCartFilled,
             label = stringResource(R.string.app_bottom_bar_cart),
             badgeCount = cartItemCount,
         )
@@ -60,7 +60,7 @@ fun AppBottomBar(
                 it.hasRoute<BottomNavRoutes.SettingsTab>()
             },
             onClick = { navController.navigateToBottomTab(BottomNavRoutes.SettingsTab) },
-            icon = Icons.Default.Settings,
+            icon = MaterialSymbols.SettingsFilled,
             label = stringResource(R.string.app_bottom_bar_settings),
         )
     }

@@ -1,18 +1,18 @@
 package krio.systemdesign.shoppingapp.uikit
 
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Announcement
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
-import androidx.compose.material.icons.outlined.Downloading
-import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material.icons.outlined.SmartButton
-import androidx.compose.material.icons.outlined.Smartphone
-import androidx.compose.material.icons.outlined.TextFields
-import androidx.compose.material.icons.outlined.ViewAgenda
-import androidx.compose.material.icons.outlined.WebAsset
 import androidx.compose.ui.graphics.vector.ImageVector
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ChatBubble
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Downloading
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Feedback
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Image
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Palette
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SmartButton
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Smartphone
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.TextFields
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ViewAgenda
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.WebAsset
 
 // Разделы каталога: значок, название и пояснение для списка разделов. Что показать в разделе, решает SectionScreen.
 enum class UiKitSection(
@@ -20,25 +20,25 @@ enum class UiKitSection(
     @StringRes val titleRes: Int,
     @StringRes val descriptionRes: Int,
 ) {
-    Theme(Icons.Outlined.Palette, R.string.uikit_section_theme, R.string.uikit_section_theme_description),
-    Buttons(Icons.Outlined.SmartButton, R.string.uikit_section_buttons, R.string.uikit_section_buttons_description),
+    Theme(MaterialSymbols.Palette, R.string.uikit_section_theme, R.string.uikit_section_theme_description),
+    Buttons(MaterialSymbols.SmartButton, R.string.uikit_section_buttons, R.string.uikit_section_buttons_description),
     Notices(
-        Icons.AutoMirrored.Outlined.Announcement,
+        MaterialSymbols.Feedback,
         R.string.uikit_section_notices,
         R.string.uikit_section_notices_description,
     ),
-    Cards(Icons.Outlined.ViewAgenda, R.string.uikit_section_cards, R.string.uikit_section_cards_description),
-    Images(Icons.Outlined.Image, R.string.uikit_section_images, R.string.uikit_section_images_description),
-    Inputs(Icons.Outlined.TextFields, R.string.uikit_section_inputs, R.string.uikit_section_inputs_description),
-    Loading(Icons.Outlined.Downloading, R.string.uikit_section_loading, R.string.uikit_section_loading_description),
+    Cards(MaterialSymbols.ViewAgenda, R.string.uikit_section_cards, R.string.uikit_section_cards_description),
+    Images(MaterialSymbols.Image, R.string.uikit_section_images, R.string.uikit_section_images_description),
+    Inputs(MaterialSymbols.TextFields, R.string.uikit_section_inputs, R.string.uikit_section_inputs_description),
+    Loading(MaterialSymbols.Downloading, R.string.uikit_section_loading, R.string.uikit_section_loading_description),
     ScreenStates(
-        Icons.Outlined.Smartphone,
+        MaterialSymbols.Smartphone,
         R.string.uikit_section_screen_states,
         R.string.uikit_section_screen_states_description,
     ),
-    Bars(Icons.Outlined.WebAsset, R.string.uikit_section_bars, R.string.uikit_section_bars_description),
+    Bars(MaterialSymbols.WebAsset, R.string.uikit_section_bars, R.string.uikit_section_bars_description),
     Dialogs(
-        Icons.Outlined.ChatBubbleOutline,
+        MaterialSymbols.ChatBubble,
         R.string.uikit_section_dialogs,
         R.string.uikit_section_dialogs_description,
     ),

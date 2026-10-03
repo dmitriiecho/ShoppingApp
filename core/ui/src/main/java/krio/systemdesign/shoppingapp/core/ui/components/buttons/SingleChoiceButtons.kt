@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,8 +98,8 @@ private fun SingleChoiceButtonsPreview() {
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         val paymentMethods = listOf(
-                            Icons.Outlined.CreditCard to "Card",
-                            Icons.Outlined.Payments to "Cash",
+                            MaterialSymbols.CreditCard to "Card",
+                            MaterialSymbols.Payments to "Cash",
                         )
                         listOf(true, false).forEach { enabled ->
                             SingleChoiceButtons(

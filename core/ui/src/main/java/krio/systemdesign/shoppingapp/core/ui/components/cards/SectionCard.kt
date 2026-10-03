@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,6 +21,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -78,7 +78,7 @@ private fun SectionCardPreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 SectionCard(
-                    icon = Icons.Outlined.ShoppingBag,
+                    icon = MaterialSymbols.ShoppingBag,
                     title = "Order items",
                 ) {
                     OrderItemRow(

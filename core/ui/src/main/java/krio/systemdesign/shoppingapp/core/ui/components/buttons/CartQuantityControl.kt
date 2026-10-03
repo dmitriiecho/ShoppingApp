@@ -18,11 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -46,6 +41,11 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Add
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DeleteFilled
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Remove
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable
@@ -71,7 +71,7 @@ fun CartQuantityControl(
                     .heightIn(min = controlHeight),
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ShoppingCart,
+                    imageVector = MaterialSymbols.ShoppingCartFilled,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                 )
@@ -99,7 +99,7 @@ fun CartQuantityControl(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 CartControlIconButton(
-                    imageVector = Icons.Filled.Remove,
+                    imageVector = MaterialSymbols.Remove,
                     contentDescription = stringResource(R.string.core_ui_decrease_quantity),
                     onClick = onDecrease,
                     size = controlHeight,
@@ -113,7 +113,7 @@ fun CartQuantityControl(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 CartControlIconButton(
-                    imageVector = Icons.Filled.Add,
+                    imageVector = MaterialSymbols.Add,
                     contentDescription = stringResource(R.string.core_ui_increase_quantity),
                     onClick = onIncrease,
                     size = controlHeight,
@@ -123,7 +123,7 @@ fun CartQuantityControl(
             }
         }
         CartControlIconButton(
-            imageVector = Icons.Filled.Delete,
+            imageVector = MaterialSymbols.DeleteFilled,
             contentDescription = stringResource(R.string.core_ui_remove_from_cart),
             onClick = onRemoveAll,
             size = controlHeight,

@@ -12,13 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Payments
-import androidx.compose.material.icons.outlined.Receipt
-import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -51,6 +44,13 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.AccountBalanceWallet
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LocationOn
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Receipt
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
@@ -147,7 +147,7 @@ private fun CheckoutContent(
         verticalArrangement = Arrangement.spacedBy(Spacing.SectionSpacing),
     ) {
         SectionCard(
-            icon = Icons.Outlined.ShoppingBag,
+            icon = MaterialSymbols.ShoppingBag,
             title = stringResource(R.string.checkout_order_items),
         ) {
             uiState.items.forEach { item ->
@@ -162,7 +162,7 @@ private fun CheckoutContent(
         }
 
         SectionCard(
-            icon = Icons.Outlined.LocationOn,
+            icon = MaterialSymbols.LocationOn,
             title = stringResource(R.string.checkout_delivery_address),
         ) {
             // Улица и квартира в одну строку: квартира короткая, отдельная строка для неё — пустое место.
@@ -193,7 +193,7 @@ private fun CheckoutContent(
         }
 
         SectionCard(
-            icon = Icons.Outlined.AccountBalanceWallet,
+            icon = MaterialSymbols.AccountBalanceWallet,
             title = stringResource(R.string.checkout_payment),
         ) {
             // Переключатель на всю ширину, как выбор темы в настройках.
@@ -218,7 +218,7 @@ private fun CheckoutContent(
         }
 
         SectionCard(
-            icon = Icons.Outlined.Receipt,
+            icon = MaterialSymbols.Receipt,
             title = stringResource(R.string.checkout_order_total),
         ) {
             // Как в корзине: плашка промокода, под ней линия, потом суммы.
@@ -249,6 +249,6 @@ private val PaymentMethod.titleRes: Int
 
 private val PaymentMethod.icon: ImageVector
     get() = when (this) {
-        PaymentMethod.Card -> Icons.Outlined.CreditCard
-        PaymentMethod.Cash -> Icons.Outlined.Payments
+        PaymentMethod.Card -> MaterialSymbols.CreditCard
+        PaymentMethod.Cash -> MaterialSymbols.Payments
     }

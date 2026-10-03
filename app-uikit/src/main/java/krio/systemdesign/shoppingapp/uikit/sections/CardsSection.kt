@@ -7,11 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.outlined.HourglassEmpty
-import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,6 +31,11 @@ import krio.systemdesign.shoppingapp.core.ui.components.cards.SectionCard
 import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
@@ -219,7 +219,7 @@ fun CardsSection(innerPadding: PaddingValues) {
         sampleGroup("SectionCard") {
             SampleVariant(stringResource(R.string.uikit_variant_as_in_checkout)) {
                 SectionCard(
-                    icon = Icons.Outlined.ShoppingBag,
+                    icon = MaterialSymbols.ShoppingBag,
                     title = stringResource(R.string.uikit_sample_order_items),
                 ) {
                     SampleOrderItems()
@@ -266,17 +266,17 @@ fun CardsSection(innerPadding: PaddingValues) {
         sampleGroup("AppListItem") {
             SampleVariant(stringResource(R.string.uikit_variant_trailing_icon), contentPadding = 0.dp) {
                 AppListItem(
-                    icon = Icons.Default.Link,
+                    icon = MaterialSymbols.Link,
                     title = stringResource(R.string.uikit_sample_deep_links),
                     description = stringResource(R.string.uikit_sample_deep_links_description),
                     onClick = {},
-                    trailing = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
+                    trailing = { Icon(MaterialSymbols.OpenInNew, contentDescription = null) },
                 )
             }
             SampleVariant(stringResource(R.string.uikit_variant_trailing_choice), contentPadding = 0.dp) {
                 var selectedSeconds by rememberSaveable { mutableIntStateOf(0) }
                 AppListItem(
-                    icon = Icons.Outlined.HourglassEmpty,
+                    icon = MaterialSymbols.HourglassEmpty,
                     title = stringResource(R.string.uikit_sample_request_delay),
                     description = stringResource(R.string.uikit_sample_seconds, selectedSeconds),
                     trailing = {

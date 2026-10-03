@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -50,6 +48,8 @@ import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import krio.systemdesign.shoppingapp.core.ui.R
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HeadphonesFilled
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
 import krio.systemdesign.shoppingapp.core.ui.theme.ShapeRadius
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
@@ -168,7 +168,7 @@ private fun Shimmer(
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ProductImagePreview() {
-    val loadedImage = rememberVectorPainter(Icons.Default.Headphones)
+    val loadedImage = rememberVectorPainter(MaterialSymbols.HeadphonesFilled)
     ShoppingAppTheme {
         Surface {
             Row(

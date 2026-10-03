@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +28,9 @@ import krio.systemdesign.shoppingapp.core.ui.components.buttons.NavigateBackIcon
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.OutOfStockButton
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.ScrollToTopButton
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
 import krio.systemdesign.shoppingapp.uikit.components.SampleList
@@ -148,8 +148,8 @@ fun ButtonsSection(innerPadding: PaddingValues) {
 }
 
 private enum class SamplePaymentMethod(val icon: ImageVector, @StringRes val titleRes: Int) {
-    Card(Icons.Outlined.CreditCard, R.string.uikit_sample_payment_card),
-    Cash(Icons.Outlined.Payments, R.string.uikit_sample_payment_cash),
+    Card(MaterialSymbols.CreditCard, R.string.uikit_sample_payment_card),
+    Cash(MaterialSymbols.Payments, R.string.uikit_sample_payment_cash),
 }
 
 // Сколько товара на складе в примере CartQuantityControl: на этом числе «+» выключается.

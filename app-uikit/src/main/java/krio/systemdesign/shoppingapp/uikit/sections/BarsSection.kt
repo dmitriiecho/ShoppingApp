@@ -1,10 +1,6 @@
 package krio.systemdesign.shoppingapp.uikit.sections
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +16,10 @@ import krio.systemdesign.shoppingapp.core.ui.components.bars.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HomeFilled
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData
@@ -85,20 +85,20 @@ private fun SampleNavigationBar(cartItemCount: Int) {
         AppNavigationBarItem(
             selected = selectedTab == 0,
             onClick = { selectedTab = 0 },
-            icon = Icons.Default.Home,
+            icon = MaterialSymbols.HomeFilled,
             label = stringResource(R.string.uikit_sample_tab_catalog),
         )
         AppNavigationBarItem(
             selected = selectedTab == 1,
             onClick = { selectedTab = 1 },
-            icon = Icons.Default.ShoppingCart,
+            icon = MaterialSymbols.ShoppingCartFilled,
             label = stringResource(R.string.uikit_sample_tab_cart),
             badgeCount = cartItemCount,
         )
         AppNavigationBarItem(
             selected = selectedTab == 2,
             onClick = { selectedTab = 2 },
-            icon = Icons.Default.Settings,
+            icon = MaterialSymbols.SettingsFilled,
             label = stringResource(R.string.uikit_sample_tab_settings),
         )
     }

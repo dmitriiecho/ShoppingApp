@@ -4,11 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.outlined.Contrast
-import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Surface
@@ -20,6 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.MaterialSymbols
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable
@@ -48,7 +48,7 @@ private fun AppListItemPreview() {
         Surface {
             Column {
                 AppListItem(
-                    icon = Icons.Outlined.Contrast,
+                    icon = MaterialSymbols.Contrast,
                     title = "Theme",
                     description = "System",
                     trailing = {
@@ -63,7 +63,7 @@ private fun AppListItemPreview() {
                     },
                 )
                 AppListItem(
-                    icon = Icons.Outlined.HourglassEmpty,
+                    icon = MaterialSymbols.HourglassEmpty,
                     title = "Request delay",
                     description = "No delay",
                     trailing = {
@@ -78,11 +78,11 @@ private fun AppListItemPreview() {
                     },
                 )
                 AppListItem(
-                    icon = Icons.Default.Link,
+                    icon = MaterialSymbols.Link,
                     title = "Deep links",
                     description = "Opens a page with the links in your browser",
                     onClick = {},
-                    trailing = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
+                    trailing = { Icon(MaterialSymbols.OpenInNew, contentDescription = null) },
                 )
                 AppListItem(
                     icon = AppIcons.OutOfStock,
