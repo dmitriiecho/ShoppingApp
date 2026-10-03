@@ -2,11 +2,10 @@ package krio.systemdesign.shoppingapp.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Схема Material приложения: по константе на каждую роль в каждой теме, как в экспорте Material Theme Builder.
-// Свои цвета сверх схемы — в AppColors.kt.
-// Светлый и тёмный блоки идут строка в строку, Theme.kt только раскладывает их по ролям.
-// Цвета палитры видны только внутри :core:ui: экраны берут цвета по смыслу, из MaterialTheme.colorScheme
-// и ShoppingAppTheme.colors, а не отсюда.
+// The app's Material color scheme: one constant per role in each theme, as in a Material Theme Builder export.
+// App colors beyond the scheme are in AppColors.kt.
+// Palette colors are visible only inside :core:ui: screens take colors by meaning,
+// from MaterialTheme.colorScheme and ShoppingAppTheme.colors, not from here.
 //
 // Акцент — приглушённый оранжевый (терракотовый), нейтральные цвета светлой темы тёплые.
 // Акцент в светлой теме темнее, чем в тёмной: на белом у него контраст 5:1, белый текст на нём читается.
