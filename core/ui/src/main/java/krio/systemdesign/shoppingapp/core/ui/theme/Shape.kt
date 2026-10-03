@@ -4,9 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
-// Скругления углов приложения. Фигуры берутся из MaterialTheme.shapes: например, medium у карточек, плашек и полей,
-// extraSmall у строк-заглушек. Радиус числом (ShapeRadius) — для тех, кому нужен радиус, а не фигура:
-// ProductImage плавно меняет его, пока картинка перелетает между экранами.
+// Скругления углов приложения. Фигуры берутся из MaterialTheme.shapes.
 object ShapeRadius {
     val ExtraSmall = 4.dp
     val Small = 8.dp

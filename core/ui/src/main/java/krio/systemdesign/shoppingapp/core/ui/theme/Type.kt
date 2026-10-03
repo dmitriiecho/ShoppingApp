@@ -7,10 +7,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Шрифты приложения — шкала Material 3 со шрифтом системы, своего фирменного шрифта у приложения нет.
-// Своё только у bodyLarge, основного текста. В стилях Material 3 над первой строкой и под последней остаётся
-// половина межстрочного интервала (LineHeightStyle с Trim.None), и блоки с таким текстом — суммы, описание товара,
-// пустые экраны — становятся на 2–4 dp выше. Здесь bodyLarge задан без LineHeightStyle, и этого запаса нет:
-// отступы карточек и блоков подобраны под такой текст.
+// Своё только у bodyLarge, основного текста.
 internal val AppTypography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,

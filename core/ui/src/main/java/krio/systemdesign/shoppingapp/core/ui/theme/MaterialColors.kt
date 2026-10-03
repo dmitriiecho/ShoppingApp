@@ -3,7 +3,6 @@ package krio.systemdesign.shoppingapp.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // The app's Material color scheme: one constant per role in each theme, as in a Material Theme Builder export.
-// The schemes built from them are in MaterialColorSchemes.kt.
 // App colors beyond the scheme are in AppColors.kt.
 // Palette colors are visible only inside :core:ui: screens take colors by meaning,
 // from MaterialTheme.colorScheme and ShoppingAppTheme.colors, not from here.
