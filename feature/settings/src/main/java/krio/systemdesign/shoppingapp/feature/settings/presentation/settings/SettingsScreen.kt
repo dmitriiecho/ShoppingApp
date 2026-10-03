@@ -29,11 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Warning
 import krio.systemdesign.shoppingapp.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.feature.settings.R

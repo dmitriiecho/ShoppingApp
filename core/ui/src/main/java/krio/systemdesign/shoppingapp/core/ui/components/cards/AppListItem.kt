@@ -15,10 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Contrast
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable

@@ -42,10 +42,6 @@ import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Add
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DeleteFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Remove
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable

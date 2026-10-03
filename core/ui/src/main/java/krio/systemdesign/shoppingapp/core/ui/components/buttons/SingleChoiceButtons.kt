@@ -23,8 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -5,9 +5,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-val AppIcons.ShoppingCart: ImageVector by lazy {
+internal val MaterialSymbols.ShoppingCart: ImageVector by lazy {
     ImageVector.Builder(
         name = "ShoppingCart",
         defaultWidth = 24.dp,

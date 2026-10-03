@@ -5,9 +5,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-val AppIcons.LightMode: ImageVector by lazy {
+internal val MaterialSymbols.LightMode: ImageVector by lazy {
     ImageVector.Builder(
         name = "LightMode",
         defaultWidth = 24.dp,

@@ -15,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.CloseIconButton
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Search
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 @Composable

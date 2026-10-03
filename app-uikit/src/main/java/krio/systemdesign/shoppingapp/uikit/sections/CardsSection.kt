@@ -31,10 +31,6 @@ import krio.systemdesign.shoppingapp.core.ui.components.cards.SectionCard
 import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HourglassEmpty
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Link
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.OpenInNew
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R

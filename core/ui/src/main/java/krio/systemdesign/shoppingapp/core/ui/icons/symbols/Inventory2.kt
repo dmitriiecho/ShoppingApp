@@ -5,9 +5,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-val AppIcons.Inventory2: ImageVector by lazy {
+internal val MaterialSymbols.Inventory2: ImageVector by lazy {
     ImageVector.Builder(
         name = "Inventory2",
         defaultWidth = 24.dp,

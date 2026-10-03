@@ -46,8 +46,6 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Error
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.RemoveShoppingCart
 import krio.systemdesign.shoppingapp.core.ui.text.asString
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing

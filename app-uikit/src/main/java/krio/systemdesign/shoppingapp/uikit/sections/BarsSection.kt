@@ -16,10 +16,6 @@ import krio.systemdesign.shoppingapp.core.ui.components.bars.TotalBottomBar
 import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HomeFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.components.SampleData

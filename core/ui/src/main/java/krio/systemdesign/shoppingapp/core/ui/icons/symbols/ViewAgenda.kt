@@ -5,9 +5,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-val AppIcons.ViewAgenda: ImageVector by lazy {
+internal val MaterialSymbols.ViewAgenda: ImageVector by lazy {
     ImageVector.Builder(
         name = "ViewAgenda",
         defaultWidth = 24.dp,

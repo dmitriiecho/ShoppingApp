@@ -5,9 +5,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 
-val AppIcons.Error: ImageVector by lazy {
+internal val MaterialSymbols.Error: ImageVector by lazy {
     ImageVector.Builder(
         name = "Error",
         defaultWidth = 24.dp,

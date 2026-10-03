@@ -25,7 +25,6 @@ import krio.systemdesign.shoppingapp.core.ui.components.notices.Notice
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeStyle
 import krio.systemdesign.shoppingapp.core.ui.components.notices.NoticeWithAction
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Info
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing

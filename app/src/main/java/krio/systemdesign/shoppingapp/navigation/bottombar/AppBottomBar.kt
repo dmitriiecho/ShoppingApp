@@ -14,9 +14,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
 import krio.systemdesign.shoppingapp.core.ui.components.bars.AppNavigationBarItem
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HomeFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
-import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 
 @Composable
 fun AppBottomBar(
