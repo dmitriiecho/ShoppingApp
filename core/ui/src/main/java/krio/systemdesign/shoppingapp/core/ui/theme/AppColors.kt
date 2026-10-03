@@ -30,7 +30,7 @@ internal val LightAppColors = AppColors(
     cardContainer = Color.White,
     // Белый центр и края с лёгким оттенком акцента.
     productImageCenter = Color.White,
-    productImageEdge = lerp(SurfaceContainerHighLight, OrangeLight, 0.04f),
+    productImageEdge = lerp(SurfaceContainerHighLight, PrimaryLight, 0.04f),
 )
 
 internal val DarkAppColors = AppColors(
@@ -40,7 +40,7 @@ internal val DarkAppColors = AppColors(
     // Вся плитка светлее карточки, а центр — заметно: иначе плитка теряется на карточке,
     // а чёрные товары (наушники, клавиатура) сливаются с фоном.
     productImageCenter = lerp(SurfaceContainerHighestDark, Color.White, 0.30f),
-    productImageEdge = lerp(lerp(SurfaceContainerHighestDark, Color.White, 0.06f), OrangeDark, 0.03f),
+    productImageEdge = lerp(lerp(SurfaceContainerHighestDark, Color.White, 0.06f), PrimaryDark, 0.03f),
 )
 
 // Без ShoppingAppTheme (например, в чужой теме) — светлый набор.
