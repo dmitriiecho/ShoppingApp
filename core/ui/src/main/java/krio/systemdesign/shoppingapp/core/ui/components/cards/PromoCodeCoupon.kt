@@ -45,7 +45,6 @@ fun PromoCodeCoupon(
     enabled: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
-    // The border below is drawn with ShapeRadius.Small: the radius of shapes.small.
     val shape = MaterialTheme.shapes.small
     Surface(
         onClick = onClick,
