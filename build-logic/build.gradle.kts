@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    // Только типы AGP для настройки блока android. Сами плагины и их версии подключает корневой build.gradle.kts.
+    // Only AGP types for the android block; the root build.gradle.kts applies the plugins themselves.
     compileOnly(libs.android.gradlePlugin)
     // Lets convention plugins use the type-safe libs accessors (gradle/gradle#15383).
     implementation(files(LibrariesForLibs::class.java.protectionDomain.codeSource.location))

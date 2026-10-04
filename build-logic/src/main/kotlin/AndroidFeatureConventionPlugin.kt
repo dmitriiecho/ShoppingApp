@@ -3,8 +3,8 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 
-// Фича: экраны на Compose, ViewModel на Hilt, маршруты навигации через kotlinx.serialization.
-// Зависимости на модули проекта (:domain, :core:ui…) фича объявляет сама: у разных фич они разные.
+// A feature module: Compose screens, Hilt ViewModels, kotlinx.serialization navigation routes.
+// Each feature declares its own project dependencies (:domain, :core:ui…).
 class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

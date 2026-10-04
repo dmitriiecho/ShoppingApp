@@ -3,7 +3,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
-// Модуль приложения: те же настройки, что у библиотек, плюс targetSdk.
+// An app module: the library setup plus targetSdk.
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
@@ -14,8 +14,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 defaultConfig.targetSdk = AndroidConfig.TARGET_SDK
 
                 buildTypes.getByName("release") {
-                    // Приложения проекта — демонстрационные стенды: release подписан отладочным ключом,
-                    // чтобы его можно было поставить на эмулятор. Для публикации в магазин понадобится свой ключ.
+                    // Demo apps: release is signed with the debug key so it installs on an emulator, and isn't shrunk.
+                    // Publishing to a store would need a real key.
                     signingConfig = signingConfigs.getByName("debug")
                     optimization {
                         enable = false

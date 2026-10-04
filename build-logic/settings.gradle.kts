@@ -11,7 +11,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
-    // Тот же каталог версий, что у приложения: версии библиотек и плагинов задаются в одном месте.
+    // The app's version catalog, so every version lives in one place.
     versionCatalogs {
         create("libs") {
             from(files("../gradle/libs.versions.toml"))

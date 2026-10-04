@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
-// Compose и его основные библиотеки. Применяется после library или application: ему нужен блок android.
+// Compose and its core libraries. Apply after library or application: it needs the android block.
 class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
@@ -17,6 +17,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             dependencies {
                 "implementation"(platform(libs.androidx.compose.bom))
                 "implementation"(libs.androidx.compose.material3)
+                // asProvider(): ui and ui-tooling are also prefixes of other aliases (ui-graphics, ui-tooling-preview).
                 "implementation"(libs.androidx.compose.ui.asProvider())
                 "implementation"(libs.androidx.compose.ui.graphics)
                 "implementation"(libs.androidx.compose.ui.tooling.preview)

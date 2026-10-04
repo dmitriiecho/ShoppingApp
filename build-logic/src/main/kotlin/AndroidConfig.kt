@@ -4,12 +4,12 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.the
 
-// Числа, общие для всех Android-модулей проекта: изменение здесь доходит до каждого модуля.
+// Shared by every Android module of the project.
 internal object AndroidConfig {
     const val COMPILE_SDK = 37
     const val MIN_SDK = 26
     const val TARGET_SDK = 36
-    // Та же версия задана в domain/build.gradle.kts: это модуль на чистом Kotlin, build-logic его не настраивает.
+    // Also set in domain/build.gradle.kts: a pure Kotlin module that build-logic doesn't configure.
     val JAVA_VERSION = JavaVersion.VERSION_21
 }
 
