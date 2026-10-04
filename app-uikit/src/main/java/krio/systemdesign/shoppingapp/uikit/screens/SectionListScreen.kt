@@ -1,5 +1,7 @@
 package krio.systemdesign.shoppingapp.uikit.screens
 
+import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,7 +13,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import krio.systemdesign.shoppingapp.core.ui.components.cards.AppListItem
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.uikit.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,5 +50,18 @@ fun SectionListScreen(
                 )
             }
         }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SectionListScreenPreview() {
+    ShoppingAppTheme {
+        SectionListScreen(
+            darkTheme = isSystemInDarkTheme(),
+            onToggleTheme = {},
+            onOpenSection = {},
+        )
     }
 }
