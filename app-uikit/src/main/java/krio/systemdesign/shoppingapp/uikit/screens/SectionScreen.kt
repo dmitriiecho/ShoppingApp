@@ -1,12 +1,16 @@
 package krio.systemdesign.shoppingapp.uikit.screens
 
+import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.NavigateBackIconButton
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.uikit.sections.BarsSection
 import krio.systemdesign.shoppingapp.uikit.sections.ButtonsSection
 import krio.systemdesign.shoppingapp.uikit.sections.CardsSection
@@ -51,5 +55,19 @@ fun SectionScreen(
             UiKitSection.Bars -> BarsSection(innerPadding)
             UiKitSection.Dialogs -> DialogsSection(innerPadding)
         }
+    }
+}
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SectionScreenPreview() {
+    ShoppingAppTheme {
+        SectionScreen(
+            section = UiKitSection.Buttons,
+            darkTheme = isSystemInDarkTheme(),
+            onToggleTheme = {},
+            onBack = {},
+        )
     }
 }
