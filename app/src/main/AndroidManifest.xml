@@ -37,9 +37,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="dmitriiecho.github.io"
-                    android:scheme="https" />
+                <data android:scheme="https" />
+                <data android:host="dmitriiecho.github.io" />
                 <data android:path="/catalog" />
                 <data android:path="/catalog/" />
                 <data android:path="/cart" />
