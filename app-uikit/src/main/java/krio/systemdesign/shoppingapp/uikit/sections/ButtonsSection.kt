@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,11 +32,11 @@ import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.samples.SampleData
+import krio.systemdesign.shoppingapp.uikit.samples.rememberSampleLoading
 import krio.systemdesign.shoppingapp.uikit.samples.SampleList
 import krio.systemdesign.shoppingapp.uikit.samples.SampleSwitch
 import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
-import kotlinx.coroutines.delay
 
 @Composable
 fun ButtonsSection(innerPadding: PaddingValues) {
@@ -62,13 +61,7 @@ fun ButtonsSection(innerPadding: PaddingValues) {
         }
         sampleGroup("LoadingButton") {
             SampleVariant(stringResource(R.string.uikit_variant_tap_to_load)) {
-                var isLoading by rememberSaveable { mutableStateOf(false) }
-                LaunchedEffect(isLoading) {
-                    if (isLoading) {
-                        delay(SampleData.LOADING_MILLIS)
-                        isLoading = false
-                    }
-                }
+                var isLoading by rememberSampleLoading()
                 LoadingButton(
                     text = stringResource(R.string.uikit_sample_place_order),
                     isLoading = isLoading,

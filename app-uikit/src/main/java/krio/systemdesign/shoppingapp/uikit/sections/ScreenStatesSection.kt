@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,11 +20,10 @@ import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SearchOff
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCart
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.samples.SampleData
+import krio.systemdesign.shoppingapp.uikit.samples.rememberSampleLoading
 import krio.systemdesign.shoppingapp.uikit.samples.SampleList
 import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
-import kotlinx.coroutines.delay
 
 @Composable
 fun ScreenStatesSection(innerPadding: PaddingValues) {
@@ -55,13 +51,7 @@ fun ScreenStatesSection(innerPadding: PaddingValues) {
         }
         sampleGroup("ErrorState") {
             SampleVariant(stringResource(R.string.uikit_variant_retry)) {
-                var isRetrying by rememberSaveable { mutableStateOf(false) }
-                LaunchedEffect(isRetrying) {
-                    if (isRetrying) {
-                        delay(SampleData.LOADING_MILLIS)
-                        isRetrying = false
-                    }
-                }
+                var isRetrying by rememberSampleLoading()
                 ScreenArea {
                     if (isRetrying) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
