@@ -6,7 +6,7 @@
       Значки строки состояния и панели навигации тёмные, как на светлом фоне, пока приложение не прочитало тему;
       дальше их цвет по теме приложения задаёт MainActivity.
     -->
-    <style name="Theme.ShoppingAppV2" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.ShoppingApp" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/core_ui_window_background</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>

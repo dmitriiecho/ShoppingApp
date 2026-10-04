@@ -11,7 +11,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ShoppingAppV2">
+        android:theme="@style/Theme.ShoppingApp">
         <!--
             When the theme is changed (in the system or in the application settings), the activity is not recreated:
             Compose simply redraws in new colors. Otherwise the screen would flicker each time the theme is changed.
@@ -23,7 +23,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.ShoppingAppV2"
+            android:theme="@style/Theme.ShoppingApp"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
