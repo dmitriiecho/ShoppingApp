@@ -37,7 +37,6 @@ import androidx.navigation.compose.rememberNavController
 import krio.systemdesign.shoppingapp.core.ui.animation.LocalSharedTransitionScope
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.CartRoutes
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.cart
-import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.graph
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.graph as cartGraph
 import krio.systemdesign.shoppingapp.feature.cart.presentation.navigation.toCartPromoResult
 import krio.systemdesign.shoppingapp.feature.catalog.presentation.navigation.CatalogRoutes
@@ -63,7 +62,7 @@ import kotlinx.coroutines.flow.map
 fun AppNavHost(
     deepLinks: Flow<Uri>,
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     val isSwitchingTabs by navController.isSwitchingTabsAsState()
 
@@ -72,26 +71,22 @@ fun AppNavHost(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = { AppBottomBar(navController) },
     ) { innerPadding ->
-        // Слой, поверх которого летят общие элементы экранов (картинка товара из списка на карточку товара).
+        // The layer shared elements fly over, e.g. a product image from the list to the product screen.
         SharedTransitionLayout(
             modifier = Modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
         ) {
-            // Общие элементы перелетают только между экранами одной вкладки. Пока одна вкладка сменяет другую,
-            // слоя для полёта нет: иначе картинка товара, который есть и в каталоге, и в корзине,
-            // перелетала бы с одной вкладки на другую.
+            // Only within a tab: otherwise a product that is both in the catalog and the cart would fly between tabs.
             CompositionLocalProvider(LocalSharedTransitionScope provides this.takeUnless { isSwitchingTabs }) {
                 NavHost(
                     navController = navController,
                     startDestination = BottomNavRoutes.CatalogTab,
                     modifier = Modifier
-                        // Пока экраны сменяют друг друга, уходящий экран ещё виден и принимает нажатия:
-                        // двойной тап по «Назад» закрывал два экрана, а по товару открывал две карточки.
-                        // Поэтому касания доходят до экранов, только когда верхний экран полностью открыт.
+                        // The leaving screen still takes taps: a double tap on Back closed two screens.
                         .blockTouchesDuringTransitions(navController),
-                    // Экраны сменяются сразу, без анимации: плавная смена (по умолчанию в NavHost) делала приложение
-                    // медленным на вид. Она осталась только там, где с экрана на экран перелетает картинка товара.
+                    // No transition: NavHost's default fade made the app feel slow. It stays only where
+                    // the product image flies between screens.
                     enterTransition = {
                         if (isProductImageTransition()) fadeIn(tween(PRODUCT_IMAGE_TRANSITION_MS)) else EnterTransition.None
                     },
@@ -105,7 +100,7 @@ fun AppNavHost(
                         catalog.catalogGraph(
                             navController = navController,
                             onClose = {
-                                // Каталог — корень вкладки, закрывать его некуда.
+                                // Tab root: nothing to close.
                             },
                         )
                     }
@@ -116,7 +111,7 @@ fun AppNavHost(
                         cart.cartGraph(
                             navController = navController,
                             onClose = {
-                                // Корзина — корень вкладки, закрывать её некуда.
+                                // Tab root: nothing to close.
                             },
                             onOpenCheckout = {
                                 navController.navigate(CheckoutRoutes.Graph)
@@ -126,7 +121,7 @@ fun AppNavHost(
                             },
                             onOpenProduct = { productId, productName, imageUrl ->
                                 navController.navigate(
-                                    CustomProductRoute(
+                                    CartProductRoute(
                                         productId = productId,
                                         productName = productName,
                                         imageUrl = imageUrl,
@@ -148,7 +143,7 @@ fun AppNavHost(
                             },
                         )
 
-                        catalog.productDetailsScreen<CustomProductRoute>(
+                        catalog.productDetailsScreen<CartProductRoute>(
                             onBack = { navController.popBackStack() },
                         )
                     }
@@ -159,7 +154,7 @@ fun AppNavHost(
                         settings.settingsGraph(
                             navController = navController,
                             onClose = {
-                                // Настройки — корень вкладки, закрывать их некуда.
+                                // Tab root: nothing to close.
                             },
                         )
                     }
@@ -174,32 +169,29 @@ fun AppNavHost(
             }
         }
 
-        // Граф задаётся внутри NavHost, поэтому ссылки открываем только после него.
+        // After NavHost: it sets the graph the links are resolved against.
         LaunchedEffect(navController, deepLinks) {
             deepLinks.collect { navController.openDeepLink(it) }
         }
     }
 }
 
-// Открываем ссылку так же, как пользователь открыл бы экран сам.
-// Поэтому с /cart «Назад» выходит из приложения, а с /product/{id} возвращает в каталог.
+// Opens a link the way the user would: Back from /cart leaves the app, from /product/{id} returns to the catalog.
 private fun NavHostController.openDeepLink(uri: Uri) {
-    // Шаблоны ссылок записаны без слеша в конце, а /cart/ и /product/1/ должны открываться так же.
+    // Link patterns have no trailing slash, but /cart/ and /product/1/ must open too.
     val path = uri.encodedPath?.trimEnd('/')
     val link = NavDeepLinkRequest.Builder.fromUri(uri.buildUpon().encodedPath(path).build()).build()
 
-    // Ищем вкладку, в которой есть экран для этой ссылки. Если такой нет (например, /catalog/shoes), пропускаем.
+    // A link no tab can open (e.g. /catalog/shoes) is ignored.
     val tab = listOf(BottomNavRoutes.CatalogTab, BottomNavRoutes.CartTab)
         .firstOrNull { tabGraph(it).hasDeepLink(link) }
         ?: return
-    // Первый экран вкладки: список товаров или корзина.
     val tabRoot = tabGraph(tab).findStartDestination()
 
-    // Переключаемся на вкладку, как при нажатии в нижней панели.
+    // As a tap in the bottom bar.
     navigateToBottomTab(tab)
-    // Закрываем экраны, открытые во вкладке поверх первого.
     popBackStack(tabRoot.id, inclusive = false)
-    // Если ссылка ведёт не на первый экран вкладки (например, на товар), открываем нужный экран поверх.
+    // E.g. a product link opens its screen over the tab root.
     if (!tabRoot.hasDeepLink(link)) {
         navigate(link)
     }
@@ -207,21 +199,19 @@ private fun NavHostController.openDeepLink(uri: Uri) {
 
 private fun NavHostController.tabGraph(tab: Any): NavGraph = graph.findNode(tab) as NavGraph
 
-// Переходы, в которых картинка товара перелетает с экрана на экран (LocalNavAnimatedVisibilityScope):
-// между списком каталога и карточкой товара и между корзиной и карточкой товара, открытой из корзины.
+// Where the product image flies: within the catalog, and between the cart and a product opened from it.
 private fun AnimatedContentTransitionScope<NavBackStackEntry>.isProductImageTransition(): Boolean {
     val screens = listOf(initialState.destination, targetState.destination)
     return screens.all { it.isIn<CatalogRoutes.Graph>() } ||
-        (screens.any { it.isIn<CartRoutes.Graph>() } && screens.any { it.hasRoute<CustomProductRoute>() })
+        (screens.any { it.isIn<CartRoutes.Graph>() } && screens.any { it.hasRoute<CartProductRoute>() })
 }
 
 private inline fun <reified T : Any> NavDestination.isIn(): Boolean = hierarchy.any { it.hasRoute<T>() }
 
-// Как у NavHost по умолчанию.
+// NavHost's default.
 private const val PRODUCT_IMAGE_TRANSITION_MS = 700
 
-// Пока экраны сменяют друг друга, видны оба: уходящий ещё не исчез, новый уже появляется.
-// Если они из разных вкладок, значит, сейчас одна вкладка сменяет другую.
+// During a transition both screens are visible; from different tabs means the tab is switching.
 @Composable
 private fun NavHostController.isSwitchingTabsAsState(): State<Boolean> =
     remember(this) {
@@ -230,7 +220,7 @@ private fun NavHostController.isSwitchingTabsAsState(): State<Boolean> =
         }
     }.collectAsState(initial = false)
 
-// Граф вкладки, в которой открыт экран. Null — экран вне вкладок (оформление заказа).
+// The tab graph the screen is in; null outside tabs (checkout).
 private fun NavDestination.bottomTab(): NavDestination? =
     hierarchy.firstOrNull {
         it.hasRoute<BottomNavRoutes.CatalogTab>() ||
@@ -238,8 +228,8 @@ private fun NavDestination.bottomTab(): NavDestination? =
             it.hasRoute<BottomNavRoutes.SettingsTab>()
     }
 
-// Верхний экран становится RESUMED, только когда анимация перехода к нему закончилась.
-// Проверяем в момент касания, а не при перерисовке: второе нажатие может прийти раньше неё.
+// The top screen is RESUMED only once its transition ends. Checked on each touch, not on recomposition:
+// a second tap can come first.
 private fun Modifier.blockTouchesDuringTransitions(navController: NavHostController): Modifier =
     pointerInput(navController) {
         awaitPointerEventScope {

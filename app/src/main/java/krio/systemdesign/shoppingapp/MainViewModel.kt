@@ -15,8 +15,7 @@ class MainViewModel @Inject constructor(
     observeThemeMode: ObserveThemeModeUseCase,
 ) : ViewModel() {
 
-    // null — тема ещё не прочитана из настроек. Читаем сразу, не дожидаясь подписчиков:
-    // от этого значения зависит первый кадр приложения.
+    // null until read. Eagerly: the first frame waits for it.
     val themeMode: StateFlow<ThemeMode?> = observeThemeMode()
         .stateIn(
             scope = viewModelScope,

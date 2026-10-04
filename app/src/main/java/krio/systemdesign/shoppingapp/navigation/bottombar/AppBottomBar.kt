@@ -66,8 +66,7 @@ fun AppBottomBar(
     }
 }
 
-// Снимаем со стека всё, включая каталог: под открытой вкладкой ничего не лежит,
-// поэтому «Назад» с корня любой вкладки выходит из приложения, а не ведёт в каталог.
+// Pops everything, the catalog too: Back from any tab root leaves the app instead of going to the catalog.
 internal fun NavHostController.navigateToBottomTab(route: Any) {
     navigate(route) {
         popUpTo(graph.id) {

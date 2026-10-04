@@ -28,30 +28,26 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    // Ссылки открывает AppNavHost: так же, как если бы пользователь дошёл до экрана сам.
+    // AppNavHost opens these the way the user would reach the screen.
     private val _deepLinks = Channel<Uri>(Channel.BUFFERED)
     private val deepLinks = _deepLinks.receiveAsFlow()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Приложение рисует и под системными панелями. Фон под ними прозрачный и без подложки:
-        // например, панель вкладок продолжается под кнопками навигации своим цветом.
-        // Не enableEdgeToEdge() из androidx.activity: при каждой смене конфигурации (например, темы)
-        // она заново применяет стили своего первого вызова и возвращает под кнопки навигации полупрозрачную подложку.
+        // Not enableEdgeToEdge() from androidx.activity: on a configuration change it reapplies the styles
+        // of its first call and brings back the translucent scrim under the navigation buttons.
         WindowCompat.enableEdgeToEdge(window)
-        // После пересоздания активити ссылка уже открыта, её экраны восстановит NavController.
-        // А из списка недавних Android запускает приложение с той ссылкой, с которой оно когда-то открылось,
-        // хотя пользователь мог давно уйти с её экрана.
+        // Skipped after recreation (NavController restores the screens) and from Recents, which relaunches
+        // with the original link even if the user has long left its screen.
         val launchedFromRecents = (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0
         if (savedInstanceState == null && !launchedFromRecents) {
             intent.data?.let { _deepLinks.trySend(it) }
         }
-        // Иначе NavHost при запуске откроет ссылку сам, по правилам Navigation: с каталогом под экраном из ссылки.
+        // Otherwise NavHost would open the link itself, its own way.
         intent.data = null
         setContent {
             val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
-            // Пока тема не прочитана (доли секунды при запуске), ничего не рисуем:
-            // иначе экран мелькнёт в теме системы и тут же перекрасится в выбранную.
+            // Nothing is drawn until the theme is read, or the screen would flash in the system theme.
             val mode = themeMode ?: return@setContent
             val darkTheme = when (mode) {
                 ThemeMode.System -> isSystemInDarkTheme()
@@ -69,9 +65,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Стартовый экран Android 12+ рисует система ещё до запуска приложения, по своей теме.
-    // Сообщаем ей тему, выбранную в настройках приложения: система её запомнит,
-    // и при следующем запуске стартовый экран будет уже в ней.
+    // The Android 12+ splash screen is drawn by the system before the app starts. It remembers this mode,
+    // so the next splash matches the app's theme.
     private fun rememberThemeForSplashScreen(mode: ThemeMode) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
         val nightMode = when (mode) {
@@ -82,7 +77,7 @@ class MainActivity : ComponentActivity() {
         getSystemService(UiModeManager::class.java).setApplicationNightMode(nightMode)
     }
 
-    // Ссылка пришла, когда приложение уже открыто (launchMode="singleTop").
+    // A link while the app is open (launchMode="singleTop").
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         intent.data?.let { _deepLinks.trySend(it) }
