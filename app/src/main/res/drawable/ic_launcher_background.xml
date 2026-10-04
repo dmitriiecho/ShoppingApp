@@ -5,7 +5,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Фирменный терракотовый акцент (OrangeLight) с мягким диагональным градиентом. -->
+    <!-- The app's terracotta, with a soft diagonal gradient. -->
     <path
         android:pathData="M0,0L108,0L108,108L0,108Z">
         <aapt:attr name="android:fillColor">

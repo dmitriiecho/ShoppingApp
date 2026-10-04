@@ -4,10 +4,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!--
-      Открытая картонная коробка с искрами в безопасной зоне адаптивной иконки (внутренние 66 dp).
-      Порядок слоёв: тень, задние клапаны, дно внутри, стенки, передние клапаны, искры.
-    -->
+    <!-- An open box with sparkles inside the adaptive icon's 66 dp safe zone. -->
     <path
         android:fillColor="#24000000"
         android:pathData="M37,73.5L54,82L71,73.5L73.43,74.96C74.85,75.81,74.8,77.1,73.32,77.84L61.68,83.66C60.2,84.4,57.81,84.38,56.34,83.61Z" />

@@ -4,10 +4,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!--
-      Силуэт для тематической иконки (Android 13+): система красит его одним цветом,
-      поэтому открытый верх коробки оставлен дырой, а стенки разделены прорезью по переднему ребру.
-    -->
+    <!-- Themed icon (Android 13+): one color, so the open top is a hole and a gap splits the front walls. -->
     <path
         android:fillColor="#FFFFFFFF"
         android:pathData="M37,52.5L54,44L51.25,35.76C51.11,35.34,50.68,35.16,50.28,35.36L34.72,43.14C34.32,43.34,34.11,43.84,34.25,44.26Z" />
