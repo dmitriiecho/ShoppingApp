@@ -100,13 +100,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                     onClick = {},
                     unitPrice = formatPrice(SampleData.HEADPHONES_PRICE),
                 ) {
-                    CartQuantityControl(
-                        quantity = 2,
-                        onAdd = {},
-                        onIncrease = {},
-                        onDecrease = {},
-                        onRemoveAll = {},
-                    )
+                    StaticQuantityControl(quantity = 2)
                 }
             }
         }
@@ -125,14 +119,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                         title = stringResource(R.string.uikit_sample_out_of_stock),
                         style = NoticeStyle.Error,
                     )
-                    CartQuantityControl(
-                        quantity = 1,
-                        onAdd = {},
-                        onIncrease = {},
-                        onDecrease = {},
-                        onRemoveAll = {},
-                        canIncrease = false,
-                    )
+                    StaticQuantityControl(quantity = 1, canIncrease = false)
                 }
             }
             SampleVariant(stringResource(R.string.uikit_variant_price_changed)) {
@@ -151,13 +138,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                         ),
                         style = NoticeStyle.Error,
                     )
-                    CartQuantityControl(
-                        quantity = 1,
-                        onAdd = {},
-                        onIncrease = {},
-                        onDecrease = {},
-                        onRemoveAll = {},
-                    )
+                    StaticQuantityControl(quantity = 1)
                 }
             }
             SampleVariant(stringResource(R.string.uikit_variant_not_enough_stock)) {
@@ -173,14 +154,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                         title = stringResource(R.string.uikit_sample_only_available, 1),
                         style = NoticeStyle.Error,
                     )
-                    CartQuantityControl(
-                        quantity = 2,
-                        onAdd = {},
-                        onIncrease = {},
-                        onDecrease = {},
-                        onRemoveAll = {},
-                        canIncrease = false,
-                    )
+                    StaticQuantityControl(quantity = 2, canIncrease = false)
                 }
             }
         }
@@ -208,14 +182,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                             style = NoticeStyle.Error,
                         )
                     }
-                    CartQuantityControl(
-                        quantity = 10,
-                        onAdd = {},
-                        onIncrease = {},
-                        onDecrease = {},
-                        onRemoveAll = {},
-                        canIncrease = false,
-                    )
+                    StaticQuantityControl(quantity = 10, canIncrease = false)
                 }
             }
         }
@@ -255,7 +222,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                 OrderTotals(
                     subtotal = formatPrice(subtotal),
                     total = formatPrice(subtotal - discount),
-                    discount = "−${formatPrice(discount)}",
+                    discount = formatPrice(discount),
                 )
             }
             SampleVariant(stringResource(R.string.uikit_variant_without_discount)) {
@@ -335,6 +302,19 @@ private fun SampleCoupons() {
             onClick = {},
         )
     }
+}
+
+// Cart buttons that only show a quantity: the cart samples aren't interactive.
+@Composable
+private fun StaticQuantityControl(quantity: Int, canIncrease: Boolean = true) {
+    CartQuantityControl(
+        quantity = quantity,
+        onAdd = {},
+        onIncrease = {},
+        onDecrease = {},
+        onRemoveAll = {},
+        canIncrease = canIncrease,
+    )
 }
 
 @Composable

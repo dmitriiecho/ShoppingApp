@@ -103,18 +103,18 @@ fun ProductCard(
 }
 
 // Loading placeholder for a product card with cart buttons. Same size as ProductCard without unitPrice,
-// so the list doesn't jump when products load. isLoading = false stops the shimmer, e.g. when loading failed.
+// so the list doesn't jump when products load. isAnimating = false stops the shimmer, e.g. when loading failed.
 @Composable
 fun ProductCardPlaceholder(
     modifier: Modifier = Modifier,
-    isLoading: Boolean = true,
+    isAnimating: Boolean = true,
 ) {
     AppCard(modifier = modifier.fillMaxWidth()) {
         ShimmerPlaceholder(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(PRODUCT_CARD_PADDING),
-            isAnimating = isLoading,
+            isAnimating = isAnimating,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(PRODUCT_CARD_PADDING)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {

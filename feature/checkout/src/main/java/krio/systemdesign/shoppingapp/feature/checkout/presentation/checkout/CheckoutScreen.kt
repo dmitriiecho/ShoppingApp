@@ -234,7 +234,7 @@ private fun CheckoutContent(
             OrderTotals(
                 subtotal = formatPrice(uiState.subtotal),
                 total = formatPrice(uiState.totalPrice),
-                discount = if (promoCode != null) "−${formatPrice(uiState.discount)}" else null,
+                discount = if (promoCode != null) formatPrice(uiState.discount) else null,
             )
         }
     }

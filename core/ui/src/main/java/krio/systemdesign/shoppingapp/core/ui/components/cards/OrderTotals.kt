@@ -23,6 +23,7 @@ import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.core.ui.theme.bodyLargeStrong
 
+// discount is the formatted amount; the minus sign is added here.
 @Composable
 fun OrderTotals(
     subtotal: String,
@@ -41,7 +42,7 @@ fun OrderTotals(
         if (discount != null) {
             PriceRow(
                 label = stringResource(R.string.core_ui_discount),
-                value = discount,
+                value = "−$discount",
                 valueColor = MaterialTheme.colorScheme.primary,
             )
         }
@@ -96,7 +97,7 @@ private fun OrderTotalsPreview() {
                         subtotal = formatPrice(40_993L),
                         total = formatPrice(36_894L),
                         modifier = Modifier.padding(Spacing.CardPadding),
-                        discount = "−${formatPrice(4_099L)}",
+                        discount = formatPrice(4_099L),
                     )
                 }
                 Surface(

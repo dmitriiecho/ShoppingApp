@@ -285,7 +285,7 @@ private fun CartTotals(
             OrderTotals(
                 subtotal = formatPrice(uiState.subtotal),
                 total = formatPrice(uiState.totalPrice),
-                discount = if (promoCode != null && uiState.isPromoCodeValid) "−${formatPrice(uiState.discount)}" else null,
+                discount = if (promoCode != null && uiState.isPromoCodeValid) formatPrice(uiState.discount) else null,
             )
         }
     }

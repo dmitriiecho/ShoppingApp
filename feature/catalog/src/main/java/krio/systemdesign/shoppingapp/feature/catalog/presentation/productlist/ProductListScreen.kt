@@ -230,7 +230,7 @@ private fun ProductList(
         ) { index ->
             val product = products[index]
             if (product == null) {
-                ProductCardPlaceholder(isLoading = prepend !is LoadState.Error)
+                ProductCardPlaceholder(isAnimating = prepend !is LoadState.Error)
                 return@items
             }
             ProductListItem(

@@ -84,7 +84,7 @@ fun LoadingSection(innerPadding: PaddingValues) {
         }
         sampleGroup("ProductCardPlaceholder") {
             SampleVariant {
-                ProductCardPlaceholder(isLoading = isAnimating)
+                ProductCardPlaceholder(isAnimating = isAnimating)
             }
         }
         sampleGroup("PromoCodeCouponPlaceholder") {

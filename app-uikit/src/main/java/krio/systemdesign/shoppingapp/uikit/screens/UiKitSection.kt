@@ -23,11 +23,7 @@ enum class UiKitSection(
 ) {
     Theme(AppIcons.Palette, R.string.uikit_section_theme, R.string.uikit_section_theme_description),
     Buttons(AppIcons.SmartButton, R.string.uikit_section_buttons, R.string.uikit_section_buttons_description),
-    Notices(
-        AppIcons.Feedback,
-        R.string.uikit_section_notices,
-        R.string.uikit_section_notices_description,
-    ),
+    Notices(AppIcons.Feedback, R.string.uikit_section_notices, R.string.uikit_section_notices_description),
     Cards(AppIcons.ViewAgenda, R.string.uikit_section_cards, R.string.uikit_section_cards_description),
     Images(AppIcons.Image, R.string.uikit_section_images, R.string.uikit_section_images_description),
     Inputs(AppIcons.TextFields, R.string.uikit_section_inputs, R.string.uikit_section_inputs_description),
@@ -38,9 +34,5 @@ enum class UiKitSection(
         R.string.uikit_section_screen_states_description,
     ),
     Bars(AppIcons.WebAsset, R.string.uikit_section_bars, R.string.uikit_section_bars_description),
-    Dialogs(
-        AppIcons.ChatBubble,
-        R.string.uikit_section_dialogs,
-        R.string.uikit_section_dialogs_description,
-    ),
+    Dialogs(AppIcons.ChatBubble, R.string.uikit_section_dialogs, R.string.uikit_section_dialogs_description),
 }
