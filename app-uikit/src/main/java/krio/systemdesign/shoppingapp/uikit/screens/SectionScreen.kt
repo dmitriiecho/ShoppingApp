@@ -58,7 +58,7 @@ fun SectionScreen(
     }
 }
 
-// Tall enough for the whole Buttons section, so it can be seen without scrolling.
+// Buttons is just an example section; the height fits all of it, so it can be seen without scrolling.
 @Preview(name = "Light", heightDp = 1700)
 @Preview(name = "Dark", heightDp = 1700, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
