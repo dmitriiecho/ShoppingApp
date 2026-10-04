@@ -14,7 +14,7 @@
         android:theme="@style/Theme.ShoppingApp">
 
         <!--
-            uiMode: a system dark mode change doesn't recreate the activity; Compose recolors in place, without a flicker.
+            uiMode: a system dark mode change doesn't recreate the activity, Compose recolors it without a flicker.
             portrait: phones only; on Android 16+ large screens (600 dp and wider) ignore it and the app rotates.
         -->
         <activity
