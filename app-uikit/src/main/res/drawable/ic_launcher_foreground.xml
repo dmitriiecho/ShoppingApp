@@ -4,7 +4,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Сетка из четырёх фигур — набор компонентов — в безопасной зоне адаптивной иконки (внутренние 66 dp). -->
+    <!-- Four shapes, a set of components, inside the adaptive icon's 66 dp safe zone. -->
     <path
         android:fillColor="#FFE39565"
         android:pathData="M37,33H48A4,4 0,0 1,52 37V48A4,4 0,0 1,48 52H37A4,4 0,0 1,33 48V37A4,4 0,0 1,37 33Z" />

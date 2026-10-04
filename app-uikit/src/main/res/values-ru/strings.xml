@@ -2,7 +2,7 @@
     <string name="uikit_switch_to_dark_theme">Включить тёмную тему</string>
     <string name="uikit_switch_to_light_theme">Включить светлую тему</string>
 
-    <!-- Разделы -->
+    <!-- Sections -->
     <string name="uikit_section_theme">Тема</string>
     <string name="uikit_section_theme_description">Цвета и шрифты</string>
     <string name="uikit_section_buttons">Кнопки</string>
@@ -24,16 +24,13 @@
     <string name="uikit_section_dialogs">Диалоги</string>
     <string name="uikit_section_dialogs_description">Диалог подтверждения</string>
 
-    <!-- Подписи к примерам -->
+    <!-- Sample captions -->
     <string name="uikit_variant_interactive_cart">Нажмите «В корзину», потом «+»: на 3 «+» выключится</string>
     <string name="uikit_variant_tap_to_load">Нажмите: загрузка длится 2 секунды</string>
     <string name="uikit_variant_disabled">Выключено</string>
     <string name="uikit_variant_icon_and_text">Иконка и текст, на всю ширину</string>
     <string name="uikit_variant_fixed_width">Фиксированная ширина, как в настройках</string>
-    <string name="uikit_variant_error">Ошибка</string>
-    <string name="uikit_variant_neutral">Нейтральная: пояснение, а не проблема</string>
     <string name="uikit_variant_with_subtitle">С подзаголовком</string>
-    <string name="uikit_variant_with_action">С кнопкой</string>
     <string name="uikit_variant_with_remove">С кнопкой «Убрать», как в корзине</string>
     <string name="uikit_variant_read_only">Без кнопки, как при оформлении</string>
     <string name="uikit_variant_clickable">Нажимается</string>
@@ -68,7 +65,7 @@
     <string name="uikit_visible">Видна</string>
     <string name="uikit_show_dialog">Показать диалог</string>
 
-    <!-- Содержимое примеров: те же тексты, что на экранах приложения -->
+    <!-- Sample content: the same texts as on the app's screens -->
     <string name="uikit_sample_card_content">Содержимое карточки</string>
     <string name="uikit_sample_place_order">Оформить заказ</string>
     <string name="uikit_sample_payment_card">Карта</string>

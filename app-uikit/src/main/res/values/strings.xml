@@ -4,7 +4,7 @@
     <string name="uikit_switch_to_dark_theme">Switch to dark theme</string>
     <string name="uikit_switch_to_light_theme">Switch to light theme</string>
 
-    <!-- Разделы -->
+    <!-- Sections -->
     <string name="uikit_section_theme">Theme</string>
     <string name="uikit_section_theme_description">Colors and typography</string>
     <string name="uikit_section_buttons">Buttons</string>
@@ -26,16 +26,13 @@
     <string name="uikit_section_dialogs">Dialogs</string>
     <string name="uikit_section_dialogs_description">Confirmation dialog</string>
 
-    <!-- Подписи к примерам -->
+    <!-- Sample captions -->
     <string name="uikit_variant_interactive_cart">Tap “Add to cart”, then “+”: at 3 the “+” turns off</string>
     <string name="uikit_variant_tap_to_load">Tap it: loading takes 2 seconds</string>
     <string name="uikit_variant_disabled">Disabled</string>
     <string name="uikit_variant_icon_and_text">Icon and text, full width</string>
     <string name="uikit_variant_fixed_width">Fixed width, as in settings</string>
-    <string name="uikit_variant_error">Error</string>
-    <string name="uikit_variant_neutral">Neutral: an explanation, not a problem</string>
     <string name="uikit_variant_with_subtitle">With a subtitle</string>
-    <string name="uikit_variant_with_action">With a button</string>
     <string name="uikit_variant_with_remove">With “Remove”, as in the cart</string>
     <string name="uikit_variant_read_only">Without a button, as at checkout</string>
     <string name="uikit_variant_clickable">Clickable</string>
@@ -70,7 +67,7 @@
     <string name="uikit_visible">Visible</string>
     <string name="uikit_show_dialog">Show the dialog</string>
 
-    <!-- Содержимое примеров: те же тексты, что на экранах приложения -->
+    <!-- Sample content: the same texts as on the app's screens -->
     <string name="uikit_sample_product_headphones" translatable="false">Wireless Headphones</string>
     <string name="uikit_sample_product_keyboard" translatable="false">Mechanical Keyboard</string>
     <string name="uikit_sample_product_hub" translatable="false">USB-C Hub</string>
