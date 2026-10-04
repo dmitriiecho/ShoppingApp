@@ -19,7 +19,6 @@ private data object SectionListRoute
 @Serializable
 private data class SectionRoute(val section: UiKitSection)
 
-// Два экрана: список разделов и раздел с примерами.
 @Composable
 fun UiKitNavHost(
     darkTheme: Boolean,
@@ -31,7 +30,7 @@ fun UiKitNavHost(
         navController = navController,
         startDestination = SectionListRoute,
         modifier = modifier,
-        // Экраны сменяются сразу, без анимации: плавная смена по умолчанию в NavHost делала переходы медленными.
+        // No transition animation: NavHost's default fade made switching feel slow.
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
@@ -47,7 +46,7 @@ fun UiKitNavHost(
                 section = entry.toRoute<SectionRoute>().section,
                 darkTheme = darkTheme,
                 onToggleTheme = onToggleTheme,
-                // navigateUp, а не popBackStack: двойное нажатие «Назад» не уберёт список разделов и не оставит пустой экран.
+                // navigateUp, not popBackStack: a double Back tap won't pop the section list and leave a blank screen.
                 onBack = { navController.navigateUp() },
             )
         }

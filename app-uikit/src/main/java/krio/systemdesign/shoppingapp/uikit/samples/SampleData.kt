@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import krio.systemdesign.shoppingapp.uikit.R
 
-// Данные для примеров. Цены в центах, как во всём приложении.
+// Sample data. Prices are in cents, as everywhere in the app.
 object SampleData {
     const val HEADPHONES_PRICE = 14_999L
     const val KEYBOARD_PRICE = 10_995L
@@ -19,10 +19,10 @@ object SampleData {
     const val SECOND_PROMO_CODE = "SALE25"
     const val SECOND_PROMO_DISCOUNT_PERCENT = 25
 
-    // Сколько длится загрузка в «живых» примерах, например после нажатия LoadingButton.
+    // How long a fake load in an interactive sample takes.
     const val LOADING_MILLIS = 2_000L
 
-    // Варианты задержки сети в секундах, как на экране настроек.
+    // Network delay options in seconds, as on the settings screen.
     val DELAY_SECONDS = listOf(0, 2, 4)
 
     val headphonesImageUrl: String
@@ -31,12 +31,12 @@ object SampleData {
     val keyboardImageUrl: String
         @Composable get() = resourceImageUrl(R.drawable.sample_product_keyboard)
 
-    // Адрес картинки, которой нет: так ProductImage показывает значок «картинки нет».
+    // An image that doesn't exist, so ProductImage shows its "no image" placeholder.
     val missingImageUrl: String
         @Composable get() = "android.resource://${LocalContext.current.packageName}/drawable/missing_image"
 }
 
-// Картинки товаров лежат в ресурсах каталога, а не на сервере: примеры работают без сети.
+// Product images are UI kit resources, not server URLs, so the samples work offline.
 @Composable
 private fun resourceImageUrl(@DrawableRes id: Int): String =
     "android.resource://${LocalContext.current.packageName}/$id"

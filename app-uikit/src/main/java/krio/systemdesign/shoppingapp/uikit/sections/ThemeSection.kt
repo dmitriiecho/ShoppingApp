@@ -33,7 +33,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleList
 import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
-// Цвета и шрифты темы. Всё берётся из MaterialTheme, поэтому кнопка темы в верхней панели показывает обе палитры.
+// The theme's colors, type, shapes and spacing. All come from the theme, so the top bar toggle shows both palettes.
 @Composable
 fun ThemeSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
@@ -67,7 +67,7 @@ fun ThemeSection(innerPadding: PaddingValues) {
     }
 }
 
-// contentColor — цвет текста на этом фоне: парный on-цвет схемы или тот, с которым цвет встречается в приложении.
+// contentColor: the text color on this background, the scheme's on-color or the one used with it in the app.
 private class ColorRole(val name: String, val color: Color, val contentColor: Color)
 
 @Composable
@@ -95,19 +95,19 @@ private fun colorRoles(): List<ColorRole> {
     )
 }
 
-// Цвета сверх схемы Material. Своих on-цветов у них нет: текст на образце — цвет, с которым они встречаются в приложении.
+// Colors beyond the Material scheme. They have no on-colors: the text is the color they are used with in the app.
 @Composable
 private fun appColorRoles(): List<ColorRole> {
     val colors = MaterialTheme.colorScheme
     val appColors = ShoppingAppTheme.colors
     return listOf(
-        // В приложении success — цвет текста и значка на светлом оттенке самого себя.
+        // In the app, success colors text and icons on a light tint of itself.
         ColorRole("success", appColors.success, colors.background),
         ColorRole("cardContainer", appColors.cardContainer, colors.onSurface),
     )
 }
 
-// Образец цвета: название роли и её значение. Рамка — чтобы фоновые цвета не сливались со страницей.
+// A color sample: role name and value. The border keeps background colors apart from the page.
 @Composable
 private fun ColorSwatch(role: ColorRole) {
     Surface(

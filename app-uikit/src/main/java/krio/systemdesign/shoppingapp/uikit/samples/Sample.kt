@@ -26,8 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 
-// Примеры раздела: группы по компонентам (sampleGroup), у каждой группы заголовок с именем компонента.
-// innerPadding — отступы от верхней панели и системных панелей, которые даёт Scaffold экрана.
+// A section's samples, grouped by component (sampleGroup). innerPadding comes from the screen's Scaffold.
 @Composable
 fun SampleList(
     innerPadding: PaddingValues,
@@ -36,10 +35,10 @@ fun SampleList(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            // Отступом, а не contentPadding: закреплённый заголовок группы встаёт под верхней панелью, а не за ней.
+            // padding, not contentPadding: a pinned group header sits below the top bar, not behind it.
             .padding(innerPadding)
-            // Отступ от панели навигации уже есть в innerPadding. Без этого компоненты, которые сами отступают
-            // от неё (TotalBottomBar, NavigationBar), добавили бы его ещё раз.
+            // innerPadding already clears the navigation bar; without this, components that clear it themselves
+            // (TotalBottomBar, NavigationBar) would add it again.
             .consumeWindowInsets(innerPadding)
             .imePadding(),
         contentPadding = PaddingValues(bottom = 24.dp),
@@ -47,8 +46,7 @@ fun SampleList(
     )
 }
 
-// Группа примеров одного компонента. Заголовок закреплён вверху, пока на экране варианты этой группы,
-// поэтому всегда видно, какой компонент сейчас перед глазами. content — варианты (SampleVariant).
+// One component's variants (SampleVariant) under a header that stays pinned while they are on screen.
 fun LazyListScope.sampleGroup(
     name: String,
     content: @Composable ColumnScope.() -> Unit,
@@ -65,7 +63,7 @@ fun LazyListScope.sampleGroup(
     }
 }
 
-// Имя компонента, как в коде, на подложке во всю ширину: подложка закрывает примеры, которые уезжают под неё.
+// The component name as in code, on a full-width background that covers samples scrolling under it.
 @Composable
 private fun SampleGroupHeader(name: String) {
     Surface(
@@ -81,9 +79,8 @@ private fun SampleGroupHeader(name: String) {
     }
 }
 
-// Вариант компонента: подпись словами и сам компонент в рамке. Внутри рамки фон страницы, как в приложении,
-// поэтому карточки и плашки выглядят так же, как на экранах. Без подписи — у компонента один вариант.
-// contentPadding — отступ внутри рамки; 0 для компонентов со своими отступами, например AppListItem.
+// One variant: an optional caption and the component in a frame with the page background, as on the app's screens.
+// contentPadding: 0 for components with their own padding, e.g. AppListItem.
 @Composable
 fun SampleVariant(
     caption: String? = null,
@@ -111,7 +108,7 @@ fun SampleVariant(
     }
 }
 
-// Переключатель с подписью: включает в примере загрузку, анимацию или видимость.
+// A labeled switch for a sample's loading, animation or visibility.
 @Composable
 fun SampleSwitch(
     label: String,

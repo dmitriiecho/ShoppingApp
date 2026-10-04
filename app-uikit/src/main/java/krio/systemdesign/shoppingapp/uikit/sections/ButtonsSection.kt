@@ -145,5 +145,5 @@ private enum class SamplePaymentMethod(val icon: ImageVector, @StringRes val tit
     Cash(AppIcons.Payments, R.string.uikit_sample_payment_cash),
 }
 
-// Сколько товара на складе в примере CartQuantityControl: на этом числе «+» выключается.
+// Stock in the CartQuantityControl sample: "+" turns off at this quantity.
 private const val SAMPLE_AVAILABLE_QUANTITY = 3

@@ -57,7 +57,7 @@ fun BarsSection(innerPadding: PaddingValues) {
                 )
             }
         }
-        // Панели во всю ширину рамки: так они стоят и в приложении — от края до края экрана.
+        // Bars span the whole frame, as they span the screen in the app.
         sampleGroup("NavigationBar · AppNavigationBarItem") {
             SampleVariant(stringResource(R.string.uikit_variant_badge), contentPadding = 0.dp) {
                 SampleNavigationBar(cartItemCount = 3)
@@ -69,7 +69,7 @@ fun BarsSection(innerPadding: PaddingValues) {
     }
 }
 
-// Нижняя панель как в приложении: те же вкладки и значки. Вкладки переключаются.
+// The app's bottom bar with the same tabs and icons; the tabs switch.
 @Composable
 private fun SampleNavigationBar(cartItemCount: Int) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }

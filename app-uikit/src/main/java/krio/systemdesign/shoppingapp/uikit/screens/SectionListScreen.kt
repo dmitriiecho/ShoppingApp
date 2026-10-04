@@ -31,7 +31,7 @@ fun SectionListScreen(
             )
         },
     ) { innerPadding ->
-        // Отступом, а не contentPadding: иначе пункты прокручиваются под системными кнопками.
+        // padding, not contentPadding: otherwise items scroll under the system buttons.
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

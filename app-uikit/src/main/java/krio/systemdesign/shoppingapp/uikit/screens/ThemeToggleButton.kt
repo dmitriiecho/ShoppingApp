@@ -9,8 +9,7 @@ import krio.systemdesign.shoppingapp.core.ui.icons.symbols.DarkMode
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.LightMode
 import krio.systemdesign.shoppingapp.uikit.R
 
-// Переключает каталог между светлой и тёмной темой. На кнопке тема, которая включится, —
-// те же значки, что у выбора темы в настройках приложения.
+// Switches the catalog between light and dark. It shows the theme it switches to, with the settings screen's icons.
 @Composable
 fun ThemeToggleButton(
     darkTheme: Boolean,

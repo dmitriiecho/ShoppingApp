@@ -25,7 +25,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 @Composable
 fun InputsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
-        // AppTextField рассчитан на карточку, поэтому и в примере он внутри неё.
+        // AppTextField is meant for a card, so the sample puts it in one.
         sampleGroup("AppTextField") {
             SampleVariant(stringResource(R.string.uikit_variant_inside_card)) {
                 var street by rememberSaveable { mutableStateOf("") }

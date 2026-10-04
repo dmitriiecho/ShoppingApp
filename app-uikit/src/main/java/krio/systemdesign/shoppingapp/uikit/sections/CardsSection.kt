@@ -265,7 +265,7 @@ fun CardsSection(innerPadding: PaddingValues) {
                 )
             }
         }
-        // У AppListItem свои отступы, как у строк списка на экране, поэтому рамка их не добавляет.
+        // AppListItem has its own padding, like list rows on screen, so the frame adds none.
         sampleGroup("AppListItem") {
             SampleVariant(stringResource(R.string.uikit_variant_trailing_icon), contentPadding = 0.dp) {
                 AppListItem(
@@ -298,7 +298,7 @@ fun CardsSection(innerPadding: PaddingValues) {
     }
 }
 
-// Две строки заказа, как на экране оформления: одна штука и две.
+// Two order rows as on the checkout screen: one item and two.
 @Composable
 private fun SampleOrderItems() {
     OrderItemRow(
@@ -317,7 +317,7 @@ private fun SampleOrderItems() {
     )
 }
 
-// Промокоды с сервера, как на экране промокода.
+// Promo codes as on the promo code screen.
 @Composable
 private fun SampleCoupons() {
     FlowRow(

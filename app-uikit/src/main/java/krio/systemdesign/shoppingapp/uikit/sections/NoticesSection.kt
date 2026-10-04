@@ -26,8 +26,8 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleList
 import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
-// Значки и тексты те же, что у плашек на экранах приложения: у каждого значка там один смысл.
-// Группы те же, что превью Notice: карточка товара, промокод, панель корзины, оформление заказа.
+// The same icons and texts as the notices on the app's screens, grouped like the Notice previews:
+// product card, promo code, cart bar, checkout.
 @Composable
 fun NoticesSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {

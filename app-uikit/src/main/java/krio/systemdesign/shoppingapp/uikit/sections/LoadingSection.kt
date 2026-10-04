@@ -35,7 +35,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
 fun LoadingSection(innerPadding: PaddingValues) {
-    // Один переключатель на все заглушки: без анимации они такие, как после неудачной загрузки.
+    // One switch for all placeholders: without animation they look as after a failed load.
     var isAnimating by rememberSaveable { mutableStateOf(true) }
     SampleList(innerPadding) {
         item {

@@ -68,7 +68,7 @@ fun ScreenStatesSection(innerPadding: PaddingValues) {
     }
 }
 
-// Место размером с небольшой экран: состояния экрана рассчитаны на всё свободное место, и видно, как они его занимают.
+// An area the size of a small screen: screen states fill the free space, and this shows how.
 @Composable
 private fun ScreenArea(content: @Composable BoxScope.() -> Unit) {
     Box(

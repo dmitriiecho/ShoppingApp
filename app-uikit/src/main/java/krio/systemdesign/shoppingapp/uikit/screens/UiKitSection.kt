@@ -15,7 +15,7 @@ import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ViewAgenda
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.WebAsset
 import krio.systemdesign.shoppingapp.uikit.R
 
-// Разделы каталога: значок, название и пояснение для списка разделов. Что показать в разделе, решает SectionScreen.
+// The catalog's sections as listed on the first screen; SectionScreen decides what each one shows.
 enum class UiKitSection(
     val icon: ImageVector,
     @StringRes val titleRes: Int,
