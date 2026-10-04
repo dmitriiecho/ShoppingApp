@@ -58,14 +58,14 @@ fun SectionScreen(
     }
 }
 
-// Buttons is just an example section; the height fits all of it, so it can be seen without scrolling.
-@Preview(name = "Light", heightDp = 1700)
-@Preview(name = "Dark", heightDp = 1700, uiMode = Configuration.UI_MODE_NIGHT_YES)
+// Bars is just an example section; the height fits all of it, so it can be seen without scrolling.
+@Preview(name = "Light", heightDp = 900)
+@Preview(name = "Dark", heightDp = 900, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun SectionScreenPreview() {
     ShoppingAppTheme {
         SectionScreen(
-            section = UiKitSection.Buttons,
+            section = UiKitSection.Bars,
             darkTheme = isSystemInDarkTheme(),
             onToggleTheme = {},
             onBack = {},
