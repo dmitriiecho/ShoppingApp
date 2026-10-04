@@ -1,8 +1,14 @@
 package krio.systemdesign.shoppingapp.core.ui.components.images
 
+import android.content.res.Configuration
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.SolidColor
@@ -11,7 +17,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
 
 // The "no image" picture ProductImage shows when an image fails to load: a crossed-out landscape.
 // The slash and the sun take the accent color.
@@ -58,3 +66,20 @@ private const val FRONT_HILL =
         "C700 615.3 703 611.6 706 587.2V674A32 32 0 0 1 674 706H350A32 32 0 0 1 318 674Z"
 private const val SUN = "M360 396A36 36 0 1 1 432 396A36 36 0 1 1 360 396Z"
 private const val SLASH = "M254 750L770 274"
+
+@Preview(name = "Light")
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProductImagePlaceholderPreview() {
+    ShoppingAppTheme {
+        Surface {
+            Image(
+                painter = rememberProductImagePlaceholder(),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(120.dp),
+            )
+        }
+    }
+}
