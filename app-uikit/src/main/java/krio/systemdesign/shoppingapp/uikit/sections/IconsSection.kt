@@ -2,10 +2,9 @@ package krio.systemdesign.shoppingapp.uikit.sections
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
@@ -72,12 +70,12 @@ fun IconsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("AppIcons") {
             SampleVariant {
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    appIcons.forEach { (name, icon) -> IconCell(name, icon) }
+                appIcons.chunked(ICON_COLUMNS).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        row.forEach { (name, icon) -> IconCell(name, icon, Modifier.weight(1f)) }
+                        // Keeps the last row's cells in their columns.
+                        repeat(ICON_COLUMNS - row.size) { Spacer(Modifier.weight(1f)) }
+                    }
                 }
             }
         }
@@ -85,19 +83,20 @@ fun IconsSection(innerPadding: PaddingValues) {
 }
 
 @Composable
-private fun IconCell(name: String, icon: ImageVector) {
+private fun IconCell(name: String, icon: ImageVector, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.width(ICON_CELL_WIDTH),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Icon(icon, contentDescription = null)
         Text(
-            text = name,
-            style = MaterialTheme.typography.labelSmall,
-            fontFamily = FontFamily.Monospace,
+            // A zero-width space between the words, so a long name wraps between them, not mid-word.
+            text = name.replace(CAMEL_CASE_BOUNDARY, "\u200B"),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            maxLines = 2,
+            minLines = 2,
         )
     }
 }
@@ -152,4 +151,5 @@ private val appIcons = listOf(
     "WebAsset" to AppIcons.WebAsset,
 )
 
-private val ICON_CELL_WIDTH = 88.dp
+private const val ICON_COLUMNS = 3
+private val CAMEL_CASE_BOUNDARY = Regex("(?<=[a-z0-9])(?=[A-Z])")
