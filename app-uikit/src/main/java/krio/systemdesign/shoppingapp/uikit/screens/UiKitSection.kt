@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ChatBubble
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Downloading
+import krio.systemdesign.shoppingapp.core.ui.icons.symbols.EmojiSymbols
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Feedback
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Image
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Palette
@@ -22,6 +23,7 @@ enum class UiKitSection(
     @StringRes val descriptionRes: Int,
 ) {
     Theme(AppIcons.Palette, R.string.uikit_section_theme, R.string.uikit_section_theme_description),
+    Icons(AppIcons.EmojiSymbols, R.string.uikit_section_icons, R.string.uikit_section_icons_description),
     Buttons(AppIcons.SmartButton, R.string.uikit_section_buttons, R.string.uikit_section_buttons_description),
     Notices(AppIcons.Feedback, R.string.uikit_section_notices, R.string.uikit_section_notices_description),
     Cards(AppIcons.ViewAgenda, R.string.uikit_section_cards, R.string.uikit_section_cards_description),

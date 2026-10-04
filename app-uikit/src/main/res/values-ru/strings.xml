@@ -5,6 +5,8 @@
     <!-- Sections -->
     <string name="uikit_section_theme">Тема</string>
     <string name="uikit_section_theme_description">Цвета и шрифты</string>
+    <string name="uikit_section_icons">Иконки</string>
+    <string name="uikit_section_icons_description">Все иконки AppIcons</string>
     <string name="uikit_section_buttons">Кнопки</string>
     <string name="uikit_section_buttons_description">Кнопки корзины, кнопка с загрузкой, переключатели</string>
     <string name="uikit_section_notices">Плашки</string>

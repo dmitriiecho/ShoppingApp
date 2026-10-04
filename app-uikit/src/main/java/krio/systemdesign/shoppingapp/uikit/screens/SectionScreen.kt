@@ -15,6 +15,7 @@ import krio.systemdesign.shoppingapp.uikit.sections.BarsSection
 import krio.systemdesign.shoppingapp.uikit.sections.ButtonsSection
 import krio.systemdesign.shoppingapp.uikit.sections.CardsSection
 import krio.systemdesign.shoppingapp.uikit.sections.DialogsSection
+import krio.systemdesign.shoppingapp.uikit.sections.IconsSection
 import krio.systemdesign.shoppingapp.uikit.sections.ImagesSection
 import krio.systemdesign.shoppingapp.uikit.sections.InputsSection
 import krio.systemdesign.shoppingapp.uikit.sections.LoadingSection
@@ -45,6 +46,7 @@ fun SectionScreen(
     ) { innerPadding ->
         when (section) {
             UiKitSection.Theme -> ThemeSection(innerPadding)
+            UiKitSection.Icons -> IconsSection(innerPadding)
             UiKitSection.Buttons -> ButtonsSection(innerPadding)
             UiKitSection.Notices -> NoticesSection(innerPadding)
             UiKitSection.Cards -> CardsSection(innerPadding)

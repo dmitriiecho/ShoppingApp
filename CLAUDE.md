@@ -9,7 +9,7 @@ applicationId: `krio.systemdesign.shoppingapp`, launcher activity: `.MainActivit
   Packages in `core/ui/.../components/` mirror the UI kit sections one to one (`buttons` ↔ `ButtonsSection`, `cards` ↔ `CardsSection`, ...): a component goes into the package of the section that shows it.
 - `:domain`, `:data`
 - `:core:ui` (shared Compose components and theme), `:core:network`, `:core:config`
-  Every icon is `AppIcons.X`: Material Symbols as `ImageVector` in `core/ui/.../icons/symbols/`, one per file, named as on fonts.google.com/icons (`AppIcons.Home`, `AppIcons.ShoppingCartFilled`). There is no material-icons dependency: a new icon is an SVG from fonts.google.com/icons converted with the Valkyrie plugin.
+  Every icon is `AppIcons.X`: Material Symbols as `ImageVector` in `core/ui/.../icons/symbols/`, one per file, named as on fonts.google.com/icons (`AppIcons.Search`, `AppIcons.ShoppingCartFilled`). There is no material-icons dependency: a new icon is an SVG from fonts.google.com/icons converted with the Valkyrie plugin, then listed in `app-uikit/.../sections/IconsSection.kt`.
 - `:feature:catalog`, `:feature:cart`, `:feature:promo`, `:feature:checkout`, `:feature:settings`
 - `build-logic/` (included build, not an app module) — convention plugins `shoppingapp.android.{library,application,compose,hilt,feature}`. compileSdk/minSdk/targetSdk/Java live in `build-logic/src/main/kotlin/AndroidConfig.kt`; a new feature module applies `libs.plugins.shoppingapp.android.feature` and declares only its own dependencies.
 - `server/` — Ktor backend for the app (Kotlin 2.3, Ktor 3.6, data in JSON files). A separate Gradle build with its own wrapper and version catalog, not included in `settings.gradle.kts`. API, data rules and deploy: `server/README.md`.
