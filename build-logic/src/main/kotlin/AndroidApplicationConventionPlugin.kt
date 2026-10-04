@@ -14,11 +14,13 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 defaultConfig.targetSdk = AndroidConfig.TARGET_SDK
 
                 buildTypes.getByName("release") {
-                    // Demo apps: release is signed with the debug key so it installs on an emulator, and isn't shrunk.
+                    // Demo apps: release is signed with the debug key so it installs on an emulator.
                     // Publishing to a store would need a real key.
                     signingConfig = signingConfigs.getByName("debug")
+                    // R8: shrinks code and resources. The libraries bring their own keep rules; the app's own go
+                    // to src/main/keepRules/*.keep.
                     optimization {
-                        enable = false
+                        enable = true
                     }
                 }
             }
