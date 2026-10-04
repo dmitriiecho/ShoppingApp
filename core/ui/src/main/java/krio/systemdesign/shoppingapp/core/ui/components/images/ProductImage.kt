@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,7 +46,6 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
-import krio.systemdesign.shoppingapp.core.ui.R
 import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.HeadphonesFilled
 import krio.systemdesign.shoppingapp.core.ui.theme.ShapeRadius
@@ -67,9 +65,7 @@ fun ProductImage(
     val colors = productImageColors()
     var isLoading by remember { mutableStateOf(false) }
     val shared = productImageSharedElement(sharedElementKey, cornerRadius)
-    val placeholder = painterResource(
-        if (ShoppingAppTheme.isDark) R.drawable.product_image_placeholder_dark else R.drawable.product_image_placeholder,
-    )
+    val placeholder = rememberProductImagePlaceholder()
     val context = LocalPlatformContext.current
     val request = remember(context, imageUrl) {
         ImageRequest.Builder(context)

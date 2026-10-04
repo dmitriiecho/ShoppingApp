@@ -27,7 +27,7 @@ fun ShoppingAppTheme(
 
 // What the app theme adds to MaterialTheme.
 object ShoppingAppTheme {
-    // Whether the theme is dark, e.g. ProductImage picks its "no image" placeholder by it.
+    // Whether the theme is dark, e.g. ProductImage picks its tile colors by it.
     val isDark: Boolean
         @Composable
         @ReadOnlyComposable
