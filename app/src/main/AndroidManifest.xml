@@ -7,14 +7,15 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoppingApp">
+
         <!--
-            When the theme is changed (in the system or in the application settings), the activity is not recreated:
-            Compose simply redraws in new colors. Otherwise the screen would flicker each time the theme is changed.
+            uiMode: a system dark mode change doesn't recreate the activity; Compose recolors in place, without a flicker.
+            portrait: phones only; on Android 16+ large screens (600 dp and wider) ignore it and the app rotates.
         -->
         <activity
             android:name=".MainActivity"
@@ -24,26 +25,21 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Deep links: only the addresses the app can open. The domain is also DeepLinkConfig.BASE_URL. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!--
-                    The same domain is specified in DeepLinkConfig.BASE_URL in core/config.
-                    Update both places if it changes.
-                -->
                 <data
-                    android:scheme="https"
-                    android:host="dmitriiecho.github.io" />
-
-                <!-- Only addresses that the application can open. -->
+                    android:host="dmitriiecho.github.io"
+                    android:scheme="https" />
                 <data android:path="/catalog" />
                 <data android:path="/catalog/" />
                 <data android:path="/cart" />
