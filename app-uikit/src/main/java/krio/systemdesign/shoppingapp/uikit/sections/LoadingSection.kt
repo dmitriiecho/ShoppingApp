@@ -28,10 +28,10 @@ import krio.systemdesign.shoppingapp.core.ui.components.loading.ShimmerPlacehold
 import krio.systemdesign.shoppingapp.core.ui.components.loading.shimmerShape
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.components.SampleList
-import krio.systemdesign.shoppingapp.uikit.components.SampleSwitch
-import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
-import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleSwitch
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
 fun LoadingSection(innerPadding: PaddingValues) {

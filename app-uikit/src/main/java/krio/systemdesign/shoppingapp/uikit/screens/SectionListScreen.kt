@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.uikit
+package krio.systemdesign.shoppingapp.uikit.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import krio.systemdesign.shoppingapp.core.ui.components.cards.AppListItem
-import krio.systemdesign.shoppingapp.uikit.components.ThemeToggleButton
+import krio.systemdesign.shoppingapp.uikit.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

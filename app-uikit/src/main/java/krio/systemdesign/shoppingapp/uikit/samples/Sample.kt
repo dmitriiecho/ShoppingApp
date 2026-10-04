@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.uikit.components
+package krio.systemdesign.shoppingapp.uikit.samples
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement

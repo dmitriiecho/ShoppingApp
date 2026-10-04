@@ -22,10 +22,10 @@ import krio.systemdesign.shoppingapp.core.ui.icons.symbols.SettingsFilled
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.components.SampleData
-import krio.systemdesign.shoppingapp.uikit.components.SampleList
-import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
-import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
+import krio.systemdesign.shoppingapp.uikit.samples.SampleData
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 import kotlinx.coroutines.delay
 
 @Composable

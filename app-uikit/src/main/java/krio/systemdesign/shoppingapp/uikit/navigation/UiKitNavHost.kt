@@ -8,9 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import krio.systemdesign.shoppingapp.uikit.SectionListScreen
-import krio.systemdesign.shoppingapp.uikit.SectionScreen
-import krio.systemdesign.shoppingapp.uikit.UiKitSection
+import krio.systemdesign.shoppingapp.uikit.screens.SectionListScreen
+import krio.systemdesign.shoppingapp.uikit.screens.SectionScreen
+import krio.systemdesign.shoppingapp.uikit.screens.UiKitSection
 import kotlinx.serialization.Serializable
 
 @Serializable

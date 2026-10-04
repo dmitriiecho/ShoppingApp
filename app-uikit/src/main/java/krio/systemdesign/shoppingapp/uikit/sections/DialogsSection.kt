@@ -11,9 +11,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import krio.systemdesign.shoppingapp.core.ui.components.dialogs.ConfirmationDialog
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.components.SampleList
-import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
-import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
 fun DialogsSection(innerPadding: PaddingValues) {

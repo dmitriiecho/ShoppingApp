@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.uikit.components
+package krio.systemdesign.shoppingapp.uikit.samples
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable

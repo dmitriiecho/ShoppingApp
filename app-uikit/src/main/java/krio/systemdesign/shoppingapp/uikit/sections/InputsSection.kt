@@ -18,9 +18,9 @@ import krio.systemdesign.shoppingapp.core.ui.components.inputs.AppTextField
 import krio.systemdesign.shoppingapp.core.ui.components.inputs.SearchField
 import krio.systemdesign.shoppingapp.core.ui.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.components.SampleList
-import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
-import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
 fun InputsSection(innerPadding: PaddingValues) {

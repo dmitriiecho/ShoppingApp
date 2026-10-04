@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.uikit
+package krio.systemdesign.shoppingapp.uikit.screens
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -7,7 +7,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import krio.systemdesign.shoppingapp.core.ui.components.buttons.NavigateBackIconButton
-import krio.systemdesign.shoppingapp.uikit.components.ThemeToggleButton
 import krio.systemdesign.shoppingapp.uikit.sections.BarsSection
 import krio.systemdesign.shoppingapp.uikit.sections.ButtonsSection
 import krio.systemdesign.shoppingapp.uikit.sections.CardsSection

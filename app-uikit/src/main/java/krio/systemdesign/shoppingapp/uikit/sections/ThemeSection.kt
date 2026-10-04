@@ -18,9 +18,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
-import krio.systemdesign.shoppingapp.uikit.components.SampleList
-import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
-import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 // Цвета и шрифты темы. Всё берётся из MaterialTheme, поэтому кнопка темы в верхней панели показывает обе палитры.
 @Composable

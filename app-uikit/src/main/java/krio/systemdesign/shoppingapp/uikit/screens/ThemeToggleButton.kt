@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.uikit.components
+package krio.systemdesign.shoppingapp.uikit.screens
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton

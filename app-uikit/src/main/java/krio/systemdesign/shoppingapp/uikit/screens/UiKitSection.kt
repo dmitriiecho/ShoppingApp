@@ -1,4 +1,4 @@
-package krio.systemdesign.shoppingapp.uikit
+package krio.systemdesign.shoppingapp.uikit.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -13,6 +13,7 @@ import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Smartphone
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.TextFields
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ViewAgenda
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.WebAsset
+import krio.systemdesign.shoppingapp.uikit.R
 
 // Разделы каталога: значок, название и пояснение для списка разделов. Что показать в разделе, решает SectionScreen.
 enum class UiKitSection(

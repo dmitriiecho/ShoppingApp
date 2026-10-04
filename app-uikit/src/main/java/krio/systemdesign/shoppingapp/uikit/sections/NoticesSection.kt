@@ -21,10 +21,10 @@ import krio.systemdesign.shoppingapp.core.ui.icons.symbols.ProductionQuantityLim
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Sell
 import krio.systemdesign.shoppingapp.core.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.components.SampleData
-import krio.systemdesign.shoppingapp.uikit.components.SampleList
-import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
-import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
+import krio.systemdesign.shoppingapp.uikit.samples.SampleData
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 // Значки и тексты те же, что у плашек на экранах приложения: у каждого значка там один смысл.
 // Группы те же, что превью Notice: карточка товара, промокод, панель корзины, оформление заказа.

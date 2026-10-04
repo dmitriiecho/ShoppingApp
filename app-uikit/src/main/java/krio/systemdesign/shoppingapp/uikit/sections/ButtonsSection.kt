@@ -32,11 +32,11 @@ import krio.systemdesign.shoppingapp.core.ui.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.CreditCard
 import krio.systemdesign.shoppingapp.core.ui.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.uikit.R
-import krio.systemdesign.shoppingapp.uikit.components.SampleData
-import krio.systemdesign.shoppingapp.uikit.components.SampleList
-import krio.systemdesign.shoppingapp.uikit.components.SampleSwitch
-import krio.systemdesign.shoppingapp.uikit.components.SampleVariant
-import krio.systemdesign.shoppingapp.uikit.components.sampleGroup
+import krio.systemdesign.shoppingapp.uikit.samples.SampleData
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleSwitch
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 import kotlinx.coroutines.delay
 
 @Composable
