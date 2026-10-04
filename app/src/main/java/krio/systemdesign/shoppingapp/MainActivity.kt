@@ -10,13 +10,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.ui.theme.SystemBarsAppearance
 import krio.systemdesign.shoppingapp.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,15 +58,7 @@ class MainActivity : ComponentActivity() {
                 ThemeMode.Light -> false
                 ThemeMode.Dark -> true
             }
-            // Значки строки состояния и панели навигации — под тему приложения, а не системы:
-            // иначе при тёмной теме приложения и светлой системе часы и батарея были бы тёмными на тёмном фоне.
-            DisposableEffect(darkTheme) {
-                WindowCompat.getInsetsController(window, window.decorView).apply {
-                    isAppearanceLightStatusBars = !darkTheme
-                    isAppearanceLightNavigationBars = !darkTheme
-                }
-                onDispose {}
-            }
+            SystemBarsAppearance(window, darkTheme)
             LaunchedEffect(mode) { rememberThemeForSplashScreen(mode) }
             ShoppingAppTheme(darkTheme = darkTheme) {
                 AppNavHost(

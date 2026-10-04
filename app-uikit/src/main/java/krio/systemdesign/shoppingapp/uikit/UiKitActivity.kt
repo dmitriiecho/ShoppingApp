@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -13,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import krio.systemdesign.shoppingapp.core.ui.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.ui.theme.SystemBarsAppearance
 import krio.systemdesign.shoppingapp.uikit.navigation.UiKitNavHost
 
 // Каталог компонентов :core:ui. Тема сначала как в системе, дальше переключается кнопкой в верхней панели:
@@ -27,15 +27,7 @@ class UiKitActivity : ComponentActivity() {
         setContent {
             val isSystemDarkTheme = isSystemInDarkTheme()
             var darkTheme by rememberSaveable { mutableStateOf(isSystemDarkTheme) }
-            // Значки строки состояния и панели навигации — под тему каталога, а не системы:
-            // иначе при тёмной теме каталога и светлой системе часы и батарея были бы тёмными на тёмном фоне.
-            DisposableEffect(darkTheme) {
-                WindowCompat.getInsetsController(window, window.decorView).apply {
-                    isAppearanceLightStatusBars = !darkTheme
-                    isAppearanceLightNavigationBars = !darkTheme
-                }
-                onDispose {}
-            }
+            SystemBarsAppearance(window, darkTheme)
             ShoppingAppTheme(darkTheme = darkTheme) {
                 UiKitNavHost(
                     darkTheme = darkTheme,
