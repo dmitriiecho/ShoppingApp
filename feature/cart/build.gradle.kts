@@ -10,7 +10,4 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core:ui"))
     implementation(project(":core:config"))
-
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
 }

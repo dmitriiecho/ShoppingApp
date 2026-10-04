@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.shoppingapp.android.library)
     alias(libs.plugins.shoppingapp.android.hilt)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

@@ -1,5 +1,4 @@
-// Каталог компонентов :core:ui — отдельное приложение, в Android Studio запускается своей run configuration.
-// Из модулей проекта зависит только от :core:ui: всё, что он показывает, должно лежать там.
+// The :core:ui component catalog, a separate app. It depends only on :core:ui: everything it shows lives there.
 plugins {
     alias(libs.plugins.shoppingapp.android.application)
     alias(libs.plugins.shoppingapp.android.compose)

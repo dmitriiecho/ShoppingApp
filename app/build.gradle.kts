@@ -33,4 +33,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Lets Coil load product images over the network (ProductImage in :core:ui).
+    implementation(libs.coil.network.okhttp)
 }
