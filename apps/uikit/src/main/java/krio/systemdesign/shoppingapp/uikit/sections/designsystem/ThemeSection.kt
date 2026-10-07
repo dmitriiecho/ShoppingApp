@@ -16,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -75,6 +76,7 @@ private class ColorRole(
 )
 
 @Composable
+@ReadOnlyComposable
 private fun colorRoles(): List<ColorRole> {
     val colors = MaterialTheme.colorScheme
     return listOf(
@@ -101,6 +103,7 @@ private fun colorRoles(): List<ColorRole> {
 
 // Colors beyond the Material scheme. They have no on-colors: the text is the color they are used with in the app.
 @Composable
+@ReadOnlyComposable
 private fun appColorRoles(): List<ColorRole> {
     val colors = MaterialTheme.colorScheme
     val appColors = ShoppingAppTheme.colors

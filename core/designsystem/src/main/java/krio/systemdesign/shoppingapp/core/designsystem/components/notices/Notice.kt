@@ -16,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -113,6 +114,7 @@ enum class NoticeStyle {
 }
 
 @Composable
+@ReadOnlyComposable
 private fun NoticeStyle.accentColor(): Color = when (this) {
     NoticeStyle.Error -> MaterialTheme.colorScheme.error
     NoticeStyle.Success -> ShoppingAppTheme.colors.success
