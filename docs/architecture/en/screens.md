@@ -4,9 +4,11 @@
 
 A screen has one UI state, a list of events from the user and a list of one-off effects. The ViewModel turns events into a new state or an effect; the screen only draws the state and reacts to effects.
 
+&nbsp;
+
 ## The files of a screen
 
-Taking the cart as an example (`feature/cart/impl/.../presentation/cart/`):
+Every screen is built the same way. Taking the cart as an example (`feature/cart/impl/.../presentation/cart/`):
 
 | File | Holds |
 |---|---|
@@ -14,20 +16,50 @@ Taking the cart as an example (`feature/cart/impl/.../presentation/cart/`):
 | `CartViewModel.kt` | the state, event handling, effects |
 | `CartUiState.kt` | the state and its nested types |
 | `CartEvent.kt`, `CartEffect.kt` | what the user does and what happens once |
-| `components/` | sections with their own previews (`CartItemCard`, `CartTotalsCard`, …), `internal` |
+| `components/` | sections with their own previews: `CartItemCard`, `CartTotalsCard`, … |
 
-### Two overloads instead of Route + Screen
+&nbsp;
 
-- **The public `CartScreen(onBack, …, viewModel = hiltViewModel())`** collects the state and the effects.
-- **The `internal CartScreen(uiState, snackbarHostState, onEvent, modifier)`** is stateless and holds the `Scaffold`, so it can be previewed without Hilt.
+## Two screen overloads
 
-The navigation code of other features calls the screen by one name either way.
+Instead of a Route + Screen pair, a screen has two functions with the same name. The first takes the ViewModel and collects the state and the effects, the second only draws:
 
-### Events go only through the screen file
+```kotlin
+@Composable
+internal fun CartScreen(
+    onBack: () -> Unit,
+    onOpenCheckout: () -> Unit,
+    // ...
+    viewModel: CartViewModel = hiltViewModel(),
+)
 
-`onEvent` reaches the stateless screen, `CartContent` and tiny private helpers. Sections in `components/` get specific callbacks (`onRetry`, `onQuantityChange`), so they don't know the screen's events and can be previewed on their own.
+@Composable
+internal fun CartScreen(
+    uiState: CartUiState,
+    snackbarHostState: SnackbarHostState,
+    onEvent: (CartEvent) -> Unit,
+    modifier: Modifier = Modifier,
+)
+```
+
+The second one doesn't know Hilt, so it can be previewed in any state.
+
+`onEvent` goes no further than this file: the screen, `CartContent` and tiny private helpers. Sections in `components/` get specific callbacks, so they don't know the screen's events and can be previewed on their own:
+
+```kotlin
+CartItemCard(
+    item = item,
+    onQuantityChange = { productId, quantity -> onEvent(CartEvent.OnQuantityChange(productId, quantity)) },
+    onRemove = { onEvent(CartEvent.OnRemoveFromCartClick(it)) },
+    // ...
+)
+```
+
+&nbsp;
 
 ## UI state
+
+The state is one `StateFlow` per screen: `combine` over the sources and `stateIn`. Types that only make up the state are nested in it:
 
 ```kotlin
 data class CartUiState(
@@ -35,24 +67,33 @@ data class CartUiState(
     val isOpeningCheckout: Boolean = false,
     val isClearCartDialogVisible: Boolean = false,
 ) {
+    val canCheckout: Boolean
+        get() = content is Content.Loaded && content.allowsCheckout && !isOpeningCheckout
+
     sealed interface Content {
         data object Loading : Content
-        data class Loaded(val items: List<Item>, /* … */) : Content
+        data class Loaded(val items: List<Item>, /* ... */) : Content
     }
+}
+```
+
+- **Nested types are written through their owner**: `CartUiState.Item`; inside the owner the name isn't repeated: `PromoCodeUiState.Check`, not `PromoCodeCheck`.
+- **Fields are grouped by screen section**, not listed flat: checkout has `order`, `address`, `paymentMethod`.
+- **Loading is a state, not a flag or `null`**: sealed `Loading` / `Loaded` / `Error` with these names everywhere. `null` only means "unknown", such as a product name a deep link didn't pass.
+- **The state holds what the screen draws**, ready decisions such as `canAddOneMore` included, not domain models or raw data.
+- **Repeated conditions are getters** on the state, like `canCheckout` above.
+
+A check before an action reads the source itself, not `uiState`: the state gets a change only after `combine`, a moment later. Otherwise a fast double tap on "Place order" placed the order twice:
+
+```kotlin
+private fun submitOrder() {
+    if (isSubmitting.value || !uiState.value.canSubmit) return
+    isSubmitting.value = true
     // ...
 }
 ```
 
-- **One `StateFlow` per screen**, built with `combine` over the sources and `stateIn(WhileSubscribed(5_000))`.
-- **Nested types.** Types that only make up the state live inside `XxxUiState` and are written as `CartUiState.Item`. Inside the owner the name isn't repeated: `PromoCodeUiState.Check`, not `PromoCodeCheck`.
-- **Fields are grouped by screen section**, not listed flat: checkout has `order`, `address`, `paymentMethod`.
-- **Loading is a state, not a flag or `null`**: sealed `Loading` / `Loaded` / `Error` with these names everywhere. `null` only means "unknown", such as a product name a deep link didn't pass.
-- **The state holds what the screen draws**, decisions included (`canAddOneMore`), not domain models or raw data.
-- **Repeated conditions are getters** on the state: `canCheckout`, `showsOrder`.
-
-### Actions read the sources, not the state
-
-`uiState` gets a change only after `combine`, a moment later. A check before an action reads the source flow itself: checkout's "Place order" checks `isSubmitting.value`, otherwise a fast double tap placed the order twice.
+&nbsp;
 
 ## Effects
 
@@ -68,27 +109,47 @@ ObserveEffects(viewModel.effects) { effect ->
 }
 ```
 
-- **Collected while the screen is visible** (`STARTED`). An effect sent in the background waits in the channel and is handled when the user comes back.
-- **On `Main.immediate`.** The effect is handled right inside the ViewModel's `send`; with a pause in between, a screen stopping at that moment would take the effect and lose it.
-- **`navigate { }` runs only while the screen is on top** (`RESUMED`), which stops a double tap from navigating twice.
-- **`showSnackbar` runs in its own coroutine**: a snackbar waits until it is dismissed and would hold the next effect.
-- **One snackbar effect per screen**, `ShowSnackBar(UiText)`: the ViewModel builds the text from a string resource without access to resources.
+Inside `ObserveEffects` the effects are collected while the screen is visible and handled at once, on `Main.immediate`:
+
+```kotlin
+lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+    withContext(Dispatchers.Main.immediate) {
+        effects.collect { effect -> scope.currentOnEffect(effect) }
+    }
+}
+```
+
+- **An effect sent in the background** waits in the channel and is handled when the user comes back.
+- **`Main.immediate`** makes the effect be handled right inside the ViewModel's `send`: with a pause in between, a screen stopping at that moment would take the effect and lose it.
+- **`navigate { }` runs only while the screen is on top**, and **`showSnackbar` runs in its own coroutine**: a snackbar waits until it is dismissed and would hold the next effect.
+
+A screen has one snackbar effect, `ShowSnackBar(UiText)`: the ViewModel builds the text from a string resource without access to resources.
+
+&nbsp;
 
 ## Text fields
 
-A field's text is a `TextFieldState` created in the ViewModel and put into the state as the same instance for the whole screen:
+A field's text is a `TextFieldState` created in the ViewModel and put into the state as the same instance for the whole screen. `savedTextField` keeps it in `SavedStateHandle`, so the text survives process death:
 
 ```kotlin
 private val searchQuery: TextFieldState = savedStateHandle.savedTextField(KEY_SEARCH_QUERY)
 ```
 
-- **No `OnTextChange` event.** The field edits the state in place, so typing never waits for a flow and can't lose characters: the old `value` + `onValueChange` round trip lost them on fast typing.
-- **Values derived from the text are getters** on the state (`canApply`). Compose tracks the read.
+- **No `OnTextChange` event.** The field edits the state in place, so typing never waits for a flow and can't lose characters.
+- **Values derived from the text are getters** on the state. Compose tracks the read:
+
+  ```kotlin
+  val canApply: Boolean
+      get() = promoCode.text.isNotBlank() && !isChecking
+  ```
+
 - **`snapshotFlow { state.text }` in the ViewModel is for actions**: search, clearing an error after an edit.
+
+&nbsp;
 
 ## Saved state
 
-What the user typed or opened survives process death; what a request was doing doesn't.
+What the user typed or opened survives process death; what a request was doing doesn't:
 
 | Survives | How |
 |---|---|
@@ -97,17 +158,34 @@ What the user typed or opened survives process death; what a request was doing d
 | the catalog page in view | the page number in `SavedStateHandle`; the list reopens there |
 | results of requests | not kept: the screen loads again |
 
+&nbsp;
+
 ## Compose stability
 
-Strong skipping is on, so by default nothing is annotated:
+Strong skipping is on, so by default nothing is annotated: a composable skips when it gets the same instance again. Only what compiler reports and a recomposition log show gets fixed.
 
-- **No `@Stable`, `@Immutable` or `ImmutableList` by default.** A composable skips when it gets the same instance again.
-- **Map the source before `combine`**, so an object changes only when its source does: checkout does `observeCart().map { it.toOrder() }`.
-- **Models from `:shared:domain` are unstable for Compose** (that module has no Compose compiler), and no Compose annotations go there. Where it matters the screen gets its own UI model with plain values: the cart's `CartUiState.Item`.
-- **List callbacks take the item's id** (`onQuantityChange: (productId, quantity) -> Unit`), so every card gets the same lambdas and "+" redraws only its own card.
-- **Check with compiler reports and a log, not by eye**, and fix only what they show.
+To make an object change only when its source does, the source is mapped before `combine`:
 
-## Styled components and previews
+```kotlin
+val uiState = combine(
+    observeCart().map { it.toOrder() },  // a new order only when the cart changes
+    paymentMethod,
+    isSubmitting,
+) { order, payment, submitting -> CheckoutUiState(/* ... */) }
+```
 
-- **Every styled element comes from `:core:designsystem`, `:shared:ui` or the feature's `ui` module** (see [Modules](modules.md#where-new-code-goes)); a screen doesn't style Material components itself.
-- **Previews sit next to what they preview**, private, Light and Dark. A screen file previews states that look different as a whole screen; a section's states are previewed in the section's file.
+Models from `:shared:domain` are unstable for Compose: that module has no Compose compiler, and no Compose annotations go there. Where it matters the screen gets its own UI model with plain values, like `CartUiState.Item` in the cart.
+
+List callbacks take the item's id instead of capturing the item. So every card gets the same lambdas, and "+" redraws only its own card:
+
+```kotlin
+onQuantityChange: (productId: String, quantity: Int) -> Unit
+```
+
+&nbsp;
+
+## Components and previews
+
+A screen is built from ready components: every styled element comes from `:core:designsystem`, `:shared:ui` or the feature's `ui` module (see [Modules](modules.md#where-new-code-goes)). The screen doesn't style Material components itself.
+
+Previews sit next to what they preview, private, in the light and dark themes. A screen file previews states that look different as a whole screen; a section's states are previewed in the section's file.

@@ -2,9 +2,13 @@
 
 [Русская версия](../ru/build.md) · [All pages](README.md)
 
+The common setup of modules lives in [`build-logic/`](../../../build-logic/), an included build with convention plugins. A module applies one or two plugins and declares only its own dependencies.
+
+&nbsp;
+
 ## Convention plugins
 
-The common setup of modules lives in [`build-logic/`](../../../build-logic/), an included build. A module applies one or two plugins and declares only its own dependencies.
+Each kind of module has its own plugin:
 
 | Plugin | For | Adds |
 |---|---|---|
@@ -15,18 +19,50 @@ The common setup of modules lives in [`build-logic/`](../../../build-logic/), an
 | `shoppingapp.android.feature` | every `:feature:<name>:impl` | library + Compose + Hilt + serialization, navigation and lifecycle libraries |
 | `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics` | Kotlin JVM without Android |
 
-compileSdk, minSdk, targetSdk and the Java version are set once, in [`AndroidConfig.kt`](../../../build-logic/src/main/kotlin/AndroidConfig.kt).
+So a module's build file is short:
+
+```kotlin
+// feature/promo/ui/build.gradle.kts
+plugins {
+    alias(libs.plugins.shoppingapp.android.library)
+    alias(libs.plugins.shoppingapp.android.compose)
+}
+
+android {
+    namespace = "krio.systemdesign.shoppingapp.feature.promo.ui"
+}
+
+dependencies {
+    implementation(project(":core:designsystem"))
+}
+```
+
+The SDK and Java versions are set in one place, [`AndroidConfig.kt`](../../../build-logic/src/main/kotlin/AndroidConfig.kt):
+
+```kotlin
+internal object AndroidConfig {
+    const val COMPILE_SDK = 37
+    const val MIN_SDK = 26
+    const val TARGET_SDK = 36
+    val JAVA_VERSION = JavaVersion.VERSION_21
+}
+```
+
+&nbsp;
 
 ## Versions and repositories
 
-- **Every version is in [`gradle/libs.versions.toml`](../../../gradle/libs.versions.toml)**; build-logic reads the same catalog. Modules apply plugins without versions.
+Every version is in [`gradle/libs.versions.toml`](../../../gradle/libs.versions.toml), and build-logic reads the same catalog. Modules apply plugins without versions.
+
 - **Repositories are declared only in `settings.gradle.kts`**: a module that declares its own fails the build. Google Maven serves only Google and AndroidX artifacts.
 - **Configuration cache and parallel builds are on.**
 - **The server is a separate build** with its own wrapper and catalog, not included in the app's settings.
 
+&nbsp;
+
 ## Code style
 
-[ktlint](https://pinterest.github.io/ktlint/) 1.8 through Spotless, rules in the root [`.editorconfig`](../../../.editorconfig):
+[ktlint](https://pinterest.github.io/ktlint/) 1.8 checks the style through Spotless, with the rules in the root [`.editorconfig`](../../../.editorconfig):
 
 ```sh
 ./gradlew spotlessCheck   # check
@@ -35,29 +71,44 @@ compileSdk, minSdk, targetSdk and the Java version are set once, in [`AndroidCon
 
 - **The `android_studio` style**, the same as Android Studio's formatter, so Ctrl+Alt+L and ktlint agree.
 - **120 characters per line.**
-- **Trailing commas** in multi-line lists: one-line diffs and lines that can be reordered.
+- **Trailing commas** in multi-line lists: one-line diffs, and lines can be reordered.
 - **One parameter per line once there are two or more.**
 
 Comments are in English, short, and explain what the code can't say: a reason, an order that matters, a workaround. Obvious code gets none.
 
+&nbsp;
+
 ## CI
 
-[`ci.yml`](../../../.github/workflows/ci.yml) runs on every pull request and every push to `main`, two jobs in parallel:
+[`ci.yml`](../../../.github/workflows/ci.yml) runs on every pull request and every push to `main`. Two jobs run in parallel:
 
 | Job | Steps |
 |---|---|
 | Android | code style → module rules (`assertModuleGraph`) → lint → build of both apps |
 | Server | code style and tests, including the check of `data/*.json` |
 
-A new push to a pull request cancels its run that is still going.
+A new push to a pull request cancels its run that is still going, and runs on `main` always finish:
+
+```yaml
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+```
+
+&nbsp;
 
 ## Signing
 
-- **The debug key is in the repo** ([`build-logic/debug.keystore`](../../../build-logic/debug.keystore)), so a build from any computer has the same signature. App Links depend on it: its fingerprint is in `assetlinks.json`.
+The debug key is in the repo ([`build-logic/debug.keystore`](../../../build-logic/debug.keystore)), so a build from any computer has the same signature. App Links depend on it: the key's fingerprint is in `assetlinks.json`.
+
 - **Release is signed with the same key** so it installs on an emulator; publishing to a store would need a real key.
 - **R8 is on in release**: it shrinks code and resources.
 
+&nbsp;
+
 ## Commands
+
+The main commands, from the project root:
 
 ```sh
 ./gradlew :apps:shop:installDebug      # the shop on a connected device

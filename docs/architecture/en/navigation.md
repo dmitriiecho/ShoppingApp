@@ -4,7 +4,9 @@
 
 Navigation Compose with type-safe routes (`@Serializable` objects and classes). Features don't know each other: each one gives the app a graph, and the app joins the graphs.
 
-### How the features are joined
+&nbsp;
+
+## How the features are joined
 
 The app builds three tabs and the checkout over them. Every way from one feature to another is a callback that [`AppNavGraph.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) passes to the feature graphs:
 
@@ -30,7 +32,9 @@ cart.cartGraph(
 > [!TIP]
 > App-wide navigation behaviour — what Back does on a tab, how tabs stack — is changed in `AppNavGraph` and the bottom bar, not in the features.
 
-### A feature's graph
+&nbsp;
+
+## A feature's graph
 
 Every feature has the same shape, even one with a single screen:
 
@@ -53,7 +57,9 @@ fun CartNavigationScope.graph(
 
 `graph(navController, onClose, …)` is the same everywhere, even where `navController` isn't used yet: a feature can grow screens without changing its signature.
 
-### Tabs
+&nbsp;
+
+## Tabs
 
 Each tab keeps its own stack. Going to a tab pops everything, the catalog too, and saves the stack of the tab being left ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
 
@@ -81,7 +87,9 @@ CompositionLocalProvider(LocalSharedTransitionScope provides this.takeUnless { i
 }
 ```
 
-### Product details inside the cart tab
+&nbsp;
+
+## Product details inside the cart tab
 
 Product details belong to the catalog, but a product opened from the cart must stay in the cart tab. For that the catalog gives an interface with the screen's arguments and a function that adds the screen under any route with that interface. The app declares its own route:
 
@@ -102,7 +110,9 @@ The ViewModel doesn't know which route opened it and reads the arguments by the 
 private val productId: String = checkNotNull(savedStateHandle[ProductDetailsRoute::productId.name])
 ```
 
-### Screen results
+&nbsp;
+
+## Screen results
 
 The promo code screen returns the applied code to the cart. The cart opens it with a `resultKey`, like a request code, and the app, closing the promo code screen, puts the result into the `savedStateHandle` of the cart's entry under that key:
 
@@ -129,7 +139,9 @@ LaunchedEffect(promoResult) {
 > [!WARNING]
 > The result can't go straight into the ViewModel's `SavedStateHandle`: an entry's handle and a ViewModel's handle are separate objects, and the ViewModel would never see it.
 
-### Navigation goes through the ViewModel
+&nbsp;
+
+## Navigation goes through the ViewModel
 
 Every button that navigates, Back and Close included, sends an event. The ViewModel answers with an effect, and the screen navigates inside `navigate { }` (see [Screens](screens.md#effects)):
 
@@ -154,7 +166,11 @@ During a transition the old screen is still visible and used to catch the second
 
 </details>
 
-### Deep links
+&nbsp;
+
+## Deep links
+
+The app opens three kinds of links:
 
 | Link | Opens |
 |---|---|

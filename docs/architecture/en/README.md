@@ -4,9 +4,13 @@
 
 ShoppingApp is a demo shop for Android: a catalog with search, product details, a cart that the server checks before checkout, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) serves the catalog and checks the cart.
 
-These pages explain how the app is built and why: each one is a set of rules, the reasons behind them and links to the code.
+These pages explain how the app is built and why: each one has the rules, the reasons behind them and short pieces of the project's code.
+
+&nbsp;
 
 ## Modules at a glance
+
+The app is laid out in four levels, from the bottom up:
 
 ```text
 apps/     shop, uikit                                    the applications
@@ -15,9 +19,13 @@ shared/   domain, data, ui, analytics                    shop code used by two o
 core/     designsystem, compose-utils, network, config   knows nothing about the shop
 ```
 
-A module depends only on modules of its own level or below. The build checks it.
+A module depends only on modules of its own level or below, and the build checks it.
+
+&nbsp;
 
 ## Pages
+
+Each page can be read on its own:
 
 | Page | What it covers |
 |---|---|
@@ -26,9 +34,13 @@ A module depends only on modules of its own level or below. The build checks it.
 | [Screens](screens.md) | the files of a screen, UI state, events and effects, text fields, Compose stability |
 | [Data](data.md) | use cases, repositories, error types, local storage, network, prices, the contract with the server |
 | [Analytics](analytics.md) | events, analytics systems, screen views, what may be sent |
-| [Build](build.md) | build-logic, the version catalog, code style, CI, signing |
+| [Build](build.md) | convention plugins, the version catalog, code style, CI, signing |
+
+&nbsp;
 
 ## Stack
+
+The main libraries and tools:
 
 | Area | Choice |
 |---|---|

@@ -2,9 +2,13 @@
 
 [English version](../en/modules.md) · [Все разделы](README.md)
 
+Папки — это уровни, снизу вверх: `core/` → `shared/` → `feature/` → `apps/`. Модуль зависит только от модулей своего уровня или ниже, поэтому уровень любого кода виден прямо по его пути.
+
+&nbsp;
+
 ## Уровни
 
-Папки — это уровни, снизу вверх. Модуль зависит только от модулей своего уровня или ниже, поэтому уровень любого кода виден по его пути.
+На каждом уровне свои модули и свой смысл:
 
 | Уровень | Модули | Что в нём |
 |---|---|---|
@@ -13,12 +17,13 @@
 | `feature/` | `catalog`, `cart`, `promo`, `checkout`, `settings` | по фиче в каждом, разделённой на `ui` и `impl` |
 | `apps/` | `shop`, `uikit` | приложения; от них никто не зависит |
 
-### Почему уровни — это папки
+Уровни разложены по папкам, а не только по зависимостям: если держать всё в `core/`, как делают многие проекты, не видно, какой код знает о магазине. И нет модулей «для всего» вроде `:core:common`, которые правит каждая фича: в `shared/` четыре модуля со строгими ролями.
 
-- **Уровень виден без открытия build-файла.** Если держать всё в `core/`, как делают многие проекты, не видно, какой код знает о магазине.
-- **Нет модулей «для всего».** Нет `:core:common` или `:core:error`, которые правит каждая фича. В `shared/` четыре модуля со строгими ролями.
+&nbsp;
 
 ## Куда класть новый код
+
+Код живёт там, где он нужен, и поднимается в `shared/`, только когда понадобился второй фиче:
 
 - **Нужен одной фиче** — остаётся в этой фиче.
 - **Понадобился второй фиче** — переезжает в `shared/`: модели, репозитории и use case'ы в `:shared:domain` / `:shared:data`, UI-компоненты магазина (карточка товара, счётчик количества в корзине) в `:shared:ui`.
@@ -34,38 +39,98 @@
 
 Фичи сами не стилизуют компоненты Material, и у каждого стилизованного компонента есть пример в приложении UI kit (`:apps:uikit`).
 
+&nbsp;
+
 ## Фича: `ui` + `impl`
 
-| Модуль | Что в нём | От чего зависит |
-|---|---|---|
-| `:feature:<name>:impl` | экраны, ViewModel'и, свои use case'ы, репозитории и навигация фичи | `core/`, `:shared:domain`, `:shared:ui`, `:shared:analytics`, свой `ui` |
-| `:feature:<name>:ui` | UI-компоненты магазина, которые нужны только этой фиче, на простых значениях | `:core:designsystem`, `:shared:ui` |
+Каждая фича — это два модуля. В `impl` всё, что делает фича, а в `ui` — её UI-компоненты на простых значениях:
+
+```kotlin
+// feature/cart/impl/build.gradle.kts
+plugins {
+    alias(libs.plugins.shoppingapp.android.feature)
+}
+
+dependencies {
+    implementation(project(":feature:cart:ui"))
+    implementation(project(":shared:domain"))
+    implementation(project(":shared:ui"))
+    implementation(project(":shared:analytics"))
+    implementation(project(":core:designsystem"))
+    // ...
+}
+```
 
 - **`ui` вынесен отдельно, чтобы UI kit мог его показать**, не видя экранов, ViewModel'ей и данных. Если у фичи таких компонентов нет, нет и модуля `ui` (`settings`).
-- **Модуля `api` нет.** Фичи никогда не зависят друг от друга, так что API фичи нужно только приложению. Приложение связывает фичи через колбэки (см. [Навигацию](navigation.md)).
+- **Модуля `api` нет.** Фичи никогда не зависят друг от друга, так что API фичи нужно только приложению, а оно связывает фичи через колбэки (см. [Навигацию](navigation.md)).
 - **От `:shared:data` зависит только `:apps:shop`.** Фичи видят интерфейсы репозиториев из `:shared:domain`, а реализации подставляет Hilt в приложении.
+
+&nbsp;
 
 ## Что фича показывает наружу
 
-В модуле `impl` публично только то, что подключает приложение, и всё это лежит в `presentation/navigation`:
+В модуле `impl` публично только то, что подключает приложение, и всё это лежит в `presentation/navigation`. Остальное — экраны, ViewModel'и, UI state, use case'ы, репозитории — `internal`:
 
-| Публично | Зачем приложению |
-|---|---|
-| `XxxRoutes.Graph` | чтобы открыть фичу |
-| `NavGraphBuilder.xxx`, `XxxNavigationScope.graph(...)` | чтобы добавить граф фичи |
-| `NavDestination.xxxAnalyticsScreen()` | чтобы называть экраны для аналитики |
-| `ProductDetailsRoute`, `productDetailsScreen<T>()` (только каталог) | чтобы показать карточку товара во вкладке корзины |
+```kotlin
+object CatalogRoutes {
+    @Serializable data object Graph                          // приложение открывает фичу
+    @Serializable internal data object ProductList
+    @Serializable internal data class ProductDetails(/* ... */) : ProductDetailsRoute
+}
 
-Всё остальное — экраны, ViewModel'и, UI state, use case'ы, репозитории — `internal`. `ProductDetailsScreen` помечен `@PublishedApi internal`: его вызывает публичная inline-функция `productDetailsScreen<T>()` из кода приложения, но вручную его вызвать нельзя.
+fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
+
+fun NavDestination.catalogAnalyticsScreen(): AnalyticsScreen? = /* ... */
+```
+
+Один экран нужен приложению напрямую: карточку товара каталога оно показывает во вкладке корзины через inline-функцию `productDetailsScreen<T>()`. Inline-функция встраивается в код приложения, поэтому экран помечен так:
+
+```kotlin
+@Composable
+@PublishedApi
+internal fun ProductDetailsScreen(
+    onBack: () -> Unit,
+    viewModel: ProductDetailsViewModel = hiltViewModel(),
+)
+```
+
+Его может вызвать встроенный код этой функции, а вручную из приложения — нет.
+
+&nbsp;
 
 ## Пакеты
 
-- **Пакет библиотеки повторяет путь модуля:** `:shared:ui` → `krio.systemdesign.shoppingapp.shared.ui`, `:feature:cart:impl` → `…feature.cart.impl`. Дефис убирается: `compose-utils` → `composeutils`.
-- **Пакет приложения — его applicationId** (`:apps:shop` → `krio.systemdesign.shoppingapp`), поэтому он не меняется, если приложение переезжает в другую папку.
+Пакет библиотеки повторяет путь модуля, а пакет приложения — его applicationId:
+
+| Модуль | Пакет |
+|---|---|
+| `:shared:ui` | `krio.systemdesign.shoppingapp.shared.ui` |
+| `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
+| `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (дефис убирается) |
+| `:apps:shop` | `krio.systemdesign.shoppingapp` |
+
+Пакет приложения привязан к applicationId, поэтому не меняется, если приложение переезжает в другую папку.
+
+&nbsp;
 
 ## Проверка
 
-`./gradlew assertModuleGraph` сверяет каждую зависимость между модулями со списком разрешённых в [`ModuleGraphRules.kt`](../../../build-logic/src/main/kotlin/ModuleGraphRules.kt), а CI запускает её на каждом pull request. Зависимость, которую не разрешает ни одно правило, роняет сборку:
+`./gradlew assertModuleGraph` сверяет каждую зависимость между модулями со списком разрешённых в [`ModuleGraphRules.kt`](../../../build-logic/src/main/kotlin/ModuleGraphRules.kt), а CI запускает её на каждом pull request. Каждое правило — одно регулярное выражение на строку «откуда → куда»:
+
+```kotlin
+allowed = arrayOf(
+    """:core:.* -> :core:.*""",
+    """:shared:(domain|ui|analytics) -> :core:.*""",
+    """:shared:data -> :(core:.*|shared:domain)""",
+    """:feature:\w+:ui -> :(core:designsystem|shared:ui)""",
+    """:feature:\w+:impl -> :(core:.*|shared:(domain|ui|analytics))""",
+    """:feature:(\w+):impl -> :feature:\1:ui""",   // только свой ui
+    """:apps:uikit -> :(core:designsystem|shared:ui|feature:\w+:ui)""",
+    """:apps:shop -> :(core|shared|feature):.*""",
+)
+```
+
+Зависимость, которую не разрешает ни одно правило, роняет сборку:
 
 ```text
 [':feature:catalog:impl' -> ':feature:cart:impl'] not allowed by any of [...]
