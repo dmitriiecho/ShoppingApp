@@ -9,7 +9,7 @@ import androidx.navigation.toRoute
 import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.PromoCodeScreen
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-class PromoNavigationScope(val builder: NavGraphBuilder)
+class PromoNavigationScope internal constructor(internal val builder: NavGraphBuilder)
 
 val NavGraphBuilder.promo: PromoNavigationScope
     get() = PromoNavigationScope(this)

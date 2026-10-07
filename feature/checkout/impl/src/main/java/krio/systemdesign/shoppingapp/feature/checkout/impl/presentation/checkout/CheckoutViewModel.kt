@@ -25,7 +25,7 @@ import krio.systemdesign.shoppingapp.shared.domain.model.Cart
 import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 
 @HiltViewModel
-class CheckoutViewModel @Inject constructor(
+internal class CheckoutViewModel @Inject constructor(
     observeCart: ObserveCartUseCase,
     private val placeOrder: PlaceOrderUseCase,
     private val analytics: Analytics,

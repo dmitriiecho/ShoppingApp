@@ -50,7 +50,7 @@ import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productli
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
 
 @Composable
-fun ProductListScreen(
+internal fun ProductListScreen(
     onBack: () -> Unit,
     onOpenProduct: (productId: String, productName: String, imageUrl: String) -> Unit,
     viewModel: ProductListViewModel = hiltViewModel(),

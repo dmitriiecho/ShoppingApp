@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart
 
 import kotlinx.collections.immutable.ImmutableList
 
-data class CartUiState(
+internal data class CartUiState(
     val content: Content = Content.Loading,
     // The user tapped Checkout; checkout opens only once the server confirms the cart, so meanwhile
     // the button shows a loader and ignores more taps.

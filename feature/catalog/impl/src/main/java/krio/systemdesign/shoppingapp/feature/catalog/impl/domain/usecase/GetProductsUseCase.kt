@@ -4,7 +4,7 @@ import javax.inject.Inject
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.ProductRepository
 
-class GetProductsUseCase @Inject constructor(private val productRepository: ProductRepository) {
+internal class GetProductsUseCase @Inject constructor(private val productRepository: ProductRepository) {
     suspend operator fun invoke(
         query: String,
         page: Int,

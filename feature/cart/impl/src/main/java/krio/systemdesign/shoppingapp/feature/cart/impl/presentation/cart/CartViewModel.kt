@@ -42,7 +42,7 @@ import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 
 @HiltViewModel
-class CartViewModel @Inject constructor(
+internal class CartViewModel @Inject constructor(
     private val observeCart: ObserveCartUseCase,
     private val updateCartQuantity: UpdateCartQuantityUseCase,
     private val removeFromCart: RemoveFromCartUseCase,

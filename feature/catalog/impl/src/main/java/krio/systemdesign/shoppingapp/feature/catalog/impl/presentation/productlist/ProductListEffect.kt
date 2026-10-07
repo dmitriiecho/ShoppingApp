@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productl
 
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 
-sealed interface ProductListEffect {
+internal sealed interface ProductListEffect {
 
     data class NavigateToDetails(
         val productId: String,

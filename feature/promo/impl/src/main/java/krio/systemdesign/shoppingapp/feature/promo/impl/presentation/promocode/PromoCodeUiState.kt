@@ -4,7 +4,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-data class PromoCodeUiState(
+internal data class PromoCodeUiState(
     // A state holder, not a String: the field edits it in place, so typing never waits for this flow
     // and can't lose characters. It's the same instance for the whole screen.
     val promoCode: TextFieldState,

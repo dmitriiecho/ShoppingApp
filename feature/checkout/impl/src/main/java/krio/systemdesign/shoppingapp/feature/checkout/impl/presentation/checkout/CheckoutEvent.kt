@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout
 
-sealed interface CheckoutEvent {
+internal sealed interface CheckoutEvent {
 
     data class OnPaymentMethodChange(val method: CheckoutUiState.PaymentMethod) : CheckoutEvent
 

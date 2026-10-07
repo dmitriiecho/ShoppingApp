@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.CheckoutScreen
 
-class CheckoutNavigationScope(val builder: NavGraphBuilder)
+class CheckoutNavigationScope internal constructor(internal val builder: NavGraphBuilder)
 
 val NavGraphBuilder.checkout: CheckoutNavigationScope
     get() = CheckoutNavigationScope(this)

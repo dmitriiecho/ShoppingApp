@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails
 
-data class ProductDetailsUiState(
+internal data class ProductDetailsUiState(
     val productId: String,
     // Null while unknown: the product hasn't loaded and the route didn't pass it (a deep link).
     val name: String?,

@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.SettingsScreen
 
-class SettingsNavigationScope(val builder: NavGraphBuilder)
+class SettingsNavigationScope internal constructor(internal val builder: NavGraphBuilder)
 
 val NavGraphBuilder.settings: SettingsNavigationScope
     get() = SettingsNavigationScope(this)

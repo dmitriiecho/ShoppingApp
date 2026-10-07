@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.shared.domain.repository.AppSettingsRepository
 
-class ObserveNetworkDelayUseCase @Inject constructor(private val appSettingsRepository: AppSettingsRepository) {
+internal class ObserveNetworkDelayUseCase @Inject constructor(
+    private val appSettingsRepository: AppSettingsRepository,
+) {
     operator fun invoke(): Flow<NetworkDelay> = appSettingsRepository.observeNetworkDelay()
 }

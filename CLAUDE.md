@@ -17,7 +17,7 @@ The rules below are checked by `./gradlew assertModuleGraph` (also a CI step); t
     Each event is a class `XxxAnalyticsEvent` that lists its `systems`; it lives in the feature that sends it (`impl/.../analytics/`), or here when two or more features send it. `:apps:shop` (`analytics/`) holds one client class per `AnalyticsSystem`. Screen views are sent by `:apps:shop` (`navigation/ScreenViews.kt`); each feature names its screens in `NavDestination.xxxAnalyticsScreen()`, and a screen with no name isn't reported.
   - `:shared:ui` — shop components shared by features (`ProductCard`, `CartQuantityControl`, `OrderTotals`, `formatPrice`, ...), built from `:core:designsystem`. Takes plain values, never `:shared:domain` models.
 - `feature/<name>/` — catalog, cart, promo, checkout, settings:
-  - `:feature:<name>:impl` — screens, ViewModels, the feature's own use cases and navigation.
+  - `:feature:<name>:impl` — screens, ViewModels, the feature's own use cases and navigation. Only what `:apps:shop` wires (in `presentation/navigation`: routes graph, `graph()`, analytics screen names) is public; everything else is `internal`.
   - `:feature:<name>:ui` — shop components only this feature uses, on plain values; depends only on `:core:designsystem` and `:shared:ui`. Exists only when the feature has such components (not in settings).
 - A library module's package mirrors its module path: `:shared:ui` → `...shoppingapp.shared.ui`, `:feature:cart:impl` → `...feature.cart.impl`. A hyphen in a module name is dropped in the package: `compose-utils` → `composeutils`.
 - An app's package is its applicationId, so it stays when the app moves to another folder: `:apps:shop` → `krio.systemdesign.shoppingapp`, `:apps:uikit` → `...shoppingapp.uikit`.

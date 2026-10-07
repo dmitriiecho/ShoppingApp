@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart
 
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-sealed interface CartEvent {
+internal sealed interface CartEvent {
 
     data class OnItemClick(
         val productId: String,

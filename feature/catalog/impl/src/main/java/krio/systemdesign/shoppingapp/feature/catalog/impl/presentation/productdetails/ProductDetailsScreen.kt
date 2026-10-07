@@ -41,7 +41,8 @@ import krio.systemdesign.shoppingapp.shared.ui.product.ProductImageKey
 import krio.systemdesign.shoppingapp.shared.ui.product.ProductImagePlaceholder
 
 @Composable
-fun ProductDetailsScreen(
+@PublishedApi
+internal fun ProductDetailsScreen(
     onBack: () -> Unit,
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {

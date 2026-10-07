@@ -3,7 +3,7 @@ package krio.systemdesign.shoppingapp.feature.settings.impl.presentation.setting
 import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 
-sealed interface SettingsEvent {
+internal sealed interface SettingsEvent {
 
     data class OnThemeModeChange(val mode: ThemeMode) : SettingsEvent
 

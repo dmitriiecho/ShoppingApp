@@ -18,7 +18,7 @@ import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartScr
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartViewModel
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-class CartNavigationScope(val builder: NavGraphBuilder)
+class CartNavigationScope internal constructor(internal val builder: NavGraphBuilder)
 
 val NavGraphBuilder.cart: CartNavigationScope
     get() = CartNavigationScope(this)

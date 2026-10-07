@@ -28,7 +28,7 @@ import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.GetPromoC
 import krio.systemdesign.shoppingapp.shared.analytics.Analytics
 
 @HiltViewModel
-class PromoCodeViewModel @Inject constructor(
+internal class PromoCodeViewModel @Inject constructor(
     private val checkPromoCode: CheckPromoCodeUseCase,
     private val getPromoCodes: GetPromoCodesUseCase,
     private val analytics: Analytics,

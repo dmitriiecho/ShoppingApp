@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails
 
-sealed interface ProductDetailsEvent {
+internal sealed interface ProductDetailsEvent {
 
     data object OnAddToCartClick : ProductDetailsEvent
 
