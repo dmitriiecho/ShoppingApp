@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productl
 
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
 
-sealed interface ProductListEvent {
+internal sealed interface ProductListEvent {
 
     data class OnProductClick(val product: Product) : ProductListEvent
 

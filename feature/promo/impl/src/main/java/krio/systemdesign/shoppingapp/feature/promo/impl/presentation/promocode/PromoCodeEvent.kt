@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode
 
-sealed interface PromoCodeEvent {
+internal sealed interface PromoCodeEvent {
 
     data object OnApplyClick : PromoCodeEvent
 

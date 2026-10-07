@@ -37,7 +37,7 @@ import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.c
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 @Composable
-fun PromoCodeScreen(
+internal fun PromoCodeScreen(
     onBack: () -> Unit,
     onCloseWithResult: (PromoCode) -> Unit,
     viewModel: PromoCodeViewModel = hiltViewModel(),

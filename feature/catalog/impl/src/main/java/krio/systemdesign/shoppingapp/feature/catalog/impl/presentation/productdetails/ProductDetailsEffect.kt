@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productd
 
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 
-sealed interface ProductDetailsEffect {
+internal sealed interface ProductDetailsEffect {
 
     data object NavigateBack : ProductDetailsEffect
 

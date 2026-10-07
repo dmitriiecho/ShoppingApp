@@ -42,7 +42,7 @@ import krio.systemdesign.shoppingapp.shared.domain.model.CartItem
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 @Composable
-fun CheckoutScreen(
+internal fun CheckoutScreen(
     onClose: () -> Unit,
     viewModel: CheckoutViewModel = hiltViewModel(),
 ) {

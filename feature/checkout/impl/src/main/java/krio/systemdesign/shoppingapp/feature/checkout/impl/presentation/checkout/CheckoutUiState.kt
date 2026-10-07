@@ -4,7 +4,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import krio.systemdesign.shoppingapp.shared.domain.model.CartItem
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-data class CheckoutUiState(
+internal data class CheckoutUiState(
     val order: Order = Order.Loading,
     val address: Address,
     val paymentMethod: PaymentMethod = PaymentMethod.Card,

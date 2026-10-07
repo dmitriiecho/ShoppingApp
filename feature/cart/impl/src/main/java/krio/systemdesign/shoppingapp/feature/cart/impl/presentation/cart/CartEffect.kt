@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart
 
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 
-sealed interface CartEffect {
+internal sealed interface CartEffect {
 
     data object NavigateBack : CartEffect
 

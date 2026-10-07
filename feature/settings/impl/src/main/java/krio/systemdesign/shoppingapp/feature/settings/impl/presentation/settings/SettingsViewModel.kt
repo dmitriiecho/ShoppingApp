@@ -27,7 +27,7 @@ import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveThemeModeUseCase
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
+internal class SettingsViewModel @Inject constructor(
     observeThemeMode: ObserveThemeModeUseCase,
     private val setThemeMode: SetThemeModeUseCase,
     observeNetworkDelay: ObserveNetworkDelayUseCase,

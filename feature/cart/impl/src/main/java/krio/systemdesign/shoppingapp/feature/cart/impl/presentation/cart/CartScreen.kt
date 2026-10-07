@@ -39,7 +39,7 @@ import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.compone
 import krio.systemdesign.shoppingapp.feature.cart.ui.ClearCartIconButton
 
 @Composable
-fun CartScreen(
+internal fun CartScreen(
     onBack: () -> Unit,
     onOpenCheckout: () -> Unit,
     onOpenPromo: () -> Unit,

@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.settings.impl.presentation.setting
 
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 
-sealed interface SettingsEffect {
+internal sealed interface SettingsEffect {
 
     data class OpenUrl(val url: UiText) : SettingsEffect
 

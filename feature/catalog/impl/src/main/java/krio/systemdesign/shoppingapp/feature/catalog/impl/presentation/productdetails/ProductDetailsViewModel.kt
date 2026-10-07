@@ -37,7 +37,7 @@ import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUse
 import krio.systemdesign.shoppingapp.shared.ui.product.PRODUCT_IMAGE_TRANSITION_MILLIS
 
 @HiltViewModel
-class ProductDetailsViewModel @Inject constructor(
+internal class ProductDetailsViewModel @Inject constructor(
     private val getProduct: GetProductUseCase,
     private val addToCart: AddToCartUseCase,
     private val updateCartQuantity: UpdateCartQuantityUseCase,

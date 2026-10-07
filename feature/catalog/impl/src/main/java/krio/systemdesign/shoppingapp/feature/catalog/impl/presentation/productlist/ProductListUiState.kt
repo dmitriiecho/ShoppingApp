@@ -2,7 +2,7 @@ package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productl
 
 import androidx.compose.foundation.text.input.TextFieldState
 
-data class ProductListUiState(
+internal data class ProductListUiState(
     // A state holder, not a String: the field edits it in place, so typing never waits for this flow
     // and can't lose characters. It's the same instance for the whole screen.
     val searchQuery: TextFieldState,

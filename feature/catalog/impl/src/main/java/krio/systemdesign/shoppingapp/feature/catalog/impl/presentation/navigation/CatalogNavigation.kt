@@ -11,7 +11,7 @@ import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails.ProductDetailsScreen
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.ProductListScreen
 
-class CatalogNavigationScope(val builder: NavGraphBuilder)
+class CatalogNavigationScope internal constructor(@PublishedApi internal val builder: NavGraphBuilder)
 
 val NavGraphBuilder.catalog: CatalogNavigationScope
     get() = CatalogNavigationScope(this)
