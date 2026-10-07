@@ -4,7 +4,8 @@
 
 Navigation Compose с типизированными маршрутами (`@Serializable`-объекты и классы). Фичи не знают друг о друге: каждая отдаёт приложению свой граф, а приложение соединяет графы.
 
----
+<br>
+<br>
 
 ## Как фичи соединены
 
@@ -29,10 +30,13 @@ cart.cartGraph(
 )
 ```
 
+<br>
+
 > [!TIP]
 > Поведение навигации во всём приложении — что делает «Назад» на вкладке, как вкладки ложатся друг на друга — меняется в `AppNavGraph` и нижней панели, а не в фичах.
 
----
+<br>
+<br>
 
 ## Граф фичи
 
@@ -52,12 +56,15 @@ fun CartNavigationScope.graph(
 )
 ```
 
+<br>
+
 > [!IMPORTANT]
 > **`onClose` значит «выйти из фичи», а что это значит конкретно, решает тот, кто фичу встроил.** У корня вкладки выходить некуда, поэтому приложение передаёт `{}`; та же фича внутри сценария закрыла бы этот сценарий.
 
 `graph(navController, onClose, …)` везде одинаковая, даже там, где `navController` пока не нужен: фича может обрасти экранами, не меняя сигнатуры.
 
----
+<br>
+<br>
 
 ## Вкладки
 
@@ -71,7 +78,8 @@ fun CartNavigationScope.graph(
 
 <br clear="right">
 
----
+<br>
+<br>
 
 ## Карточка товара во вкладке корзины
 
@@ -99,7 +107,8 @@ data class CartProductRoute(
 catalog.productDetailsScreen<CartProductRoute>(onBack = { navController.popBackStack() })
 ```
 
----
+<br>
+<br>
 
 ## Результат экрана
 
@@ -109,10 +118,13 @@ catalog.productDetailsScreen<CartProductRoute>(onBack = { navController.popBackS
 2. **Экран промокода закрывается с результатом**, а приложение кладёт код в `savedStateHandle` записи стека корзины под этим ключом, в виде JSON.
 3. **Навигация корзины читает результат**, передаёт его во ViewModel событием `OnPromoCodeApplied(promoCode)` и удаляет.
 
+<br>
+
 > [!WARNING]
 > Положить результат прямо в `SavedStateHandle` ViewModel'и нельзя: у записи стека и у ViewModel'и это разные объекты, и ViewModel его не увидит.
 
----
+<br>
+<br>
 
 ## Навигация идёт через ViewModel
 
@@ -124,6 +136,8 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 // на экране:     ProductDetailsEffect.NavigateBack -> navigate { onBack() }
 ```
 
+<br>
+
 <details>
 <summary>Как остановлен быстрый двойной тап</summary>
 
@@ -132,7 +146,8 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 
 </details>
 
----
+<br>
+<br>
 
 ## Deep links
 
@@ -153,6 +168,8 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 - **App Links проверены**: debug-ключ лежит в репозитории, а его отпечаток есть в `assetlinks.json` на домене, поэтому ссылки открывает сборка с любого компьютера.
 - **Домен и пути записаны дважды**, в intent-filter манифеста и в `DeepLinkConfig`; комментарий в каждом месте указывает на другое.
 - **Тестовые страницы** со всеми ссылками, с завершающим слешем и краевыми случаями (несуществующий товар, неизвестный путь) лежат в [`docs/deeplinks/`](../../deeplinks/) и опубликованы на GitHub Pages; их открывает экран настроек.
+
+<br>
 
 <details>
 <summary>Почему ссылка запуска открывается только один раз</summary>
