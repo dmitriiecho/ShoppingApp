@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Android lint settings for every module: lint looks for lint.xml from a module up to this root. -->
+<lint>
+    <!-- CompositionLocals the project creates on purpose (Slack's Compose rules flag any new one):
+         the shared element scopes, so a product image can fly between screens without passing them through
+         every screen (core/compose-utils, SharedElements.kt), and the app theme's own values next to
+         MaterialTheme (core/designsystem, Theme.kt). -->
+    <issue id="ComposeCompositionLocalUsage">
+        <option name="allowed-composition-locals"
+            value="LocalSharedTransitionScope,LocalNavAnimatedVisibilityScope,LocalDarkTheme,LocalAppColors" />
+    </issue>
+</lint>

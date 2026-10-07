@@ -18,6 +18,7 @@ room = "2.8.5"
 paging = "3.5.1"
 datastore = "1.2.1"
 composeBom = "2026.09.00"
+composeLints = "1.6.1"
 
 # DI
 hilt = "2.60.1"
@@ -79,6 +80,8 @@ androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graph
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+# Slack's lint rules for Compose: modifier parameters, private previews, remember and the like.
+compose-lint-checks = { group = "com.slack.lint.compose", name = "compose-lint-checks", version.ref = "composeLints" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 

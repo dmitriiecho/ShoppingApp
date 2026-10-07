@@ -2,6 +2,7 @@ package krio.systemdesign.shoppingapp.uikit.samples
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
 import krio.systemdesign.shoppingapp.uikit.R
 
@@ -23,17 +24,21 @@ internal object SampleData {
     const val LOADING_MILLIS = 2_000L
 
     val headphonesImageUrl: String
-        @Composable get() = resourceImageUrl(R.drawable.sample_product_headphones)
+        @Composable @ReadOnlyComposable
+        get() = resourceImageUrl(R.drawable.sample_product_headphones)
 
     val keyboardImageUrl: String
-        @Composable get() = resourceImageUrl(R.drawable.sample_product_keyboard)
+        @Composable @ReadOnlyComposable
+        get() = resourceImageUrl(R.drawable.sample_product_keyboard)
 
     // An image that doesn't exist, so ProductImage shows its "no image" placeholder.
     val missingImageUrl: String
-        @Composable get() = "android.resource://${LocalContext.current.packageName}/drawable/missing_image"
+        @Composable @ReadOnlyComposable
+        get() = "android.resource://${LocalContext.current.packageName}/drawable/missing_image"
 }
 
 // Product images are UI kit resources, not server URLs, so the samples work offline.
 @Composable
+@ReadOnlyComposable
 private fun resourceImageUrl(@DrawableRes id: Int): String =
     "android.resource://${LocalContext.current.packageName}/$id"

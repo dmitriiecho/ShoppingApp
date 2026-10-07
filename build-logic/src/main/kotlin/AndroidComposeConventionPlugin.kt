@@ -22,6 +22,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
                 "implementation"(libs.androidx.compose.ui.graphics)
                 "implementation"(libs.androidx.compose.ui.tooling.preview)
                 "debugImplementation"(libs.androidx.compose.ui.tooling.asProvider())
+                "lintChecks"(libs.compose.lint.checks)
             }
         }
     }

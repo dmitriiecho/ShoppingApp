@@ -11,6 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -82,6 +83,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+@ReadOnlyComposable
 private fun ThemeMode.isDark(): Boolean = when (this) {
     ThemeMode.System -> isSystemInDarkTheme()
     ThemeMode.Light -> false

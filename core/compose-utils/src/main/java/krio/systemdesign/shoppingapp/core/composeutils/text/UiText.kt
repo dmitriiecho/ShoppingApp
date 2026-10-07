@@ -3,6 +3,7 @@ package krio.systemdesign.shoppingapp.core.composeutils.text
 import android.content.res.Resources
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 
 // Screen text a ViewModel can build without access to resources.
@@ -22,6 +23,7 @@ fun UiText.asString(resources: Resources): String = when (this) {
 }
 
 @Composable
+@ReadOnlyComposable
 fun UiText.asString(): String = when (this) {
     is UiText.Dynamic -> value
     is UiText.Resource -> stringResource(id, *args.toTypedArray())
