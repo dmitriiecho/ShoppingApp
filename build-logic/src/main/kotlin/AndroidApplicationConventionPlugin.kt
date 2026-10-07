@@ -8,6 +8,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply(libs.plugins.android.application.get().pluginId)
+            pluginManager.apply(libs.plugins.dependency.analysis.get().pluginId)
             configureModuleGraphRules()
 
             extensions.configure<ApplicationExtension> {

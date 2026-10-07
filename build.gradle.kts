@@ -9,7 +9,34 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.room) apply false
     alias(libs.plugins.module.graph.assertion) apply false
+    // Unused and undeclared dependencies: ./gradlew buildHealth. Each module gets it from its convention plugin.
+    alias(libs.plugins.dependency.analysis)
     alias(libs.plugins.spotless)
+}
+
+// ./gradlew buildHealth (a CI step) fails on unused dependencies and on module structure advice.
+dependencyAnalysis {
+    issues {
+        all {
+            onAny {
+                severity("fail")
+            }
+            // Libraries used through others (single Compose artifacts behind the BOM and the like): declaring each
+            // would add dozens of lines to every module for no gain.
+            onUsedTransitiveDependencies {
+                severity("ignore")
+            }
+            // api vs implementation: impl modules are wired only by the app, and internal classes look public
+            // in bytecode, so the advice doesn't fit.
+            onIncorrectConfiguration {
+                severity("ignore")
+            }
+            // Convention plugins add these to every Compose or Hilt module on purpose; a few modules don't use them.
+            onUnusedDependencies {
+                exclude(libs.androidx.compose.ui.graphics, libs.androidx.compose.ui.tooling.preview, libs.hilt.android)
+            }
+        }
+    }
 }
 
 // Code style for the whole build (rules in .editorconfig): spotlessCheck checks, spotlessApply fixes.
