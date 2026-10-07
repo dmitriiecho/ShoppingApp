@@ -4,9 +4,7 @@
 
 Navigation Compose с типизированными маршрутами (`@Serializable`-объекты и классы). Фичи не знают друг о друге: каждая отдаёт приложению свой граф, а приложение соединяет графы.
 
-<br>
-
-## Как фичи соединены
+### Как фичи соединены
 
 Приложение собирает три вкладки и оформление заказа поверх них. Все переходы между фичами — это колбэки, которые [`AppNavGraph.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) передаёт в графы фич:
 
@@ -32,9 +30,7 @@ cart.cartGraph(
 > [!TIP]
 > Поведение навигации во всём приложении — что делает «Назад» на вкладке, как вкладки ложатся друг на друга — меняется в `AppNavGraph` и нижней панели, а не в фичах.
 
-<br>
-
-## Граф фичи
+### Граф фичи
 
 У всех фич одинаковое устройство, даже у фичи с одним экраном:
 
@@ -57,28 +53,37 @@ fun CartNavigationScope.graph(
 
 `graph(navController, onClose, …)` везде одинаковая, даже там, где `navController` пока не нужен: фича может обрасти экранами, не меняя сигнатуры.
 
-<br>
+### Вкладки
 
-## Вкладки
+У каждой вкладки свой стек. Переход на вкладку снимает со стека всё, в том числе каталог, и сохраняет стек ушедшей вкладки ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
 
-**У каждой вкладки свой стек.** Переключение вкладки снимает со стека всё, в том числе каталог ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)), с `saveState`/`restoreState`. Поэтому «Назад» с корня любой вкладки выходит из приложения, а не возвращает в каталог.
+```kotlin
+navigate(route) {
+    popUpTo(graph.id) { saveState = true }  // снять всё, но запомнить стек вкладки
+    launchSingleTop = true
+    restoreState = true                     // вернуть стек вкладки, на которую перешли
+}
+```
 
-**Нижняя панель видна только внутри вкладок.** Оформление заказа её закрывает.
+Поэтому «Назад» с корня любой вкладки выходит из приложения, а не возвращает в каталог.
 
-**Картинка товара перелетает между экранами** внутри вкладки (shared element). Между вкладками она не летает: пока вкладки переключаются, scope общих переходов равен `null`.
+Нижняя панель видна только внутри вкладок. Вне их, на оформлении заказа, её просто нет:
 
-<br>
+```kotlin
+val currentTab = navBackStackEntry?.destination?.bottomTab() ?: return
+```
 
-## Карточка товара во вкладке корзины
+Картинка товара перелетает между экранами внутри вкладки (shared element), но не между вкладками: пока вкладки переключаются, scope общих переходов не передаётся.
 
-Карточка товара принадлежит каталогу, но товар, открытый из корзины, должен остаться во вкладке корзины.
+```kotlin
+CompositionLocalProvider(LocalSharedTransitionScope provides this.takeUnless { isSwitchingTabs }) {
+    NavHost(/* ... */)
+}
+```
 
-Каталог для этого предлагает две вещи:
+### Карточка товара во вкладке корзины
 
-- **`ProductDetailsRoute`** — интерфейс с аргументами экрана: `productId`, `productName`, `imageUrl`;
-- **`productDetailsScreen<T>()`** — добавляет экран под любой маршрут, который этот интерфейс реализует.
-
-Приложение объявляет свой маршрут и добавляет экран во вкладку корзины. ViewModel читает аргументы по именам свойств интерфейса, поэтому работает с любым маршрутом.
+Карточка товара принадлежит каталогу, но товар, открытый из корзины, должен остаться во вкладке корзины. Каталог для этого даёт интерфейс с аргументами экрана и функцию, которая добавляет экран под любой маршрут с этим интерфейсом. Приложение объявляет свой маршрут:
 
 ```kotlin
 @Serializable
@@ -91,22 +96,40 @@ data class CartProductRoute(
 catalog.productDetailsScreen<CartProductRoute>(onBack = { navController.popBackStack() })
 ```
 
-<br>
+ViewModel не знает, каким маршрутом её открыли, и читает аргументы по именам свойств интерфейса:
 
-## Результат экрана
+```kotlin
+private val productId: String = checkNotNull(savedStateHandle[ProductDetailsRoute::productId.name])
+```
 
-Экран промокода возвращает корзине применённый код:
+### Результат экрана
 
-1. **Корзина открывает экран промокода** и передаёт `resultKey`, как request code: `onOpenPromo(resultKey)`. Так один экран промокода может обслуживать нескольких вызывающих.
-2. **Экран промокода закрывается с результатом**, а приложение кладёт код в `savedStateHandle` записи стека корзины под этим ключом, в виде JSON.
-3. **Навигация корзины читает результат**, передаёт его во ViewModel событием `OnPromoCodeApplied(promoCode)` и удаляет.
+Экран промокода возвращает корзине применённый код. Корзина открывает его с `resultKey`, как с request code, а приложение, закрывая экран промокода, кладёт результат в `savedStateHandle` записи корзины под этим ключом:
+
+```kotlin
+onCloseWithResult = { resultKey, promoCode ->
+    navController.popBackStack<PromoRoutes.Graph>(inclusive = true)
+    navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.set(resultKey, Json.encodeToString(promoCode))
+},
+```
+
+Навигация корзины читает результат, передаёт его во ViewModel событием и удаляет:
+
+```kotlin
+LaunchedEffect(promoResult) {
+    promoResult?.let { result ->
+        viewModel.onEvent(CartEvent.OnPromoCodeApplied(Json.decodeFromString<PromoCode>(result)))
+        entry.savedStateHandle.remove<String>(CartResults.PROMO_RESULT_KEY)
+    }
+}
+```
 
 > [!WARNING]
 > Положить результат прямо в `SavedStateHandle` ViewModel'и нельзя: у записи стека и у ViewModel'и это разные объекты, и ViewModel его не увидит.
 
-<br>
-
-## Навигация идёт через ViewModel
+### Навигация идёт через ViewModel
 
 Каждая кнопка, которая куда-то ведёт, включая «Назад» и «Закрыть», отправляет событие. ViewModel отвечает эффектом, а экран переходит внутри `navigate { }` (см. [Экраны](screens.md#эффекты)):
 
@@ -116,17 +139,22 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 // на экране:     ProductDetailsEffect.NavigateBack -> navigate { onBack() }
 ```
 
-<details>
-<summary>Как остановлен быстрый двойной тап</summary>
+`navigate { }` выполняется, только пока экран сверху. После первого перехода экран уже не сверху, так что второй переход от быстрого двойного тапа ждёт и отбрасывается:
 
-- **`navigate { }` выполняется, только пока экран сверху** (`RESUMED`). После первого перехода экран уже не сверху, поэтому второй переход ждёт и отбрасывается, когда экран останавливается.
-- **Уходящий экран не принимает нажатия** ([`BlockTouchesDuringTransitions.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt)). Пока идёт анимация перехода, старый экран ещё виден и раньше ловил второй тап: двойной тап по «Назад» закрывал два экрана.
+```kotlin
+fun navigate(block: () -> Unit) {
+    scope.launch { lifecycle.withResumed(block) }
+}
+```
+
+<details>
+<summary>Вторая защита: уходящий экран не принимает нажатия</summary>
+
+Пока идёт анимация перехода, старый экран ещё виден и раньше ловил второй тап: двойной тап по «Назад» закрывал два экрана. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) не пропускает нажатия, пока верхний экран не стал `RESUMED`.
 
 </details>
 
-<br>
-
-## Deep links
+### Deep links
 
 | Ссылка | Что открывает |
 |---|---|
@@ -136,11 +164,17 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 
 Ссылка открывается так, как туда пришёл бы пользователь ([`DeepLinks.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
 
-1. **Найти вкладку, которая открывает ссылку.** Если такой нет, ссылка игнорируется.
-2. **Переключиться на эту вкладку**, как при нажатии, и вернуться к её корню.
-3. **Открыть экран поверх корня.** Поэтому «Назад» с товара из ссылки ведёт в каталог.
+```kotlin
+// Вкладка, которая открывает ссылку; если такой нет, ссылка игнорируется
+val tab = BottomNavRoutes.all.firstOrNull { tabGraph(it).hasDeepLink(link) } ?: return
+val tabRoot = tabGraph(tab).findStartDestination()
 
-Ещё о ссылках:
+navigateToBottomTab(tab)                       // как нажатие на вкладку
+popBackStack(tabRoot.id, inclusive = false)    // к корню вкладки
+if (!tabRoot.hasDeepLink(link)) navigate(link) // экран поверх корня
+```
+
+Поэтому «Назад» с товара из ссылки ведёт в каталог.
 
 - **App Links проверены**: debug-ключ лежит в репозитории, а его отпечаток есть в `assetlinks.json` на домене, поэтому ссылки открывает сборка с любого компьютера.
 - **Домен и пути записаны дважды**, в intent-filter манифеста и в `DeepLinkConfig`; комментарий в каждом месте указывает на другое.
@@ -149,6 +183,14 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 <details>
 <summary>Почему ссылка запуска открывается только один раз</summary>
 
-`MainActivity` открывает ссылку, с которой приложение запустили, а затем стирает её из intent. Иначе `NavHost` открыл бы её ещё раз сам, с другим стеком. Ссылка не открывается повторно ни после пересоздания экрана (сохранённые экраны и так её показывают), ни при запуске из списка недавних: оттуда Android перезапускает приложение со старым intent.
+`MainActivity` открывает ссылку, с которой приложение запустили, только при первом запуске и не из списка недавних (оттуда Android перезапускает приложение со старым intent), а затем стирает её, чтобы `NavHost` не открыл её ещё раз сам:
+
+```kotlin
+val launchedFromRecents = (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0
+if (savedInstanceState == null && !launchedFromRecents) {
+    intent.data?.let(viewModel::openDeepLink)
+}
+intent.data = null
+```
 
 </details>

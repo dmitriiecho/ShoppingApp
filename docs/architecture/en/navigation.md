@@ -4,9 +4,7 @@
 
 Navigation Compose with type-safe routes (`@Serializable` objects and classes). Features don't know each other: each one gives the app a graph, and the app joins the graphs.
 
-<br>
-
-## How the features are joined
+### How the features are joined
 
 The app builds three tabs and the checkout over them. Every way from one feature to another is a callback that [`AppNavGraph.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) passes to the feature graphs:
 
@@ -32,9 +30,7 @@ cart.cartGraph(
 > [!TIP]
 > App-wide navigation behaviour — what Back does on a tab, how tabs stack — is changed in `AppNavGraph` and the bottom bar, not in the features.
 
-<br>
-
-## A feature's graph
+### A feature's graph
 
 Every feature has the same shape, even one with a single screen:
 
@@ -57,28 +53,37 @@ fun CartNavigationScope.graph(
 
 `graph(navController, onClose, …)` is the same everywhere, even where `navController` isn't used yet: a feature can grow screens without changing its signature.
 
-<br>
+### Tabs
 
-## Tabs
+Each tab keeps its own stack. Going to a tab pops everything, the catalog too, and saves the stack of the tab being left ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
 
-**Each tab keeps its own stack.** Switching a tab pops everything, the catalog too ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)), with `saveState`/`restoreState`. So Back from any tab root leaves the app instead of going to the catalog.
+```kotlin
+navigate(route) {
+    popUpTo(graph.id) { saveState = true }  // pop everything, but remember the tab's stack
+    launchSingleTop = true
+    restoreState = true                     // bring back the stack of the tab we go to
+}
+```
 
-**The bottom bar is shown only inside tabs.** The checkout covers it.
+So Back from any tab root leaves the app instead of going to the catalog.
 
-**A product image flies between screens** within a tab (shared element). It doesn't fly between tabs: while tabs switch, the shared transition scope is `null`.
+The bottom bar is shown only inside tabs. Outside them, on the checkout, there is none:
 
-<br>
+```kotlin
+val currentTab = navBackStackEntry?.destination?.bottomTab() ?: return
+```
 
-## Product details inside the cart tab
+A product image flies between screens within a tab (shared element), but not between tabs: while tabs switch, the shared transition scope isn't passed down.
 
-Product details belong to the catalog, but a product opened from the cart must stay in the cart tab.
+```kotlin
+CompositionLocalProvider(LocalSharedTransitionScope provides this.takeUnless { isSwitchingTabs }) {
+    NavHost(/* ... */)
+}
+```
 
-The catalog offers two things for that:
+### Product details inside the cart tab
 
-- **`ProductDetailsRoute`** — an interface with the screen's arguments: `productId`, `productName`, `imageUrl`;
-- **`productDetailsScreen<T>()`** — adds the screen under any route that implements it.
-
-The app declares its own route and adds the screen to the cart tab. The ViewModel reads the arguments by the interface's property names, so it works with any route.
+Product details belong to the catalog, but a product opened from the cart must stay in the cart tab. For that the catalog gives an interface with the screen's arguments and a function that adds the screen under any route with that interface. The app declares its own route:
 
 ```kotlin
 @Serializable
@@ -91,22 +96,40 @@ data class CartProductRoute(
 catalog.productDetailsScreen<CartProductRoute>(onBack = { navController.popBackStack() })
 ```
 
-<br>
+The ViewModel doesn't know which route opened it and reads the arguments by the interface's property names:
 
-## Screen results
+```kotlin
+private val productId: String = checkNotNull(savedStateHandle[ProductDetailsRoute::productId.name])
+```
 
-The promo code screen returns the applied code to the cart:
+### Screen results
 
-1. **The cart opens the promo code screen** with a `resultKey`, like a request code: `onOpenPromo(resultKey)`. So one promo code screen can serve several callers.
-2. **The promo code screen closes with a result**, and the app puts the code into the `savedStateHandle` of the cart's back stack entry under that key, as JSON.
-3. **The cart's navigation reads the result**, passes it to the ViewModel as an `OnPromoCodeApplied(promoCode)` event and removes it.
+The promo code screen returns the applied code to the cart. The cart opens it with a `resultKey`, like a request code, and the app, closing the promo code screen, puts the result into the `savedStateHandle` of the cart's entry under that key:
+
+```kotlin
+onCloseWithResult = { resultKey, promoCode ->
+    navController.popBackStack<PromoRoutes.Graph>(inclusive = true)
+    navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.set(resultKey, Json.encodeToString(promoCode))
+},
+```
+
+The cart's navigation reads the result, passes it to the ViewModel as an event and removes it:
+
+```kotlin
+LaunchedEffect(promoResult) {
+    promoResult?.let { result ->
+        viewModel.onEvent(CartEvent.OnPromoCodeApplied(Json.decodeFromString<PromoCode>(result)))
+        entry.savedStateHandle.remove<String>(CartResults.PROMO_RESULT_KEY)
+    }
+}
+```
 
 > [!WARNING]
 > The result can't go straight into the ViewModel's `SavedStateHandle`: an entry's handle and a ViewModel's handle are separate objects, and the ViewModel would never see it.
 
-<br>
-
-## Navigation goes through the ViewModel
+### Navigation goes through the ViewModel
 
 Every button that navigates, Back and Close included, sends an event. The ViewModel answers with an effect, and the screen navigates inside `navigate { }` (see [Screens](screens.md#effects)):
 
@@ -116,17 +139,22 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 // in the screen:     ProductDetailsEffect.NavigateBack -> navigate { onBack() }
 ```
 
-<details>
-<summary>How a fast double tap is stopped</summary>
+`navigate { }` runs only while the screen is on top. After the first navigation the screen is no longer on top, so the second one from a fast double tap waits and is dropped:
 
-- **`navigate { }` runs only while the screen is on top** (`RESUMED`). After the first navigation the screen is no longer on top, so the second one waits and is dropped when the screen stops.
-- **A screen that is leaving doesn't take taps** ([`BlockTouchesDuringTransitions.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt)). During the transition the old screen is still visible and used to catch the second tap: a double tap on Back closed two screens.
+```kotlin
+fun navigate(block: () -> Unit) {
+    scope.launch { lifecycle.withResumed(block) }
+}
+```
+
+<details>
+<summary>The second guard: a leaving screen takes no taps</summary>
+
+During a transition the old screen is still visible and used to catch the second tap: a double tap on Back closed two screens. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) drops taps until the top screen is `RESUMED`.
 
 </details>
 
-<br>
-
-## Deep links
+### Deep links
 
 | Link | Opens |
 |---|---|
@@ -136,11 +164,17 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 
 A link opens the way a user would get there ([`DeepLinks.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
 
-1. **Find the tab that opens the link.** If there is none, the link is ignored.
-2. **Switch to that tab**, as a tap would, and go back to its root.
-3. **Open the screen over the root.** So Back from a product opened by a link goes to the catalog.
+```kotlin
+// The tab that opens the link; with none, the link is ignored
+val tab = BottomNavRoutes.all.firstOrNull { tabGraph(it).hasDeepLink(link) } ?: return
+val tabRoot = tabGraph(tab).findStartDestination()
 
-More about links:
+navigateToBottomTab(tab)                       // as a tap on the tab
+popBackStack(tabRoot.id, inclusive = false)    // to the tab root
+if (!tabRoot.hasDeepLink(link)) navigate(link) // the screen over the root
+```
+
+So Back from a product opened by a link goes to the catalog.
 
 - **App Links are verified**: the debug key is kept in the repo, and its fingerprint is in `assetlinks.json` on the domain, so a build from any computer opens the links.
 - **The domain and paths are written twice**, in the manifest's intent filter and in `DeepLinkConfig`; a comment in each points to the other.
@@ -149,6 +183,14 @@ More about links:
 <details>
 <summary>Why the launch link is opened only once</summary>
 
-`MainActivity` opens the link the app was launched with, then clears it from the intent: otherwise `NavHost` would open it again by itself, with a different back stack. The link isn't opened again after recreation (the restored screens already show it) or from Recents, which relaunches the app with the old intent.
+`MainActivity` opens the link the app was launched with only on the first start and not from Recents (which relaunches the app with the old intent), then clears it so `NavHost` doesn't open it again by itself:
+
+```kotlin
+val launchedFromRecents = (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0
+if (savedInstanceState == null && !launchedFromRecents) {
+    intent.data?.let(viewModel::openDeepLink)
+}
+intent.data = null
+```
 
 </details>
