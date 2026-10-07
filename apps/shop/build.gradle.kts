@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.timber)
 
-    // Lets Coil load product images over the network (ProductImage in :shared:ui).
+    // Lets Coil load product images over the network (ProductImage in :shared:ui), with the app's OkHttpClient:
+    // ShoppingApp creates Coil's image loader. asProvider(): coil is also a prefix of coil-network-okhttp.
+    implementation(libs.coil.asProvider())
     implementation(libs.coil.network.okhttp)
 }
