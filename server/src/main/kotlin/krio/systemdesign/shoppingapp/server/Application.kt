@@ -9,8 +9,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
-import java.io.File
-import java.nio.file.Path as NioPath
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlinx.serialization.json.Json
 import krio.systemdesign.shoppingapp.server.data.ShopData
@@ -18,7 +17,7 @@ import krio.systemdesign.shoppingapp.server.routes.cartRoutes
 import krio.systemdesign.shoppingapp.server.routes.productRoutes
 import krio.systemdesign.shoppingapp.server.routes.promoCodeRoutes
 
-// Порт и папку с данными задаёт systemd-сервис (см. deploy.sh). Значения по умолчанию подходят для запуска из папки server/.
+// The systemd service sets PORT and DATA_DIR (see deploy.sh); the defaults fit a run from server/.
 fun main() {
     val port = System.getenv("PORT")?.toInt() ?: DEFAULT_PORT
     val dataDir = Path(System.getenv("DATA_DIR") ?: DEFAULT_DATA_DIR)
@@ -30,10 +29,10 @@ fun main() {
 
 fun Application.module(
     data: ShopData,
-    imagesDir: NioPath,
+    imagesDir: Path,
 ) {
     install(ContentNegotiation) {
-        // Те же настройки, что у Json в приложении (NetworkModule в core/network).
+        // Same settings as the app's Json (NetworkModule in :core:network).
         json(
             Json {
                 ignoreUnknownKeys = true
@@ -44,8 +43,8 @@ fun Application.module(
     }
     install(CallLogging)
     routing {
-        // Картинки из data/images/. В imageUrl у товара полный адрес этого же сервера.
-        staticFiles("/images", File(imagesDir.toString()), index = null)
+        // A product's imageUrl is the full address of a file here.
+        staticFiles("/images", imagesDir.toFile(), index = null)
         productRoutes(data.products)
         promoCodeRoutes(data.promoCodes)
         cartRoutes(data.products, data.promoCodes)

@@ -1,34 +1,26 @@
 #!/usr/bin/env bash
-# Деплой сервера ShoppingApp на эту машину: тесты, сборка, копирование в ~/server/shoppingapp и перезапуск.
-# Запуск из любой папки: server/deploy.sh
-
-# Остановить скрипт при первой же ошибке, чтобы не продолжать с недособранным сервером.
+# Deploys the server on this machine: tests, build, copy to ~/server/shoppingapp, restart.
+# Runs from any folder: server/deploy.sh
 set -euo pipefail
 
-# --- Настройки ---
-
-# Папка с исходниками сервера — та, где лежит этот скрипт.
 SERVER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# Куда кладётся готовый сервер. Он работает из этой копии, поэтому новая сборка не мешает запущенной версии.
+# The server runs from this copy, so a new build doesn't disturb the running one.
 INSTALL_DIR="$HOME/server/shoppingapp"
 SERVICE=shoppingapp-server
-# Порты всех серверов на машине перечислены в ~/server/README.md.
+# The ports of all servers on this machine are listed in ~/server/README.md.
 PORT=8080
 
-# Сервер собирается и работает на JDK 21. Если JAVA_HOME не задан, скрипт остановится с этим сообщением.
-: "${JAVA_HOME:?Нужен JAVA_HOME с JDK 21: на нём собирается и работает сервер}"
+: "${JAVA_HOME:?JAVA_HOME must point to JDK 21: the server builds and runs on it}"
 
-# --- 1. Тесты и сборка ---
+# --- 1. Tests and build ---
 
-# Если тест упадёт, скрипт остановится здесь, а работающий сервер останется нетронутым.
-# Собранный сервер со всеми библиотеками появляется в build/install/server.
+# A failed test stops the script here and leaves the running server alone.
 cd "$SERVER_DIR"
 ./gradlew test installDist
 
-# --- 2. Сервис systemd ---
+# --- 2. systemd service ---
 
-# systemd держит сервер запущенным в фоне: перезапускает при падении и запускает после перезагрузки машины.
-# Текст между <<EOF и EOF записывается в файл сервиса, вместо $ПЕРЕМЕННЫХ подставляются их значения.
+# systemd restarts the server after a crash and starts it after a reboot.
 SERVICE_FILE="$HOME/.config/systemd/user/$SERVICE.service"
 mkdir -p "$(dirname "$SERVICE_FILE")"
 cat > "$SERVICE_FILE" <<EOF
@@ -42,38 +34,37 @@ Environment=DATA_DIR=$INSTALL_DIR/data
 ExecStart=$INSTALL_DIR/app/bin/server
 Restart=on-failure
 RestartSec=5
+# The JVM exits with 143 on SIGTERM; without this, every stop is logged as a failure.
+SuccessExitStatus=143
 
 [Install]
 WantedBy=default.target
 EOF
-# Сообщить systemd, что файл сервиса мог измениться.
 systemctl --user daemon-reload
 
-# --- 3. Замена работающей версии ---
+# --- 3. Replacing the running version ---
 
-# Сначала останавливаем сервер: он читает файлы, которые сейчас будут перезаписаны.
+# Stop first: the server reads the files about to be overwritten.
 systemctl --user stop "$SERVICE"
 rm -rf "$INSTALL_DIR/app" "$INSTALL_DIR/data"
 mkdir -p "$INSTALL_DIR"
 cp -r build/install/server "$INSTALL_DIR/app"
 cp -r data "$INSTALL_DIR/data"
-# Запустить сервер и включить ему автозапуск.
 systemctl --user enable --now "$SERVICE"
 
-# --- 4. Проверки ---
+# --- 4. Checks ---
 
-# Без linger сервисы пользователя не стартуют после перезагрузки машины, пока он не зайдёт по SSH.
+# Without linger, user services don't start after a reboot until the user logs in.
 if [[ "$(loginctl show-user "$USER" -p Linger --value)" != yes ]]; then
-    echo "Внимание: после перезагрузки сервер сам не запустится. Включи один раз: sudo loginctl enable-linger $USER" >&2
+    echo "Warning: the server won't start after a reboot. Run once: sudo loginctl enable-linger $USER" >&2
 fi
 
-# Ждём до 30 секунд, пока сервер начнёт отвечать на запросы.
 for _ in $(seq 30); do
     if curl -sf "http://localhost:$PORT/products?page=1&pageSize=1" > /dev/null; then
-        echo "Сервер работает на порту $PORT"
+        echo "Server is running on port $PORT"
         exit 0
     fi
     sleep 1
 done
-echo "Сервер не ответил за 30 секунд. Логи: journalctl --user -u $SERVICE -n 50" >&2
+echo "Server didn't respond in 30 seconds. Logs: journalctl --user -u $SERVICE -n 50" >&2
 exit 1

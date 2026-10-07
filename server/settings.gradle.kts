@@ -1,4 +1,4 @@
-// Отдельная сборка: в settings.gradle.kts приложения сервер не подключён, и Android-сборку он не затрагивает.
+// A separate build: the app's settings.gradle.kts doesn't include it.
 pluginManagement {
     repositories {
         mavenCentral()

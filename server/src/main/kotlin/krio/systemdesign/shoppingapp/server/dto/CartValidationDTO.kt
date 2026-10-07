@@ -3,8 +3,7 @@ package krio.systemdesign.shoppingapp.server.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// Корзина, которую приложение присылает на проверку перед оформлением заказа.
-// Формат совпадает с CartValidationDTO в приложении (:data).
+// Same format as CartValidationDTO.kt in :shared:data.
 @Serializable
 data class CartValidationRequestDTO(
     val items: List<CartItemDTO>,
@@ -14,21 +13,20 @@ data class CartValidationRequestDTO(
 @Serializable
 data class CartItemDTO(
     val productId: String,
-    // Цена, которую видит пользователь: если она устарела, сервер вернёт ItemIssueDTO.PriceChanged.
+    // The price the user sees; an outdated one gets ItemIssueDTO.PriceChanged.
     val price: Long,
     val quantity: Int,
 )
 
-// Корзина в порядке, если список проблем с товарами пуст и промокод действует.
-// Соответствует CartValidationResult и ItemIssue в :domain.
+// Mirrors CartValidationResult and ItemIssue in :shared:domain.
 @Serializable
 data class CartValidationResponseDTO(
     val issues: List<ItemIssueDTO>,
-    // false — присланного промокода больше нет. Если промокод не прислан, true.
+    // false when the sent code no longer exists; true when no code was sent.
     val promoCodeValid: Boolean,
 )
 
-// В JSON вид проблемы передаётся полем "type": {"type": "priceChanged", "productId": "1", "newPrice": 8999}.
+// The kind goes in the "type" field: {"type": "priceChanged", "productId": "1", "newPrice": 8999}.
 @Serializable
 sealed interface ItemIssueDTO {
     @Serializable
@@ -42,7 +40,7 @@ sealed interface ItemIssueDTO {
         val newPrice: Long,
     ) : ItemIssueDTO
 
-    // В корзине больше, чем можно заказать. availableQuantity больше 0: при 0 приходит Unavailable.
+    // availableQuantity is above 0: at 0 the item gets Unavailable instead.
     @Serializable
     @SerialName("notEnoughStock")
     data class NotEnoughStock(

@@ -7,26 +7,25 @@ import kotlinx.serialization.json.Json
 import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
-// Товары и промокоды из JSON-файлов в папке data/. Файлы читаются один раз при запуске,
-// поэтому после их правки сервер нужно перезапустить.
+// Read once at startup: an edited data file takes effect after a redeploy.
 class ShopData(
     val products: List<ProductDTO>,
     val promoCodes: List<PromoCodeDTO>,
 ) {
     init {
         products.groupBy { it.id }.forEach { (id, sameId) ->
-            require(sameId.size == 1) { "Несколько товаров с id $id" }
+            require(sameId.size == 1) { "Duplicate product id $id" }
         }
         products.forEach {
-            require(it.availableQuantity >= 0) { "У товара ${it.id} отрицательный остаток" }
+            require(it.availableQuantity >= 0) { "Product ${it.id} has a negative availableQuantity" }
         }
-        // Коды проверяются без учёта регистра, поэтому SALE10 и sale10 — один и тот же код.
+        // Codes are matched ignoring case, so SALE10 and sale10 are the same code.
         promoCodes.groupBy { it.code.uppercase() }.forEach { (code, sameCode) ->
-            require(sameCode.size == 1) { "Промокод $code указан несколько раз" }
+            require(sameCode.size == 1) { "Duplicate promo code $code" }
         }
         promoCodes.forEach {
-            // Другой процент приложение не примет: PromoCode в :domain проверяет тот же диапазон.
-            require(it.discountPercent in 1..100) { "У промокода ${it.code} скидка не в диапазоне 1..100" }
+            // The app rejects any other percent: PromoCode in :shared:domain checks the same range.
+            require(it.discountPercent in 1..100) { "Promo code ${it.code} has discountPercent outside 1..100" }
         }
     }
 
@@ -38,15 +37,13 @@ class ShopData(
     }
 }
 
-// Промокод ищется без учёта регистра и пробелов по краям: на " sale10 " найдётся "SALE10".
-// Вставленный из буфера код часто приходит с пробелами.
+// Ignores case and surrounding spaces: a code pasted from the clipboard often comes with spaces.
 fun List<PromoCodeDTO>.findPromoCode(code: String?): PromoCodeDTO? =
     find { it.code.equals(code?.trim(), ignoreCase = true) }
 
-// Файлы читаем строгим Json, без ignoreUnknownKeys: опечатка в названии поля остановит запуск,
-// а не потеряет значение молча.
+// Strict Json, without ignoreUnknownKeys: a misspelled field stops the startup instead of being lost silently.
 private inline fun <reified T> Path.readJson(): T = try {
     Json.decodeFromString(readText())
 } catch (e: SerializationException) {
-    throw IllegalStateException("Не удалось разобрать $this: ${e.message}", e)
+    throw IllegalStateException("Cannot parse $this: ${e.message}", e)
 }

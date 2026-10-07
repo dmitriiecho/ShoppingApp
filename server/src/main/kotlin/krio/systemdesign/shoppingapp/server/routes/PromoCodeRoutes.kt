@@ -8,13 +8,12 @@ import krio.systemdesign.shoppingapp.server.data.findPromoCode
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
 fun Route.promoCodeRoutes(promoCodes: List<PromoCodeDTO>) {
-    // Все коды, в порядке promo-codes.json. Приложение — тестовый стенд и показывает их подсказкой
-    // на экране промокода, чтобы не держать список в голове.
+    // In promo-codes.json order. The app is a test stand and shows them as a hint on the promo code screen.
     get("/promo-codes") {
         call.respond(promoCodes)
     }
 
-    // В ответе код записан так, как в promo-codes.json: на "sale10" вернётся "SALE10".
+    // The code comes back as written in promo-codes.json: "sale10" returns "SALE10".
     get("/promo-codes/{code}") {
         val promoCode = promoCodes.findPromoCode(call.pathParameters["code"])
         if (promoCode == null) {

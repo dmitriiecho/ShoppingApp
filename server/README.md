@@ -1,64 +1,154 @@
-# Сервер ShoppingApp
+# ShoppingApp server
 
-Небольшой сервер на Ktor для приложения. Это отдельная Gradle-сборка: в `settings.gradle.kts` приложения она не подключена и Android-сборку не затрагивает.
+[Русская версия](README.ru.md)
 
-Работает по адресу `http://2.56.204.151:8080/`. HTTPS нет: нет ни домена, ни сертификата.
+A small Ktor server for the app: catalog, promo codes and cart validation.
 
-## Запросы
+- **Address:** `http://2.56.204.151:8080/` (no domain, so no HTTPS).
+- **Build:** a separate Gradle build, not included in the app's `settings.gradle.kts`.
+- **Formats** match the app's DTOs: `ProductDTO` in `feature/catalog`, `PromoCodeDTO` in `feature/promo`, `CartValidationDTO.kt` in `:shared:data`.
 
-- `GET /products?query=&page=1&pageSize=20` — страница каталога: `{"products": [...], "endReached": false}`.
-  `query` ищет по названию без учёта регистра и пробелов по краям, пустой `query` отдаёт весь каталог.
-  `page` начинается с 1, `pageSize` от 1 до 100, иначе ответ 400.
-- `GET /products/{id}` — один товар или 404.
-  У товара есть `availableQuantity` — сколько штук можно заказать. 0 — товар закончился.
-- `GET /promo-codes` — все промокоды в порядке `promo-codes.json`: `[{"code": "SALE10", "discountPercent": 10}, ...]`. Приложение показывает их подсказкой на экране промокода.
-- `GET /promo-codes/{code}` — `{"code": "SALE10", "discountPercent": 10}` или 404. Регистр и пробелы по краям не важны: на `sale10` вернётся `SALE10`, как код записан в `promo-codes.json`.
-- `GET /images/{file}` — файл картинки из `data/images/`. В `imageUrl` у товара полный адрес этого же сервера, например `http://2.56.204.151:8080/images/1.png`.
-- `POST /cart/validate` — проверка корзины перед оформлением заказа. Тело:
-  `{"items": [{"productId": "1", "price": 7999, "quantity": 2}], "promoCode": "SALE10"}` (`promoCode` можно не передавать).
-  Ответ: `{"issues": [], "promoCodeValid": true}`.
-  `issues` — чем товары в корзине расходятся с каталогом, пустой список — расхождений нет. Каждая позиция сверяется с `products.json`:
-  - товар закончился (`availableQuantity` равно 0) или его нет в каталоге — `{"type": "unavailable", "productId": "3"}`. Про цену и остаток такого товара сервер не сообщает;
-  - цена в корзине не совпадает с каталогом — `{"type": "priceChanged", "productId": "1", "newPrice": 8999}`;
-  - в корзине больше, чем можно заказать, — `{"type": "notEnoughStock", "productId": "1", "availableQuantity": 2}`.
+## API
 
-  Цена и остаток проверяются независимо: для одного товара могут прийти обе проблемы.
-  `promoCodeValid` — `false`, если присланного промокода больше нет в `promo-codes.json` (регистр и пробелы по краям не важны); если промокод не прислан, `true`.
-  На тело не того формата ответ 400.
+| Request | Returns |
+|---|---|
+| `GET /products` | A catalog page |
+| `GET /products/{id}` | One product |
+| `GET /promo-codes` | All promo codes |
+| `GET /promo-codes/{code}` | One promo code |
+| `GET /images/{file}` | A product image |
+| `POST /cart/validate` | Where the cart differs from the catalog |
 
-Форматы совпадают с DTO в приложении: товар и промокод — с `ProductDTO` и `PromoCodeDTO` в `feature/catalog` и `feature/promo`, проверка корзины — с `CartValidationDTO.kt` в `:shared:data`.
+### `GET /products`
 
-## Данные
+| Parameter | Meaning |
+|---|---|
+| `query` | Search by name. Ignores case and surrounding spaces; empty returns the whole catalog. |
+| `page` | Page number, from 1. |
+| `pageSize` | From 1 to 100. |
 
-Товары лежат в `data/products.json`, промокоды в `data/promo-codes.json`, картинки товаров — в `data/images/`. JSON читается один раз при запуске, поэтому после правки нужно задеплоить заново (см. ниже). Картинки отдаются как файлы и перечитываются на каждый запрос.
+A wrong `page` or `pageSize` gets 400. Products come in `products.json` order.
 
-Правила, на которые рассчитывает постраничная загрузка в приложении (подробнее в `ProductApi` в `feature/catalog`):
+```json
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Wireless Headphones",
+      "price": 14999,
+      "imageUrl": "http://2.56.204.151:8080/images/1.png",
+      "description": "Over-ear wireless headphones…",
+      "availableQuantity": 3
+    }
+  ],
+  "endReached": false
+}
+```
 
-- товары не удаляются: закончившемуся товару ставится `"availableQuantity": 0`;
-- новый товар получает id больше существующих и дописывается в конец файла.
+- `price` is in US cents: `14999` is $149.99.
+- `availableQuantity` is how many can be ordered; `0` means out of stock.
 
-Все цены в долларах США и записаны целым числом центов: `"price": 14999` — это $149.99. Так же цены передаются в запросах и ответах.
+### `GET /products/{id}`
 
-У товара `"16"` (Hoodie) остаток должен оставаться 0: пункт «Добавить закончившийся товар в корзину» в настройках приложения кладёт в корзину его копию (`AddUnavailableProductToCartUseCase` в `feature/settings`), чтобы проверить, как корзина ведёт себя с недоступным товаром.
+One product in the same format, or 404.
 
-У товара `"48"` (Laundry Basket) остаток должен оставаться меньше 10, а цена — 4699: пункт «Добавить товар сверх остатка» кладёт в корзину 10 штук его копии (`AddNotEnoughStockProductToCartUseCase`), чтобы проверить, как корзина ведёт себя, когда товара не хватает. Если поменять цену, к нехватке добавится ещё и изменение цены.
+### `GET /promo-codes`
 
-У товара `"40"` (Cutting Board) цена не должна стать 4900, а остаток не должен стать 0: пункт «Добавить товар со старой ценой» кладёт в корзину одну его копию по цене 4900 (`AddPriceChangedProductToCartUseCase`), чтобы проверить, как корзина ведёт себя, когда цена изменилась. Если товар закончится, сервер сообщит только, что его нет, а про цену промолчит.
+All codes in `promo-codes.json` order. The app shows them as a hint on the promo code screen.
 
-У товара `"32"` (Notebook) цена не должна стать 995, а остаток должен оставаться от 1 до 9: пункт «Добавить товар с двумя изменениями» кладёт в корзину 10 штук его копии по цене 995 (`AddPriceChangedNotEnoughStockProductToCartUseCase`), чтобы проверить, как корзина показывает у одного товара сразу изменение цены и нехватку.
+```json
+[{"code": "SALE10", "discountPercent": 10}, {"code": "SALE25", "discountPercent": 25}]
+```
 
-`availableQuantity` не может быть отрицательным. У промокода `discountPercent` должен быть от 1 до 100. Процент у созданного промокода не меняют: для другой скидки заводят новый код.
-Удалённый промокод перестаёт действовать: приложение, где он уже применён, узнает об этом при проверке корзины.
+### `GET /promo-codes/{code}`
 
-Повторяющиеся id товаров или коды, ошибка в JSON или неизвестное поле не дадут серверу запуститься, а тесты на это упадут ещё при сборке.
+One code, or 404. Ignores case and surrounding spaces: `sale10` returns `SALE10`, as written in the file.
 
-## Запуск
+```json
+{"code": "SALE10", "discountPercent": 10}
+```
 
-- `./gradlew test` — тесты, в том числе проверка, что файлы из `data/` читаются.
-- `./gradlew run` — запустить локально на порту 8080 с данными из `data/`.
-- `./deploy.sh` — прогнать тесты, собрать сервер и перезапустить его на этой машине.
+### `GET /images/{file}`
 
-Сервер работает как пользовательский systemd-сервис `shoppingapp-server` из копии в `~/server/shoppingapp`, поэтому новая сборка не трогает запущенную версию. После перезагрузки машины сервис стартует сам. sudo для этого не нужен.
+A file from `data/images/`. A product's `imageUrl` points here.
 
-- `journalctl --user -u shoppingapp-server -f` — логи, в том числе каждый запрос;
-- `systemctl --user status shoppingapp-server` — запущен ли сервер (`stop`, `restart` — остановить, перезапустить).
+### `POST /cart/validate`
+
+Checks the cart before checkout. `promoCode` is optional.
+
+```json
+{
+  "items": [{"productId": "1", "price": 7999, "quantity": 2}],
+  "promoCode": "SALE10"
+}
+```
+
+Response:
+
+```json
+{
+  "issues": [{"type": "priceChanged", "productId": "1", "newPrice": 8999}],
+  "promoCodeValid": true
+}
+```
+
+`issues` is empty when the cart matches the catalog. Each item can get these issues:
+
+| `type` | When | Extra field |
+|---|---|---|
+| `unavailable` | Out of stock or not in the catalog | — |
+| `priceChanged` | The price differs from the catalog | `newPrice` |
+| `notEnoughStock` | More than `availableQuantity` | `availableQuantity` |
+
+- An `unavailable` item gets no other issues.
+- Price and stock are checked separately: one item can get both `priceChanged` and `notEnoughStock`.
+- `promoCodeValid` is `false` when the sent code is no longer in `promo-codes.json`, and `true` when no code is sent.
+- A body in the wrong format gets 400.
+
+## Data
+
+| File | Contents |
+|---|---|
+| `data/products.json` | Products |
+| `data/promo-codes.json` | Promo codes |
+| `data/images/` | Product images |
+
+The JSON files are read once at startup: after an edit, run `./deploy.sh`. Images are read on every request.
+
+### Rules
+
+- **Products are never removed**: an out-of-stock product gets `"availableQuantity": 0`. The app's paging relies on it (`ProductApi` in `feature/catalog`).
+- **A new product** gets an id greater than the existing ones and goes to the end of the file.
+- **Prices** are in US dollars, as whole cents: `"price": 14999` is $149.99.
+- **`availableQuantity`** is never negative.
+- **`discountPercent`** is from 1 to 100 and never changes: a different discount gets a new code.
+- **A removed promo code** stops working: an app that applied it finds out at cart validation.
+
+The server refuses to start on duplicate ids or codes, a JSON error or an unknown field, and the tests catch these at build time.
+
+### Products the settings screen relies on
+
+The app's settings have items that put a copy of a product in the cart to show a cart issue (use cases in `feature/settings`). These products must keep their values, otherwise the cart shows a different issue.
+
+| Product | Must keep | Settings item | Adds to the cart |
+|---|---|---|---|
+| `16` Hoodie | stock 0 | Add an out-of-stock item to the cart | 1 copy |
+| `48` Laundry Basket | stock below 10, price 4699 | Add more of an item than is in stock | 10 copies |
+| `40` Cutting Board | stock above 0, price not 4900 | Add an item with an outdated price | 1 copy at 4900 |
+| `32` Notebook | stock 1–9, price not 995 | Add an item with two changes | 10 copies at 995 |
+
+## Running
+
+```sh
+./gradlew test            # tests, including reading the files in data/
+./gradlew run             # run locally on port 8080 with data/
+./gradlew spotlessCheck   # code style (rules in the root .editorconfig); spotlessApply fixes it
+./deploy.sh               # test, build and restart the server on this machine
+```
+
+On the machine, the server is the user systemd service `shoppingapp-server`. It runs from a copy in `~/server/shoppingapp`, so a new build doesn't touch the running version. It starts by itself after a reboot and needs no sudo.
+
+```sh
+journalctl --user -u shoppingapp-server -f        # logs, including every request
+systemctl --user status shoppingapp-server        # is it running (also: stop, restart)
+```

@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
-// Та же версия Java, что у приложения (JAVA_VERSION в build-logic/src/main/kotlin/AndroidConfig.kt).
+// Same Java as the app (JAVA_VERSION in build-logic/src/main/kotlin/AndroidConfig.kt).
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
@@ -37,9 +37,9 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    // Тесты читают файлы из data/. Без этой строки Gradle не заметит правку JSON и пропустит тесты как UP-TO-DATE.
+    // Tests read data/: without this, an edited JSON file leaves the tests UP-TO-DATE and skipped.
     inputs.dir("data")
-    // Печатать текст ошибки без стектрейса: по нему видно, что не так в JSON-файлах.
+    // The message alone says what is wrong in a JSON file; the stack trace only hides it.
     testLogging {
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         showStackTraces = false

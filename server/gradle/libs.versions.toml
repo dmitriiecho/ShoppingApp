@@ -1,6 +1,6 @@
-# Свой каталог версий: у сервера отдельная сборка, версии приложения (gradle/libs.versions.toml в корне) сюда не попадают.
+# A separate build, so the app's catalog (gradle/libs.versions.toml in the root) doesn't apply here.
 [versions]
-# Ktor 3.6.0 собран с Kotlin 2.3.21 и kotlinx.serialization 1.11.0.
+# Ktor 3.6.0 is built with Kotlin 2.3.21 and kotlinx.serialization 1.11.0.
 kotlin = "2.3.21"
 ktor = "3.6.0"
 kotlinxSerialization = "1.11.0"

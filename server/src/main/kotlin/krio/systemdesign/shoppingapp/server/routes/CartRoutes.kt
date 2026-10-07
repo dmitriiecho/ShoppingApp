@@ -16,21 +16,20 @@ fun Route.cartRoutes(
     products: List<ProductDTO>,
     promoCodes: List<PromoCodeDTO>,
 ) {
+    val productsById = products.associateBy { it.id }
     post("/cart/validate") {
         val request = call.receive<CartValidationRequestDTO>()
-        val productsById = products.associateBy { it.id }
         val issues = request.items.flatMap { it.issues(productsById[it.productId]) }
-        // Процент у созданного промокода не меняется, поэтому достаточно проверить, что код ещё есть.
+        // A code's percent never changes, so it is enough to check the code still exists.
         val promoCodeValid = request.promoCode == null || promoCodes.findPromoCode(request.promoCode) != null
         call.respond(CartValidationResponseDTO(issues = issues, promoCodeValid = promoCodeValid))
     }
 }
 
-// Чем позиция корзины расходится с каталогом. Закончившийся товар заказать нельзя совсем,
-// поэтому про его цену и остаток не сообщаем. Иначе цена и остаток проверяются отдельно
-// и для одного товара могут прийти обе проблемы.
+// An out-of-stock item can't be ordered at all, so its price and stock aren't reported.
+// Otherwise price and stock are checked separately and one item can get both issues.
 private fun CartItemDTO.issues(product: ProductDTO?): List<ItemIssueDTO> {
-    // Товары из каталога не удаляются, так что неизвестный id приложение прислать не должно.
+    // Products are never removed, so the app shouldn't send an unknown id.
     if (product == null || product.availableQuantity == 0) {
         return listOf(ItemIssueDTO.Unavailable(productId))
     }

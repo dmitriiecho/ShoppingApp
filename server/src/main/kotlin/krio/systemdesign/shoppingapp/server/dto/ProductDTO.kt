@@ -2,16 +2,16 @@ package krio.systemdesign.shoppingapp.server.dto
 
 import kotlinx.serialization.Serializable
 
-// Формат совпадает с ProductDTO и ProductsPageDTO в приложении (feature/catalog).
+// Same format as ProductDTO and ProductsPageDTO in :feature:catalog:impl.
 @Serializable
 data class ProductDTO(
     val id: String,
     val name: String,
-    // Цена в центах: 14999 — это $149.99. Все цены в долларах США.
+    // US cents: 14999 is $149.99.
     val price: Long,
     val imageUrl: String,
     val description: String,
-    // Сколько штук можно заказать. 0 — товар закончился: он остаётся в каталоге, но заказать его нельзя.
+    // 0 means out of stock: the product stays in the catalog but can't be ordered.
     val availableQuantity: Int,
 )
 
