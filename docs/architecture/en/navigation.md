@@ -5,7 +5,6 @@
 Navigation Compose with type-safe routes (`@Serializable` objects and classes). Features don't know each other: each one gives the app a graph, and the app joins the graphs.
 
 <br>
-<br>
 
 ## How the features are joined
 
@@ -30,12 +29,9 @@ cart.cartGraph(
 )
 ```
 
-<br>
-
 > [!TIP]
 > App-wide navigation behaviour — what Back does on a tab, how tabs stack — is changed in `AppNavGraph` and the bottom bar, not in the features.
 
-<br>
 <br>
 
 ## A feature's graph
@@ -56,36 +52,26 @@ fun CartNavigationScope.graph(
 )
 ```
 
-<br>
-
 > [!IMPORTANT]
 > **`onClose` means "leave the feature", and the host decides what that is.** A tab root has nowhere to go, so the app passes `{}`; the same feature inside a flow would close the flow.
 
 `graph(navController, onClose, …)` is the same everywhere, even where `navController` isn't used yet: a feature can grow screens without changing its signature.
 
 <br>
-<br>
 
 ## Tabs
-
-<img src="../images/product-image-transition.gif" align="right" width="220" alt="The product image flies from the list to the product details">
 
 **Each tab keeps its own stack.** Switching a tab pops everything, the catalog too ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)), with `saveState`/`restoreState`. So Back from any tab root leaves the app instead of going to the catalog.
 
 **The bottom bar is shown only inside tabs.** The checkout covers it.
 
-**A product image flies between screens** within a tab (shared element), as in the animation on the right. It doesn't fly between tabs: while tabs switch, the shared transition scope is `null`.
+**A product image flies between screens** within a tab (shared element). It doesn't fly between tabs: while tabs switch, the shared transition scope is `null`.
 
-<br clear="right">
-
-<br>
 <br>
 
 ## Product details inside the cart tab
 
-<img src="../images/product-in-cart-tab.png" align="right" width="220" alt="A product opened from the cart: the Cart tab is selected">
-
-Product details belong to the catalog, but a product opened from the cart must stay in the cart tab, as in the screenshot on the right.
+Product details belong to the catalog, but a product opened from the cart must stay in the cart tab.
 
 The catalog offers two things for that:
 
@@ -93,8 +79,6 @@ The catalog offers two things for that:
 - **`productDetailsScreen<T>()`** — adds the screen under any route that implements it.
 
 The app declares its own route and adds the screen to the cart tab. The ViewModel reads the arguments by the interface's property names, so it works with any route.
-
-<br clear="right">
 
 ```kotlin
 @Serializable
@@ -108,7 +92,6 @@ catalog.productDetailsScreen<CartProductRoute>(onBack = { navController.popBackS
 ```
 
 <br>
-<br>
 
 ## Screen results
 
@@ -118,12 +101,9 @@ The promo code screen returns the applied code to the cart:
 2. **The promo code screen closes with a result**, and the app puts the code into the `savedStateHandle` of the cart's back stack entry under that key, as JSON.
 3. **The cart's navigation reads the result**, passes it to the ViewModel as an `OnPromoCodeApplied(promoCode)` event and removes it.
 
-<br>
-
 > [!WARNING]
 > The result can't go straight into the ViewModel's `SavedStateHandle`: an entry's handle and a ViewModel's handle are separate objects, and the ViewModel would never see it.
 
-<br>
 <br>
 
 ## Navigation goes through the ViewModel
@@ -136,8 +116,6 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 // in the screen:     ProductDetailsEffect.NavigateBack -> navigate { onBack() }
 ```
 
-<br>
-
 <details>
 <summary>How a fast double tap is stopped</summary>
 
@@ -146,7 +124,6 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 
 </details>
 
-<br>
 <br>
 
 ## Deep links
@@ -168,8 +145,6 @@ More about links:
 - **App Links are verified**: the debug key is kept in the repo, and its fingerprint is in `assetlinks.json` on the domain, so a build from any computer opens the links.
 - **The domain and paths are written twice**, in the manifest's intent filter and in `DeepLinkConfig`; a comment in each points to the other.
 - **Test pages** with every link, with a trailing slash and edge cases (an unknown product, an unknown path) are in [`docs/deeplinks/`](../../deeplinks/) and published on GitHub Pages; the settings screen opens them.
-
-<br>
 
 <details>
 <summary>Why the launch link is opened only once</summary>
