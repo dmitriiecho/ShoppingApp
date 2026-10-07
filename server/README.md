@@ -133,9 +133,11 @@ The app's settings have items that put a copy of a product in the cart to show a
 | Product | Must keep | Settings item | Adds to the cart |
 |---|---|---|---|
 | `16` Hoodie | stock 0 | Add an out-of-stock item to the cart | 1 copy |
-| `48` Laundry Basket | stock below 10, price 4699 | Add more of an item than is in stock | 10 copies |
+| `48` Laundry Basket | stock 1–9, price 4699 | Add more of an item than is in stock | 10 copies |
 | `40` Cutting Board | stock above 0, price not 4900 | Add an item with an outdated price | 1 copy at 4900 |
 | `32` Notebook | stock 1–9, price not 995 | Add an item with two changes | 10 copies at 995 |
+
+`ShopDataTest` checks these values in `data/products.json`, so `./gradlew test` (and CI) fails when one breaks.
 
 ## Running
 
