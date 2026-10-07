@@ -4,30 +4,20 @@
 
 Navigation Compose with type-safe routes (`@Serializable` objects and classes). Features don't know each other: each one gives the app a graph, and the app joins the graphs.
 
+---
+
 ## How the features are joined
 
-```mermaid
-flowchart LR
-    subgraph catalogTab["Catalog tab"]
-        catalog["catalog.graph<br/>list → product"]
-    end
-    subgraph cartTab["Cart tab"]
-        cart["cart.graph"]
-        promo["promo.graph"]
-        product["product from the catalog<br/>(productDetailsScreen)"]
-    end
-    subgraph settingsTab["Settings tab"]
-        settings["settings.graph"]
-    end
-    checkout["checkout.graph<br/>over the tabs"]
+The app builds three tabs and the checkout over them. Every way from one feature to another is a callback that [`AppNavGraph.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) passes to the feature graphs:
 
-    cart -- onOpenProduct --> product
-    cart -- onOpenPromo --> promo
-    promo -. applied code .-> cart
-    cart -- onOpenCheckout --> checkout
-```
+| From | To | Callback |
+|---|---|---|
+| Cart | Product details (inside the cart tab) | `onOpenProduct` |
+| Cart | Promo code screen | `onOpenPromo(resultKey)` |
+| Promo code screen | back to the cart, with the applied code | `onCloseWithResult(resultKey, promoCode)` |
+| Cart | Checkout (over the tabs) | `onOpenCheckout` |
 
-Every arrow is a callback that [`AppNavGraph.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) passes to the feature graphs. The cart knows neither the promo code screen nor the checkout: it just calls `onOpenPromo(…)` and `onOpenCheckout()`.
+The cart knows neither the promo code screen nor the checkout; it just calls a callback:
 
 ```kotlin
 cart.cartGraph(
@@ -41,6 +31,8 @@ cart.cartGraph(
 
 > [!TIP]
 > App-wide navigation behaviour — what Back does on a tab, how tabs stack — is changed in `AppNavGraph` and the bottom bar, not in the features.
+
+---
 
 ## A feature's graph
 
@@ -65,27 +57,38 @@ fun CartNavigationScope.graph(
 
 `graph(navController, onClose, …)` is the same everywhere, even where `navController` isn't used yet: a feature can grow screens without changing its signature.
 
+---
+
 ## Tabs
 
-- **Switching a tab pops everything, the catalog too** ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)), with `saveState`/`restoreState` so each tab keeps its own stack. Back from any tab root leaves the app instead of going to the catalog.
-- **The bottom bar is shown only inside tabs**: the checkout covers it.
-- **A product image flies between screens within a tab** (shared element), but not between tabs: while tabs switch, the shared transition scope is `null`.
+<img src="../images/product-image-transition.gif" align="right" width="220" alt="The product image flies from the list to the product details">
 
-<p align="center">
-  <img src="../images/product-image-transition.gif" width="280" alt="The product image flies from the list to the product details">
-</p>
+**Each tab keeps its own stack.** Switching a tab pops everything, the catalog too ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)), with `saveState`/`restoreState`. So Back from any tab root leaves the app instead of going to the catalog.
+
+**The bottom bar is shown only inside tabs.** The checkout covers it.
+
+**A product image flies between screens** within a tab (shared element), as in the animation on the right. It doesn't fly between tabs: while tabs switch, the shared transition scope is `null`.
+
+<br clear="right">
+
+---
 
 ## Product details inside the cart tab
 
-Product details belong to the catalog, but a product opened from the cart must stay in the cart tab. The catalog offers:
+<img src="../images/product-in-cart-tab.png" align="right" width="220" alt="A product opened from the cart: the Cart tab is selected">
 
-| What | Why |
-|---|---|
-| `ProductDetailsRoute` | an interface with the screen's arguments: `productId`, `productName`, `imageUrl` |
-| `productDetailsScreen<T>()` | adds the screen under any route that implements it |
+Product details belong to the catalog, but a product opened from the cart must stay in the cart tab, as in the screenshot on the right.
+
+The catalog offers two things for that:
+
+- **`ProductDetailsRoute`** — an interface with the screen's arguments: `productId`, `productName`, `imageUrl`;
+- **`productDetailsScreen<T>()`** — adds the screen under any route that implements it.
+
+The app declares its own route and adds the screen to the cart tab. The ViewModel reads the arguments by the interface's property names, so it works with any route.
+
+<br clear="right">
 
 ```kotlin
-// In the app:
 @Serializable
 data class CartProductRoute(
     override val productId: String,
@@ -96,44 +99,26 @@ data class CartProductRoute(
 catalog.productDetailsScreen<CartProductRoute>(onBack = { navController.popBackStack() })
 ```
 
-The ViewModel reads the arguments by the interface's property names, so it works with either route.
-
-<p align="center">
-  <img src="../images/product-in-cart-tab.png" width="280" alt="A product opened from the cart: the Cart tab is selected">
-</p>
+---
 
 ## Screen results
 
 The promo code screen returns the applied code to the cart:
 
-```mermaid
-sequenceDiagram
-    participant Cart as Cart
-    participant App as AppNavGraph
-    participant Promo as Promo code screen
-    Cart->>App: onOpenPromo(resultKey)
-    App->>Promo: navigate(PromoRoutes.Graph(resultKey))
-    Promo->>App: onCloseWithResult(resultKey, promoCode)
-    App->>App: popBackStack()<br/>savedStateHandle[resultKey] = JSON
-    App-->>Cart: CartNavigation reads and removes the result
-    Cart->>Cart: onEvent(OnPromoCodeApplied(promoCode))
-```
-
-- **`resultKey` works like a request code**: one promo graph can serve several callers, each gets the result under its own key.
-- **The result goes into the `savedStateHandle` of the caller's back stack entry**, as JSON of `PromoCode`.
+1. **The cart opens the promo code screen** with a `resultKey`, like a request code: `onOpenPromo(resultKey)`. So one promo code screen can serve several callers.
+2. **The promo code screen closes with a result**, and the app puts the code into the `savedStateHandle` of the cart's back stack entry under that key, as JSON.
+3. **The cart's navigation reads the result**, passes it to the ViewModel as an `OnPromoCodeApplied(promoCode)` event and removes it.
 
 > [!WARNING]
-> The result can't go straight into the ViewModel's `SavedStateHandle`: an entry's handle and a ViewModel's handle are separate objects, and the ViewModel would never see it. So navigation reads the result and passes it to the ViewModel as an event.
+> The result can't go straight into the ViewModel's `SavedStateHandle`: an entry's handle and a ViewModel's handle are separate objects, and the ViewModel would never see it.
+
+---
 
 ## Navigation goes through the ViewModel
 
-Every button that navigates, Back and Close included, sends an event; the ViewModel answers with an effect, and the screen navigates inside `navigate { }` (see [Screens](screens.md#effects)).
+Every button that navigates, Back and Close included, sends an event. The ViewModel answers with an effect, and the screen navigates inside `navigate { }` (see [Screens](screens.md#effects)):
 
 ```kotlin
-// ❌ The screen navigates by itself: a double tap opens the screen twice
-NavigateBackIconButton(onClick = onBack)
-
-// ✅ Event → effect → navigate { }
 NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 // in the ViewModel:  OnBackClick -> send(ProductDetailsEffect.NavigateBack)
 // in the screen:     ProductDetailsEffect.NavigateBack -> navigate { onBack() }
@@ -147,6 +132,8 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 
 </details>
 
+---
+
 ## Deep links
 
 | Link | Opens |
@@ -155,16 +142,13 @@ NavigateBackIconButton(onClick = { onEvent(ProductDetailsEvent.OnBackClick) })
 | `https://dmitriiecho.github.io/ShoppingApp/cart` | the cart tab |
 | `https://dmitriiecho.github.io/ShoppingApp/product/{id}` | a product over the catalog |
 
-```mermaid
-flowchart LR
-    link["Link"] --> tab{"Which tab<br/>opens it?"}
-    tab -- none --> ignore["Ignored"]
-    tab -- found --> switch["Switch to the tab,<br/>as a tap would"]
-    switch --> root["Go back to the tab root"]
-    root --> screen["Open the screen<br/>over the root"]
-```
+A link opens the way a user would get there ([`DeepLinks.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
 
-So Back from a product opened by a link goes to the catalog, as if the user had got there by themselves ([`DeepLinks.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)).
+1. **Find the tab that opens the link.** If there is none, the link is ignored.
+2. **Switch to that tab**, as a tap would, and go back to its root.
+3. **Open the screen over the root.** So Back from a product opened by a link goes to the catalog.
+
+More about links:
 
 - **App Links are verified**: the debug key is kept in the repo, and its fingerprint is in `assetlinks.json` on the domain, so a build from any computer opens the links.
 - **The domain and paths are written twice**, in the manifest's intent filter and in `DeepLinkConfig`; a comment in each points to the other.
