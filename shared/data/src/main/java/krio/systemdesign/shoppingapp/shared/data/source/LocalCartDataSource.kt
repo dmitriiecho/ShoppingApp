@@ -1,36 +1,103 @@
 package krio.systemdesign.shoppingapp.shared.data.source
 
+import androidx.room.withTransaction
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import krio.systemdesign.shoppingapp.shared.data.database.ShoppingDatabase
+import krio.systemdesign.shoppingapp.shared.data.database.dao.AppliedPromoCodeDao
+import krio.systemdesign.shoppingapp.shared.data.database.dao.CartItemDao
+import krio.systemdesign.shoppingapp.shared.data.database.databaseCall
+import krio.systemdesign.shoppingapp.shared.data.database.entity.toCartItemEntity
+import krio.systemdesign.shoppingapp.shared.data.database.entity.toDomain
+import krio.systemdesign.shoppingapp.shared.data.database.entity.toEntity
 import krio.systemdesign.shoppingapp.shared.domain.model.Cart
 import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-internal interface LocalCartDataSource {
+internal class LocalCartDataSource @Inject constructor(
+    private val database: ShoppingDatabase,
+    private val cartItemDao: CartItemDao,
+    private val appliedPromoCodeDao: AppliedPromoCodeDao,
+) {
 
     suspend fun addItem(
         product: Product,
         quantity: Int,
-    ): Result<Unit>
+    ): Result<Unit> = databaseCall {
+        require(quantity > 0) { "quantity must be positive" }
+        database.withTransaction {
+            val existing = cartItemDao.find(product.id)
+            val entity = if (existing != null) {
+                // The catalog stock is fresher than the stored one.
+                existing.copy(
+                    quantity = existing.quantity + quantity,
+                    availableQuantity = product.availableQuantity,
+                )
+            } else {
+                product.toCartItemEntity(quantity)
+            }
+            cartItemDao.upsert(entity)
+        }
+    }
 
     suspend fun setQuantity(
         productId: String,
         quantity: Int,
-    ): Result<Unit>
+    ): Result<Unit> = databaseCall {
+        require(quantity > 0) { "quantity must be positive" }
+        // Already removed, e.g. by a fast tap on Remove just before this "+": nothing to change.
+        val existing = cartItemDao.find(productId) ?: return@databaseCall
+        cartItemDao.upsert(existing.copy(quantity = quantity))
+    }
 
-    suspend fun removeItem(productId: String): Result<Unit>
+    suspend fun removeItem(productId: String): Result<Unit> = databaseCall {
+        cartItemDao.delete(productId)
+    }
 
-    // Removes the items but keeps the promo code.
-    suspend fun clearItems(): Result<Unit>
+    suspend fun clearItems(): Result<Unit> = databaseCall {
+        cartItemDao.deleteAll()
+    }
 
-    // Resets the cart to its initial state: removes items and the promo code at once.
-    suspend fun reset(): Result<Unit>
+    suspend fun reset(): Result<Unit> = databaseCall {
+        database.withTransaction {
+            cartItemDao.deleteAll()
+            appliedPromoCodeDao.delete()
+        }
+    }
 
-    fun observe(): Flow<Cart>
+    fun observe(): Flow<Cart> = combine(
+        cartItemDao.observeAll(),
+        appliedPromoCodeDao.observe(),
+    ) { entities, promoCode ->
+        Cart(
+            items = entities.map { it.toDomain() },
+            promoCode = promoCode?.toDomain(),
+        )
+    }
 
-    suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit>
+    suspend fun acceptChanges(issues: List<ItemIssue>): Result<Unit> = databaseCall {
+        database.withTransaction {
+            issues.forEach { issue ->
+                when (issue) {
+                    is ItemIssue.Unavailable -> cartItemDao.delete(issue.productId)
+                    is ItemIssue.PriceChanged -> {
+                        val existing = cartItemDao.find(issue.productId) ?: return@forEach
+                        cartItemDao.upsert(existing.copy(price = issue.newPrice))
+                    }
+                    // The user decreases the quantity themselves for each item; such changes are not accepted in bulk.
+                    is ItemIssue.NotEnoughStock -> Unit
+                }
+            }
+        }
+    }
 
-    suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit>
+    suspend fun applyPromoCode(promoCode: PromoCode): Result<Unit> = databaseCall {
+        appliedPromoCodeDao.upsert(promoCode.toEntity())
+    }
 
-    suspend fun removePromoCode(): Result<Unit>
+    suspend fun removePromoCode(): Result<Unit> = databaseCall {
+        appliedPromoCodeDao.delete()
+    }
 }
