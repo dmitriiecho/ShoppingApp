@@ -6,6 +6,7 @@ ksp = "2.3.12"
 spotless = "8.10.3"
 ktlint = "1.8.0"
 moduleGraphAssert = "2.9.1"
+dependencyAnalysis = "3.19.2"
 
 # AndroidX
 androidxCore = "1.19.1"
@@ -98,6 +99,7 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 room = { id = "androidx.room", version.ref = "room" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 module-graph-assertion = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraphAssert" }
+dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
 
 # Project convention plugins from build-logic
 shoppingapp-android-application = { id = "shoppingapp.android.application" }

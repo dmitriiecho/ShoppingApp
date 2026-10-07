@@ -1,4 +1,4 @@
-# Checks every pull request and every push to main: code style, module rules, lint and the build of both apps,
+# Checks every pull request and every push to main: code style, module rules, dependencies, lint, both apps build,
 # plus the server's code style and tests. The server is a separate Gradle build, so it gets its own job.
 name: CI
 
@@ -36,6 +36,10 @@ jobs:
       # Dependencies between modules follow the rules in build-logic/src/main/kotlin/ModuleGraphRules.kt.
       - name: Module rules
         run: ./gradlew assertModuleGraph
+
+      # Unused dependencies and module structure; the rules are in the root build.gradle.kts.
+      - name: Dependencies
+        run: ./gradlew buildHealth
 
       - name: Lint
         run: ./gradlew lintDebug

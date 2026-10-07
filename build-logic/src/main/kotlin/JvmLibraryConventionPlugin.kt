@@ -11,6 +11,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply(libs.plugins.kotlin.jvm.get().pluginId)
+            pluginManager.apply(libs.plugins.dependency.analysis.get().pluginId)
 
             extensions.configure<JavaPluginExtension> {
                 sourceCompatibility = AndroidConfig.JAVA_VERSION

@@ -9,6 +9,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply(libs.plugins.android.library.get().pluginId)
+            pluginManager.apply(libs.plugins.dependency.analysis.get().pluginId)
 
             extensions.configure<LibraryExtension> {
                 configureAndroid(this)
