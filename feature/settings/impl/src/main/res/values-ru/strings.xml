@@ -1,0 +1,30 @@
+<resources>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_system">Системная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Тёмная</string>
+    <string name="settings_theme_save_error">Не удалось сохранить тему</string>
+    <string name="settings_network_delay">Задержка запросов</string>
+    <string name="settings_network_delay_none">Без задержки</string>
+    <string name="settings_network_delay_two_seconds">2 секунды</string>
+    <string name="settings_network_delay_four_seconds">4 секунды</string>
+    <string name="settings_network_delay_save_error">Не удалось сохранить задержку запросов</string>
+    <string name="settings_deep_links_page">Диплинки</string>
+    <string name="settings_deep_links_page_url">%1$s/ru.html</string>
+    <string name="settings_deep_links_page_description">Откроется страница со ссылками в браузере</string>
+    <string name="settings_no_browser">Не найден браузер, чтобы открыть страницу</string>
+    <string name="settings_add_unavailable_product">Добавить закончившийся товар в корзину</string>
+    <string name="settings_add_unavailable_product_description">Чтобы проверить, как корзина покажет недоступный товар</string>
+    <string name="settings_unavailable_product_added">Закончившийся товар добавлен в корзину</string>
+    <string name="settings_add_to_cart_error">Не удалось добавить товар в корзину</string>
+    <string name="settings_add_not_enough_stock_product">Добавить товар сверх остатка</string>
+    <string name="settings_add_not_enough_stock_product_description">Чтобы проверить, как корзина покажет нехватку товара</string>
+    <string name="settings_not_enough_stock_product_added">Товар сверх остатка добавлен в корзину</string>
+    <string name="settings_add_price_changed_product">Добавить товар со старой ценой</string>
+    <string name="settings_add_price_changed_product_description">Чтобы проверить, как корзина покажет изменение цены</string>
+    <string name="settings_price_changed_product_added">Товар со старой ценой добавлен в корзину</string>
+    <string name="settings_add_price_changed_not_enough_stock_product">Добавить товар с двумя изменениями</string>
+    <string name="settings_add_price_changed_not_enough_stock_product_description">Старая цена и больше, чем есть в наличии</string>
+    <string name="settings_price_changed_not_enough_stock_product_added">Товар с двумя изменениями добавлен в корзину</string>
+</resources>

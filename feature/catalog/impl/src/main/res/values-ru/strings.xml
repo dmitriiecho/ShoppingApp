@@ -1,0 +1,13 @@
+<resources>
+    <string name="catalog_title">Каталог</string>
+    <string name="catalog_search_placeholder">Поиск товаров</string>
+    <string name="catalog_empty">Каталог пуст</string>
+    <string name="catalog_search_no_results">Ничего не найдено по запросу «%1$s»</string>
+    <string name="catalog_load_error">Не удалось загрузить товары</string>
+
+    <string name="catalog_product_title">Товар</string>
+    <string name="catalog_product_load_error">Не удалось загрузить товар</string>
+    <string name="catalog_product_not_found">Товар не найден</string>
+
+    <string name="catalog_cart_update_error">Не удалось обновить корзину</string>
+</resources>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="promo_code">Promo code</string>
+    <string name="promo_apply">Apply</string>
+    <string name="promo_check_error">Couldn\'t check the promo code</string>
+    <string name="promo_not_found">Promo code not found</string>
+    <string name="promo_available_title">Promo codes for testing</string>
+    <string name="promo_available_hint">Tap a code to put it in the field</string>
+    <string name="promo_available_empty">There are no promo codes on the server</string>
+    <string name="promo_available_error">Couldn\'t load the list</string>
+    <string name="promo_retry">Retry</string>
+</resources>

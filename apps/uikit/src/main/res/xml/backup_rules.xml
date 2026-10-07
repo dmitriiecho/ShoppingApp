@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The UI kit keeps nothing worth saving. Used below Android 12, where allowBackup="false" already turns backup off. -->
+<full-backup-content>
+    <exclude domain="root" path="." />
+    <exclude domain="device_root" path="." />
+    <exclude domain="external" path="." />
+</full-backup-content>

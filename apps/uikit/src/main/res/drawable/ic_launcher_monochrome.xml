@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Themed icon (Android 13+): the same four shapes. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M37,33H48A4,4 0,0 1,52 37V48A4,4 0,0 1,48 52H37A4,4 0,0 1,33 48V37A4,4 0,0 1,37 33Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M56,42.5A9.5,9.5 0,1 1,75 42.5A9.5,9.5 0,1 1,56 42.5Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M37,56H48A4,4 0,0 1,52 60V71A4,4 0,0 1,48 75H37A4,4 0,0 1,33 71V60A4,4 0,0 1,37 56Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M60,56H71A4,4 0,0 1,75 60V71A4,4 0,0 1,71 75H60A4,4 0,0 1,56 71V60A4,4 0,0 1,60 56Z" />
+</vector>

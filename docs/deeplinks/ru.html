@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Диплинки ShoppingApp</title>
+  <!--
+    Page for checking deep links by hand, opened by the "Deep links" item in the app's settings.
+    The same page in two languages: en.html (English) and ru.html (Russian). The app opens
+    the one for its language (settings_deep_links_page_url in the settings strings). Keep them in sync.
+    GitHub Pages publishes them on the deep links' domain (DeepLinkConfig.BASE_URL), so the links have no domain.
+    A new path in the intent-filter in apps/shop/src/main/AndroidManifest.xml goes to both pages.
+  -->
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #15181d;
+      --muted: #5b6370;
+      --accent: #2f5fd0;
+      --border: #dde1e7;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1014;
+        --card: #191c22;
+        --text: #e7e9ee;
+        --muted: #9aa2b1;
+        --accent: #8fb0ff;
+        --border: #2b3039;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px 16px 40px;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main { max-width: 560px; margin: 0 auto; }
+    h1 { font-size: 24px; margin: 0 0 8px; }
+    h2 { font-size: 15px; margin: 28px 0 10px; color: var(--muted); font-weight: 600; }
+    p { margin: 0; color: var(--muted); }
+    a.link {
+      display: block;
+      margin-bottom: 10px;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: inherit;
+      text-decoration: none;
+    }
+    a.link:active { border-color: var(--accent); }
+    .title { font-weight: 600; }
+    .path { color: var(--accent); font-family: ui-monospace, "Roboto Mono", monospace; font-size: 14px; }
+    .expected { margin-top: 4px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Диплинки ShoppingApp</h1>
+  <p>
+    Нажмите на ссылку: должно открыться приложение на нужном экране.
+    Ссылку нужно именно нажать: если вставить адрес в строку браузера, Chrome откроет сайт, а не приложение.
+  </p>
+
+  <h2>Открывают приложение</h2>
+  <a class="link" href="/ShoppingApp/catalog">
+    <div class="title">Каталог <span class="path">/ShoppingApp/catalog</span></div>
+    <div class="expected">Вкладка «Каталог», список товаров.</div>
+  </a>
+  <a class="link" href="/ShoppingApp/cart">
+    <div class="title">Корзина <span class="path">/ShoppingApp/cart</span></div>
+    <div class="expected">Вкладка «Корзина». «Назад» выходит из приложения.</div>
+  </a>
+  <a class="link" href="/ShoppingApp/product/1">
+    <div class="title">Товар 1 <span class="path">/ShoppingApp/product/1</span></div>
+    <div class="expected">Карточка товара во вкладке «Каталог». «Назад» возвращает к списку товаров.</div>
+  </a>
+
+  <h2>Слеш в конце</h2>
+  <a class="link" href="/ShoppingApp/catalog/">
+    <div class="title">Каталог <span class="path">/ShoppingApp/catalog/</span></div>
+    <div class="expected">То же, что /ShoppingApp/catalog.</div>
+  </a>
+  <a class="link" href="/ShoppingApp/cart/">
+    <div class="title">Корзина <span class="path">/ShoppingApp/cart/</span></div>
+    <div class="expected">То же, что /ShoppingApp/cart.</div>
+  </a>
+  <a class="link" href="/ShoppingApp/product/1/">
+    <div class="title">Товар 1 <span class="path">/ShoppingApp/product/1/</span></div>
+    <div class="expected">То же, что /ShoppingApp/product/1.</div>
+  </a>
+
+  <h2>Пограничные случаи</h2>
+  <a class="link" href="/ShoppingApp/product/999">
+    <div class="title">Несуществующий товар <span class="path">/ShoppingApp/product/999</span></div>
+    <div class="expected">Карточка товара с сообщением «Товар не найден».</div>
+  </a>
+  <a class="link" href="/ShoppingApp/catalog/shoes">
+    <div class="title">Неизвестный адрес <span class="path">/ShoppingApp/catalog/shoes</span></div>
+    <div class="expected">Приложение не открывается, браузер показывает страницу 404.</div>
+  </a>
+</main>
+</body>
+</html>

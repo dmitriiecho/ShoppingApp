@@ -1,0 +1,142 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="uikit_app_name" translatable="false">ShoppingApp UI Kit</string>
+    <string name="uikit_title" translatable="false">UI Kit</string>
+    <string name="uikit_switch_to_dark_theme">Switch to dark theme</string>
+    <string name="uikit_switch_to_light_theme">Switch to light theme</string>
+
+    <!-- Sections -->
+    <string name="uikit_group_design_system">Design system</string>
+    <string name="uikit_group_design_system_description">Theme, icons and components that fit any app</string>
+    <string name="uikit_group_shared">Shared components</string>
+    <string name="uikit_group_shared_description">Shop components used by several features</string>
+    <string name="uikit_group_feature">Feature components</string>
+    <string name="uikit_group_feature_description">Components of a single feature</string>
+    <string name="uikit_section_theme">Theme</string>
+    <string name="uikit_section_theme_description">Colors and typography</string>
+    <string name="uikit_section_icons">Icons</string>
+    <string name="uikit_section_icons_description">Every AppIcons icon</string>
+    <string name="uikit_section_buttons">Buttons</string>
+    <string name="uikit_section_buttons_description">Loading button, choice buttons, icon buttons</string>
+    <string name="uikit_section_notices">Notices</string>
+    <string name="uikit_section_notices_description">Notices on cards and error banners</string>
+    <string name="uikit_section_cards">Cards and lists</string>
+    <string name="uikit_section_cards_description">Cards, section cards, list items</string>
+    <string name="uikit_section_inputs">Text fields</string>
+    <string name="uikit_section_inputs_description">Text fields and search</string>
+    <string name="uikit_section_loading">Loading</string>
+    <string name="uikit_section_loading_description">Shimmer while content loads</string>
+    <string name="uikit_section_screen_states">Screen states</string>
+    <string name="uikit_section_screen_states_description">Empty screen and error</string>
+    <string name="uikit_section_bars">Bars</string>
+    <string name="uikit_section_bars_description">Tab bar</string>
+    <string name="uikit_section_dialogs">Dialogs</string>
+    <string name="uikit_section_dialogs_description">Confirmation dialog</string>
+    <string name="uikit_section_product">Product</string>
+    <string name="uikit_section_product_description">Product card and image</string>
+    <string name="uikit_section_cart">Cart</string>
+    <string name="uikit_section_cart_description">Cart buttons</string>
+    <string name="uikit_section_order">Order</string>
+    <string name="uikit_section_order_description">Order totals and total bar</string>
+    <string name="uikit_section_promo">Promo code</string>
+    <string name="uikit_section_promo_description">Applied promo code</string>
+    <string name="uikit_section_catalog_feature">Catalog</string>
+    <string name="uikit_section_catalog_feature_description">Out of stock button, product info placeholder</string>
+    <string name="uikit_section_cart_feature">Cart</string>
+    <string name="uikit_section_cart_feature_description">Cart change notices, clear cart button</string>
+    <string name="uikit_section_promo_feature">Promo code</string>
+    <string name="uikit_section_promo_feature_description">Promo code coupons</string>
+    <string name="uikit_section_checkout_feature">Checkout</string>
+    <string name="uikit_section_checkout_feature_description">Order item rows</string>
+
+    <!-- Sample captions -->
+    <string name="uikit_variant_interactive_cart">Tap “Add to cart”, then “+”: at 3 the “+” turns off</string>
+    <string name="uikit_variant_tap_to_load">Tap it: loading takes 2 seconds</string>
+    <string name="uikit_variant_disabled">Disabled</string>
+    <string name="uikit_variant_icon_and_text">Icon and text, full width</string>
+    <string name="uikit_variant_fixed_width">Fixed width</string>
+    <string name="uikit_variant_with_subtitle">With a subtitle</string>
+    <string name="uikit_variant_with_remove">With “Remove”, as in the cart</string>
+    <string name="uikit_variant_read_only">Without a button, as at checkout</string>
+    <string name="uikit_variant_clickable">Clickable</string>
+    <string name="uikit_variant_catalog">As in the catalog</string>
+    <string name="uikit_variant_catalog_out_of_stock">As in the catalog: out of stock</string>
+    <string name="uikit_variant_cart_dimmed">As in the cart: out of stock, dimmed</string>
+    <string name="uikit_variant_cart">As in the cart</string>
+    <string name="uikit_variant_price_changed">Price changed</string>
+    <string name="uikit_variant_not_enough_stock">Not enough stock</string>
+    <string name="uikit_variant_several_issues">Price changed and not enough stock</string>
+    <string name="uikit_variant_with_discount">With a discount</string>
+    <string name="uikit_variant_without_discount">Without a discount</string>
+    <string name="uikit_variant_trailing_icon">Clickable, with an icon on the right</string>
+    <string name="uikit_variant_trailing_choice">With choice buttons on the right</string>
+    <string name="uikit_variant_inside_card">Inside a card</string>
+    <string name="uikit_variant_on_background">On the screen background</string>
+    <string name="uikit_variant_with_error">With an error</string>
+    <string name="uikit_variant_custom_shapes">Shapes laid out like the real content</string>
+    <string name="uikit_variant_coupons_placeholder">Two coupons while the codes load</string>
+    <string name="uikit_variant_cart_buttons_placeholder">Cart buttons</string>
+    <string name="uikit_variant_product_image_placeholder">Image while its address is unknown</string>
+    <string name="uikit_variant_product_info_placeholder">Name, price and description</string>
+    <string name="uikit_variant_loaded">Loaded</string>
+    <string name="uikit_variant_load_failed">Couldn\'t load</string>
+    <string name="uikit_variant_with_title">With a title</string>
+    <string name="uikit_variant_without_title">Without a title</string>
+    <string name="uikit_variant_retry">“Retry” shows loading for a moment</string>
+    <string name="uikit_variant_with_header">With a notice above the total</string>
+    <string name="uikit_variant_badge">A count on a tab</string>
+    <string name="uikit_variant_badge_overflow">More than 99</string>
+    <string name="uikit_variant_destructive">Can\'t be undone: the confirm button is red</string>
+    <string name="uikit_variant_regular">Regular action</string>
+    <string name="uikit_variant_notice_styles">Error, success and neutral</string>
+    <string name="uikit_animation">Animation</string>
+    <string name="uikit_visible">Visible</string>
+    <string name="uikit_show_dialog">Show the dialog</string>
+
+    <!-- Sample content: shop components show the app's texts, the design system neutral ones -->
+    <string name="uikit_sample_product_headphones" translatable="false">Wireless Headphones</string>
+    <string name="uikit_sample_product_keyboard" translatable="false">Mechanical Keyboard</string>
+    <string name="uikit_sample_product_hub" translatable="false">USB-C Hub</string>
+    <string name="uikit_sample_product_cutting_board" translatable="false">Cutting Board</string>
+    <string name="uikit_sample_product_notebook" translatable="false">Notebook</string>
+    <string name="uikit_sample_card_content">Card content</string>
+    <string name="uikit_sample_place_order">Place order</string>
+    <string name="uikit_sample_out_of_stock">Out of stock</string>
+    <string name="uikit_sample_price_changed">Price changed: now %1$s</string>
+    <string name="uikit_sample_demo_order">This is a demo app: the order isn\'t sent anywhere. Placing it empties the cart and its promo code</string>
+    <string name="uikit_sample_price_changes">Price changed for 1 item</string>
+    <!-- Not a plural: "1 available" and "5 available" read the same, and Russian avoids the forms with "шт." -->
+    <string name="uikit_sample_only_available" tools:ignore="PluralsCandidate">Only %1$d available to order now</string>
+    <string name="uikit_sample_item_out_of_stock">1 item is out of stock</string>
+    <string name="uikit_sample_not_enough_stock_items">Not enough stock for 1 item</string>
+    <string name="uikit_sample_remove">Remove</string>
+    <string name="uikit_sample_accept">Accept</string>
+    <string name="uikit_sample_nothing_found">Nothing found for “%1$s”</string>
+    <string name="uikit_sample_load_error">Couldn\'t load data</string>
+    <string name="uikit_sample_checkout">Checkout</string>
+    <string name="uikit_sample_tab_settings">Settings</string>
+    <string name="uikit_sample_notice_error">Something went wrong</string>
+    <string name="uikit_sample_notice_success">Done</string>
+    <string name="uikit_sample_notice_neutral">For your information</string>
+    <string name="uikit_sample_notice_subtitle">A short explanation</string>
+    <string name="uikit_sample_notice_action">Action</string>
+    <string name="uikit_sample_button">Button</string>
+    <string name="uikit_sample_option_light">Light</string>
+    <string name="uikit_sample_option_dark">Dark</string>
+    <string name="uikit_sample_section_title">Section title</string>
+    <string name="uikit_sample_list_item">List item</string>
+    <string name="uikit_sample_list_item_description">Item description</string>
+    <string name="uikit_sample_selected">Selected: %1$d</string>
+    <string name="uikit_sample_field_label">Label</string>
+    <string name="uikit_sample_multiline_field">Multiline field</string>
+    <string name="uikit_sample_field_error">Error message</string>
+    <string name="uikit_sample_search">Search</string>
+    <string name="uikit_sample_empty_title">Nothing here yet</string>
+    <string name="uikit_sample_empty_message">Content will appear here</string>
+    <string name="uikit_sample_delete_title">Delete this?</string>
+    <string name="uikit_sample_delete_message">This can\'t be undone.</string>
+    <string name="uikit_sample_delete_confirm">Delete</string>
+    <string name="uikit_sample_apply_title">Apply changes?</string>
+    <string name="uikit_sample_apply_confirm">Apply</string>
+    <string name="uikit_sample_tab_home">Home</string>
+    <string name="uikit_sample_tab_notifications">Notifications</string>
+</resources>

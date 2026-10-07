@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        Our server does not have HTTPS (no domain), so plain HTTP is only permitted for its address.
+        The same address is specified in ServerConfig.BASE_URL in core/config. Update both places if it changes.
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">2.56.204.151</domain>
+    </domain-config>
+</network-security-config>

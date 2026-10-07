@@ -1,0 +1,7 @@
+<resources>
+    <string name="designsystem_close">Close</string>
+    <string name="designsystem_navigate_back">Back</string>
+    <string name="designsystem_retry">Retry</string>
+    <string name="designsystem_cancel">Cancel</string>
+    <string name="designsystem_scroll_to_top">Back to top</string>
+</resources>

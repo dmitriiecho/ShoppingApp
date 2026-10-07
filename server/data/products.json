@@ -1,0 +1,402 @@
+[
+  {
+    "id": "1",
+    "name": "Wireless Headphones",
+    "price": 14999,
+    "imageUrl": "http://2.56.204.151:8080/images/1.png",
+    "description": "Over-ear wireless headphones in matte black, with thick soft ear cushions and a padded headband. Stable Bluetooth playback for up to 30 hours.",
+    "availableQuantity": 3
+  },
+  {
+    "id": "2",
+    "name": "Mechanical Keyboard",
+    "price": 10995,
+    "imageUrl": "http://2.56.204.151:8080/images/2.png",
+    "description": "A black mechanical keyboard with sculpted keycaps, a tactile feel, and a soft white backlight, laid out for work and games.",
+    "availableQuantity": 1
+  },
+  {
+    "id": "3",
+    "name": "USB-C Hub",
+    "price": 2999,
+    "imageUrl": "http://2.56.204.151:8080/images/3.png",
+    "description": "A compact silver aluminum USB-C hub with one HDMI port, two USB-A ports, and a memory-card slot, meant to replace several cables with one.",
+    "availableQuantity": 0
+  },
+  {
+    "id": "4",
+    "name": "4K Monitor",
+    "price": 34999,
+    "imageUrl": "http://2.56.204.151:8080/images/4.png",
+    "description": "A 27-inch 4K monitor with a thin black bezel, a slim stand, and accurate color for graphics work.",
+    "availableQuantity": 17
+  },
+  {
+    "id": "5",
+    "name": "Laptop Stand",
+    "price": 3995,
+    "imageUrl": "http://2.56.204.151:8080/images/5.png",
+    "description": "A silver aluminum laptop stand with an open frame that lifts the screen to eye level and leaves room underneath for airflow.",
+    "availableQuantity": 8
+  },
+  {
+    "id": "6",
+    "name": "Bluetooth Speaker",
+    "price": 7999,
+    "imageUrl": "http://2.56.204.151:8080/images/6.png",
+    "description": "A portable cylindrical Bluetooth speaker with a fabric grille, full sound, a splash-resistant shell, and a battery that lasts all day.",
+    "availableQuantity": 15
+  },
+  {
+    "id": "7",
+    "name": "Webcam HD",
+    "price": 5949,
+    "imageUrl": "http://2.56.204.151:8080/images/7.png",
+    "description": "A small black Full HD webcam on a clip mount, with a glass lens, autofocus, and a built-in microphone for calls and streams.",
+    "availableQuantity": 6
+  },
+  {
+    "id": "8",
+    "name": "Noise Cancelling Earbuds",
+    "price": 12900,
+    "imageUrl": "http://2.56.204.151:8080/images/8.png",
+    "description": "Black in-ear earbuds with soft silicone tips and active noise cancelling, shown beside a compact charging case.",
+    "availableQuantity": 13
+  },
+  {
+    "id": "9",
+    "name": "Cotton T-Shirt",
+    "price": 1450,
+    "imageUrl": "http://2.56.204.151:8080/images/9.png",
+    "description": "A plain light-gray cotton T-shirt in a relaxed everyday cut. The soft fabric keeps its shape after washing.",
+    "availableQuantity": 20
+  },
+  {
+    "id": "10",
+    "name": "Denim Jacket",
+    "price": 6990,
+    "imageUrl": "http://2.56.204.151:8080/images/10.png",
+    "description": "A medium-blue denim jacket of medium weight, with a pointed collar, metal buttons, and two chest pockets, cut to wear over a T-shirt or hoodie.",
+    "availableQuantity": 11
+  },
+  {
+    "id": "11",
+    "name": "Running Shoes",
+    "price": 11995,
+    "imageUrl": "http://2.56.204.151:8080/images/11.png",
+    "description": "Light gray running shoes with a cushioned sole and a breathable mesh upper, for daily runs and city walks.",
+    "availableQuantity": 18
+  },
+  {
+    "id": "12",
+    "name": "Wool Sweater",
+    "price": 7900,
+    "imageUrl": "http://2.56.204.151:8080/images/12.png",
+    "description": "A loose oatmeal wool sweater with a crew neck. Soft knit that does not itch and holds warmth.",
+    "availableQuantity": 9
+  },
+  {
+    "id": "13",
+    "name": "Leather Belt",
+    "price": 3495,
+    "imageUrl": "http://2.56.204.151:8080/images/13.png",
+    "description": "A brown leather belt with a simple metal buckle, made to wear with jeans or trousers.",
+    "availableQuantity": 16
+  },
+  {
+    "id": "14",
+    "name": "Winter Scarf",
+    "price": 2750,
+    "imageUrl": "http://2.56.204.151:8080/images/14.png",
+    "description": "A thick charcoal scarf in soft woven fabric, long enough to wrap the neck and stay put under a coat.",
+    "availableQuantity": 7
+  },
+  {
+    "id": "15",
+    "name": "Casual Sneakers",
+    "price": 5999,
+    "imageUrl": "http://2.56.204.151:8080/images/15.png",
+    "description": "White canvas sneakers with a flexible rubber sole, for work, class, and walking.",
+    "availableQuantity": 14
+  },
+  {
+    "id": "16",
+    "name": "Hoodie",
+    "price": 4499,
+    "imageUrl": "http://2.56.204.151:8080/images/16.png",
+    "description": "A heather-gray hoodie in thick fleece, with a hood and a kangaroo pocket. It keeps its shape after washing.",
+    "availableQuantity": 0
+  },
+  {
+    "id": "17",
+    "name": "Ceramic Mug",
+    "price": 1195,
+    "imageUrl": "http://2.56.204.151:8080/images/17.png",
+    "description": "A white ceramic mug, 350 ml, with a comfortable handle. Dishwasher safe.",
+    "availableQuantity": 12
+  },
+  {
+    "id": "18",
+    "name": "Desk Lamp",
+    "price": 4249,
+    "imageUrl": "http://2.56.204.151:8080/images/18.png",
+    "description": "A black desk lamp with a flexible neck and a dimmable head that does not glare on a screen.",
+    "availableQuantity": 19
+  },
+  {
+    "id": "19",
+    "name": "Throw Pillow",
+    "price": 2499,
+    "imageUrl": "http://2.56.204.151:8080/images/19.png",
+    "description": "A square decorative pillow in warm beige linen, with a removable cover, for a sofa or armchair.",
+    "availableQuantity": 10
+  },
+  {
+    "id": "20",
+    "name": "Wall Clock",
+    "price": 2995,
+    "imageUrl": "http://2.56.204.151:8080/images/20.png",
+    "description": "A round wall clock with a large white face, simple black tick marks, and black hands. Quiet movement, no loud ticking.",
+    "availableQuantity": 17
+  },
+  {
+    "id": "21",
+    "name": "Scented Candle",
+    "price": 1675,
+    "imageUrl": "http://2.56.204.151:8080/images/21.png",
+    "description": "A cream scented candle in a clear glass jar, with a steady flame and about 25 hours of burn time.",
+    "availableQuantity": 8
+  },
+  {
+    "id": "22",
+    "name": "Kitchen Scale",
+    "price": 1999,
+    "imageUrl": "http://2.56.204.151:8080/images/22.png",
+    "description": "A digital kitchen scale with a glass platform, accurate to 1 gram, and a tare button.",
+    "availableQuantity": 15
+  },
+  {
+    "id": "23",
+    "name": "Plant Pot",
+    "price": 1840,
+    "imageUrl": "http://2.56.204.151:8080/images/23.png",
+    "description": "A matte terracotta ceramic pot with a drainage hole and a matching saucer, for a houseplant.",
+    "availableQuantity": 6
+  },
+  {
+    "id": "24",
+    "name": "Cutlery Set",
+    "price": 4999,
+    "imageUrl": "http://2.56.204.151:8080/images/24.png",
+    "description": "A stainless-steel cutlery set for four: forks, knives, and spoons that do not tarnish.",
+    "availableQuantity": 13
+  },
+  {
+    "id": "25",
+    "name": "Water Bottle",
+    "price": 2695,
+    "imageUrl": "http://2.56.204.151:8080/images/25.png",
+    "description": "A matte silver stainless-steel water bottle, 750 ml, with a black screw cap.",
+    "availableQuantity": 20
+  },
+  {
+    "id": "26",
+    "name": "Yoga Mat",
+    "price": 3250,
+    "imageUrl": "http://2.56.204.151:8080/images/26.png",
+    "description": "A dark green yoga mat rolled into a tight cylinder, with a textured non-slip surface.",
+    "availableQuantity": 11
+  },
+  {
+    "id": "27",
+    "name": "Backpack",
+    "price": 6499,
+    "imageUrl": "http://2.56.204.151:8080/images/27.png",
+    "description": "A charcoal canvas backpack with one front pocket and padded shoulder straps.",
+    "availableQuantity": 18
+  },
+  {
+    "id": "28",
+    "name": "Sunglasses",
+    "price": 4500,
+    "imageUrl": "http://2.56.204.151:8080/images/28.png",
+    "description": "Black wayfarer sunglasses with dark lenses and slim metal hinges.",
+    "availableQuantity": 9
+  },
+  {
+    "id": "29",
+    "name": "Baseball Cap",
+    "price": 2200,
+    "imageUrl": "http://2.56.204.151:8080/images/29.png",
+    "description": "A navy cotton baseball cap with a curved brim and a fabric-covered button on top.",
+    "availableQuantity": 16
+  },
+  {
+    "id": "30",
+    "name": "Wireless Mouse",
+    "price": 2499,
+    "imageUrl": "http://2.56.204.151:8080/images/30.png",
+    "description": "A compact matte-black wireless mouse with a smooth scroll wheel.",
+    "availableQuantity": 7
+  },
+  {
+    "id": "31",
+    "name": "Desk Organizer",
+    "price": 2875,
+    "imageUrl": "http://2.56.204.151:8080/images/31.png",
+    "description": "A light oak desk organizer with separate slots for pens, notes, and small items.",
+    "availableQuantity": 14
+  },
+  {
+    "id": "32",
+    "name": "Notebook",
+    "price": 1295,
+    "imageUrl": "http://2.56.204.151:8080/images/32.png",
+    "description": "A closed hardcover notebook with a navy linen cover and a ribbon bookmark.",
+    "availableQuantity": 5
+  },
+  {
+    "id": "33",
+    "name": "Pen Set",
+    "price": 649,
+    "imageUrl": "http://2.56.204.151:8080/images/33.png",
+    "description": "Three slim ballpoint pens laid side by side: black, blue, and red.",
+    "availableQuantity": 12
+  },
+  {
+    "id": "34",
+    "name": "Phone Stand",
+    "price": 1799,
+    "imageUrl": "http://2.56.204.151:8080/images/34.png",
+    "description": "A silver aluminum phone stand, folded open, holding a blank black phone upright.",
+    "availableQuantity": 19
+  },
+  {
+    "id": "35",
+    "name": "Power Bank",
+    "price": 3499,
+    "imageUrl": "http://2.56.204.151:8080/images/35.png",
+    "description": "A slim black power bank with a USB-C port on the short end and a small charge indicator.",
+    "availableQuantity": 10
+  },
+  {
+    "id": "36",
+    "name": "Throw Blanket",
+    "price": 4950,
+    "imageUrl": "http://2.56.204.151:8080/images/36.png",
+    "description": "A folded light-beige knit throw blanket with a visible ribbed texture.",
+    "availableQuantity": 17
+  },
+  {
+    "id": "37",
+    "name": "Coaster Set",
+    "price": 899,
+    "imageUrl": "http://2.56.204.151:8080/images/37.png",
+    "description": "Four round cork coasters stacked in a short pile.",
+    "availableQuantity": 8
+  },
+  {
+    "id": "38",
+    "name": "French Press",
+    "price": 3295,
+    "imageUrl": "http://2.56.204.151:8080/images/38.png",
+    "description": "A glass French press with a stainless-steel frame and a black handle.",
+    "availableQuantity": 15
+  },
+  {
+    "id": "39",
+    "name": "Tea Kettle",
+    "price": 3999,
+    "imageUrl": "http://2.56.204.151:8080/images/39.png",
+    "description": "A stainless-steel stovetop kettle with a black handle and a curved spout.",
+    "availableQuantity": 6
+  },
+  {
+    "id": "40",
+    "name": "Cutting Board",
+    "price": 5400,
+    "imageUrl": "http://2.56.204.151:8080/images/40.png",
+    "description": "A rectangular walnut cutting board with rounded corners and a juice groove.",
+    "availableQuantity": 13
+  },
+  {
+    "id": "41",
+    "name": "Chef Knife",
+    "price": 8995,
+    "imageUrl": "http://2.56.204.151:8080/images/41.png",
+    "description": "A single stainless-steel chef knife with a black handle, shown on its side.",
+    "availableQuantity": 20
+  },
+  {
+    "id": "42",
+    "name": "Glass Jar",
+    "price": 949,
+    "imageUrl": "http://2.56.204.151:8080/images/42.png",
+    "description": "A clear glass storage jar with a light wooden lid.",
+    "availableQuantity": 11
+  },
+  {
+    "id": "43",
+    "name": "Bath Towel",
+    "price": 2199,
+    "imageUrl": "http://2.56.204.151:8080/images/43.png",
+    "description": "A folded white cotton bath towel with a soft terry texture.",
+    "availableQuantity": 18
+  },
+  {
+    "id": "44",
+    "name": "Slippers",
+    "price": 3600,
+    "imageUrl": "http://2.56.204.151:8080/images/44.png",
+    "description": "A pair of gray felt slippers with a closed toe.",
+    "availableQuantity": 9
+  },
+  {
+    "id": "45",
+    "name": "Alarm Clock",
+    "price": 1949,
+    "imageUrl": "http://2.56.204.151:8080/images/45.png",
+    "description": "A small round analog alarm clock with a white face, simple black tick marks, and black hands.",
+    "availableQuantity": 16
+  },
+  {
+    "id": "46",
+    "name": "Picture Frame",
+    "price": 1499,
+    "imageUrl": "http://2.56.204.151:8080/images/46.png",
+    "description": "A thin black picture frame standing upright, holding a simple abstract color photograph with no text.",
+    "availableQuantity": 7
+  },
+  {
+    "id": "47",
+    "name": "Floor Lamp",
+    "price": 11900,
+    "imageUrl": "http://2.56.204.151:8080/images/47.png",
+    "description": "A slim black floor lamp with a cylindrical linen shade, shown full length.",
+    "availableQuantity": 14
+  },
+  {
+    "id": "48",
+    "name": "Laundry Basket",
+    "price": 4699,
+    "imageUrl": "http://2.56.204.151:8080/images/48.png",
+    "description": "A round natural-rattan laundry basket with two side handles.",
+    "availableQuantity": 5
+  },
+  {
+    "id": "49",
+    "name": "Umbrella",
+    "price": 2450,
+    "imageUrl": "http://2.56.204.151:8080/images/49.png",
+    "description": "A closed compact black umbrella with a curved handle.",
+    "availableQuantity": 12
+  },
+  {
+    "id": "50",
+    "name": "Travel Mug",
+    "price": 2799,
+    "imageUrl": "http://2.56.204.151:8080/images/50.png",
+    "description": "A stainless-steel travel mug with a black leak-proof lid.",
+    "availableQuantity": 19
+  }
+]

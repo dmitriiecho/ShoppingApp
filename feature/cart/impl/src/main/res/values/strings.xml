@@ -1,0 +1,40 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="cart_title">Cart</string>
+    <string name="cart_promo_code">Promo code</string>
+    <string name="cart_checkout">Checkout</string>
+    <string name="cart_order_total">Order total</string>
+    <string name="cart_empty_title">Your cart is empty</string>
+    <string name="cart_empty_message">Add products from the catalog</string>
+
+    <string name="cart_clear_dialog_title">Clear cart?</string>
+    <string name="cart_clear_dialog_message">All items will be removed.</string>
+    <string name="cart_clear_dialog_confirm">Clear</string>
+
+    <string name="cart_changed">Your cart has been updated, please review the changes</string>
+    <string name="cart_item_unavailable">Out of stock</string>
+    <string name="cart_item_price_changed">Price changed: now %1$s</string>
+    <!-- Not a plural: "1 available" and "5 available" read the same, and Russian avoids the forms with "шт." -->
+    <string name="cart_item_not_enough_stock" tools:ignore="PluralsCandidate">Only %1$d available to order now</string>
+    <string name="cart_promo_invalid">Promo code %1$s is no longer valid</string>
+    <string name="cart_promo_invalid_hint">Remove it to place your order</string>
+    <string name="cart_promo_remove">Remove</string>
+    <string name="cart_accept_new_prices">Accept</string>
+    <string name="cart_remove_unavailable">Remove</string>
+    <plurals name="cart_price_changes">
+        <item quantity="one">Price changed for %d item</item>
+        <item quantity="other">Prices changed for %d items</item>
+    </plurals>
+    <plurals name="cart_unavailable_items">
+        <item quantity="one">%d item is out of stock</item>
+        <item quantity="other">%d items are out of stock</item>
+    </plurals>
+    <plurals name="cart_not_enough_stock_items">
+        <item quantity="one">Not enough stock for %d item</item>
+        <item quantity="other">Not enough stock for %d items</item>
+    </plurals>
+
+    <string name="cart_promo_applied">Promo code %1$s applied</string>
+    <string name="cart_promo_apply_error">Couldn\'t apply the promo code</string>
+    <string name="cart_validation_error">Couldn\'t check your cart</string>
+    <string name="cart_update_error">Couldn\'t update your cart</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--
+      The app's window background, seen until Compose draws the first frame.
+      Dark system bar icons for the light background; UiKitActivity recolors them when the theme changes.
+    -->
+    <style name="Theme.ShoppingAppUiKit" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/designsystem_window_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+</resources>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="shared_ui_applied_promo_code">Promo code %1$s · −%2$d%%</string>
+    <string name="shared_ui_remove_promo_code">Remove</string>
+    <string name="shared_ui_add_to_cart">Add to cart</string>
+    <string name="shared_ui_decrease_quantity">Decrease quantity</string>
+    <string name="shared_ui_increase_quantity">Increase quantity</string>
+    <string name="shared_ui_remove_from_cart">Remove from cart</string>
+    <string name="shared_ui_subtotal">Subtotal</string>
+    <string name="shared_ui_discount">Discount</string>
+    <string name="shared_ui_total">Total</string>
+</resources>

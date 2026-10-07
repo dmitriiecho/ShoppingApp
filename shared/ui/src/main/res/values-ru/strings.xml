@@ -1,0 +1,11 @@
+<resources>
+    <string name="shared_ui_applied_promo_code">Промокод %1$s · −%2$d%%</string>
+    <string name="shared_ui_remove_promo_code">Убрать</string>
+    <string name="shared_ui_add_to_cart">В корзину</string>
+    <string name="shared_ui_decrease_quantity">Уменьшить количество</string>
+    <string name="shared_ui_increase_quantity">Добавить ещё</string>
+    <string name="shared_ui_remove_from_cart">Удалить из корзины</string>
+    <string name="shared_ui_subtotal">Товары</string>
+    <string name="shared_ui_discount">Скидка</string>
+    <string name="shared_ui_total">Итого</string>
+</resources>
