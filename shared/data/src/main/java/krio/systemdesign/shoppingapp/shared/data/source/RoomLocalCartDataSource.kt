@@ -48,8 +48,8 @@ internal class RoomLocalCartDataSource @Inject constructor(
         quantity: Int,
     ): Result<Unit> = databaseCall {
         require(quantity > 0) { "quantity must be positive" }
-        val existing = cartItemDao.find(productId)
-            ?: error("Product $productId is not in the cart")
+        // Already removed, e.g. by a fast tap on Remove just before this "+": nothing to change.
+        val existing = cartItemDao.find(productId) ?: return@databaseCall
         cartItemDao.upsert(existing.copy(quantity = quantity))
     }
 

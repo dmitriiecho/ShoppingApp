@@ -15,6 +15,7 @@ interface CartRepository {
     ): Result<Unit>
 
     // quantity is above 0; UpdateCartQuantityUseCase turns 0 into removeItem.
+    // A product that is no longer in the cart stays out of it: nothing is changed.
     suspend fun setQuantity(
         productId: String,
         quantity: Int,
