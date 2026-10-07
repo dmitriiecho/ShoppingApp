@@ -1,8 +1,9 @@
-# Publishes the release APKs of a branch as its pre-release <branch>-latest, so the README can link a fresh build.
+# Publishes the release APKs of a branch as its release <branch>-latest, so the README can link a fresh build.
 # Runs after CI passes on a push to one of the variant branches, or by hand from the Actions tab.
 name: Latest build
 
 on:
+  # GitHub runs this trigger only from the copy of this file on main, so it can't be tried in a pull request.
   workflow_run:
     workflows: [CI]
     types: [completed]
@@ -14,6 +15,7 @@ concurrency:
   group: latest-build-${{ github.event.workflow_run.head_branch || github.ref_name }}
   cancel-in-progress: true
 
+# Creating and deleting releases.
 permissions:
   contents: write
 
@@ -23,10 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     # Only builds that passed CI, and only from pushes: CI also runs for pull requests.
     if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    # After CI the branch and commit come from its run; by hand, from where the workflow was started.
     env:
       BRANCH: ${{ github.event.workflow_run.head_branch || github.ref_name }}
       SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
     steps:
+      # The commit CI checked, even if the branch has moved on since.
       - uses: actions/checkout@v7
         with:
           ref: ${{ env.SHA }}
@@ -41,19 +45,21 @@ jobs:
       - name: Build release APKs
         run: ./gradlew :apps:shop:assembleRelease :apps:uikit:assembleRelease
 
-      # Fixed file names keep the download links in the README the same from build to build.
-      - name: Publish the pre-release
+      - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Fixed file names keep the download links in the README the same from build to build.
           mkdir dist
           cp apps/shop/build/outputs/apk/release/shop-release.apk dist/ShoppingApp.apk
           cp apps/uikit/build/outputs/apk/release/uikit-release.apk dist/ShoppingApp-UiKit.apk
           TAG="$BRANCH-latest"
+          # The main build is the repo's Latest release, shown on its front page; the other branches are pre-releases.
+          if [ "$BRANCH" = main ]; then KIND="--latest"; else KIND="--prerelease --latest=false"; fi
+          # The old release and its tag go first, so the tag moves to the new commit. The first time there is none.
           gh release delete "$TAG" --cleanup-tag --yes || true
           gh release create "$TAG" dist/*.apk \
             --target "$SHA" \
-            --prerelease \
-            --latest=false \
+            $KIND \
             --title "$BRANCH — latest build" \
             --notes "Release build of \`$BRANCH\` at ${SHA:0:7}, signed with the debug key from the repo."
