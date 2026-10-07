@@ -5,6 +5,7 @@ applicationId: `krio.systemdesign.shoppingapp`, launcher activity: `.MainActivit
 
 ## Modules
 Folders are levels, bottom to top: `core/` → `shared/` → `feature/` → `apps/`. A module never depends on a level above its own.
+The rules below are checked by `./gradlew assertModuleGraph` (also a CI step); they live in `build-logic/src/main/kotlin/ModuleGraphRules.kt`, and a new kind of dependency between modules needs a rule there.
 - `core/` — knows nothing about the shop, would fit any app:
   - `:core:designsystem` — theme, icons, generic components (cards, buttons, fields, notices, placeholders, dialogs, screen states). Its strings are generic ("Close", "Retry").
     Every icon is `AppIcons.X`: Material Symbols as `ImageVector` in `core/designsystem/.../icons/symbols/`, one per file, named as on fonts.google.com/icons (`AppIcons.Search`, `AppIcons.ShoppingCartFilled`). There is no material-icons dependency: a new icon is an SVG from fonts.google.com/icons converted with the Valkyrie plugin, then listed in `apps/uikit/.../sections/designsystem/IconsSection.kt`.

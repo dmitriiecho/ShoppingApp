@@ -7,6 +7,8 @@ plugins {
 dependencies {
     // Only AGP types for the android block; the root build.gradle.kts applies the plugins themselves.
     compileOnly(libs.android.gradlePlugin)
+    // The same for the module rules: only the types of their extension.
+    compileOnly(libs.module.graph.assertion.gradlePlugin)
     // Lets convention plugins use the type-safe libs accessors (gradle/gradle#15383).
     implementation(files(LibrariesForLibs::class.java.protectionDomain.codeSource.location))
 }
