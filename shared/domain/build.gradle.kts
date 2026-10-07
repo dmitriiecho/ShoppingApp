@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.core)
 

@@ -16,4 +16,6 @@ dependencies {
     implementation(project(":core:config"))
 
     implementation(libs.kotlinx.serialization.json)
+    // ImmutableList in CartUiState, so Compose can compare an item's issues by content.
+    implementation(libs.kotlinx.collections.immutable)
 }
