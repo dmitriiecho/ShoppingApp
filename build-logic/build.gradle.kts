@@ -5,8 +5,10 @@ plugins {
 }
 
 dependencies {
-    // Only AGP types for the android block; the root build.gradle.kts applies the plugins themselves.
+    // Only AGP and Kotlin types for the android and kotlin blocks; the root build.gradle.kts applies the plugins
+    // themselves.
     compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
     // The same for the module rules: only the types of their extension.
     compileOnly(libs.module.graph.assertion.gradlePlugin)
     // Lets convention plugins use the type-safe libs accessors (gradle/gradle#15383).
@@ -34,6 +36,10 @@ gradlePlugin {
         register("androidFeature") {
             id = libs.plugins.shoppingapp.android.feature.get().pluginId
             implementationClass = "AndroidFeatureConventionPlugin"
+        }
+        register("jvmLibrary") {
+            id = libs.plugins.shoppingapp.jvm.library.get().pluginId
+            implementationClass = "JvmLibraryConventionPlugin"
         }
     }
 }

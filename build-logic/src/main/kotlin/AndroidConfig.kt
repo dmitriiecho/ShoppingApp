@@ -10,7 +10,7 @@ internal object AndroidConfig {
     const val MIN_SDK = 26
     const val TARGET_SDK = 36
 
-    // Also set in shared/domain/build.gradle.kts: a pure Kotlin module that build-logic doesn't configure.
+    // The pure Kotlin modules use it too (JvmLibraryConventionPlugin).
     val JAVA_VERSION = JavaVersion.VERSION_21
 }
 
