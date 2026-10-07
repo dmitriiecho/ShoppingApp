@@ -20,7 +20,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun BarsSection(innerPadding: PaddingValues) {
+internal fun BarsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         // Bars span the whole frame, as they span the screen in the app.
         sampleGroup("NavigationBar · AppNavigationBarItem") {

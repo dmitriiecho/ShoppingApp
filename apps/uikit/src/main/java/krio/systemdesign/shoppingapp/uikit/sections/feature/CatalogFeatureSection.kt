@@ -19,7 +19,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.sampleAnimationSwitch
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun CatalogFeatureSection(innerPadding: PaddingValues) {
+internal fun CatalogFeatureSection(innerPadding: PaddingValues) {
     var isAnimating by rememberSaveable { mutableStateOf(true) }
     SampleList(innerPadding) {
         sampleGroup("OutOfStockButton") {

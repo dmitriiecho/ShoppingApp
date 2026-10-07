@@ -36,7 +36,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.rememberSampleLoading
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun ButtonsSection(innerPadding: PaddingValues) {
+internal fun ButtonsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("LoadingButton") {
             SampleVariant(caption = stringResource(R.string.uikit_variant_tap_to_load)) {

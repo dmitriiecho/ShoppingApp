@@ -24,7 +24,7 @@ private data class SectionListRoute(val group: UiKitSection.Group)
 private data class SectionRoute(val section: UiKitSection)
 
 @Composable
-fun UiKitNavHost(
+internal fun UiKitNavHost(
     darkTheme: Boolean,
     onToggleTheme: () -> Unit,
     modifier: Modifier = Modifier,

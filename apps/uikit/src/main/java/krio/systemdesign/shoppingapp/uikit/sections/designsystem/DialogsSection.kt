@@ -16,7 +16,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun DialogsSection(innerPadding: PaddingValues) {
+internal fun DialogsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("ConfirmationDialog") {
             SampleVariant(caption = stringResource(R.string.uikit_variant_destructive)) {

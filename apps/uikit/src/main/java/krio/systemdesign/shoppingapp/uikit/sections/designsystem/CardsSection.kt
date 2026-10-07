@@ -30,7 +30,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun CardsSection(innerPadding: PaddingValues) {
+internal fun CardsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("AppCard") {
             SampleVariant {

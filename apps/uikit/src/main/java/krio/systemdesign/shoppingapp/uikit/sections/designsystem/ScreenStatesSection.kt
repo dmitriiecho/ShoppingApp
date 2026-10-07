@@ -26,7 +26,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.rememberSampleLoading
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun ScreenStatesSection(innerPadding: PaddingValues) {
+internal fun ScreenStatesSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("EmptyState") {
             SampleVariant(caption = stringResource(R.string.uikit_variant_with_title)) {

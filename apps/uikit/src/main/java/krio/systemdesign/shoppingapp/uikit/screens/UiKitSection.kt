@@ -28,7 +28,7 @@ import krio.systemdesign.shoppingapp.uikit.R
 // The UI kit's sections in three groups by the module the components live in; SectionScreen decides
 // what each one shows. @Keep: the enum travels in a navigation route, and its serializer is found by name.
 @Keep
-enum class UiKitSection(
+internal enum class UiKitSection(
     val group: Group,
     val icon: ImageVector,
     @StringRes val titleRes: Int,

@@ -15,7 +15,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun CartFeatureSection(innerPadding: PaddingValues) {
+internal fun CartFeatureSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("CartChangeNotice") {
             SampleVariant {

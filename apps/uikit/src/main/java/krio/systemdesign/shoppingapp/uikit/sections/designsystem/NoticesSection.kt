@@ -17,7 +17,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun NoticesSection(innerPadding: PaddingValues) {
+internal fun NoticesSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("Notice") {
             SampleVariant(caption = stringResource(R.string.uikit_variant_notice_styles)) {

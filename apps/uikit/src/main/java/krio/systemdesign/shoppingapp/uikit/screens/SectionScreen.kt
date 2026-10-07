@@ -32,7 +32,7 @@ import krio.systemdesign.shoppingapp.uikit.sections.shared.PromoSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SectionScreen(
+internal fun SectionScreen(
     section: UiKitSection,
     darkTheme: Boolean,
     onToggleTheme: () -> Unit,

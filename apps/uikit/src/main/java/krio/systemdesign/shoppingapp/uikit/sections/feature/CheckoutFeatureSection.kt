@@ -12,7 +12,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun CheckoutFeatureSection(innerPadding: PaddingValues) {
+internal fun CheckoutFeatureSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("OrderItemRow") {
             SampleVariant {

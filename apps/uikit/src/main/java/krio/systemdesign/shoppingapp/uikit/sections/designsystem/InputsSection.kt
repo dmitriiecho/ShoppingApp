@@ -21,7 +21,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun InputsSection(innerPadding: PaddingValues) {
+internal fun InputsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         // AppTextField is meant for a card, so the sample puts it in one.
         sampleGroup("AppTextField") {

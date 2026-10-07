@@ -20,7 +20,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 import krio.systemdesign.shoppingapp.uikit.R
 
 @Composable
-fun SampleSwitch(
+internal fun SampleSwitch(
     label: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -40,7 +40,7 @@ fun SampleSwitch(
 }
 
 // One switch for all placeholders of a section: without animation they look as after a failed load.
-fun LazyListScope.sampleAnimationSwitch(
+internal fun LazyListScope.sampleAnimationSwitch(
     isAnimating: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
