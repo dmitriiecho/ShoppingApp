@@ -3,11 +3,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
-// An app module: the library setup plus targetSdk.
+// An app module: the library setup plus targetSdk, and the module rules for its graph.
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply(libs.plugins.android.application.get().pluginId)
+            configureModuleGraphRules()
 
             extensions.configure<ApplicationExtension> {
                 configureAndroid(this)

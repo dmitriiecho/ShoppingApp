@@ -5,6 +5,7 @@ kotlin = "2.4.20"
 ksp = "2.3.12"
 spotless = "8.10.3"
 ktlint = "1.8.0"
+moduleGraphAssert = "2.9.1"
 
 # AndroidX
 androidxCore = "1.19.1"
@@ -83,6 +84,8 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 
 # For build-logic: AGP types the convention plugins use to configure the android block
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+# For build-logic: the types for the module rules (ModuleGraphRules.kt)
+module-graph-assertion-gradlePlugin = { group = "com.jraska.module.graph.assertion", name = "plugin", version.ref = "moduleGraphAssert" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -94,6 +97,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 room = { id = "androidx.room", version.ref = "room" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+module-graph-assertion = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraphAssert" }
 
 # Project convention plugins from build-logic
 shoppingapp-android-application = { id = "shoppingapp.android.application" }
