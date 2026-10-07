@@ -83,8 +83,9 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
-# For build-logic: AGP types the convention plugins use to configure the android block
+# For build-logic: AGP and Kotlin types the convention plugins use to configure the android and kotlin blocks
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 # For build-logic: the types for the module rules (ModuleGraphRules.kt)
 module-graph-assertion-gradlePlugin = { group = "com.jraska.module.graph.assertion", name = "plugin", version.ref = "moduleGraphAssert" }
 
@@ -106,3 +107,4 @@ shoppingapp-android-library = { id = "shoppingapp.android.library" }
 shoppingapp-android-compose = { id = "shoppingapp.android.compose" }
 shoppingapp-android-hilt = { id = "shoppingapp.android.hilt" }
 shoppingapp-android-feature = { id = "shoppingapp.android.feature" }
+shoppingapp-jvm-library = { id = "shoppingapp.jvm.library" }

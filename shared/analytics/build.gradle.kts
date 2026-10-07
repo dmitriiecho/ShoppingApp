@@ -1,15 +1,4 @@
 // Pure Kotlin, so it can move to KMP commonMain as is.
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-    }
+    alias(libs.plugins.shoppingapp.jvm.library)
 }
