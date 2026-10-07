@@ -21,7 +21,7 @@ import krio.systemdesign.shoppingapp.uikit.R
 // The first screen: the three groups of sections, by the module the components live in.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupListScreen(
+internal fun GroupListScreen(
     darkTheme: Boolean,
     onToggleTheme: () -> Unit,
     onOpenGroup: (UiKitSection.Group) -> Unit,

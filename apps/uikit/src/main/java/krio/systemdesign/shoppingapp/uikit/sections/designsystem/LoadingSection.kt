@@ -28,7 +28,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.sampleAnimationSwitch
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun LoadingSection(innerPadding: PaddingValues) {
+internal fun LoadingSection(innerPadding: PaddingValues) {
     var isAnimating by rememberSaveable { mutableStateOf(true) }
     SampleList(innerPadding) {
         sampleAnimationSwitch(isAnimating = isAnimating, onCheckedChange = { isAnimating = it })

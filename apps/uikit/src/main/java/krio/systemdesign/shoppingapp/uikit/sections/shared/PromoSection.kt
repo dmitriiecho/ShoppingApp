@@ -11,7 +11,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun PromoSection(innerPadding: PaddingValues) {
+internal fun PromoSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("AppliedPromoCodeNotice") {
             SampleVariant(caption = stringResource(R.string.uikit_variant_with_remove)) {

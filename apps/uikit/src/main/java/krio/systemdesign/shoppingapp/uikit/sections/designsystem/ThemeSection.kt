@@ -35,7 +35,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 // The theme's colors, type, shapes and spacing. All come from the theme, so the top bar toggle shows both palettes.
 @Composable
-fun ThemeSection(innerPadding: PaddingValues) {
+internal fun ThemeSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("MaterialTheme.colorScheme") {
             SampleVariant {

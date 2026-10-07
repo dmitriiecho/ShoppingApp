@@ -20,7 +20,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SectionListScreen(
+internal fun SectionListScreen(
     group: UiKitSection.Group,
     darkTheme: Boolean,
     onToggleTheme: () -> Unit,

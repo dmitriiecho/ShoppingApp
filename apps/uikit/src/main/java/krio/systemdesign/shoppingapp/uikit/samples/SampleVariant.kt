@@ -20,7 +20,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
 // Optional caption and the component in a frame; contentPadding = 0 for components with their own padding.
 @Composable
-fun SampleVariant(
+internal fun SampleVariant(
     modifier: Modifier = Modifier,
     caption: String? = null,
     contentPadding: Dp = 16.dp,

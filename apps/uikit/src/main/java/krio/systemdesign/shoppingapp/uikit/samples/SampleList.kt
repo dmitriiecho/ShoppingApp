@@ -25,7 +25,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 
 // A section's samples, grouped by component (sampleGroup). innerPadding comes from the screen's Scaffold.
 @Composable
-fun SampleList(
+internal fun SampleList(
     innerPadding: PaddingValues,
     content: LazyListScope.() -> Unit,
 ) {
@@ -43,7 +43,7 @@ fun SampleList(
 }
 
 // One component's variants (SampleVariant) under a header that stays pinned while they are on screen.
-fun LazyListScope.sampleGroup(
+internal fun LazyListScope.sampleGroup(
     name: String,
     content: @Composable ColumnScope.() -> Unit,
 ) {

@@ -17,7 +17,7 @@ import krio.systemdesign.shoppingapp.uikit.navigation.UiKitNavHost
 
 // The UI kit: every styled component of the app. It starts in the system theme, and the top bar button switches it,
 // so any component can be checked in both themes.
-class UiKitActivity : ComponentActivity() {
+internal class UiKitActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

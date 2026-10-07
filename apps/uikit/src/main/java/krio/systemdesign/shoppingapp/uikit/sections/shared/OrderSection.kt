@@ -20,7 +20,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.rememberSampleLoading
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun OrderSection(innerPadding: PaddingValues) {
+internal fun OrderSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("OrderTotals") {
             SampleVariant(caption = stringResource(R.string.uikit_variant_with_discount)) {

@@ -20,7 +20,7 @@ import krio.systemdesign.shoppingapp.uikit.R
 
 // Switches the UI kit between light and dark. It shows the theme it switches to, with the settings screen's icons.
 @Composable
-fun ThemeToggleButton(
+internal fun ThemeToggleButton(
     darkTheme: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,

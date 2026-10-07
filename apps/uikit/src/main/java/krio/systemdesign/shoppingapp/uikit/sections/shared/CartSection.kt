@@ -18,7 +18,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.sampleAnimationSwitch
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun CartSection(innerPadding: PaddingValues) {
+internal fun CartSection(innerPadding: PaddingValues) {
     var isAnimating by rememberSaveable { mutableStateOf(true) }
     SampleList(innerPadding) {
         sampleGroup("CartQuantityControl") {

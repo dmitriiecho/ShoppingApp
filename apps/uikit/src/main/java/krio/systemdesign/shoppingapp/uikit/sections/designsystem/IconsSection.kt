@@ -71,7 +71,7 @@ import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
 import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
 
 @Composable
-fun IconsSection(innerPadding: PaddingValues) {
+internal fun IconsSection(innerPadding: PaddingValues) {
     SampleList(innerPadding) {
         sampleGroup("AppIcons") {
             SampleVariant {

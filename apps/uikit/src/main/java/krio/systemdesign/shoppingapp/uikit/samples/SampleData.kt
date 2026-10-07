@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import krio.systemdesign.shoppingapp.uikit.R
 
 // Sample data. Prices are in cents, as everywhere in the app.
-object SampleData {
+internal object SampleData {
     const val HEADPHONES_PRICE = 14_999L
     const val KEYBOARD_PRICE = 10_995L
     const val HUB_PRICE = 2_999L
