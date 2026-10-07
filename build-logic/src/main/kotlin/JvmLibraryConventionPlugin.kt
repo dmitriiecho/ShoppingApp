@@ -5,7 +5,8 @@ import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
-// A pure Kotlin module without Android (:shared:domain, :shared:analytics), on the same Java as the Android modules.
+// A pure Kotlin module without Android (:shared:domain, :shared:analytics, :core:config),
+// on the same Java as the Android modules.
 class JvmLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
