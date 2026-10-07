@@ -1,0 +1,59 @@
+# Publishes the release APKs of a branch as its pre-release <branch>-latest, so the README can link a fresh build.
+# Runs after CI passes on a push to one of the variant branches, or by hand from the Actions tab.
+name: Latest build
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main, kmp-ready, kmp]
+  workflow_dispatch:
+
+# A newer build of the same branch replaces one still going.
+concurrency:
+  group: latest-build-${{ github.event.workflow_run.head_branch || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    # Only builds that passed CI, and only from pushes: CI also runs for pull requests.
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    env:
+      BRANCH: ${{ github.event.workflow_run.head_branch || github.ref_name }}
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SHA }}
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Build release APKs
+        run: ./gradlew :apps:shop:assembleRelease :apps:uikit:assembleRelease
+
+      # Fixed file names keep the download links in the README the same from build to build.
+      - name: Publish the pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir dist
+          cp apps/shop/build/outputs/apk/release/shop-release.apk dist/ShoppingApp.apk
+          cp apps/uikit/build/outputs/apk/release/uikit-release.apk dist/ShoppingApp-UiKit.apk
+          TAG="$BRANCH-latest"
+          gh release delete "$TAG" --cleanup-tag --yes || true
+          gh release create "$TAG" dist/*.apk \
+            --target "$SHA" \
+            --prerelease \
+            --latest=false \
+            --title "$BRANCH — latest build" \
+            --notes "Release build of \`$BRANCH\` at ${SHA:0:7}, signed with the debug key from the repo."
