@@ -17,7 +17,7 @@
 | `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3 |
 | `shoppingapp.android.hilt` | модули с Hilt | Hilt с KSP |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Hilt + serialization, библиотеки навигации и lifecycle |
-| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics` | Kotlin JVM без Android |
+| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM без Android |
 
 Поэтому build-файл модуля короткий:
 

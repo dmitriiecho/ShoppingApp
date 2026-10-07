@@ -16,6 +16,5 @@ dependencies {
     implementation(project(":core:config"))
     implementation(project(":core:network"))
 
-    implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 }

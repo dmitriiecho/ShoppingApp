@@ -33,12 +33,12 @@ dependencies {
     implementation(project(":core:compose-utils"))
 
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.timber)
 
     // Lets Coil load product images over the network (ProductImage in :shared:ui), with the app's OkHttpClient:
