@@ -20,31 +20,34 @@ jobs:
     name: Android
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - name: Check out the code
+        uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
 
       # Caches Gradle and its dependencies between runs; also validates gradle-wrapper.jar.
-      - uses: gradle/actions/setup-gradle@v6
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
-      - name: Code style
+      - name: Code style (ktlint)
         run: ./gradlew spotlessCheck
 
       # Dependencies between modules follow the rules in build-logic/src/main/kotlin/ModuleGraphRules.kt.
-      - name: Module rules
+      - name: Dependencies between modules (assertModuleGraph)
         run: ./gradlew assertModuleGraph
 
       # Unused dependencies and module structure; the rules are in the root build.gradle.kts.
-      - name: Dependencies
+      - name: Unused dependencies (buildHealth)
         run: ./gradlew buildHealth
 
-      - name: Lint
+      - name: Problems in code and resources (Android lint)
         run: ./gradlew lintDebug
 
-      - name: Build
+      - name: Both apps compile (assembleDebug)
         run: ./gradlew :apps:shop:assembleDebug :apps:uikit:assembleDebug
 
   server:
@@ -54,14 +57,20 @@ jobs:
       run:
         working-directory: server
     steps:
-      - uses: actions/checkout@v7
+      - name: Check out the code
+        uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
 
-      - uses: gradle/actions/setup-gradle@v6
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
-      - name: Code style and tests
-        run: ./gradlew spotlessCheck test
+      - name: Code style (ktlint)
+        run: ./gradlew spotlessCheck
+
+      - name: API and data files (tests)
+        run: ./gradlew test

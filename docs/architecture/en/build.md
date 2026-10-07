@@ -84,8 +84,8 @@ Comments are in English, short, and explain what the code can't say: a reason, a
 
 | Job | Steps |
 |---|---|
-| Android | code style → module rules (`assertModuleGraph`) → lint → build of both apps |
-| Server | code style and tests, including the check of `data/*.json` |
+| Android | code style (ktlint) → dependencies between modules (`assertModuleGraph`) → unused dependencies (`buildHealth`) → problems in code and resources (Android lint) → both apps compile |
+| Server | code style (ktlint) → API and data files (tests, including the check of `data/*.json`) |
 
 A new push to a pull request cancels its run that is still going, and runs on `main` always finish:
 
