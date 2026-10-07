@@ -2,7 +2,6 @@ package krio.systemdesign.shoppingapp.shared.data.source
 
 import androidx.room.withTransaction
 import javax.inject.Inject
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import krio.systemdesign.shoppingapp.shared.data.database.ShoppingDatabase
@@ -73,7 +72,7 @@ internal class RoomLocalCartDataSource @Inject constructor(
         appliedPromoCodeDao.observe(),
     ) { entities, promoCode ->
         Cart(
-            items = entities.map { it.toDomain() }.toPersistentList(),
+            items = entities.map { it.toDomain() },
             promoCode = promoCode?.toDomain(),
         )
     }

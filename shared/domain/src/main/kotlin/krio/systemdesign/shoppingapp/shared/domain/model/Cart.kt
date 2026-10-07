@@ -1,9 +1,7 @@
 package krio.systemdesign.shoppingapp.shared.domain.model
 
-import kotlinx.collections.immutable.ImmutableList
-
 data class Cart(
-    val items: ImmutableList<CartItem>,
+    val items: List<CartItem>,
     val promoCode: PromoCode? = null,
 ) {
     fun subtotal(): Long = items.sumOf { it.price * it.quantity }
