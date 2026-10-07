@@ -1,0 +1,3 @@
+exclude:
+  # Read on GitHub: its links to the code would not work on GitHub Pages, which publishes only docs/.
+  - architecture
