@@ -8,13 +8,14 @@ Tests run on the JVM, with no emulator: the app's logic, its data layer and the 
 
 ## Running the tests
 
-Each build runs its own tests:
+Each build runs its own tests, and CI runs both on every pull request:
 
 ```sh
-./gradlew testDebugUnitTest                         # Android modules
-./gradlew :shared:domain:test :shared:analytics:test  # pure Kotlin modules
-cd server && ./gradlew test                         # the server
+./gradlew test                # the app: every module, once
+cd server && ./gradlew test   # the server
 ```
+
+Android modules run their unit tests on debug only (`shoppingapp.android.library` turns off release ones, which would repeat them), so one `test` covers Android and pure Kotlin modules alike.
 
 &nbsp;
 

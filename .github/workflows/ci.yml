@@ -1,6 +1,6 @@
 # CI: checks every pull request and every push to main and the variant branches (kmp-ready, kmp).
 #
-#   Android job: code style → module rules → unused dependencies → lint → both apps build
+#   Android job: code style → module rules → unused dependencies → lint → unit tests → both apps build
 #   Server job:  code style → tests
 #
 # The two jobs run in parallel, each on its own fresh virtual machine (a "runner").
@@ -49,7 +49,8 @@ jobs:
   android:
     name: Android
     runs-on: ubuntu-latest
-    # A normal run takes about 7 minutes; a hung one would otherwise hold the runner for GitHub's default 6 hours.
+    # A normal run takes 3 to 7 minutes, depending on how much the build cache holds; the unit tests take
+    # under half a minute of it. A hung one would otherwise hold the runner for GitHub's default 6 hours.
     timeout-minutes: 30
     # Gradle reads ORG_GRADLE_PROJECT_<name> as the property <name>: here -PwarningsAsErrors=true.
     # With it, Kotlin and lint warnings fail the build, so they don't pile up (build-logic, WarningsAsErrors.kt).
@@ -73,6 +74,14 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      # Robolectric downloads the Android it runs tests on (about 200 MB) into ~/.m2, outside Gradle's cache.
+      # Which Android it is depends on the Robolectric version and the targetSdk, so the key follows those files.
+      - name: Cache Robolectric's Android
+        uses: actions/cache@v6
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ hashFiles('gradle/libs.versions.toml', 'build-logic/src/main/kotlin/AndroidConfig.kt') }}
+
       # --- Checks -----------------------------------------------------------
       # By default a failed step skips all the steps after it. `if: !cancelled()` runs a check anyway
       # (unless the whole run was cancelled), so one run shows every problem at once.
@@ -94,6 +103,27 @@ jobs:
       - name: Problems in code and resources (Android lint)
         if: ${{ !cancelled() }}
         run: ./gradlew lintDebug
+
+      # Every module's tests, on debug: logic, ViewModels, the database (Robolectric), the API samples.
+      # --continue: a failed module doesn't stop the others, so the report shows every failing test.
+      # The rules for tests are in docs/architecture/en/testing.md.
+      - name: Behaviour (unit tests)
+        id: tests
+        if: ${{ !cancelled() }}
+        run: ./gradlew test --continue
+
+      # Shows each failed test, with its message and line, at the top of the run's page and next to the test's
+      # line in the PR's Files changed; below, a summary with each failure's full stack trace.
+      # annotate_only: no check run of its own, which would need a token that can write.
+      - name: Failed tests
+        if: ${{ failure() && steps.tests.outcome == 'failure' }}
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: '**/build/test-results/**/*.xml'
+          check_name: Android tests
+          annotate_only: true
+          detailed_summary: true
+          failed_summary_logs: true
 
       - name: Both apps compile (assembleDebug)
         if: ${{ !cancelled() }}
@@ -138,7 +168,19 @@ jobs:
       - name: Code style (ktlint)
         run: ./gradlew spotlessCheck
 
-      # Includes the check of the data files server/data/*.json.
+      # Includes the check of the data files server/data/*.json and of the API samples in server/api-samples.
       - name: API and data files (tests)
+        id: tests
         if: ${{ !cancelled() }}
         run: ./gradlew test
+
+      # As in the Android job.
+      - name: Failed tests
+        if: ${{ failure() && steps.tests.outcome == 'failure' }}
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: 'server/build/test-results/test/*.xml'
+          check_name: Server tests
+          annotate_only: true
+          detailed_summary: true
+          failed_summary_logs: true
