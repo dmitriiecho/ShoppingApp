@@ -9,4 +9,10 @@
         <option name="allowed-composition-locals"
             value="LocalSharedTransitionScope,LocalNavAnimatedVisibilityScope,LocalDarkTheme,LocalAppColors" />
     </issue>
+
+    <!-- "A newer version is available": still in the report as a hint, but not a warning, which CI turns into an
+         error. Otherwise any library's release would fail CI with no change in the project. -->
+    <issue id="GradleDependency" severity="informational" />
+    <issue id="AndroidGradlePluginVersion" severity="informational" />
+    <issue id="NewerVersionAvailable" severity="informational" />
 </lint>
