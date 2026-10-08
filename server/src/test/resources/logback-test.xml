@@ -1,0 +1,13 @@
+<!-- Tests only (logback reads this file before logback.xml): every test request would log an INFO line,
+     and a failed test would get lost among hundreds of them. Warnings and errors still show. -->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="WARN">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
