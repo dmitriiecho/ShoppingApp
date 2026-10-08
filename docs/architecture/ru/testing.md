@@ -54,6 +54,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | Подменная реализация | `Test` + что подменяет | `TestAnalyticsClient` |
 | Построитель данных | `test` + модель | `testCartItem()`, `testCart()` |
 | Функция-вход вида тестов | вид + `Test` | `networkTest {}`, `serverTest {}` |
+| Действие в тесте | глагол | `typeText()`, `keepCollecting()` |
 
 Исключение из первой строки одно: проверка файлов `data/` сервера — `DataFilesTest`, потому что это данные, а не код.
 
@@ -64,9 +65,10 @@ fun `discount is the promo code percent of the subtotal`() {
 | `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
-| `viewModelTest {}` | `:core:compose-utils` | `src/testFixtures` |
+| `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
+| `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 
 Модуль берёт чужие fixtures через `testImplementation(testFixtures(project(":shared:domain")))`. Fixtures видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только `api` и `implementation`, так что тестовые зависимости следуют уровням по договорённости, а не по проверке.
 
@@ -81,7 +83,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | `kotlin.test` | `@Test` и другие аннотации; тесты не импортируют `org.junit` |
 | [AssertK](https://github.com/assertk-org/assertk) | все проверки: `assertThat(actual).isEqualTo(expected)`, `isInstanceOf<T>()` сужает тип, `assertFailure {}` |
 | `kotlinx-coroutines-test` | `runTest` и виртуальные часы |
-| [Turbine](https://github.com/cashapp/turbine) | любой Flow: состояние и эффекты экрана проверяются через `test {}` |
+| [Turbine](https://github.com/cashapp/turbine) | разовые эффекты экрана: `effects.test { awaitItem() }` |
 | MockWebServer | локальный HTTP-сервер для сетевого кода |
 
 Раннер скрыт за `kotlin.test`, поэтому тесты выглядят одинаково, хотя раннеры разные: JUnit4 в приложении (Robolectric работает только на нём), JUnit5 на сервере.
@@ -111,6 +113,10 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 ```
 
 - **ViewModel создаётся внутри `viewModelTest {}`**, уже после подмены `Dispatchers.Main`.
+- **На состояние держится подписка, как у экрана**: `keepCollecting(viewModel.uiState)` сразу после создания, дальше тест читает `viewModel.uiState.value`. Поток `stateIn(WhileSubscribed)` без подписчика остаётся с начальным значением. Эффекты разовые, поэтому их проверяет Turbine.
+- **Ввод — через `typeText()`**: на устройстве Compose применяет изменение поля на следующем кадре, а у теста кадров нет.
+- **Время виртуальное**: `advanceTimeBy()` проматывает debounce или анимацию без ожидания.
+- **Сохранение на случай смерти процесса** проверяется, только когда это обычное значение в `SavedStateHandle` (диалог, способ оплаты): тот же handle передаётся новой ViewModel. Поля ввода сохраняются через Android `Bundle`, которого в JVM-тесте нет.
 - **Запрос «в процессе»** — это `CompletableDeferred`, которого ждёт ответ: тест тем временем меняет корзину, а потом завершает его.
 - **У событий аналитики нет `equals`**, поэтому `TestAnalytics.sentEvents` хранит их имя и параметры: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
 

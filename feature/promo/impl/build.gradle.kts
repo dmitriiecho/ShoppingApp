@@ -15,4 +15,10 @@ dependencies {
     implementation(project(":core:network"))
 
     implementation(libs.timber)
+
+    testImplementation(testFixtures(project(":shared:analytics")))
+    testImplementation(testFixtures(project(":core:compose-utils")))
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertk)
+    testImplementation(libs.turbine)
 }

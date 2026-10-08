@@ -26,7 +26,7 @@ class ProductPagingSourceTest {
 
     @Test
     fun `first page has no page before it`() = runTest {
-        repository.pages[1] = ProductsPage(listOf(testProduct("1"), testProduct("2")), endReached = false)
+        serve(1 to ProductsPage(listOf(testProduct("1"), testProduct("2")), endReached = false))
 
         val page = source.loadPage(1)
 
@@ -35,7 +35,7 @@ class ProductPagingSourceTest {
 
     @Test
     fun `middle page points to its neighbours`() = runTest {
-        repository.pages[2] = ProductsPage(listOf(testProduct("3"), testProduct("4")), endReached = false)
+        serve(2 to ProductsPage(listOf(testProduct("3"), testProduct("4")), endReached = false))
 
         val page = source.loadPage(2)
 
@@ -45,7 +45,7 @@ class ProductPagingSourceTest {
 
     @Test
     fun `last page has no page after it`() = runTest {
-        repository.pages[3] = ProductsPage(listOf(testProduct("5")), endReached = true)
+        serve(3 to ProductsPage(listOf(testProduct("5")), endReached = true))
 
         val page = source.loadPage(3)
 
@@ -55,7 +55,7 @@ class ProductPagingSourceTest {
     // The list keeps placeholders for the pages above, so a list reopened in the middle has the right length.
     @Test
     fun `page counts the products before it`() = runTest {
-        repository.pages[3] = ProductsPage(listOf(testProduct("5")), endReached = true)
+        serve(3 to ProductsPage(listOf(testProduct("5")), endReached = true))
 
         val page = source.loadPage(3)
 
@@ -65,8 +65,10 @@ class ProductPagingSourceTest {
     // A product renamed between two page loads can move to the next page; a repeated key crashes the list.
     @Test
     fun `product already loaded on an earlier page is dropped`() = runTest {
-        repository.pages[1] = ProductsPage(listOf(testProduct("1"), testProduct("2")), endReached = false)
-        repository.pages[2] = ProductsPage(listOf(testProduct("2"), testProduct("3")), endReached = true)
+        serve(
+            1 to ProductsPage(listOf(testProduct("1"), testProduct("2")), endReached = false),
+            2 to ProductsPage(listOf(testProduct("2"), testProduct("3")), endReached = true),
+        )
         source.loadPage(1)
 
         val page = source.loadPage(2)
@@ -77,7 +79,7 @@ class ProductPagingSourceTest {
     @Test
     fun `failed load returns the error`() = runTest {
         val error = IOException("No network")
-        repository.error = error
+        repository.productsAnswer = { _, _ -> Result.failure(error) }
 
         val result = source.load(PagingSource.LoadParams.Refresh(key = 1, loadSize = 2, placeholdersEnabled = true))
 
@@ -98,6 +100,10 @@ class ProductPagingSourceTest {
         )
 
         assertThat(source.getRefreshKey(state)).isEqualTo(2)
+    }
+
+    private fun serve(vararg pages: Pair<Int, ProductsPage>) {
+        repository.productsAnswer = { _, page -> Result.success(pages.toMap().getValue(page)) }
     }
 
     private suspend fun ProductPagingSource.loadPage(key: Int): LoadResult.Page<Int, Product> {

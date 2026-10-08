@@ -23,6 +23,9 @@ class TestCartRepository(initialCart: Cart = testCart()) : CartRepository {
 
     var changeError: Throwable? = null
 
+    // Runs before every change. A test can suspend in it to act while the change is in progress.
+    var beforeChange: suspend () -> Unit = {}
+
     override suspend fun addItem(
         product: Product,
         quantity: Int,
@@ -82,7 +85,8 @@ class TestCartRepository(initialCart: Cart = testCart()) : CartRepository {
         availableQuantity = availableQuantity,
     )
 
-    private fun change(update: (Cart) -> Cart): Result<Unit> {
+    private suspend fun change(update: (Cart) -> Cart): Result<Unit> {
+        beforeChange()
         changeError?.let { return Result.failure(it) }
         cart.update(update)
         return Result.success(Unit)

@@ -2,6 +2,8 @@ package krio.systemdesign.shoppingapp.core.composeutils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -19,4 +21,11 @@ fun viewModelTest(block: suspend TestScope.() -> Unit): TestResult {
     } finally {
         Dispatchers.resetMain()
     }
+}
+
+// Keeps a ViewModel's state collected, as its screen does: a stateIn(WhileSubscribed) flow with no collector keeps
+// its initial value. The collector starts at once, so the test can read the state's value right after an event.
+@OptIn(ExperimentalCoroutinesApi::class)
+fun TestScope.keepCollecting(flow: Flow<*>) {
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { flow.collect {} }
 }
