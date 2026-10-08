@@ -8,25 +8,15 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
-import kotlinx.serialization.json.Json
 import krio.systemdesign.shoppingapp.core.config.ServerConfig
+import krio.systemdesign.shoppingapp.core.network.networkJsonConverterFactory
 import okhttp3.Interceptor
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object NetworkModule {
-    @Provides
-    @Singleton
-    fun provideJson(): Json = Json {
-        ignoreUnknownKeys = true
-        explicitNulls = false
-        encodeDefaults = true
-    }
-
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -40,15 +30,11 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(
-        json: Json,
-        okHttpClient: Lazy<OkHttpClient>,
-    ): Retrofit = Retrofit.Builder()
+    fun provideRetrofit(okHttpClient: Lazy<OkHttpClient>): Retrofit = Retrofit.Builder()
         .baseUrl(ServerConfig.BASE_URL)
         .callFactory { okHttpClient.get().newCall(it) }
-        .addConverterFactory(json.asConverterFactory(JSON_MEDIA_TYPE))
+        .addConverterFactory(networkJsonConverterFactory)
         .build()
 
-    private val JSON_MEDIA_TYPE = "application/json; charset=UTF-8".toMediaType()
     private val TIMEOUT = 30.seconds
 }

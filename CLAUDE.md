@@ -22,6 +22,7 @@ The rules below are checked by `./gradlew assertModuleGraph` (also a CI step); t
 - A library module's package mirrors its module path: `:shared:ui` → `...shoppingapp.shared.ui`, `:feature:cart:impl` → `...feature.cart.impl`. A hyphen in a module name is dropped in the package: `compose-utils` → `composeutils`.
 - An app's package is its applicationId, so it stays when the app moves to another folder: `:apps:shop` → `krio.systemdesign.shoppingapp`, `:apps:uikit` → `...shoppingapp.uikit`.
 - Where a styled component goes: would it fit any other app unchanged → `:core:designsystem`; knows shop words (product, cart, promo, price, stock) → `:shared:ui` if two or more features use it, else that feature's `ui` module. Features don't style Material components themselves.
+- Tests follow `docs/architecture/en/testing.md`. A test helper (`TestXxx` stand-in, `testXxx()` builder, `xxxTest {}` entry function) used by tests of two or more modules lives in the test fixtures of the module that owns what it replaces (`:shared:analytics` → `TestAnalyticsClient`); one used by a single module stays in its `src/test`. The prefix `Fake` is taken by real code (analytics stand-ins in `:apps:shop`).
 - `apps/` — the applications; nothing depends on them:
   - `:apps:shop` — the shop app: entry point, navigation host.
   - `:apps:uikit` — separate app showing every styled component (UI kit catalog); applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity`. Depends only on UI modules (`:core:designsystem`, `:shared:ui`, every `:feature:<name>:ui`), never on `impl`, domain or data.
@@ -33,6 +34,7 @@ The rules below are checked by `./gradlew assertModuleGraph` (also a CI step); t
 - `./gradlew :apps:shop:assembleDebug` — build debug APK (`apps/shop/build/outputs/apk/debug/shop-debug.apk`)
 - `./gradlew :apps:shop:installDebug` — build and install on the connected device
 - `./gradlew :apps:uikit:installDebug` — build and install the UI kit catalog; in Android Studio it is the run configuration of the `uikit` module
+- `./gradlew testDebugUnitTest :shared:domain:test :shared:analytics:test` — app tests (Android modules, then pure Kotlin ones)
 - `cd server && ./gradlew test` — server tests; `server/deploy.sh` — test, build and restart the deployed server
 - `./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug :apps:shop:assembleDebug :apps:uikit:assembleDebug` — the CI checks locally (CI treats Kotlin and lint warnings as errors); for the server: `cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test`
 - Never run two Gradle builds in the same checkout at once: they share `build/` dirs and corrupt each other's outputs.

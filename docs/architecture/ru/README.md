@@ -35,6 +35,7 @@ core/     designsystem, compose-utils, network, config   ничего не зн�
 | [Данные](data.md) | use case'ы, репозитории, типы ошибок, локальное хранение, сеть, цены, договорённости с сервером |
 | [Аналитика](analytics.md) | события, системы аналитики, просмотры экранов, что можно отправлять |
 | [Сборка](build.md) | convention-плагины, каталог версий, стиль кода, CI, подпись |
+| [Тесты](testing.md) | как пишется тест, имена и место тестовых помощников, инструменты, виды тестов |
 
 &nbsp;
 
@@ -52,3 +53,4 @@ core/     designsystem, compose-utils, network, config   ничего не зн�
 | Сеть | Retrofit, OkHttp, kotlinx.serialization, Coil для картинок |
 | Сборка | Gradle 9.8, AGP 9.4, JDK 21, convention-плагины; minSdk 26, targetSdk 36, compileSdk 37 |
 | Сервер | Ktor 3.6, данные в JSON-файлах |
+| Тесты | kotlin.test, AssertK, kotlinx-coroutines-test, MockWebServer |

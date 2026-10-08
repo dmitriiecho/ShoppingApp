@@ -126,6 +126,7 @@ The main commands, from the project root:
 ./gradlew assertModuleGraph            # dependencies between modules
 ./gradlew buildHealth                  # unused dependencies
 ./gradlew lintDebug                    # Android lint for every module
+./gradlew testDebugUnitTest :shared:domain:test :shared:analytics:test  # app tests
 cd server && ./gradlew test            # server tests
 ```
 
