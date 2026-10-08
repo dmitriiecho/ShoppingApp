@@ -13,7 +13,7 @@ Each build runs its own tests, and CI runs both on every pull request:
 ```sh
 ./gradlew test                # the app: every module, once, screenshots included
 cd server && ./gradlew test   # the server
-./gradlew recordRoborazziDebug  # saves new screenshots after a change to the UI
+./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # saves new screenshots after a UI change
 ```
 
 Android modules run their unit tests on debug only (`shoppingapp.android.library` turns off release ones, which would repeat them), so one `test` covers Android and pure Kotlin modules alike.
@@ -180,11 +180,12 @@ Every `@Preview` is a screenshot test: nobody writes them. `shoppingapp.android.
 | Command | Does |
 |---|---|
 | `./gradlew test` | compares every preview with its saved image and fails on a difference |
-| `./gradlew recordRoborazziDebug` | draws the previews and saves them as the new images |
+| `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` | draws the previews and saves them as the new images; deletes the images of previews that are gone |
 
 - **A changed screen is a failed test** until its new images are recorded and committed; the pull request then shows the old and new images side by side.
 - **A failed one leaves a comparison image** next to the build: `build/outputs/roborazzi/*_compare.png`, the saved image, the difference in red and the new one. In CI they are attached to the run as `changed-screenshots`.
 - **The clock is stopped**: `PausedClockPreviewTester` draws every preview at its first frame, so an endless animation (the shimmer, a spinner) doesn't hang the test and every run draws the same image.
+- **Old images are deleted only when recording**, by that flag: Roborazzi deletes every image the run didn't draw, so with the flag always on, running one test from Android Studio would delete the rest of the module's images.
 - **Private previews count too**: Slack's lint rules make them private, and the plugin includes them.
 - **The UI kit app has no screenshots of its own**: its sections show the same components that are already drawn in their own modules.
 

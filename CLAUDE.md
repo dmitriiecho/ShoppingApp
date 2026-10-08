@@ -35,7 +35,7 @@ The rules below are checked by `./gradlew assertModuleGraph` (also a CI step); t
 - `./gradlew :apps:shop:installDebug` — build and install on the connected device
 - `./gradlew :apps:uikit:installDebug` — build and install the UI kit catalog; in Android Studio it is the run configuration of the `uikit` module
 - `./gradlew test` — every app test, once (release unit tests are off), screenshots compared with `<module>/screenshots/`
-- `./gradlew recordRoborazziDebug` — after a UI change, saves the new screenshots; commit them with the change
+- `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` — after a UI change, saves the new screenshots and deletes those of removed previews; commit them with the change. Never put the cleanup flag in gradle.properties: a filtered test run would then delete the module's other screenshots
 - `cd server && ./gradlew test` — server tests; `server/deploy.sh` — test, build and restart the deployed server
 - `./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug test :apps:shop:assembleDebug :apps:uikit:assembleDebug` — the CI checks locally (CI treats Kotlin and lint warnings as errors); for the server: `cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test`
 - Never run two Gradle builds in the same checkout at once: they share `build/` dirs and corrupt each other's outputs.

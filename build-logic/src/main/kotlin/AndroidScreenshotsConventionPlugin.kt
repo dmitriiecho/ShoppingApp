@@ -8,7 +8,8 @@ import org.gradle.kotlin.dsl.dependencies
 
 // Screenshot tests generated from a module's @Preview functions: Roborazzi draws each preview on Robolectric
 // and compares it with the image saved in the module's screenshots/ folder. Apply after library or application
-// and compose. ./gradlew recordRoborazziDebug saves new images, verifyRoborazziDebug compares (CI does).
+// and compose. ./gradlew test compares (roborazzi.test.verify in gradle.properties); recordRoborazziDebug saves
+// new images (docs/architecture/en/testing.md#screenshots).
 class AndroidScreenshotsConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
