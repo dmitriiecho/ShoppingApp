@@ -62,8 +62,11 @@ A helper used by tests of **two or more modules** lives in the **test fixtures**
 | Helper | Module | Source set |
 |---|---|---|
 | `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
-| `TestAnalyticsClient` | `:shared:analytics` | `src/testFixtures` |
+| `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
+| `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
+| `viewModelTest {}` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
+| `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 
 A module uses another module's fixtures with `testImplementation(testFixtures(project(":shared:domain")))`. Fixtures see only the public API of their module. The [module graph check](modules.md#the-check) looks at `api` and `implementation` only, so test dependencies follow the levels by convention, not by the check.
 
@@ -78,6 +81,7 @@ The libraries work in Kotlin Multiplatform, except those for Android-only code:
 | `kotlin.test` | `@Test` and the other annotations; tests don't import `org.junit` |
 | [AssertK](https://github.com/assertk-org/assertk) | every check: `assertThat(actual).isEqualTo(expected)`, `isInstanceOf<T>()` narrows the type, `assertFailure {}` |
 | `kotlinx-coroutines-test` | `runTest` and the virtual clock |
+| [Turbine](https://github.com/cashapp/turbine) | every Flow: a screen's state and effects are checked with `test {}` |
 | MockWebServer | a local HTTP server for the network code |
 
 The runner hides behind `kotlin.test`, so tests look the same though the runners differ: JUnit4 in the app (Robolectric runs only on it), JUnit5 on the server.
@@ -87,6 +91,28 @@ The runner hides behind `kotlin.test`, so tests look the same though the runners
 ## Kinds of tests
 
 Each kind of test starts with one entry function that sets up what the kind needs.
+
+### ViewModel
+
+`viewModelTest {}` replaces `Dispatchers.Main`, where `viewModelScope` runs, with a test dispatcher on `runTest`'s virtual clock. The ViewModel gets its real use cases on top of `Test` repositories, so a test sets the data and the server's answer and checks what the screen gets:
+
+```kotlin
+@Test
+fun `checkout of a cart the server changed asks to review the changes`() = viewModelTest {
+    cartRepository.validationAnswer = { invalid(ItemIssue.Unavailable("2")) }
+    val viewModel = cartViewModel()
+
+    viewModel.effects.test {
+        viewModel.onEvent(CartEvent.OnCheckoutClick)
+
+        assertThat(awaitItem()).isEqualTo(snackBar(R.string.cart_changed))
+    }
+}
+```
+
+- **The ViewModel is created inside `viewModelTest {}`**, after `Dispatchers.Main` is replaced.
+- **A request in progress** is a `CompletableDeferred` the answer waits for: the test changes the cart meanwhile, then completes it.
+- **Analytics events have no `equals`**, so `TestAnalytics.sentEvents` holds their name and params: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
 
 ### Network
 

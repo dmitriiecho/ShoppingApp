@@ -62,8 +62,11 @@ fun `discount is the promo code percent of the subtotal`() {
 | Помощник | Модуль | Source set |
 |---|---|---|
 | `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
-| `TestAnalyticsClient` | `:shared:analytics` | `src/testFixtures` |
+| `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
+| `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
+| `viewModelTest {}` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
+| `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 
 Модуль берёт чужие fixtures через `testImplementation(testFixtures(project(":shared:domain")))`. Fixtures видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только `api` и `implementation`, так что тестовые зависимости следуют уровням по договорённости, а не по проверке.
 
@@ -78,6 +81,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | `kotlin.test` | `@Test` и другие аннотации; тесты не импортируют `org.junit` |
 | [AssertK](https://github.com/assertk-org/assertk) | все проверки: `assertThat(actual).isEqualTo(expected)`, `isInstanceOf<T>()` сужает тип, `assertFailure {}` |
 | `kotlinx-coroutines-test` | `runTest` и виртуальные часы |
+| [Turbine](https://github.com/cashapp/turbine) | любой Flow: состояние и эффекты экрана проверяются через `test {}` |
 | MockWebServer | локальный HTTP-сервер для сетевого кода |
 
 Раннер скрыт за `kotlin.test`, поэтому тесты выглядят одинаково, хотя раннеры разные: JUnit4 в приложении (Robolectric работает только на нём), JUnit5 на сервере.
@@ -87,6 +91,28 @@ fun `discount is the promo code percent of the subtotal`() {
 ## Виды тестов
 
 Каждый вид тестов начинается с одной функции-входа, которая готовит всё, что этому виду нужно.
+
+### ViewModel
+
+`viewModelTest {}` подменяет `Dispatchers.Main`, на котором работает `viewModelScope`, тестовым диспетчером на виртуальных часах `runTest`. ViewModel получает настоящие use case'ы поверх `Test`-репозиториев, поэтому тест задаёт данные и ответ сервера и проверяет, что получает экран:
+
+```kotlin
+@Test
+fun `checkout of a cart the server changed asks to review the changes`() = viewModelTest {
+    cartRepository.validationAnswer = { invalid(ItemIssue.Unavailable("2")) }
+    val viewModel = cartViewModel()
+
+    viewModel.effects.test {
+        viewModel.onEvent(CartEvent.OnCheckoutClick)
+
+        assertThat(awaitItem()).isEqualTo(snackBar(R.string.cart_changed))
+    }
+}
+```
+
+- **ViewModel создаётся внутри `viewModelTest {}`**, уже после подмены `Dispatchers.Main`.
+- **Запрос «в процессе»** — это `CompletableDeferred`, которого ждёт ответ: тест тем временем меняет корзину, а потом завершает его.
+- **У событий аналитики нет `equals`**, поэтому `TestAnalytics.sentEvents` хранит их имя и параметры: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
 
 ### Сеть
 
