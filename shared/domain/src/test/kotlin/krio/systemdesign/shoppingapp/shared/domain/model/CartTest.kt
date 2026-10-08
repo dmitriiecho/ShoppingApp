@@ -20,7 +20,7 @@ class CartTest {
     fun `discount is the promo code percent of the subtotal`() {
         val cart = testCart(testCartItem(price = 2000), promoCode = PromoCode("SALE10", 10))
 
-        assertThat(cart.discount()).isEqualTo(300)
+        assertThat(cart.discount()).isEqualTo(200)
     }
 
     @Test
