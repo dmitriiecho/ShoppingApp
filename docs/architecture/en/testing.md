@@ -61,7 +61,7 @@ A helper used by tests of **two or more modules** lives in the **test fixtures**
 
 | Helper | Module | Source set |
 |---|---|---|
-| `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
+| `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient` | `:shared:analytics` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
 

@@ -17,4 +17,9 @@ dependencies {
     implementation(project(":core:network"))
 
     implementation(libs.androidx.paging.compose)
+
+    testImplementation(testFixtures(project(":shared:domain")))
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertk)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

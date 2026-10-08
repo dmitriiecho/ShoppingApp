@@ -18,4 +18,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     // ImmutableList in CartUiState, so Compose can compare an item's issues by content.
     implementation(libs.kotlinx.collections.immutable)
+
+    testImplementation(testFixtures(project(":shared:domain")))
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertk)
 }
