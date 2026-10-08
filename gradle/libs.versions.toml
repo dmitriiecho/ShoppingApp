@@ -40,6 +40,8 @@ timber = "5.0.1"
 # Testing
 assertk = "0.28.1"
 turbine = "1.2.1"
+robolectric = "4.17"
+androidxTestCore = "1.7.0"
 
 [libraries]
 # AndroidX
@@ -81,6 +83,9 @@ kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit"
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+# Android classes on the JVM, for code that can't run without them (Room).
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver3", version.ref = "okhttp" }
 
