@@ -5,6 +5,9 @@ plugins {
 
 android {
     namespace = "krio.systemdesign.shoppingapp.core.network"
+    testFixtures {
+        enable = true
+    }
 }
 
 dependencies {
@@ -18,4 +21,11 @@ dependencies {
     implementation(libs.timber)
 
     debugImplementation(libs.okhttp.logging)
+
+    // networkTest: MockWebServer with a Retrofit client that reads JSON as the app does.
+    testFixturesApi(libs.okhttp.mockwebserver)
+    testFixturesApi(libs.kotlinx.coroutines.test)
+
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertk)
 }

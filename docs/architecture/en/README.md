@@ -35,6 +35,7 @@ Each page can be read on its own:
 | [Data](data.md) | use cases, repositories, error types, local storage, network, prices, the contract with the server |
 | [Analytics](analytics.md) | events, analytics systems, screen views, what may be sent |
 | [Build](build.md) | convention plugins, the version catalog, code style, CI, signing |
+| [Testing](testing.md) | how tests are written, names and places of test helpers, tools, kinds of tests |
 
 &nbsp;
 
@@ -52,3 +53,4 @@ The main libraries and tools:
 | Network | Retrofit, OkHttp, kotlinx.serialization, Coil for images |
 | Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; minSdk 26, targetSdk 36, compileSdk 37 |
 | Server | Ktor 3.6, data in JSON files |
+| Tests | kotlin.test, AssertK, kotlinx-coroutines-test, MockWebServer |

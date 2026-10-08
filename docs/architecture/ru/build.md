@@ -126,6 +126,7 @@ Debug-ключ лежит в репозитории ([`build-logic/debug.keystor
 ./gradlew assertModuleGraph            # зависимости между модулями
 ./gradlew buildHealth                  # неиспользуемые зависимости
 ./gradlew lintDebug                    # Android lint во всех модулях
+./gradlew testDebugUnitTest :shared:domain:test :shared:analytics:test  # тесты приложения
 cd server && ./gradlew test            # тесты сервера
 ```
 

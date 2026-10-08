@@ -32,7 +32,7 @@ fun Application.module(
     imagesDir: Path,
 ) {
     install(ContentNegotiation) {
-        // Same settings as the app's Json (NetworkModule in :core:network).
+        // Same settings as the app's Json (NetworkJson.kt in :core:network).
         json(
             Json {
                 ignoreUnknownKeys = true
