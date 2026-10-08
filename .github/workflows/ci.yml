@@ -1,6 +1,6 @@
 # CI: checks every pull request and every push to main and the variant branches (kmp-ready, kmp).
 #
-#   Android job: code style → module rules → unused dependencies → lint → both apps build
+#   Android job: code style → module rules → unused dependencies → lint → unit tests → both apps build
 #   Server job:  code style → tests
 #
 # The two jobs run in parallel, each on its own fresh virtual machine (a "runner").
@@ -73,6 +73,14 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      # Robolectric downloads the Android it runs tests on (about 200 MB) into ~/.m2, outside Gradle's cache.
+      # Which Android it is depends on the Robolectric version and the targetSdk, so the key follows those files.
+      - name: Cache Robolectric's Android
+        uses: actions/cache@v6
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ hashFiles('gradle/libs.versions.toml', 'build-logic/src/main/kotlin/AndroidConfig.kt') }}
+
       # --- Checks -----------------------------------------------------------
       # By default a failed step skips all the steps after it. `if: !cancelled()` runs a check anyway
       # (unless the whole run was cancelled), so one run shows every problem at once.
@@ -94,6 +102,22 @@ jobs:
       - name: Problems in code and resources (Android lint)
         if: ${{ !cancelled() }}
         run: ./gradlew lintDebug
+
+      # Every module's tests, on debug: logic, ViewModels, the database (Robolectric), the API samples.
+      # The rules for tests are in docs/architecture/en/testing.md.
+      - name: Behaviour (unit tests)
+        id: tests
+        if: ${{ !cancelled() }}
+        run: ./gradlew test
+
+      # The HTML report says which test failed and why; it is attached to the run for a week.
+      - name: Test report
+        if: ${{ failure() && steps.tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: '**/build/reports/tests/'
+          retention-days: 7
 
       - name: Both apps compile (assembleDebug)
         if: ${{ !cancelled() }}
@@ -138,7 +162,7 @@ jobs:
       - name: Code style (ktlint)
         run: ./gradlew spotlessCheck
 
-      # Includes the check of the data files server/data/*.json.
+      # Includes the check of the data files server/data/*.json and of the API samples in server/api-samples.
       - name: API and data files (tests)
         if: ${{ !cancelled() }}
         run: ./gradlew test

@@ -84,13 +84,15 @@ internal object AndroidConfig {
 
 | Задача | Шаги |
 |---|---|
-| Android | стиль кода (ktlint) → зависимости между модулями (`assertModuleGraph`) → неиспользуемые зависимости (`buildHealth`) → ошибки в коде и ресурсах (Android lint с правилами Compose от Slack) → сборка обоих приложений |
-| Server | стиль кода (ktlint) → API и файлы данных (тесты, включая проверку `data/*.json`) |
+| Android | стиль кода (ktlint) → зависимости между модулями (`assertModuleGraph`) → неиспользуемые зависимости (`buildHealth`) → ошибки в коде и ресурсах (Android lint с правилами Compose от Slack) → [unit-тесты](testing.md) → сборка обоих приложений |
+| Server | стиль кода (ktlint) → API и файлы данных (тесты, включая проверку `data/*.json` и [образцов API](testing.md#контракт-с-сервером)) |
 
 - **Каждая проверка запускается, даже если предыдущая упала**, так что один прогон показывает все проблемы.
 - **Предупреждения в CI — ошибки**, и у Kotlin, и у lint: CI передаёт `-PwarningsAsErrors=true`, его читают convention-плагины ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)) и сборка сервера. Локальная сборка их только печатает.
 - **Неиспользуемые зависимости** находит плагин [Dependency Analysis](https://github.com/autonomousapps/dependency-analysis-gradle-plugin); его правила — какие советы он игнорирует и почему — в корневом [`build.gradle.kts`](../../../build.gradle.kts).
 - **Исключения lint** — в корневом [`lint.xml`](../../../lint.xml): CompositionLocal, которые проект создаёт намеренно, и «вышла новая версия» — это только подсказка, чтобы релиз какой-нибудь библиотеки не ронял CI.
+- **Упавшие тесты прикладывают HTML-отчёт** (`test-reports`) к прогону на неделю: упавший тест и его сообщение — в одном клике.
+- **Android для Robolectric кэшируется** между прогонами: Robolectric скачивает его в `~/.m2`, который кэш Gradle не покрывает.
 - **Задача останавливается через 30 минут** (серверная — через 15), а не висит 6 часов, как по умолчанию в GitHub.
 
 Новый push в pull request отменяет его ещё не законченный прогон, а прогоны на ветках всегда доходят до конца:
@@ -126,13 +128,13 @@ Debug-ключ лежит в репозитории ([`build-logic/debug.keystor
 ./gradlew assertModuleGraph            # зависимости между модулями
 ./gradlew buildHealth                  # неиспользуемые зависимости
 ./gradlew lintDebug                    # Android lint во всех модулях
-./gradlew testDebugUnitTest :shared:domain:test :shared:analytics:test  # тесты приложения
+./gradlew test                         # тесты приложения
 cd server && ./gradlew test            # тесты сервера
 ```
 
 Те же проверки, что в CI, с предупреждениями как ошибками:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug :apps:shop:assembleDebug :apps:uikit:assembleDebug
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug test :apps:shop:assembleDebug :apps:uikit:assembleDebug
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

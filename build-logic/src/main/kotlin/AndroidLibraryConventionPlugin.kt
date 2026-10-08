@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.variant.HostTestBuilder
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.PathSensitivity
@@ -35,6 +37,14 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 lint.warningsAsErrors = warningsAsErrors
             }
             configureKotlinWarnings()
+
+            // Unit tests run on debug only: release would repeat the same tests, and `./gradlew test` would run
+            // each one twice. So `test` runs every test of the app once, Android and pure Kotlin modules alike.
+            extensions.configure<LibraryAndroidComponentsExtension> {
+                beforeVariants(selector().withBuildType("release")) { variant ->
+                    variant.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = false
+                }
+            }
 
             // Kotlin LSP ("Kotlin by JetBrains") adds R.jar only to app modules, so R is unresolved in libraries.
             // The property is set only by its project import; R.jar exists after the module's first build.

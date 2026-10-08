@@ -8,13 +8,14 @@
 
 ## Запуск тестов
 
-Каждая сборка запускает свои тесты:
+Каждая сборка запускает свои тесты, а CI запускает обе на каждом pull request:
 
 ```sh
-./gradlew testDebugUnitTest                         # Android-модули
-./gradlew :shared:domain:test :shared:analytics:test  # модули на чистом Kotlin
-cd server && ./gradlew test                         # сервер
+./gradlew test                # приложение: все модули, по одному разу
+cd server && ./gradlew test   # сервер
 ```
+
+Android-модули гоняют unit-тесты только на debug (`shoppingapp.android.library` выключает release-тесты, которые бы их повторяли), поэтому один `test` охватывает и Android-модули, и модули на чистом Kotlin.
 
 &nbsp;
 
