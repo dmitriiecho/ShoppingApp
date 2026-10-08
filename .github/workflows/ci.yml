@@ -69,12 +69,8 @@ jobs:
           java-version: 21
 
       # Caches Gradle and the downloaded libraries between runs, and checks that gradle-wrapper.jar is genuine.
-      # Gradle encrypts its configuration cache (the task graph it builds before running tasks); a fixed key
-      # from the repo's secrets lets the next run read it and skip that work.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
-        with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       # --- Checks -----------------------------------------------------------
       # By default a failed step skips all the steps after it. `if: !cancelled()` runs a check anyway
@@ -129,11 +125,9 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # The same caching and key as in the Android job.
+      # The same caching as in the Android job.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
-        with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       # --- Checks: each runs even if the one before failed ------------------
 

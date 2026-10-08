@@ -89,7 +89,6 @@ Comments are in English, short, and explain what the code can't say: a reason, a
 
 - **Every check runs even if one before it failed**, so one run shows all the problems.
 - **Warnings are errors in CI**, Kotlin's and lint's alike: CI passes `-PwarningsAsErrors=true`, read by the convention plugins ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)). A local build only prints them.
-- **The configuration cache is kept between runs**: Gradle encrypts it, and the repo secret `GRADLE_ENCRYPTION_KEY` gives every run the same key, so a run whose build scripts didn't change skips configuration.
 - **A job is stopped after 30 minutes** (the server's after 15) instead of hanging for GitHub's default 6 hours.
 
 A new push to a pull request cancels its run that is still going, and runs on `main` always finish:

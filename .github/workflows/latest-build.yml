@@ -62,11 +62,9 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # The same caching and configuration cache key as in CI (ci.yml explains them).
+      # The same caching as in CI (ci.yml explains it).
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
-        with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       # --- Build and publish ------------------------------------------------
 

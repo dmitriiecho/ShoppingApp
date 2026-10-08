@@ -56,7 +56,6 @@ jobs:
       - name: Send the libraries to GitHub
         uses: gradle/actions/dependency-submission@v6
         with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           dependency-graph-include-configurations: '(release)?[Rr]untimeClasspath'
 
   # ==========================================================================
@@ -83,5 +82,4 @@ jobs:
         uses: gradle/actions/dependency-submission@v6
         with:
           build-root-directory: server
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           dependency-graph-include-configurations: 'runtimeClasspath'
