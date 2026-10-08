@@ -1,39 +1,37 @@
 package krio.systemdesign.shoppingapp.server
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.server.testing.testApplication
-import kotlin.io.path.Path
-import kotlin.io.path.exists
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.writeBytes
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import krio.systemdesign.shoppingapp.server.data.ShopData
 
 class ApplicationTest {
 
     @Test
-    fun `hosted images are in data and are served`() = testApplication {
-        val dataDir = Path("data")
-        val data = ShopData.load(dataDir)
-        val hosted = data.products.filter { "/images/" in it.imageUrl }
-        assertEquals(50, hosted.size)
-        hosted.forEach { product ->
-            val fileName = product.imageUrl.substringAfterLast('/').substringBefore('?')
-            assertEquals("${product.id}.png", fileName)
-            val file = dataDir.resolve("images/$fileName")
-            // The hub has no file on purpose: the app requests it and shows a placeholder.
-            if (product.id == "3") assertFalse(file.exists(), fileName) else assertTrue(file.exists(), fileName)
-        }
+    fun `product image is served as PNG`() {
+        val imagesDir = createTempDirectory("product-images")
+        val image = byteArrayOf(1, 2, 3)
+        imagesDir.resolve("1.png").writeBytes(image)
 
-        application { module(data, dataDir.resolve("images")) }
-        val response = createClient { }.get("/images/1.png")
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
-        assertTrue(response.bodyAsBytes().isNotEmpty())
+        serverTest(imagesDir = imagesDir) { client ->
+            val response = client.get("/images/1.png")
+
+            assertThat(response.contentType()?.withoutParameters()).isEqualTo(ContentType.Image.PNG)
+            assertThat(response.bodyAsBytes().toList()).isEqualTo(image.toList())
+        }
+    }
+
+    // The app shows a placeholder for a product whose image is missing.
+    @Test
+    fun `missing product image is rejected with 404`() = serverTest { client ->
+        val response = client.get("/images/1.png")
+
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
     }
 }

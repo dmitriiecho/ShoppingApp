@@ -11,7 +11,6 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlinx.serialization.json.Json
 import krio.systemdesign.shoppingapp.server.data.ShopData
 import krio.systemdesign.shoppingapp.server.routes.cartRoutes
 import krio.systemdesign.shoppingapp.server.routes.productRoutes
@@ -32,14 +31,7 @@ fun Application.module(
     imagesDir: Path,
 ) {
     install(ContentNegotiation) {
-        // Same settings as the app's Json (NetworkJson.kt in :core:network).
-        json(
-            Json {
-                ignoreUnknownKeys = true
-                explicitNulls = false
-                encodeDefaults = true
-            },
-        )
+        json(serverJson)
     }
     install(CallLogging)
     routing {

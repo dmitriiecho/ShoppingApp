@@ -137,7 +137,7 @@ The app's settings have items that put a copy of a product in the cart to show a
 | `40` Cutting Board | stock above 0, price not 4900 | Add an item with an outdated price | 1 copy at 4900 |
 | `32` Notebook | stock 1–9, price not 995 | Add an item with two changes | 10 copies at 995 |
 
-`ShopDataTest` checks these values in `data/products.json`, so `./gradlew test` (and CI) fails when one breaks.
+`DataFilesTest` sends these carts to the server on the real `data/products.json` and checks that each still gets exactly its change, so `./gradlew test` (and CI) fails when one breaks.
 
 ## Running
 

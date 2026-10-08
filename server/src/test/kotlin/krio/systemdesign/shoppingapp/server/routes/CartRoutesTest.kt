@@ -1,5 +1,10 @@
 package krio.systemdesign.shoppingapp.server.routes
 
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
+import assertk.assertions.isTrue
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -8,86 +13,117 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlinx.serialization.json.Json
 import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
 import krio.systemdesign.shoppingapp.server.dto.CartValidationResponseDTO
 import krio.systemdesign.shoppingapp.server.dto.ItemIssueDTO
+import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
+import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest
+import krio.systemdesign.shoppingapp.server.testProduct
+import krio.systemdesign.shoppingapp.server.testShopData
 import krio.systemdesign.shoppingapp.server.validateCart
 
 class CartRoutesTest {
 
+    private val promoData = testShopData(
+        products = listOf(testProduct(id = "1")),
+        promoCodes = listOf(PromoCodeDTO("SALE10", 10)),
+    )
+
     @Test
-    fun `cart matching the catalog`() = serverTest { client ->
-        val response = client.validateCart(
-            promoCode = null,
-            items = listOf(CartItemDTO("1", price = 1000, quantity = 5)),
+    fun `cart matching the catalog has no issues`() = serverTest(
+        testShopData(products = listOf(testProduct(id = "1", price = 1000, availableQuantity = 10))),
+    ) { client ->
+        val response = client.validateCart(CartItemDTO("1", price = 1000, quantity = 5))
+
+        assertThat(response.body<CartValidationResponseDTO>())
+            .isEqualTo(CartValidationResponseDTO(issues = emptyList(), promoCodeValid = true))
+    }
+
+    @Test
+    fun `out-of-stock product is reported unavailable, without price and stock`() = serverTest(
+        testShopData(products = listOf(testProduct(id = "1", price = 1000, availableQuantity = 0))),
+    ) { client ->
+        val issues = client.cartIssues(CartItemDTO("1", price = 900, quantity = 2))
+
+        assertThat(issues).containsExactly(ItemIssueDTO.Unavailable("1"))
+    }
+
+    @Test
+    fun `unknown product is reported unavailable`() = serverTest { client ->
+        val issues = client.cartIssues(CartItemDTO("42", price = 1000, quantity = 1))
+
+        assertThat(issues).containsExactly(ItemIssueDTO.Unavailable("42"))
+    }
+
+    @Test
+    fun `more in the cart than in stock is reported with the stock`() = serverTest(
+        testShopData(products = listOf(testProduct(id = "1", availableQuantity = 2))),
+    ) { client ->
+        val issues = client.cartIssues(CartItemDTO("1", price = 1000, quantity = 3))
+
+        assertThat(issues).containsExactly(ItemIssueDTO.NotEnoughStock("1", availableQuantity = 2))
+    }
+
+    @Test
+    fun `changed price is reported with the new price`() = serverTest(
+        testShopData(products = listOf(testProduct(id = "1", price = 1000))),
+    ) { client ->
+        val issues = client.cartIssues(CartItemDTO("1", price = 900, quantity = 1))
+
+        assertThat(issues).containsExactly(ItemIssueDTO.PriceChanged("1", newPrice = 1000))
+    }
+
+    @Test
+    fun `changed price and missing stock of one item are both reported`() = serverTest(
+        testShopData(products = listOf(testProduct(id = "1", price = 1000, availableQuantity = 2))),
+    ) { client ->
+        val issues = client.cartIssues(CartItemDTO("1", price = 900, quantity = 3))
+
+        assertThat(issues).containsExactly(
+            ItemIssueDTO.PriceChanged("1", newPrice = 1000),
+            ItemIssueDTO.NotEnoughStock("1", availableQuantity = 2),
         )
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(CartValidationResponseDTO(issues = emptyList(), promoCodeValid = true), response.body())
     }
 
     @Test
-    fun `out-of-stock and unknown product - unavailable without price and stock`() = serverTest { client ->
-        assertEquals(
-            listOf(ItemIssueDTO.Unavailable("3"), ItemIssueDTO.Unavailable("42")),
-            client.cartIssues(CartItemDTO("3", price = 1, quantity = 2), CartItemDTO("42", price = 1000, quantity = 1)),
-        )
+    fun `existing promo code is valid`() = serverTest(promoData) { client ->
+        assertThat(client.promoCodeValid("SALE10")).isTrue()
     }
 
     @Test
-    fun `more in the cart than in stock`() = serverTest { client ->
-        assertEquals(
-            listOf(ItemIssueDTO.NotEnoughStock("2", availableQuantity = 2)),
-            client.cartIssues(CartItemDTO("2", price = 1000, quantity = 3)),
-        )
+    fun `promo code in another case is valid`() = serverTest(promoData) { client ->
+        assertThat(client.promoCodeValid("sale10")).isTrue()
     }
 
     @Test
-    fun `price changed`() = serverTest { client ->
-        assertEquals(
-            listOf(ItemIssueDTO.PriceChanged("1", newPrice = 1000)),
-            client.cartIssues(CartItemDTO("1", price = 900, quantity = 1)),
-        )
+    fun `promo code with spaces around it is valid`() = serverTest(promoData) { client ->
+        assertThat(client.promoCodeValid(" SALE10 ")).isTrue()
     }
 
     @Test
-    fun `both price and stock changed`() = serverTest { client ->
-        assertEquals(
-            listOf(
-                ItemIssueDTO.PriceChanged("2", newPrice = 1000),
-                ItemIssueDTO.NotEnoughStock("2", availableQuantity = 2),
-            ),
-            client.cartIssues(CartItemDTO("2", price = 900, quantity = 3)),
-        )
+    fun `unknown promo code is invalid`() = serverTest(promoData) { client ->
+        assertThat(client.promoCodeValid("SALE99")).isFalse()
+    }
+
+    // promoCodeValid answers "does the sent code still work"; with no code there is nothing that fails.
+    @Test
+    fun `cart without a promo code has a valid promo code`() = serverTest(promoData) { client ->
+        assertThat(client.promoCodeValid(null)).isTrue()
     }
 
     @Test
-    fun `cart promo code ignores case`() = serverTest { client ->
-        suspend fun promoCodeValid(code: String?) =
-            client.validateCart(promoCode = code).body<CartValidationResponseDTO>().promoCodeValid
-
-        assertTrue(promoCodeValid("SALE10"))
-        assertTrue(promoCodeValid("sale10"))
-        assertFalse(promoCodeValid("SALE99"))
-        // No code, nothing to check.
-        assertTrue(promoCodeValid(null))
-    }
-
-    @Test
-    fun `malformed cart - 400`() = serverTest { client ->
+    fun `malformed cart is rejected with 400`() = serverTest { client ->
         val response = client.post("/cart/validate") {
             contentType(ContentType.Application.Json)
             setBody("""{"items": "oops"}""")
         }
-        assertEquals(HttpStatusCode.BadRequest, response.status)
+
+        assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
     }
 
     @Test
-    fun `issues JSON format`() {
+    fun `issues are written with their type in a type field`() {
         val response = CartValidationResponseDTO(
             issues = listOf(
                 ItemIssueDTO.Unavailable("3"),
@@ -96,14 +132,21 @@ class CartRoutesTest {
             ),
             promoCodeValid = false,
         )
-        assertEquals(
+
+        val json = serverJson.encodeToString(response)
+
+        assertThat(json).isEqualTo(
             """{"issues":[{"type":"unavailable","productId":"3"},""" +
                 """{"type":"priceChanged","productId":"1","newPrice":900},""" +
                 """{"type":"notEnoughStock","productId":"2","availableQuantity":2}],"promoCodeValid":false}""",
-            Json.encodeToString(response),
         )
     }
 
     private suspend fun HttpClient.cartIssues(vararg items: CartItemDTO): List<ItemIssueDTO> =
-        validateCart(promoCode = null, items = items.toList()).body<CartValidationResponseDTO>().issues
+        validateCart(*items).body<CartValidationResponseDTO>().issues
+
+    private suspend fun HttpClient.promoCodeValid(code: String?): Boolean =
+        validateCart(CartItemDTO("1", price = 1000, quantity = 1), promoCode = code)
+            .body<CartValidationResponseDTO>()
+            .promoCodeValid
 }
