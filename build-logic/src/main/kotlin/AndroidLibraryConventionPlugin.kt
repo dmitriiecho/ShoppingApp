@@ -13,7 +13,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureAndroid(this)
+                lint.warningsAsErrors = warningsAsErrors
             }
+            configureKotlinWarnings()
 
             // Kotlin LSP ("Kotlin by JetBrains") adds R.jar only to app modules, so R is unresolved in libraries.
             // The property is set only by its project import; R.jar exists after the module's first build.
