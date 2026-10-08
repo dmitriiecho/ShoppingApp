@@ -21,6 +21,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
                 compilerOptions.jvmTarget.set(JvmTarget.fromTarget(AndroidConfig.JAVA_VERSION.toString()))
             }
             configureKotlinWarnings()
+            configureTestLogging()
         }
     }
 }

@@ -37,6 +37,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 lint.warningsAsErrors = warningsAsErrors
             }
             configureKotlinWarnings()
+            configureTestLogging()
 
             // Unit tests run on debug only: release would repeat the same tests, and `./gradlew test` would run
             // each one twice. So `test` runs every test of the app once, Android and pure Kotlin modules alike.
