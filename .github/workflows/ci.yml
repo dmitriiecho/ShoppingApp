@@ -49,7 +49,8 @@ jobs:
   android:
     name: Android
     runs-on: ubuntu-latest
-    # A normal run takes about 7 minutes; a hung one would otherwise hold the runner for GitHub's default 6 hours.
+    # A normal run takes 3 to 7 minutes, depending on how much the build cache holds; the unit tests take
+    # under half a minute of it. A hung one would otherwise hold the runner for GitHub's default 6 hours.
     timeout-minutes: 30
     # Gradle reads ORG_GRADLE_PROJECT_<name> as the property <name>: here -PwarningsAsErrors=true.
     # With it, Kotlin and lint warnings fail the build, so they don't pile up (build-logic, WarningsAsErrors.kt).
