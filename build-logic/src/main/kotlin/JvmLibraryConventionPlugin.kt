@@ -20,6 +20,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
             extensions.configure<KotlinJvmProjectExtension> {
                 compilerOptions.jvmTarget.set(JvmTarget.fromTarget(AndroidConfig.JAVA_VERSION.toString()))
             }
+            configureKotlinWarnings()
         }
     }
 }

@@ -80,12 +80,17 @@ internal object AndroidConfig {
 
 ## CI
 
-[`ci.yml`](../../../.github/workflows/ci.yml) запускается на каждый pull request и каждый push в `main`. Две задачи идут параллельно:
+[`ci.yml`](../../../.github/workflows/ci.yml) запускается на каждый pull request и каждый push в `main`, кроме изменений только в документации, README и их картинках. Две задачи идут параллельно:
 
 | Задача | Шаги |
 |---|---|
 | Android | стиль кода (ktlint) → зависимости между модулями (`assertModuleGraph`) → неиспользуемые зависимости (`buildHealth`) → ошибки в коде и ресурсах (Android lint) → сборка обоих приложений |
 | Server | стиль кода (ktlint) → API и файлы данных (тесты, включая проверку `data/*.json`) |
+
+- **Каждая проверка запускается, даже если предыдущая упала**, так что один прогон показывает все проблемы.
+- **Предупреждения в CI — ошибки**, и у Kotlin, и у lint: CI передаёт `-PwarningsAsErrors=true`, его читают convention-плагины ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)). Локальная сборка их только печатает.
+- **Configuration cache сохраняется между прогонами**: Gradle его шифрует, а секрет репозитория `GRADLE_ENCRYPTION_KEY` даёт всем прогонам один ключ, поэтому прогон без изменений в сборочных скриптах пропускает конфигурацию.
+- **Задача останавливается через 30 минут** (серверная — через 15), а не висит 6 часов, как по умолчанию в GitHub.
 
 Новый push в pull request отменяет его ещё не законченный прогон, а прогоны на `main` всегда доходят до конца:
 
@@ -94,6 +99,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 ```
+
+[`dependency-graph.yml`](../../../.github/workflows/dependency-graph.yml) после каждого push в `main` отправляет в GitHub список библиотек, с которыми выходят приложение и сервер. GitHub проверяет их по базе известных уязвимостей и, если найдёт, показывает Dependabot alert во вкладке Security. Это отдельный workflow, потому что для отправки нужно право записи, а CI остаётся только на чтение.
 
 &nbsp;
 

@@ -1,25 +1,64 @@
-# Checks every pull request and every push to main: code style, module rules, dependencies, lint, both apps build,
-# plus the server's code style and tests. The server is a separate Gradle build, so it gets its own job.
+# CI: checks every pull request and every push to main.
+#
+#   Android job: code style → module rules → unused dependencies → lint → both apps build
+#   Server job:  code style → tests
+#
+# The two jobs run in parallel, each on its own fresh virtual machine (a "runner").
+# The server is a separate Gradle build (server/), so it gets a job of its own.
+# Latest build (latest-build.yml) starts after this workflow passes on a push.
+
 name: CI
+
+
+# ============================================================================
+# When it runs
+# ============================================================================
 
 on:
   pull_request:
+    # A change only to docs, READMEs or their images builds nothing, so it doesn't start a run.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/readme/**'
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/readme/**'
 
-# A new push to a pull request cancels its run that is still going; runs on main always finish.
+# Runs in the same group don't overlap. A new push to a pull request cancels its run that is still going;
+# runs on main always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# The token every job gets may only read the repo: the checks change nothing.
 permissions:
   contents: read
 
+
 jobs:
+
+  # ==========================================================================
+  # Android: the app and every module
+  # ==========================================================================
+
   android:
     name: Android
     runs-on: ubuntu-latest
+    # A normal run takes about 7 minutes; a hung one would otherwise hold the runner for GitHub's default 6 hours.
+    timeout-minutes: 30
+    # Gradle reads ORG_GRADLE_PROJECT_<name> as the property <name>: here -PwarningsAsErrors=true.
+    # With it, Kotlin and lint warnings fail the build, so they don't pile up (build-logic, WarningsAsErrors.kt).
+    env:
+      ORG_GRADLE_PROJECT_warningsAsErrors: true
+
     steps:
+
+      # --- Setup: the code, Java and Gradle ---------------------------------
+
       - name: Check out the code
         uses: actions/checkout@v7
 
@@ -29,34 +68,58 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # Caches Gradle and its dependencies between runs; also validates gradle-wrapper.jar.
+      # Caches Gradle and the downloaded libraries between runs, and checks that gradle-wrapper.jar is genuine.
+      # Gradle encrypts its configuration cache (the task graph it builds before running tasks); a fixed key
+      # from the repo's secrets lets the next run read it and skip that work.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      # --- Checks -----------------------------------------------------------
+      # By default a failed step skips all the steps after it. `if: !cancelled()` runs a check anyway
+      # (unless the whole run was cancelled), so one run shows every problem at once.
 
       - name: Code style (ktlint)
         run: ./gradlew spotlessCheck
 
-      # Dependencies between modules follow the rules in build-logic/src/main/kotlin/ModuleGraphRules.kt.
+      # The allowed dependencies between modules are in build-logic/src/main/kotlin/ModuleGraphRules.kt.
       - name: Dependencies between modules (assertModuleGraph)
+        if: ${{ !cancelled() }}
         run: ./gradlew assertModuleGraph
 
       # Unused dependencies and module structure; the rules are in the root build.gradle.kts.
       - name: Unused dependencies (buildHealth)
+        if: ${{ !cancelled() }}
         run: ./gradlew buildHealth
 
+      # Android's own rules plus Slack's Compose rules; exceptions are in the root lint.xml.
       - name: Problems in code and resources (Android lint)
+        if: ${{ !cancelled() }}
         run: ./gradlew lintDebug
 
       - name: Both apps compile (assembleDebug)
+        if: ${{ !cancelled() }}
         run: ./gradlew :apps:shop:assembleDebug :apps:uikit:assembleDebug
+
+  # ==========================================================================
+  # Server: the Ktor backend in server/
+  # ==========================================================================
 
   server:
     name: Server
     runs-on: ubuntu-latest
+    # A normal run takes under a minute.
+    timeout-minutes: 15
+    # Every `run:` command of this job starts in server/, where its own Gradle wrapper is.
     defaults:
       run:
         working-directory: server
+
     steps:
+
+      # --- Setup: the code, Java and Gradle ---------------------------------
+
       - name: Check out the code
         uses: actions/checkout@v7
 
@@ -66,11 +129,18 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      # The same caching and key as in the Android job.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      # --- Checks: each runs even if the one before failed ------------------
 
       - name: Code style (ktlint)
         run: ./gradlew spotlessCheck
 
+      # Includes the check of the data files server/data/*.json.
       - name: API and data files (tests)
+        if: ${{ !cancelled() }}
         run: ./gradlew test

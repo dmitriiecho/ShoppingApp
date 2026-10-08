@@ -14,6 +14,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 configureAndroid(this)
                 defaultConfig.targetSdk = AndroidConfig.TARGET_SDK
+                lint.warningsAsErrors = warningsAsErrors
 
                 // The debug key is kept in the repo, so a build from any computer has the same signature.
                 // Deep links depend on it: Android opens them in the app only if the key's SHA-256 is listed in
@@ -36,6 +37,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     }
                 }
             }
+            configureKotlinWarnings()
         }
     }
 }
