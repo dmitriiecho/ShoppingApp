@@ -182,7 +182,17 @@ Every `@Preview` is a screenshot test: nobody writes them. `shoppingapp.android.
 | `./gradlew test` | compares every preview with its saved image and fails on a difference |
 | `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` | draws the previews and saves them as the new images; deletes the images of previews that are gone |
 
-- **A changed screen is a failed test** until its new images are recorded and committed; the pull request then shows the old and new images side by side.
+These tests don't say whether a screen looks right: they catch changes nobody asked for. So the images are recorded only by a person, on purpose, after a change to the UI:
+
+1. Change the UI.
+2. Record: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`.
+3. Look at which images changed (`git status`, or the images in the IDE): only those of the screens you meant to change. Thirty changed images after a change to one button is the problem to look into.
+4. Commit them with the code; the pull request shows each one's old and new version side by side.
+
+> [!IMPORTANT]
+> If you didn't mean to change how the app looks, don't record. A failed screenshot test is then a found problem: a padding that moved in a refactor, a library update that changed the buttons, a shared component that touched another screen. CI never records images.
+
+- **A changed screen is a failed test** until its new images are recorded and committed.
 - **A failed one leaves a comparison image** next to the build: `build/outputs/roborazzi/*_compare.png`, the saved image, the difference in red and the new one. In CI they are attached to the run as `changed-screenshots`.
 - **The clock is stopped**: `PausedClockPreviewTester` draws every preview at its first frame, so an endless animation (the shimmer, a spinner) doesn't hang the test and every run draws the same image.
 - **Old images are deleted only when recording**, by that flag: Roborazzi deletes every image the run didn't draw, so with the flag always on, running one test from Android Studio would delete the rest of the module's images.
