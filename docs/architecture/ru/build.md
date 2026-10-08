@@ -55,7 +55,7 @@ internal object AndroidConfig {
 Все версии — в [`gradle/libs.versions.toml`](../../../gradle/libs.versions.toml), и build-logic читает тот же каталог. Модули подключают плагины без версий.
 
 - **Репозитории объявлены только в `settings.gradle.kts`**: модуль, объявивший свои, роняет сборку. Из Google Maven берутся только артефакты Google и AndroidX.
-- **Включены configuration cache и параллельная сборка.**
+- **Включены configuration cache, build cache и параллельная сборка.** Build cache хранит результаты задач, и CI тоже берёт их из прошлых прогонов.
 - **Сервер — отдельная сборка** со своим wrapper и каталогом, в настройки приложения она не входит.
 
 &nbsp;

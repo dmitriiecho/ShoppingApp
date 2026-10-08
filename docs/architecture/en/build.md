@@ -55,7 +55,7 @@ internal object AndroidConfig {
 Every version is in [`gradle/libs.versions.toml`](../../../gradle/libs.versions.toml), and build-logic reads the same catalog. Modules apply plugins without versions.
 
 - **Repositories are declared only in `settings.gradle.kts`**: a module that declares its own fails the build. Google Maven serves only Google and AndroidX artifacts.
-- **Configuration cache and parallel builds are on.**
+- **Configuration cache, build cache and parallel builds are on.** The build cache keeps task outputs, and CI reuses them from earlier runs too.
 - **The server is a separate build** with its own wrapper and catalog, not included in the app's settings.
 
 &nbsp;
