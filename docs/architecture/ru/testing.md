@@ -11,8 +11,9 @@
 Каждая сборка запускает свои тесты, а CI запускает обе на каждом pull request:
 
 ```sh
-./gradlew test                # приложение: все модули, по одному разу
+./gradlew test                # приложение: все модули, по одному разу, вместе со скриншотами
 cd server && ./gradlew test   # сервер
+./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # сохраняет новые скриншоты после изменения интерфейса
 ```
 
 Android-модули гоняют unit-тесты только на debug (`shoppingapp.android.library` выключает release-тесты, которые бы их повторяли), поэтому один `test` охватывает и Android-модули, и модули на чистом Kotlin.
@@ -66,7 +67,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
-| `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
+| `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}`, `apiSample()` | `:core:network` | `src/testFixtures` |
 | `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
@@ -87,7 +88,8 @@ fun `discount is the promo code percent of the subtotal`() {
 | `kotlinx-coroutines-test` | `runTest` и виртуальные часы |
 | [Turbine](https://github.com/cashapp/turbine) | разовые эффекты экрана: `effects.test { awaitItem() }` |
 | MockWebServer | локальный HTTP-сервер для сетевого кода |
-| [Robolectric](https://robolectric.org) | классы Android на JVM, только для кода, который без них не работает (Room) |
+| [Robolectric](https://robolectric.org) | классы Android на JVM, только для кода, который без них не работает (Room, скриншоты) |
+| [Roborazzi](https://github.com/takahirom/roborazzi) | скриншот-тесты из функций `@Preview` |
 
 Раннер скрыт за `kotlin.test`, поэтому тесты выглядят одинаково, хотя раннеры разные: JUnit4 в приложении (Robolectric работает только на нём), JUnit5 на сервере.
 
@@ -170,6 +172,38 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
 | Приложение | отправляет запросы в точности как образцы запросов и разбирает образцы ответов в ожидаемые модели |
 
 Изменение формата с одной стороны роняет тесты этой стороны, пока не будут изменены образец, а затем и другая сторона. Сборка объявляет папку входом каждой тестовой задачи, поэтому изменённый образец перезапускает тесты.
+
+### Скриншоты
+
+Каждый `@Preview` — это скриншот-тест, писать их не нужно. `shoppingapp.android.screenshots`, который подключает каждый модуль с превью, поручает [Roborazzi](https://github.com/takahirom/roborazzi) нарисовать каждое превью на Robolectric и сравнить с картинкой, сохранённой в папке модуля `screenshots/`:
+
+| Команда | Что делает |
+|---|---|
+| `./gradlew test` | сравнивает каждое превью с его сохранённой картинкой и падает при разнице |
+| `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` | рисует превью и сохраняет их как новые картинки; удаляет картинки превью, которых больше нет |
+
+Эти тесты не говорят, правильно ли выглядит экран: они ловят изменения, которых никто не заказывал. Поэтому картинки записывает только человек, сознательно, после изменения интерфейса:
+
+1. Изменить интерфейс.
+2. Убедиться, что изменилось только задуманное, одним из двух способов:
+   - **сначала тесты**: `./gradlew test`. Падают только превью, которые и должны были измениться, а на `build/outputs/roborazzi/…_compare.png` каждого красным отмечено только задуманное; там виден и сдвиг на пиксель-два, который на двух картинках рядом не заметишь;
+   - **сначала запись**: записать (шаг 3), потом посмотреть, какие картинки изменились (`git status` или сами картинки в IDE). Быстрее, один прогон вместо двух, но старая картинка уже перезаписана, и картинки сравнения нет.
+
+   В обоих случаях тридцать изменённых картинок после правки одной кнопки — это проблема, в которой надо разобраться.
+3. Записать, если ещё не записано: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`.
+4. Закоммитить картинки вместе с кодом; pull request покажет старую и новую версию каждой рядом.
+
+> [!IMPORTANT]
+> Если ты не собирался менять вид приложения, записывать не нужно. Упавший скриншот-тест тогда — найденная проблема: отступ, съехавший при рефакторинге, обновление библиотеки, поменявшее кнопки, общий компонент, задевший другой экран. CI картинки никогда не записывает.
+
+- **Изменившийся экран — это упавший тест**, пока его новые картинки не записаны и не закоммичены.
+- **Упавший тест оставляет картинку сравнения** рядом со сборкой: `build/outputs/roborazzi/*_compare.png` — сохранённая картинка, разница красным и новая. В CI они прикладываются к прогону как `changed-screenshots`.
+- **Часы остановлены**: `PausedClockPreviewTester` рисует каждое превью в его первый кадр, поэтому бесконечная анимация (шиммер, индикатор загрузки) не подвешивает тест, и каждый прогон рисует одну и ту же картинку.
+- **Старые картинки удаляются только при записи**, этим флагом: Roborazzi удаляет каждую картинку, которую прогон не нарисовал, поэтому с флагом, включённым всегда, запуск одного теста из Android Studio удалил бы остальные картинки модуля.
+- **Приватные превью тоже снимаются**: правила lint от Slack делают их приватными, и плагин их включает.
+- **У приложения UI kit своих скриншотов нет**: его разделы показывают те же компоненты, которые уже снимаются в своих модулях.
+
+Compose Preview Screenshot Testing от Google делает то же самое рендерером Android Studio, но он всё ещё в alpha; пока он не стабилен — Roborazzi.
 
 ### Сервер
 

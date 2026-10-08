@@ -11,8 +11,9 @@ Tests run on the JVM, with no emulator: the app's logic, its data layer and the 
 Each build runs its own tests, and CI runs both on every pull request:
 
 ```sh
-./gradlew test                # the app: every module, once
+./gradlew test                # the app: every module, once, screenshots included
 cd server && ./gradlew test   # the server
+./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # saves new screenshots after a UI change
 ```
 
 Android modules run their unit tests on debug only (`shoppingapp.android.library` turns off release ones, which would repeat them), so one `test` covers Android and pure Kotlin modules alike.
@@ -66,7 +67,7 @@ A helper used by tests of **two or more modules** lives in the **test fixtures**
 | `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
-| `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
+| `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}`, `apiSample()` | `:core:network` | `src/testFixtures` |
 | `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
@@ -87,7 +88,8 @@ The libraries work in Kotlin Multiplatform, except those for Android-only code:
 | `kotlinx-coroutines-test` | `runTest` and the virtual clock |
 | [Turbine](https://github.com/cashapp/turbine) | a screen's one-off effects: `effects.test { awaitItem() }` |
 | MockWebServer | a local HTTP server for the network code |
-| [Robolectric](https://robolectric.org) | Android classes on the JVM, only for code that can't run without them (Room) |
+| [Robolectric](https://robolectric.org) | Android classes on the JVM, only for code that can't run without them (Room, screenshots) |
+| [Roborazzi](https://github.com/takahirom/roborazzi) | screenshot tests made from the `@Preview` functions |
 
 The runner hides behind `kotlin.test`, so tests look the same though the runners differ: JUnit4 in the app (Robolectric runs only on it), JUnit5 on the server.
 
@@ -170,6 +172,38 @@ The app and the server each describe the API's JSON in their own DTOs. What keep
 | App | it sends requests exactly like the request samples and reads the answer samples into the expected models |
 
 A format change on one side fails that side's tests, until the sample, and then the other side, are changed too. The build declares the folder as an input of every test task, so an edited sample runs the tests again.
+
+### Screenshots
+
+Every `@Preview` is a screenshot test: nobody writes them. `shoppingapp.android.screenshots`, applied by each module with previews, has [Roborazzi](https://github.com/takahirom/roborazzi) draw each preview on Robolectric and compare it with the image saved in the module's `screenshots/` folder:
+
+| Command | Does |
+|---|---|
+| `./gradlew test` | compares every preview with its saved image and fails on a difference |
+| `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` | draws the previews and saves them as the new images; deletes the images of previews that are gone |
+
+These tests don't say whether a screen looks right: they catch changes nobody asked for. So the images are recorded only by a person, on purpose, after a change to the UI:
+
+1. Change the UI.
+2. Check that only what you meant changed, in either of two ways:
+   - **test first**: `./gradlew test`. Only the previews you meant to change fail, and each one's `build/outputs/roborazzi/…_compare.png` marks in red only what you meant; it shows a shift of a pixel or two that two images side by side hide;
+   - **record first**: record (step 3), then look at which images changed (`git status`, or the images in the IDE). Quicker, one run instead of two, but the old image is already overwritten, so there is no comparison image.
+
+   Either way, thirty changed images after a change to one button is the problem to look into.
+3. Record, if not done yet: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`.
+4. Commit the images with the code; the pull request shows each one's old and new version side by side.
+
+> [!IMPORTANT]
+> If you didn't mean to change how the app looks, don't record. A failed screenshot test is then a found problem: a padding that moved in a refactor, a library update that changed the buttons, a shared component that touched another screen. CI never records images.
+
+- **A changed screen is a failed test** until its new images are recorded and committed.
+- **A failed one leaves a comparison image** next to the build: `build/outputs/roborazzi/*_compare.png`, the saved image, the difference in red and the new one. In CI they are attached to the run as `changed-screenshots`.
+- **The clock is stopped**: `PausedClockPreviewTester` draws every preview at its first frame, so an endless animation (the shimmer, a spinner) doesn't hang the test and every run draws the same image.
+- **Old images are deleted only when recording**, by that flag: Roborazzi deletes every image the run didn't draw, so with the flag always on, running one test from Android Studio would delete the rest of the module's images.
+- **Private previews count too**: Slack's lint rules make them private, and the plugin includes them.
+- **The UI kit app has no screenshots of its own**: its sections show the same components that are already drawn in their own modules.
+
+Google's Compose Preview Screenshot Testing does the same with Android Studio's renderer, but it is still in alpha; Roborazzi it is until that one is stable.
 
 ### Server
 

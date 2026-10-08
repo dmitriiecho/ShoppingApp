@@ -17,6 +17,7 @@ Each kind of module has its own plugin:
 | `shoppingapp.android.compose` | modules with Compose | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.android.hilt` | modules with Hilt | Hilt with KSP |
 | `shoppingapp.android.feature` | every `:feature:<name>:impl` | library + Compose + Hilt + serialization, navigation and lifecycle libraries |
+| `shoppingapp.android.screenshots` | every module with previews | [screenshot tests](testing.md#screenshots) made from the previews |
 | `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM without Android, dependency analysis, warnings as errors in CI |
 
 So a module's build file is short:

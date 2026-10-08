@@ -17,6 +17,7 @@
 | `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.android.hilt` | модули с Hilt | Hilt с KSP |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Hilt + serialization, библиотеки навигации и lifecycle |
+| `shoppingapp.android.screenshots` | каждый модуль с превью | [скриншот-тесты](testing.md#скриншоты) из превью |
 | `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM без Android, анализ зависимостей, предупреждения как ошибки в CI |
 
 Поэтому build-файл модуля короткий:
