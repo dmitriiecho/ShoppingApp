@@ -56,6 +56,8 @@ jobs:
       - name: Send the libraries to GitHub
         uses: gradle/actions/dependency-submission@v6
         with:
+          # Reads the libraries CI cached but saves nothing: its own copy would only take space in the repo's cache.
+          cache-read-only: true
           dependency-graph-include-configurations: '(release)?[Rr]untimeClasspath'
 
   # ==========================================================================
@@ -82,4 +84,5 @@ jobs:
         uses: gradle/actions/dependency-submission@v6
         with:
           build-root-directory: server
+          cache-read-only: true
           dependency-graph-include-configurations: 'runtimeClasspath'
