@@ -62,7 +62,7 @@ core/     designsystem, compose-utils, network, config   ничего не зн�
 
 ## Запуск
 
-Проще всего скачать [APK из ветки `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): это release-сборка, она ставится на Android 8.0 и новее. Её пересобирает CI после каждого изменения в `main`.
+Проще всего скачать [APK из ветки `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): это release-сборка, она ставится на Android 8.0 и новее. Её пересобирает CI после каждого изменения кода в `main`.
 
 Чтобы собрать самому, нужны JDK 21 и Android SDK:
 
@@ -85,4 +85,4 @@ core/     designsystem, compose-utils, network, config   ничего не зн�
 
 - **Правила записаны для агентов**: [CLAUDE.md](CLAUDE.md) описывает устройство модулей, стиль кода и договорённости по экранам.
 - **Изменения делаются небольшими шагами**, и каждый обсуждается и проверяется до коммита.
-- **Поведение проверяется на эмуляторе**, а сборку, стиль и правила модулей проверяет CI.
+- **Поведение проверяется на эмуляторе**, а CI проверяет стиль, правила модулей, неиспользуемые зависимости, lint, сборку и тесты сервера.

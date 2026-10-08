@@ -12,12 +12,12 @@
 
 | Плагин | Для чего | Что добавляет |
 |---|---|---|
-| `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | настройку Android, targetSdk, подпись, R8 в release, [проверку графа модулей](modules.md#проверка) |
-| `shoppingapp.android.library` | каждая Android-библиотека | compileSdk, minSdk, Java |
-| `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3 |
+| `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | настройку Android, targetSdk, подпись, R8 в release, [проверку графа модулей](modules.md#проверка), анализ зависимостей, предупреждения как ошибки в CI |
+| `shoppingapp.android.library` | каждая Android-библиотека | compileSdk, minSdk, Java, анализ зависимостей, предупреждения как ошибки в CI |
+| `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.android.hilt` | модули с Hilt | Hilt с KSP |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Hilt + serialization, библиотеки навигации и lifecycle |
-| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM без Android |
+| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM без Android, анализ зависимостей, предупреждения как ошибки в CI |
 
 Поэтому build-файл модуля короткий:
 
@@ -84,11 +84,13 @@ internal object AndroidConfig {
 
 | Задача | Шаги |
 |---|---|
-| Android | стиль кода (ktlint) → зависимости между модулями (`assertModuleGraph`) → неиспользуемые зависимости (`buildHealth`) → ошибки в коде и ресурсах (Android lint) → сборка обоих приложений |
+| Android | стиль кода (ktlint) → зависимости между модулями (`assertModuleGraph`) → неиспользуемые зависимости (`buildHealth`) → ошибки в коде и ресурсах (Android lint с правилами Compose от Slack) → сборка обоих приложений |
 | Server | стиль кода (ktlint) → API и файлы данных (тесты, включая проверку `data/*.json`) |
 
 - **Каждая проверка запускается, даже если предыдущая упала**, так что один прогон показывает все проблемы.
 - **Предупреждения в CI — ошибки**, и у Kotlin, и у lint: CI передаёт `-PwarningsAsErrors=true`, его читают convention-плагины ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)) и сборка сервера. Локальная сборка их только печатает.
+- **Неиспользуемые зависимости** находит плагин [Dependency Analysis](https://github.com/autonomousapps/dependency-analysis-gradle-plugin); его правила — какие советы он игнорирует и почему — в корневом [`build.gradle.kts`](../../../build.gradle.kts).
+- **Исключения lint** — в корневом [`lint.xml`](../../../lint.xml): CompositionLocal, которые проект создаёт намеренно, и «вышла новая версия» — это только подсказка, чтобы релиз какой-нибудь библиотеки не ронял CI.
 - **Задача останавливается через 30 минут** (серверная — через 15), а не висит 6 часов, как по умолчанию в GitHub.
 
 Новый push в pull request отменяет его ещё не законченный прогон, а прогоны на ветках всегда доходят до конца:
@@ -122,6 +124,14 @@ Debug-ключ лежит в репозитории ([`build-logic/debug.keystor
 ./gradlew :apps:shop:installDebug      # магазин на подключённое устройство
 ./gradlew :apps:uikit:installDebug     # приложение UI kit
 ./gradlew assertModuleGraph            # зависимости между модулями
+./gradlew buildHealth                  # неиспользуемые зависимости
 ./gradlew lintDebug                    # Android lint во всех модулях
 cd server && ./gradlew test            # тесты сервера
+```
+
+Те же проверки, что в CI, с предупреждениями как ошибками:
+
+```sh
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug :apps:shop:assembleDebug :apps:uikit:assembleDebug
+cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

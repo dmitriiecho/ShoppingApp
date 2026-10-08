@@ -62,7 +62,7 @@ How the modules, navigation, screens, data, analytics and the build work is in t
 
 ## Running
 
-The easiest way is to download the [APK from `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): a release build for Android 8.0 and newer, rebuilt by CI after every change in `main`.
+The easiest way is to download the [APK from `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): a release build for Android 8.0 and newer, rebuilt by CI after every code change in `main`.
 
 To build it yourself you need JDK 21 and the Android SDK:
 
@@ -85,4 +85,4 @@ The app is developed with the AI agents Claude Code, Cursor and Grok Build, on C
 
 - **The rules are written down for the agents**: [CLAUDE.md](CLAUDE.md) describes the module layout, the code style and the conventions for screens.
 - **Changes go in small steps**, each discussed and checked before it is committed.
-- **Behaviour is checked on an emulator**, and CI checks the build, the style and the module rules.
+- **Behaviour is checked on an emulator**, and CI checks the style, the module rules, unused dependencies, lint, the build and the server's tests.
