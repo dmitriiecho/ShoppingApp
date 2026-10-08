@@ -1,57 +1,83 @@
 package krio.systemdesign.shoppingapp.server.routes
 
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEmpty
+import assertk.assertions.isEqualTo
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import krio.systemdesign.shoppingapp.server.TEST_DATA
 import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.ProductsPageDTO
 import krio.systemdesign.shoppingapp.server.serverTest
+import krio.systemdesign.shoppingapp.server.testProduct
+import krio.systemdesign.shoppingapp.server.testShopData
 
 class ProductRoutesTest {
 
+    private val threeProducts = testShopData(products = listOf(testProduct("1"), testProduct("2"), testProduct("3")))
+
     @Test
-    fun `catalog is split into pages`() = serverTest { client ->
-        val first = client.get("/products?query=&page=1&pageSize=2").body<ProductsPageDTO>()
-        assertEquals(listOf("1", "2"), first.products.map { it.id })
-        assertFalse(first.endReached)
+    fun `page holds the requested number of products in file order`() = serverTest(threeProducts) { client ->
+        val page = client.get("/products?query=&page=1&pageSize=2").body<ProductsPageDTO>()
 
-        val last = client.get("/products?query=&page=2&pageSize=2").body<ProductsPageDTO>()
-        assertEquals(listOf("3"), last.products.map { it.id })
-        assertTrue(last.endReached)
-
-        val beyond = client.get("/products?query=&page=3&pageSize=2").body<ProductsPageDTO>()
-        assertEquals(emptyList(), beyond.products)
-        assertTrue(beyond.endReached)
+        assertThat(page).isEqualTo(ProductsPageDTO(listOf(testProduct("1"), testProduct("2")), endReached = false))
     }
 
     @Test
-    fun `search by name ignores case`() = serverTest { client ->
+    fun `last page is marked as the end`() = serverTest(threeProducts) { client ->
+        val page = client.get("/products?query=&page=2&pageSize=2").body<ProductsPageDTO>()
+
+        assertThat(page).isEqualTo(ProductsPageDTO(listOf(testProduct("3")), endReached = true))
+    }
+
+    @Test
+    fun `page past the end is empty and marked as the end`() = serverTest(threeProducts) { client ->
+        val page = client.get("/products?query=&page=3&pageSize=2").body<ProductsPageDTO>()
+
+        assertThat(page).isEqualTo(ProductsPageDTO(emptyList(), endReached = true))
+    }
+
+    @Test
+    fun `search finds names containing the query in any case`() = serverTest(
+        testShopData(products = listOf(testProduct("1", name = "Red Mug"), testProduct("2", name = "Lamp"))),
+    ) { client ->
         val page = client.get("/products?query=MUG&page=1&pageSize=10").body<ProductsPageDTO>()
-        assertEquals(listOf("1", "2"), page.products.map { it.id })
-        assertTrue(page.endReached)
+
+        assertThat(page.products.map { it.id }).containsExactly("1")
     }
 
     @Test
-    fun `search ignores surrounding spaces`() = serverTest { client ->
+    fun `search ignores spaces around the query`() = serverTest(
+        testShopData(products = listOf(testProduct("1", name = "Red Mug"), testProduct("2", name = "Lamp"))),
+    ) { client ->
         val page = client.get("/products?query=%20mug%20&page=1&pageSize=10").body<ProductsPageDTO>()
-        assertEquals(listOf("1", "2"), page.products.map { it.id })
+
+        assertThat(page.products.map { it.id }).containsExactly("1")
+    }
+
+    // Every case is asked and the wrong answers are listed together, so one run shows all of them.
+    @Test
+    fun `invalid page parameters are rejected with 400`() = serverTest(threeProducts) { client ->
+        val parameters = listOf("page=0&pageSize=2", "page=1&pageSize=0", "page=1&pageSize=101", "page=1", "pageSize=2")
+
+        val statuses = parameters.associateWith { client.get("/products?$it").status }
+
+        assertThat(statuses.filterValues { it != HttpStatusCode.BadRequest }).isEmpty()
     }
 
     @Test
-    fun `invalid page parameters - 400`() = serverTest { client ->
-        assertEquals(HttpStatusCode.BadRequest, client.get("/products?page=0&pageSize=2").status)
-        assertEquals(HttpStatusCode.BadRequest, client.get("/products?page=1&pageSize=0").status)
-        assertEquals(HttpStatusCode.BadRequest, client.get("/products?page=1").status)
+    fun `product is found by id`() = serverTest(threeProducts) { client ->
+        val product = client.get("/products/2").body<ProductDTO>()
+
+        assertThat(product).isEqualTo(testProduct("2"))
     }
 
     @Test
-    fun `product by id`() = serverTest { client ->
-        assertEquals(TEST_DATA.products[2], client.get("/products/3").body<ProductDTO>())
-        assertEquals(HttpStatusCode.NotFound, client.get("/products/42").status)
+    fun `unknown product id is rejected with 404`() = serverTest(threeProducts) { client ->
+        val response = client.get("/products/42")
+
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
     }
 }

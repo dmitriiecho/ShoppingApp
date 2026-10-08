@@ -31,7 +31,7 @@ fun `discount is the promo code percent of the subtotal`() {
 }
 ```
 
-- **One behaviour per test.** Several unrelated checks in one test hide each other: the first failure stops the rest. Cases of the same kind go into one table with AssertK's `tableOf`, which checks every row and reports all failing ones.
+- **One behaviour per test.** Several unrelated checks in one test hide each other: the first failure stops the rest. Cases of the same kind go into one table with AssertK's `tableOf`, which checks every row and reports all failing ones. A table can't call suspend functions, so cases sent to a server are all asked first and then checked together: `assertThat(statuses.filterValues { it != BadRequest }).isEmpty()` lists every wrong answer.
 - **The name says the condition and the expected result**, in backticks: `` `cart with a changed price reports the new price` ``, not `` `price changed` ``.
 - **Arrange, act, assert**, separated by blank lines.
 - **The test's data is in the test.** Builders with defaults (`testCartItem(price = 2000)`) let a test set only the values that matter to it. There is no shared data set for all tests: changing it would break unrelated tests.
@@ -105,4 +105,4 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
 
 ### Server
 
-`serverTest {}` starts the server in memory with Ktor's `testApplication` and gives a client that reads JSON. More on the server's API in [`server/README.md`](../../../server/README.md).
+`serverTest {}` starts the server in memory with Ktor's `testApplication`, on the data the test passes (`testShopData(products = …)`), and gives a client that reads JSON with the server's own `serverJson`. More on the server's API in [`server/README.md`](../../../server/README.md).

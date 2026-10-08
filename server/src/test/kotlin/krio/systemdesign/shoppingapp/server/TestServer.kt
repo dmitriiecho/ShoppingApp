@@ -9,6 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
+import java.nio.file.Path
 import kotlin.io.path.createTempDirectory
 import krio.systemdesign.shoppingapp.server.data.ShopData
 import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
@@ -16,38 +17,39 @@ import krio.systemdesign.shoppingapp.server.dto.CartValidationRequestDTO
 import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
-val TEST_DATA = ShopData(
-    products = listOf(
-        testProduct(id = "1", name = "Red Mug"),
-        testProduct(id = "2", name = "Blue Mug", availableQuantity = 2),
-        testProduct(id = "3", name = "Lamp", availableQuantity = 0),
-    ),
-    promoCodes = listOf(PromoCodeDTO("SALE10", 10), PromoCodeDTO("SALE25", 25)),
-)
+// The server in memory on the test's data, with a client that reads JSON as the app does.
+fun serverTest(
+    data: ShopData = testShopData(),
+    imagesDir: Path = createTempDirectory("product-images"),
+    block: suspend (client: HttpClient) -> Unit,
+) = testApplication {
+    application { module(data, imagesDir) }
+    block(createClient { install(ContentNegotiation) { json(serverJson) } })
+}
+
+fun testShopData(
+    products: List<ProductDTO> = emptyList(),
+    promoCodes: List<PromoCodeDTO> = emptyList(),
+) = ShopData(products = products, promoCodes = promoCodes)
 
 fun testProduct(
-    id: String,
-    name: String,
+    id: String = "1",
+    name: String = "Product $id",
+    price: Long = 1000,
     availableQuantity: Int = 10,
 ) = ProductDTO(
     id = id,
     name = name,
-    price = 1000,
-    imageUrl = "https://picsum.photos/seed/$id/400/400",
+    price = price,
+    imageUrl = "https://example.com/$id.png",
     description = "",
     availableQuantity = availableQuantity,
 )
 
-// The server on TEST_DATA, with a client that reads JSON.
-fun serverTest(block: suspend (HttpClient) -> Unit) = testApplication {
-    application { module(TEST_DATA, createTempDirectory("product-images")) }
-    block(createClient { install(ContentNegotiation) { json() } })
-}
-
 suspend fun HttpClient.validateCart(
-    promoCode: String?,
-    items: List<CartItemDTO> = listOf(CartItemDTO("1", price = 1000, quantity = 1)),
+    vararg items: CartItemDTO,
+    promoCode: String? = null,
 ): HttpResponse = post("/cart/validate") {
     contentType(ContentType.Application.Json)
-    setBody(CartValidationRequestDTO(items = items, promoCode = promoCode))
+    setBody(CartValidationRequestDTO(items = items.toList(), promoCode = promoCode))
 }

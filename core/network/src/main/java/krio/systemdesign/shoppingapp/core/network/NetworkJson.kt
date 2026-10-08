@@ -6,7 +6,7 @@ import retrofit2.Converter
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 // How the app reads and writes the server's JSON. Public so that tests read it the same way (networkTest).
-// The server has the same settings (server/.../Application.kt).
+// The server has the same settings (serverJson in server/.../ServerJson.kt).
 val networkJson: Json = Json {
     ignoreUnknownKeys = true
     explicitNulls = false
