@@ -1,0 +1,10 @@
+[
+  {
+    "code": "SALE10",
+    "discountPercent": 10
+  },
+  {
+    "code": "SALE25",
+    "discountPercent": 25
+  }
+]

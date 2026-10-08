@@ -66,7 +66,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
-| `networkTest {}` | `:core:network` | `src/testFixtures` |
+| `networkTest {}`, `apiSample()` | `:core:network` | `src/testFixtures` |
 | `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
@@ -158,6 +158,17 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
     assertThat(result).isInstanceOf<NetworkResult.HttpError>().prop(NetworkResult.HttpError::code).isEqualTo(404)
 }
 ```
+
+### Контракт с сервером
+
+Приложение и сервер описывают JSON API каждый в своих DTO. Согласованность держит [`server/api-samples/`](../../../server/api-samples/): по одному JSON-файлу на каждый запрос или ответ, на который опирается приложение. `apiSample("product.json")` читает файл на обеих сторонах, разбирая его `Json` своей стороны, а проверка сравнивает деревья JSON: порядок полей не важен, а переименованное, лишнее или пропавшее поле — важно:
+
+| Сторона | Что проверяет |
+|---|---|
+| Сервер | принимает образцы запросов и отвечает в точности как образцы ответов |
+| Приложение | отправляет запросы в точности как образцы запросов и разбирает образцы ответов в ожидаемые модели |
+
+Изменение формата с одной стороны роняет тесты этой стороны, пока не будут изменены образец, а затем и другая сторона. Сборка объявляет папку входом каждой тестовой задачи, поэтому изменённый образец перезапускает тесты.
 
 ### Сервер
 

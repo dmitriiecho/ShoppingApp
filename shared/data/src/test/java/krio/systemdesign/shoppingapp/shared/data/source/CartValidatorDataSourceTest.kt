@@ -4,10 +4,13 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.core.network.apiSample
+import krio.systemdesign.shoppingapp.core.network.networkJson
 import krio.systemdesign.shoppingapp.core.network.networkTest
 import krio.systemdesign.shoppingapp.shared.data.api.CartApi
 import krio.systemdesign.shoppingapp.shared.domain.model.CartValidationResult
 import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.shared.domain.model.testCart
 import krio.systemdesign.shoppingapp.shared.domain.model.testCartItem
 import mockwebserver3.MockResponse
@@ -57,4 +60,40 @@ class CartValidatorDataSourceTest {
 
         assertThat(result).isInstanceOf<CartValidationResult.Error>()
     }
+
+    @Test
+    fun `cart is sent as in the API sample`() = networkTest<CartApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("cart-validation-response.json").toString()).build())
+
+        CartValidatorDataSource(api).validate(sampleCart)
+
+        val sent = networkJson.parseToJsonElement(checkNotNull(server.takeRequest().body).utf8())
+        assertThat(sent).isEqualTo(apiSample("cart-validation-request.json"))
+    }
+
+    @Test
+    fun `answer from the API sample is read with all its changes`() = networkTest<CartApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("cart-validation-response.json").toString()).build())
+
+        val result = CartValidatorDataSource(api).validate(sampleCart)
+
+        assertThat(result).isEqualTo(
+            CartValidationResult.Invalid(
+                issues = listOf(
+                    ItemIssue.PriceChanged("2", newPrice = 1000),
+                    ItemIssue.NotEnoughStock("2", availableQuantity = 2),
+                    ItemIssue.Unavailable("3"),
+                ),
+                isPromoCodeValid = false,
+            ),
+        )
+    }
+
+    // The cart behind the request sample.
+    private val sampleCart = testCart(
+        testCartItem(productId = "1", price = 1299, quantity = 1),
+        testCartItem(productId = "2", price = 900, quantity = 3),
+        testCartItem(productId = "3", price = 4999, quantity = 1),
+        promoCode = PromoCode("SUMMER", 10),
+    )
 }

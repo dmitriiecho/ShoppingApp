@@ -41,8 +41,9 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    // Tests read data/: without this, an edited JSON file leaves the tests UP-TO-DATE and skipped.
+    // Tests read data/ and api-samples/: without this, an edited JSON file leaves the tests UP-TO-DATE and skipped.
     inputs.dir("data")
+    inputs.dir("api-samples")
     // The message alone says what is wrong in a JSON file; the stack trace only hides it.
     testLogging {
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL

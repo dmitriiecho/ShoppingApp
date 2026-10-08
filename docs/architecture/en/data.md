@@ -158,7 +158,7 @@ There is no `Money` value class. It could live only in the domain: `:shared:ui` 
 
 The server's API and data rules are in [`server/README.md`](../../../server/README.md). What the app relies on:
 
-- **DTOs are copies of the server's**, with a comment pointing to the other side.
+- **DTOs are copies of the server's**, with a comment pointing to the other side. The JSON samples in [`server/api-samples/`](../../../server/api-samples/) keep them in step: [both sides' tests](testing.md#contract-with-the-server) check them.
 - **Paging by page number is safe**: the server never removes products and adds new ones at the end. A renamed product can still move within search results, so `ProductPagingSource` drops repeated ids.
 - **The server decides whether checkout opens.** The cart shows what its last check found, but "Checkout" opens only on a fresh `Success` from the server.
 - **A promo code's percent never changes**, so the server only checks that the code still exists.

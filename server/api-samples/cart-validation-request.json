@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "productId": "1",
+      "price": 1299,
+      "quantity": 1
+    },
+    {
+      "productId": "2",
+      "price": 900,
+      "quantity": 3
+    },
+    {
+      "productId": "3",
+      "price": 4999,
+      "quantity": 1
+    }
+  ],
+  "promoCode": "SUMMER"
+}

@@ -66,7 +66,7 @@ A helper used by tests of **two or more modules** lives in the **test fixtures**
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
-| `networkTest {}` | `:core:network` | `src/testFixtures` |
+| `networkTest {}`, `apiSample()` | `:core:network` | `src/testFixtures` |
 | `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
@@ -158,6 +158,17 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
     assertThat(result).isInstanceOf<NetworkResult.HttpError>().prop(NetworkResult.HttpError::code).isEqualTo(404)
 }
 ```
+
+### Contract with the server
+
+The app and the server each describe the API's JSON in their own DTOs. What keeps them in step is [`server/api-samples/`](../../../server/api-samples/): one JSON file per request or answer the app relies on. `apiSample("product.json")` reads one on both sides, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter but a renamed, extra or missing field does:
+
+| Side | Checks |
+|---|---|
+| Server | it accepts the request samples and answers exactly like the answer samples |
+| App | it sends requests exactly like the request samples and reads the answer samples into the expected models |
+
+A format change on one side fails that side's tests, until the sample, and then the other side, are changed too. The build declares the folder as an input of every test task, so an edited sample runs the tests again.
 
 ### Server
 
