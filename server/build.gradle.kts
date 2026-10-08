@@ -44,10 +44,11 @@ tasks.test {
     // Tests read data/ and api-samples/: without this, an edited JSON file leaves the tests UP-TO-DATE and skipped.
     inputs.dir("data")
     inputs.dir("api-samples")
-    // The message alone says what is wrong in a JSON file; the stack trace only hides it.
+    // As in the app (build-logic, TestLogging.kt): a failed test prints its message, e.g. what is wrong in a JSON
+    // file, and of the stack trace the line of the test where it failed. On JUnit5 a few of the runner's lines stay.
     testLogging {
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-        showStackTraces = false
+        stackTraceFilters(org.gradle.api.tasks.testing.logging.TestStackTraceFilter.ENTRY_POINT)
     }
 }
 
