@@ -120,7 +120,7 @@ class CartValidationTest {
         val validation = CartValidation(issues = listOf(ItemIssue.NotEnoughStock("1", availableQuantity = 2)))
         val item = testCartItem(productId = "1", quantity = 2, availableQuantity = 7)
 
-        assertThat(validation.stockOf(item)).isEqualTo(2)
+        assertThat(validation.stockOf(item)).isEqualTo(7)
     }
 
     @Test

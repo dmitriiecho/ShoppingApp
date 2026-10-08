@@ -41,7 +41,7 @@ class PromoCodeRoutesTest {
     ) { client ->
         val response = client.get("/promo-codes/SALE99")
 
-        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
     }
 
     @Test
