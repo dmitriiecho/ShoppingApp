@@ -1,5 +1,18 @@
 package krio.systemdesign.shoppingapp.shared.domain.model
 
+fun testProduct(
+    id: String = "1",
+    price: Long = 1000,
+    availableQuantity: Int = 10,
+) = Product(
+    id = id,
+    name = "Product $id",
+    price = price,
+    imageUrl = "https://example.com/$id.png",
+    description = "",
+    availableQuantity = availableQuantity,
+)
+
 fun testCartItem(
     productId: String = "1",
     price: Long = 1000,

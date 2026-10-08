@@ -61,7 +61,7 @@ fun `discount is the promo code percent of the subtotal`() {
 
 | Помощник | Модуль | Source set |
 |---|---|---|
-| `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
+| `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient` | `:shared:analytics` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
 
