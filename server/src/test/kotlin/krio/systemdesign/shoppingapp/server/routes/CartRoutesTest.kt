@@ -9,10 +9,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.server.apiSample
 import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
 import krio.systemdesign.shoppingapp.server.dto.CartValidationResponseDTO
 import krio.systemdesign.shoppingapp.server.dto.ItemIssueDTO
@@ -122,24 +124,25 @@ class CartRoutesTest {
         assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
     }
 
+    // The app sends a cart like the request sample; the server must answer like the response sample.
     @Test
-    fun `issues are written with their type in a type field`() {
-        val response = CartValidationResponseDTO(
-            issues = listOf(
-                ItemIssueDTO.Unavailable("3"),
-                ItemIssueDTO.PriceChanged("1", newPrice = 900),
-                ItemIssueDTO.NotEnoughStock("2", availableQuantity = 2),
+    fun `cart check answers as in the API sample`() = serverTest(
+        testShopData(
+            products = listOf(
+                testProduct(id = "1", price = 1299, availableQuantity = 12),
+                testProduct(id = "2", price = 1000, availableQuantity = 2),
+                testProduct(id = "3", price = 4999, availableQuantity = 0),
             ),
-            promoCodeValid = false,
-        )
+            promoCodes = listOf(PromoCodeDTO("SALE10", 10)),
+        ),
+    ) { client ->
+        val response = client.post("/cart/validate") {
+            contentType(ContentType.Application.Json)
+            setBody(apiSample("cart-validation-request.json").toString())
+        }
 
-        val json = serverJson.encodeToString(response)
-
-        assertThat(json).isEqualTo(
-            """{"issues":[{"type":"unavailable","productId":"3"},""" +
-                """{"type":"priceChanged","productId":"1","newPrice":900},""" +
-                """{"type":"notEnoughStock","productId":"2","availableQuantity":2}],"promoCodeValid":false}""",
-        )
+        assertThat(serverJson.parseToJsonElement(response.bodyAsText()))
+            .isEqualTo(apiSample("cart-validation-response.json"))
     }
 
     private suspend fun HttpClient.cartIssues(vararg items: CartItemDTO): List<ItemIssueDTO> =

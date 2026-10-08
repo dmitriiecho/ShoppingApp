@@ -19,6 +19,8 @@ A small Ktor server for the app: catalog, promo codes and cart validation.
 | `GET /images/{file}` | A product image |
 | `POST /cart/validate` | Where the cart differs from the catalog |
 
+Every request and answer the app relies on has a sample in [`api-samples/`](api-samples/). The server's tests check that it answers exactly so, and the app's tests read the same files, so a format change on one side fails that side's tests.
+
 ### `GET /products`
 
 | Parameter | Meaning |

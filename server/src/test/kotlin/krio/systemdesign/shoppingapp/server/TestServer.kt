@@ -10,7 +10,10 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.createTempDirectory
+import kotlin.io.path.readText
+import kotlinx.serialization.json.JsonElement
 import krio.systemdesign.shoppingapp.server.data.ShopData
 import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
 import krio.systemdesign.shoppingapp.server.dto.CartValidationRequestDTO
@@ -53,3 +56,6 @@ suspend fun HttpClient.validateCart(
     contentType(ContentType.Application.Json)
     setBody(CartValidationRequestDTO(items = items.toList(), promoCode = promoCode))
 }
+
+// A sample from api-samples/: the JSON the app and the server agree on. The app's tests read the same files.
+fun apiSample(name: String): JsonElement = serverJson.parseToJsonElement(Path("api-samples", name).readText())

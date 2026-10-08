@@ -5,9 +5,13 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlin.test.Test
+import kotlinx.serialization.json.decodeFromJsonElement
+import krio.systemdesign.shoppingapp.server.apiSample
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
+import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest
 import krio.systemdesign.shoppingapp.server.testShopData
 
@@ -48,4 +52,22 @@ class PromoCodeRoutesTest {
 
         assertThat(promoCodes).containsExactly(PromoCodeDTO("SALE25", 25), PromoCodeDTO("SALE10", 10))
     }
+
+    @Test
+    fun `promo code is written as in the API sample`() = serverTest(samplePromoCodes()) { client ->
+        val response = client.get("/promo-codes/SALE10")
+
+        assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("promo-code.json"))
+    }
+
+    @Test
+    fun `promo codes are written as in the API sample`() = serverTest(samplePromoCodes()) { client ->
+        val response = client.get("/promo-codes")
+
+        assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("promo-codes.json"))
+    }
+
+    private fun samplePromoCodes() = testShopData(
+        promoCodes = serverJson.decodeFromJsonElement<List<PromoCodeDTO>>(apiSample("promo-codes.json")),
+    )
 }

@@ -1,0 +1,19 @@
+{
+  "issues": [
+    {
+      "type": "priceChanged",
+      "productId": "2",
+      "newPrice": 1000
+    },
+    {
+      "type": "notEnoughStock",
+      "productId": "2",
+      "availableQuantity": 2
+    },
+    {
+      "type": "unavailable",
+      "productId": "3"
+    }
+  ],
+  "promoCodeValid": false
+}

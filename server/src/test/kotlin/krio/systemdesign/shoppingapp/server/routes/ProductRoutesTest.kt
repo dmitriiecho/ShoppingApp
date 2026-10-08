@@ -6,10 +6,14 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlin.test.Test
+import kotlinx.serialization.json.decodeFromJsonElement
+import krio.systemdesign.shoppingapp.server.apiSample
 import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.ProductsPageDTO
+import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest
 import krio.systemdesign.shoppingapp.server.testProduct
 import krio.systemdesign.shoppingapp.server.testShopData
@@ -80,4 +84,25 @@ class ProductRoutesTest {
 
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
     }
+
+    // The app reads products as in the samples; the server must write them so.
+    @Test
+    fun `product is written as in the API sample`() = serverTest(samplePageData()) { client ->
+        val response = client.get("/products/1")
+
+        assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("product.json"))
+    }
+
+    @Test
+    fun `page is written as in the API sample`() = serverTest(samplePageData()) { client ->
+        val response = client.get("/products?query=&page=1&pageSize=2")
+
+        assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("products-page.json"))
+    }
+
+    // The sample page's products and one more, so that the page isn't the last.
+    private fun samplePageData() = testShopData(
+        products = serverJson.decodeFromJsonElement<ProductsPageDTO>(apiSample("products-page.json")).products +
+            testProduct("3"),
+    )
 }

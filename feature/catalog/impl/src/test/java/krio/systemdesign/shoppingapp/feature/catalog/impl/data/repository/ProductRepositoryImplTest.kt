@@ -4,9 +4,12 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.core.network.apiSample
 import krio.systemdesign.shoppingapp.core.network.networkTest
 import krio.systemdesign.shoppingapp.feature.catalog.impl.data.api.ProductApi
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductLoadResult
+import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
+import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import mockwebserver3.MockResponse
 
 class ProductRepositoryImplTest {
@@ -29,4 +32,40 @@ class ProductRepositoryImplTest {
 
         assertThat(result).isInstanceOf<ProductLoadResult.Error>()
     }
+
+    @Test
+    fun `product from the API sample is read`() = networkTest<ProductApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("product.json").toString()).build())
+
+        val result = ProductRepositoryImpl(api).getProduct("1")
+
+        assertThat(result).isEqualTo(ProductLoadResult.Success(redMug))
+    }
+
+    @Test
+    fun `page from the API sample is read`() = networkTest<ProductApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("products-page.json").toString()).build())
+
+        val result = ProductRepositoryImpl(api).getProducts(query = "", page = 1, pageSize = 2)
+
+        assertThat(result).isEqualTo(Result.success(ProductsPage(listOf(redMug, blueMug), endReached = false)))
+    }
+
+    // The products in the samples.
+    private val redMug = Product(
+        id = "1",
+        name = "Red Mug",
+        price = 1299,
+        imageUrl = "http://2.56.204.151:8080/images/1.png",
+        description = "A red ceramic mug.",
+        availableQuantity = 12,
+    )
+    private val blueMug = Product(
+        id = "2",
+        name = "Blue Mug",
+        price = 1000,
+        imageUrl = "http://2.56.204.151:8080/images/2.png",
+        description = "A blue ceramic mug.",
+        availableQuantity = 2,
+    )
 }
