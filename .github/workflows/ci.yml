@@ -1,4 +1,4 @@
-# CI: checks every pull request and every push to main.
+# CI: checks every pull request and every push to main and the variant branches (kmp-ready, kmp).
 #
 #   Android job: code style → module rules → unused dependencies → lint → both apps build
 #   Server job:  code style → tests
@@ -22,14 +22,15 @@ on:
       - 'docs/**'
       - '.github/readme/**'
   push:
-    branches: [main]
+    # Latest build publishes the APKs of these branches after CI passes on them.
+    branches: [main, kmp-ready, kmp]
     paths-ignore:
       - '**.md'
       - 'docs/**'
       - '.github/readme/**'
 
 # Runs in the same group don't overlap. A new push to a pull request cancels its run that is still going;
-# runs on main always finish.
+# runs on pushes to the branches always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -107,6 +108,9 @@ jobs:
     runs-on: ubuntu-latest
     # A normal run takes under a minute.
     timeout-minutes: 15
+    # Warnings fail the build here too (server/build.gradle.kts).
+    env:
+      ORG_GRADLE_PROJECT_warningsAsErrors: true
     # Every `run:` command of this job starts in server/, where its own Gradle wrapper is.
     defaults:
       run:

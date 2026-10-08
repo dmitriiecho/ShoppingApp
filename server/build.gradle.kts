@@ -14,6 +14,9 @@ java {
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        // As in the app (build-logic, WarningsAsErrors.kt): CI passes -PwarningsAsErrors=true, then warnings fail
+        // the build; locally they are only printed.
+        allWarningsAsErrors.set(providers.gradleProperty("warningsAsErrors").map(String::toBoolean).orElse(false))
     }
 }
 

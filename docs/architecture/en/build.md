@@ -80,7 +80,7 @@ Comments are in English, short, and explain what the code can't say: a reason, a
 
 ## CI
 
-[`ci.yml`](../../../.github/workflows/ci.yml) runs on every pull request and every push to `main`, unless only docs, READMEs or their images changed. Two jobs run in parallel:
+[`ci.yml`](../../../.github/workflows/ci.yml) runs on every pull request and every push to `main` and the variant branches (`kmp-ready`, `kmp`), unless only docs, READMEs or their images changed. Two jobs run in parallel:
 
 | Job | Steps |
 |---|---|
@@ -88,16 +88,18 @@ Comments are in English, short, and explain what the code can't say: a reason, a
 | Server | code style (ktlint) → API and data files (tests, including the check of `data/*.json`) |
 
 - **Every check runs even if one before it failed**, so one run shows all the problems.
-- **Warnings are errors in CI**, Kotlin's and lint's alike: CI passes `-PwarningsAsErrors=true`, read by the convention plugins ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)). A local build only prints them.
+- **Warnings are errors in CI**, Kotlin's and lint's alike: CI passes `-PwarningsAsErrors=true`, read by the convention plugins ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)) and by the server build. A local build only prints them.
 - **A job is stopped after 30 minutes** (the server's after 15) instead of hanging for GitHub's default 6 hours.
 
-A new push to a pull request cancels its run that is still going, and runs on `main` always finish:
+A new push to a pull request cancels its run that is still going, and runs on the branches always finish:
 
 ```yaml
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 ```
+
+[`latest-build.yml`](../../../.github/workflows/latest-build.yml) builds the release APKs of the app and the UI kit after CI passes on a push to `main`, `kmp-ready` or `kmp`, and publishes them as the release `<branch>-latest`. The download links in the README point to it. The `main` build is the repo's Latest release, the other branches are pre-releases.
 
 [`dependency-graph.yml`](../../../.github/workflows/dependency-graph.yml) sends GitHub the libraries the app and the server ship with, after every push to `main`. GitHub checks them for known vulnerabilities and shows a Dependabot alert in the Security tab if one has any. It is a separate workflow because sending needs write access, and CI stays read-only.
 
