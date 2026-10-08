@@ -105,11 +105,12 @@ jobs:
         run: ./gradlew lintDebug
 
       # Every module's tests, on debug: logic, ViewModels, the database (Robolectric), the API samples.
+      # --continue: a failed module doesn't stop the others, so the report shows every failing test.
       # The rules for tests are in docs/architecture/en/testing.md.
       - name: Behaviour (unit tests)
         id: tests
         if: ${{ !cancelled() }}
-        run: ./gradlew test
+        run: ./gradlew test --continue
 
       # The HTML report says which test failed and why; it is attached to the run for a week.
       - name: Test report
