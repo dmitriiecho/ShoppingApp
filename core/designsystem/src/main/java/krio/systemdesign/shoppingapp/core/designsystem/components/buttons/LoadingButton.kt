@@ -46,7 +46,7 @@ fun LoadingButton(
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(28.dp),
                 strokeWidth = 2.dp,
             )
         } else {
