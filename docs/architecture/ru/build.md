@@ -91,7 +91,7 @@ internal object AndroidConfig {
 - **Предупреждения в CI — ошибки**, и у Kotlin, и у lint: CI передаёт `-PwarningsAsErrors=true`, его читают convention-плагины ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)) и сборка сервера. Локальная сборка их только печатает.
 - **Неиспользуемые зависимости** находит плагин [Dependency Analysis](https://github.com/autonomousapps/dependency-analysis-gradle-plugin); его правила — какие советы он игнорирует и почему — в корневом [`build.gradle.kts`](../../../build.gradle.kts).
 - **Исключения lint** — в корневом [`lint.xml`](../../../lint.xml): CompositionLocal, которые проект создаёт намеренно, и «вышла новая версия» — это только подсказка, чтобы релиз какой-нибудь библиотеки не ронял CI.
-- **Упавшие тесты прикладывают HTML-отчёт** (`test-reports`) к прогону на неделю: упавший тест и его сообщение — в одном клике.
+- **Упавшие тесты видны там, куда и так смотришь**: каждый, с сообщением и строкой, — вверху страницы прогона и у строки теста на вкладке Files changed в PR, а ниже — сводка с полным стеком ([action-junit-report](https://github.com/mikepenz/action-junit-report), единственное действие в CI не от GitHub и не от Gradle).
 - **Android для Robolectric кэшируется** между прогонами: Robolectric скачивает его в `~/.m2`, который кэш Gradle не покрывает.
 - **Задача останавливается через 30 минут** (серверная — через 15), а не висит 6 часов, как по умолчанию в GitHub.
 

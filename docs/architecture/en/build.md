@@ -91,7 +91,7 @@ Comments are in English, short, and explain what the code can't say: a reason, a
 - **Warnings are errors in CI**, Kotlin's and lint's alike: CI passes `-PwarningsAsErrors=true`, read by the convention plugins ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)) and by the server build. A local build only prints them.
 - **Unused dependencies** are found by the [Dependency Analysis](https://github.com/autonomousapps/dependency-analysis-gradle-plugin) plugin; its rules, with the advice it ignores and why, are in the root [`build.gradle.kts`](../../../build.gradle.kts).
 - **Lint exceptions** are in the root [`lint.xml`](../../../lint.xml): the CompositionLocals the project creates on purpose, and "a newer version is available", reported as a hint so a library's release doesn't fail CI.
-- **A failed test run attaches its HTML report** (`test-reports`) to the run for a week, so the failing test and its message are one click away.
+- **Failed tests are shown where you look anyway**: each one, with its message and line, at the top of the run's page and next to the test's line in the PR's Files changed, and in a summary below with the full stack trace ([action-junit-report](https://github.com/mikepenz/action-junit-report), the one action in CI that isn't GitHub's or Gradle's).
 - **Robolectric's Android is cached** between runs: Robolectric downloads it into `~/.m2`, which Gradle's cache doesn't cover.
 - **A job is stopped after 30 minutes** (the server's after 15) instead of hanging for GitHub's default 6 hours.
 

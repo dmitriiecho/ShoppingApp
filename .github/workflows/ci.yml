@@ -112,14 +112,18 @@ jobs:
         if: ${{ !cancelled() }}
         run: ./gradlew test --continue
 
-      # The HTML report says which test failed and why; it is attached to the run for a week.
-      - name: Test report
+      # Shows each failed test, with its message and line, at the top of the run's page and next to the test's
+      # line in the PR's Files changed; below, a summary with each failure's full stack trace.
+      # annotate_only: no check run of its own, which would need a token that can write.
+      - name: Failed tests
         if: ${{ failure() && steps.tests.outcome == 'failure' }}
-        uses: actions/upload-artifact@v7
+        uses: mikepenz/action-junit-report@v6
         with:
-          name: test-reports
-          path: '**/build/reports/tests/'
-          retention-days: 7
+          report_paths: '**/build/test-results/**/*.xml'
+          check_name: Android tests
+          annotate_only: true
+          detailed_summary: true
+          failed_summary_logs: true
 
       - name: Both apps compile (assembleDebug)
         if: ${{ !cancelled() }}
@@ -166,5 +170,17 @@ jobs:
 
       # Includes the check of the data files server/data/*.json and of the API samples in server/api-samples.
       - name: API and data files (tests)
+        id: tests
         if: ${{ !cancelled() }}
         run: ./gradlew test
+
+      # As in the Android job.
+      - name: Failed tests
+        if: ${{ failure() && steps.tests.outcome == 'failure' }}
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: 'server/build/test-results/test/*.xml'
+          check_name: Server tests
+          annotate_only: true
+          detailed_summary: true
+          failed_summary_logs: true
