@@ -42,6 +42,9 @@ assertk = "0.28.1"
 turbine = "1.2.1"
 robolectric = "4.17"
 androidxTestCore = "1.7.0"
+roborazzi = "1.76.0"
+composablePreviewScanner = "0.9.3"
+junit = "4.13.2"
 
 [libraries]
 # AndroidX
@@ -86,6 +89,13 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 # Android classes on the JVM, for code that can't run without them (Room).
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+# Screenshot tests generated from the @Preview functions (shoppingapp.android.screenshots).
+# The generated tests are plain JUnit4, and Roborazzi checks that junit:junit is declared.
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+roborazzi-compose-preview-scanner-support = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose-preview-scanner-support", version.ref = "roborazzi" }
+composable-preview-scanner = { group = "io.github.sergio-sastre.ComposablePreviewScanner", name = "android", version.ref = "composablePreviewScanner" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver3", version.ref = "okhttp" }
 
@@ -108,6 +118,8 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 # For build-logic: AGP and Kotlin types the convention plugins use to configure the android and kotlin blocks
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+# For build-logic: the types of the screenshot tests' settings
+roborazzi-gradlePlugin = { group = "io.github.takahirom.roborazzi", name = "roborazzi-gradle-plugin", version.ref = "roborazzi" }
 # For build-logic: the types for the module rules (ModuleGraphRules.kt)
 module-graph-assertion-gradlePlugin = { group = "com.jraska.module.graph.assertion", name = "plugin", version.ref = "moduleGraphAssert" }
 
@@ -123,6 +135,7 @@ room = { id = "androidx.room", version.ref = "room" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 module-graph-assertion = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraphAssert" }
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 
 # Project convention plugins from build-logic
 shoppingapp-android-application = { id = "shoppingapp.android.application" }
@@ -130,4 +143,5 @@ shoppingapp-android-library = { id = "shoppingapp.android.library" }
 shoppingapp-android-compose = { id = "shoppingapp.android.compose" }
 shoppingapp-android-hilt = { id = "shoppingapp.android.hilt" }
 shoppingapp-android-feature = { id = "shoppingapp.android.feature" }
+shoppingapp-android-screenshots = { id = "shoppingapp.android.screenshots" }
 shoppingapp-jvm-library = { id = "shoppingapp.jvm.library" }

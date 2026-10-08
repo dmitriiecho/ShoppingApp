@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.shoppingapp.android.feature)
+    alias(libs.plugins.shoppingapp.android.screenshots)
 }
 
 android {

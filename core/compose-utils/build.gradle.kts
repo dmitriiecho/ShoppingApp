@@ -20,4 +20,7 @@ dependencies {
     testFixturesImplementation(platform(libs.androidx.compose.bom))
     testFixturesImplementation(libs.androidx.compose.runtime)
     testFixturesApi(libs.androidx.compose.foundation)
+    // PausedClockPreviewTester for the screenshot tests.
+    testFixturesImplementation(libs.roborazzi.compose.preview.scanner.support)
+    testFixturesImplementation(libs.androidx.compose.ui.test.junit4)
 }

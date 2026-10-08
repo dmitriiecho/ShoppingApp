@@ -104,7 +104,8 @@ jobs:
         if: ${{ !cancelled() }}
         run: ./gradlew lintDebug
 
-      # Every module's tests, on debug: logic, ViewModels, the database (Robolectric), the API samples.
+      # Every module's tests, on debug: logic, ViewModels, the database (Robolectric), the API samples, and the
+      # screenshots of every @Preview compared with the saved images.
       # --continue: a failed module doesn't stop the others, so the report shows every failing test.
       # The rules for tests are in docs/architecture/en/testing.md.
       - name: Behaviour (unit tests)
@@ -124,6 +125,17 @@ jobs:
           annotate_only: true
           detailed_summary: true
           failed_summary_logs: true
+
+      # A changed screenshot can't be shown in the summary: its saved image, the new one and the difference,
+      # side by side, are attached to the run for a week.
+      - name: Changed screenshots
+        if: ${{ failure() && steps.tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: changed-screenshots
+          path: '**/build/outputs/roborazzi/*_compare.png'
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Both apps compile (assembleDebug)
         if: ${{ !cancelled() }}

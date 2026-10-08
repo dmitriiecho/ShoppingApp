@@ -11,6 +11,8 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     // The same for the module rules: only the types of their extension.
     compileOnly(libs.module.graph.assertion.gradlePlugin)
+    // And the screenshot tests' settings (AndroidScreenshotsConventionPlugin).
+    compileOnly(libs.roborazzi.gradlePlugin)
     // Lets convention plugins use the type-safe libs accessors (gradle/gradle#15383).
     implementation(files(LibrariesForLibs::class.java.protectionDomain.codeSource.location))
 }
@@ -36,6 +38,10 @@ gradlePlugin {
         register("androidFeature") {
             id = libs.plugins.shoppingapp.android.feature.get().pluginId
             implementationClass = "AndroidFeatureConventionPlugin"
+        }
+        register("androidScreenshots") {
+            id = libs.plugins.shoppingapp.android.screenshots.get().pluginId
+            implementationClass = "AndroidScreenshotsConventionPlugin"
         }
         register("jvmLibrary") {
             id = libs.plugins.shoppingapp.jvm.library.get().pluginId
