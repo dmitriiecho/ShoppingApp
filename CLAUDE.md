@@ -34,6 +34,7 @@ The rules below are checked by `./gradlew assertModuleGraph` (also a CI step); t
 - `./gradlew :apps:shop:installDebug` — build and install on the connected device
 - `./gradlew :apps:uikit:installDebug` — build and install the UI kit catalog; in Android Studio it is the run configuration of the `uikit` module
 - `cd server && ./gradlew test` — server tests; `server/deploy.sh` — test, build and restart the deployed server
+- `./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug :apps:shop:assembleDebug :apps:uikit:assembleDebug` — the CI checks locally (CI treats Kotlin and lint warnings as errors); for the server: `cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test`
 - Never run two Gradle builds in the same checkout at once: they share `build/` dirs and corrupt each other's outputs.
 
 Machine-specific setup (SDK paths, emulator access) lives in `CLAUDE.local.md`, if present.
