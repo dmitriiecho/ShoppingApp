@@ -67,6 +67,7 @@ A helper used by tests of **two or more modules** lives in the **test fixtures**
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
+| `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 
@@ -85,6 +86,7 @@ The libraries work in Kotlin Multiplatform, except those for Android-only code:
 | `kotlinx-coroutines-test` | `runTest` and the virtual clock |
 | [Turbine](https://github.com/cashapp/turbine) | a screen's one-off effects: `effects.test { awaitItem() }` |
 | MockWebServer | a local HTTP server for the network code |
+| [Robolectric](https://robolectric.org) | Android classes on the JVM, only for code that can't run without them (Room) |
 
 The runner hides behind `kotlin.test`, so tests look the same though the runners differ: JUnit4 in the app (Robolectric runs only on it), JUnit5 on the server.
 
@@ -119,6 +121,28 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 - **State saved for process death** is checked only when it is a plain value in `SavedStateHandle` (a dialog, the payment method): the same handle is given to a new ViewModel. Text fields are saved through an Android `Bundle`, which a JVM test doesn't have.
 - **A request in progress** is a `CompletableDeferred` the answer waits for: the test changes the cart meanwhile, then completes it.
 - **Analytics events have no `equals`**, so `TestAnalytics.sentEvents` holds their name and params: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
+
+### Database
+
+`databaseTest {}` gives an empty `ShoppingDatabase` in memory. Room needs an Android `Context`, so these test classes run on Robolectric, the one place a test imports `org.junit`:
+
+```kotlin
+@RunWith(RobolectricTestRunner::class)
+class LocalCartDataSourceTest {
+
+    @Test
+    fun `adding a product already in the cart adds to its quantity`() = databaseTest { database ->
+        val cart = cartOf(database)
+        cart.addItem(testProduct(id = "1"), quantity = 2)
+
+        cart.addItem(testProduct(id = "1"), quantity = 3)
+
+        assertThat(cart.current().quantityOf("1")).isEqualTo(5)
+    }
+}
+```
+
+Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` gives every library module's tests that SDK, its resources and the JVM flags Robolectric needs on Java 17+. Without them it would take its oldest SDK, older than the app's `minSdk`. DataStore needs no `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
 
 ### Network
 

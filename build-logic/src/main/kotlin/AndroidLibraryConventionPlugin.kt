@@ -13,6 +13,19 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureAndroid(this)
+                // Robolectric runs unit tests on the targetSdk of the module's merged manifest; a library has none of
+                // its own, so it gets the app's. Without the resources Robolectric sees no manifest and takes its
+                // oldest SDK, older than the app's minSdk.
+                testOptions.targetSdk = AndroidConfig.TARGET_SDK
+                testOptions.unitTests.isIncludeAndroidResources = true
+                // Robolectric reaches into JDK internals; on Java 17+ they have to be opened (robolectric.org).
+                testOptions.unitTests.all { test ->
+                    test.jvmArgs(ROBOLECTRIC_JVM_ARGS)
+                    // With the resources, Hilt's bytecode transform puts the R class among the test classes, so in
+                    // a module with no tests Gradle sees classes without tests and fails. Only a module that has
+                    // tests can have tests that weren't found.
+                    test.failOnNoDiscoveredTests.set(file("src/test").exists())
+                }
                 lint.warningsAsErrors = warningsAsErrors
             }
             configureKotlinWarnings()
@@ -34,3 +47,15 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         }
     }
 }
+
+private val ROBOLECTRIC_JVM_ARGS = listOf(
+    "--add-opens=java.base/java.lang=ALL-UNNAMED",
+    "--add-opens=java.base/java.util=ALL-UNNAMED",
+    "--add-opens=java.base/java.io=ALL-UNNAMED",
+    "--add-opens=java.base/java.net=ALL-UNNAMED",
+    "--add-opens=java.base/java.security=ALL-UNNAMED",
+    "--add-opens=java.base/java.text=ALL-UNNAMED",
+    "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+    "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+    "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+)

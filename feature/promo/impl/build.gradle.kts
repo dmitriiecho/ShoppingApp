@@ -18,6 +18,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":shared:analytics")))
     testImplementation(testFixtures(project(":core:compose-utils")))
+    testImplementation(testFixtures(project(":core:network")))
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.assertk)
     testImplementation(libs.turbine)

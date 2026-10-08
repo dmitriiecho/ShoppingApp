@@ -27,4 +27,11 @@ dependencies {
     implementation(libs.timber)
 
     ksp(libs.androidx.room.compiler)
+
+    testImplementation(testFixtures(project(":shared:domain")))
+    testImplementation(testFixtures(project(":core:network")))
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertk)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
 }

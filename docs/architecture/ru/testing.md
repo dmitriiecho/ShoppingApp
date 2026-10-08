@@ -67,6 +67,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
+| `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 
@@ -85,6 +86,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | `kotlinx-coroutines-test` | `runTest` и виртуальные часы |
 | [Turbine](https://github.com/cashapp/turbine) | разовые эффекты экрана: `effects.test { awaitItem() }` |
 | MockWebServer | локальный HTTP-сервер для сетевого кода |
+| [Robolectric](https://robolectric.org) | классы Android на JVM, только для кода, который без них не работает (Room) |
 
 Раннер скрыт за `kotlin.test`, поэтому тесты выглядят одинаково, хотя раннеры разные: JUnit4 в приложении (Robolectric работает только на нём), JUnit5 на сервере.
 
@@ -119,6 +121,28 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 - **Сохранение на случай смерти процесса** проверяется, только когда это обычное значение в `SavedStateHandle` (диалог, способ оплаты): тот же handle передаётся новой ViewModel. Поля ввода сохраняются через Android `Bundle`, которого в JVM-тесте нет.
 - **Запрос «в процессе»** — это `CompletableDeferred`, которого ждёт ответ: тест тем временем меняет корзину, а потом завершает его.
 - **У событий аналитики нет `equals`**, поэтому `TestAnalytics.sentEvents` хранит их имя и параметры: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
+
+### База данных
+
+`databaseTest {}` даёт пустую `ShoppingDatabase` в памяти. Room нужен Android `Context`, поэтому такие тестовые классы идут на Robolectric — это единственное место, где тест импортирует `org.junit`:
+
+```kotlin
+@RunWith(RobolectricTestRunner::class)
+class LocalCartDataSourceTest {
+
+    @Test
+    fun `adding a product already in the cart adds to its quantity`() = databaseTest { database ->
+        val cart = cartOf(database)
+        cart.addItem(testProduct(id = "1"), quantity = 2)
+
+        cart.addItem(testProduct(id = "1"), quantity = 3)
+
+        assertThat(cart.current().quantityOf("1")).isEqualTo(5)
+    }
+}
+```
+
+Robolectric работает на `targetSdk` приложения: `shoppingapp.android.library` даёт тестам каждого library-модуля этот SDK, его ресурсы и флаги JVM, которые Robolectric нужны на Java 17+. Без них он взял бы свой самый старый SDK, старше `minSdk` приложения. DataStore `Context` не нужен, поэтому настройки проверяются на настоящем DataStore во временном файле, без Robolectric.
 
 ### Сеть
 
