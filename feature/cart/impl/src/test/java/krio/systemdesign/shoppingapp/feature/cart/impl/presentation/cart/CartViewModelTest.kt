@@ -10,6 +10,8 @@ import assertk.assertions.isTrue
 import java.io.IOException
 import kotlin.test.Test
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.test.TestScope
+import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
@@ -43,11 +45,9 @@ class CartViewModelTest {
         cartRepository.validationAnswer = { invalid(ItemIssue.PriceChanged("1", newPrice = 1200)) }
         val viewModel = cartViewModel()
 
-        viewModel.uiState.test {
-            viewModel.onEvent(CartEvent.OnScreenShown)
+        viewModel.onEvent(CartEvent.OnScreenShown)
 
-            assertThat(expectMostRecentItem().loaded().changes.priceChangeCount).isEqualTo(1)
-        }
+        assertThat(viewModel.uiState.value.loaded().changes.priceChangeCount).isEqualTo(1)
     }
 
     @Test
@@ -154,9 +154,7 @@ class CartViewModelTest {
 
         val recreated = cartViewModel(savedStateHandle)
 
-        recreated.uiState.test {
-            assertThat(expectMostRecentItem().isClearCartDialogVisible).isTrue()
-        }
+        assertThat(recreated.uiState.value.isClearCartDialogVisible).isTrue()
     }
 
     @Test
@@ -201,7 +199,7 @@ class CartViewModelTest {
         assertThat(analytics.sentEvents).isEmpty()
     }
 
-    private fun cartViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) = CartViewModel(
+    private fun TestScope.cartViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) = CartViewModel(
         observeCart = ObserveCartUseCase(cartRepository),
         updateCartQuantity = UpdateCartQuantityUseCase(cartRepository),
         removeFromCart = RemoveFromCartUseCase(cartRepository),
@@ -212,7 +210,7 @@ class CartViewModelTest {
         clearCartItems = ClearCartItemsUseCase(cartRepository),
         analytics = analytics.analytics,
         savedStateHandle = savedStateHandle,
-    )
+    ).also { keepCollecting(it.uiState) }
 
     private fun invalid(vararg issues: ItemIssue) =
         CartValidationResult.Invalid(issues.toList(), isPromoCodeValid = true)

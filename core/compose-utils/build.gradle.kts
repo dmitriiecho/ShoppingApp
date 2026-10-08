@@ -16,7 +16,8 @@ dependencies {
 
     // viewModelTest: runTest with Dispatchers.Main, where viewModelScope runs, replaced by the test dispatcher.
     testFixturesApi(libs.kotlinx.coroutines.test)
-    // The module's Compose compiler plugin compiles the fixtures too and needs the runtime on their classpath.
-    testFixturesCompileOnly(platform(libs.androidx.compose.bom))
-    testFixturesCompileOnly(libs.androidx.compose.runtime)
+    // typeText: types into a TextFieldState and applies the snapshot.
+    testFixturesImplementation(platform(libs.androidx.compose.bom))
+    testFixturesImplementation(libs.androidx.compose.runtime)
+    testFixturesApi(libs.androidx.compose.foundation)
 }

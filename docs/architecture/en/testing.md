@@ -54,6 +54,7 @@ Everything made for tests starts with `Test` or `test`, as in Now in Android. Th
 | Stand-in implementation | `Test` + what it replaces | `TestAnalyticsClient` |
 | Data builder | `test` + the model | `testCartItem()`, `testCart()` |
 | Entry function of a test kind | kind + `Test` | `networkTest {}`, `serverTest {}` |
+| Action a test does | a verb | `typeText()`, `keepCollecting()` |
 
 The one exception to the first row: the server's check of its `data/` files is `DataFilesTest`, since those are data, not code.
 
@@ -64,9 +65,10 @@ A helper used by tests of **two or more modules** lives in the **test fixtures**
 | `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
-| `viewModelTest {}` | `:core:compose-utils` | `src/testFixtures` |
+| `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}` | `:core:network` | `src/testFixtures` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
+| `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 
 A module uses another module's fixtures with `testImplementation(testFixtures(project(":shared:domain")))`. Fixtures see only the public API of their module. The [module graph check](modules.md#the-check) looks at `api` and `implementation` only, so test dependencies follow the levels by convention, not by the check.
 
@@ -81,7 +83,7 @@ The libraries work in Kotlin Multiplatform, except those for Android-only code:
 | `kotlin.test` | `@Test` and the other annotations; tests don't import `org.junit` |
 | [AssertK](https://github.com/assertk-org/assertk) | every check: `assertThat(actual).isEqualTo(expected)`, `isInstanceOf<T>()` narrows the type, `assertFailure {}` |
 | `kotlinx-coroutines-test` | `runTest` and the virtual clock |
-| [Turbine](https://github.com/cashapp/turbine) | every Flow: a screen's state and effects are checked with `test {}` |
+| [Turbine](https://github.com/cashapp/turbine) | a screen's one-off effects: `effects.test { awaitItem() }` |
 | MockWebServer | a local HTTP server for the network code |
 
 The runner hides behind `kotlin.test`, so tests look the same though the runners differ: JUnit4 in the app (Robolectric runs only on it), JUnit5 on the server.
@@ -111,6 +113,10 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 ```
 
 - **The ViewModel is created inside `viewModelTest {}`**, after `Dispatchers.Main` is replaced.
+- **The state is kept collected, as the screen does**: `keepCollecting(viewModel.uiState)` right after creating it, then the test reads `viewModel.uiState.value`. A `stateIn(WhileSubscribed)` flow with no collector keeps its initial value. Effects are one-off, so they are checked with Turbine.
+- **Typing goes through `typeText()`**: on a device Compose applies a field's change on the next frame, a test has no frames.
+- **Time is virtual**: `advanceTimeBy()` moves it past a debounce or an animation without waiting.
+- **State saved for process death** is checked only when it is a plain value in `SavedStateHandle` (a dialog, the payment method): the same handle is given to a new ViewModel. Text fields are saved through an Android `Bundle`, which a JVM test doesn't have.
 - **A request in progress** is a `CompletableDeferred` the answer waits for: the test changes the cart meanwhile, then completes it.
 - **Analytics events have no `equals`**, so `TestAnalytics.sentEvents` holds their name and params: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
 
