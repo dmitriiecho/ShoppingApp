@@ -185,9 +185,13 @@ Every `@Preview` is a screenshot test: nobody writes them. `shoppingapp.android.
 These tests don't say whether a screen looks right: they catch changes nobody asked for. So the images are recorded only by a person, on purpose, after a change to the UI:
 
 1. Change the UI.
-2. Record: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`.
-3. Look at which images changed (`git status`, or the images in the IDE): only those of the screens you meant to change. Thirty changed images after a change to one button is the problem to look into.
-4. Commit them with the code; the pull request shows each one's old and new version side by side.
+2. Check that only what you meant changed, in either of two ways:
+   - **test first**: `./gradlew test`. Only the previews you meant to change fail, and each one's `build/outputs/roborazzi/…_compare.png` marks in red only what you meant; it shows a shift of a pixel or two that two images side by side hide;
+   - **record first**: record (step 3), then look at which images changed (`git status`, or the images in the IDE). Quicker, one run instead of two, but the old image is already overwritten, so there is no comparison image.
+
+   Either way, thirty changed images after a change to one button is the problem to look into.
+3. Record, if not done yet: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`.
+4. Commit the images with the code; the pull request shows each one's old and new version side by side.
 
 > [!IMPORTANT]
 > If you didn't mean to change how the app looks, don't record. A failed screenshot test is then a found problem: a padding that moved in a refactor, a library update that changed the buttons, a shared component that touched another screen. CI never records images.
