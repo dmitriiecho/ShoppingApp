@@ -186,11 +186,11 @@ onQuantityChange: (productId: String, quantity: Int) -> Unit
 
 ## Wide screens
 
-Phones show the app upright only, but Android 16+ rotates it anyway on screens 600 dp and wider: tablets, unfolded foldables, desktop windows. So a screen lays out for the width:
+Phones show the app upright only, by design. Android 16+ rotates it anyway on screens 600 dp and wider: tablets, unfolded foldables, desktop windows. So a screen lays out for the width:
 
 - **Content stays a column** of `ContentMaxWidth` (600 dp) in the middle, with `Modifier.contentWidth()` from `:core:designsystem`. It goes inside the scrolling container, so the screen also scrolls beside the column.
+- **The top bar lines up with the column**, with `Modifier.contentBarWidth()`: as wide as the column with the screen padding around it, so the title and the buttons sit over the content's edges as on a phone.
 - **The product screen held sideways** puts the image and the details side by side: below a square image the details would start off the screen.
-- **Landscape on a phone** isn't laid out yet: on the low screen the bottom bars of the cart and checkout leave little room for the content.
 
 &nbsp;
 
