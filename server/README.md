@@ -72,7 +72,7 @@ One code, or 404. Ignores case and surrounding spaces: `sale10` returns `SALE10`
 
 ### `GET /images/{file}`
 
-A file from `data/images/`. A product's `imageUrl` points here.
+A file from `data/images/`. A product's `imageUrl` points here: the server's address (`PUBLIC_URL`), `/images/` and the product's `image`.
 
 ### `POST /cart/validate`
 
@@ -125,6 +125,7 @@ The JSON files are read once at startup: after an edit, run `./deploy.sh`. Image
 - **`availableQuantity`** is never negative.
 - **`discountPercent`** is from 1 to 100 and never changes: a different discount gets a new code.
 - **A removed promo code** stops working: an app that applied it finds out at cart validation.
+- **`image`** is the file's name in `data/images/`, `<id>.png`. The address isn't stored: it depends on where the server runs.
 - **Product `3` (USB-C Hub) has no image file** on purpose: the app shows on it what it draws when an image fails to load. Every other product has its `<id>.png`; `DataFilesTest` checks both.
 
 The server refuses to start on duplicate ids or codes, a JSON error or an unknown field, and the tests catch these at build time.
@@ -146,10 +147,12 @@ The app's settings have items that put a copy of a product in the cart to show a
 
 ```sh
 ./gradlew test            # tests, including reading the files in data/
-./gradlew run             # run locally on port 8080 with data/
+./gradlew run             # run locally on port 8080 with data/; image addresses start with http://localhost:8080
 ./gradlew spotlessCheck   # code style (rules in the root .editorconfig); spotlessApply fixes it
 ./deploy.sh               # test, build and restart the server on this machine
 ```
+
+`deploy.sh` gives the server `PORT`, `DATA_DIR` and `PUBLIC_URL`, the address the app reaches it at (`ServerConfig.BASE_URL` in `core/config`).
 
 On the machine, the server is the user systemd service `shoppingapp-server`. It runs from a copy in `~/server/shoppingapp`, so a new build doesn't touch the running version. It starts by itself after a reboot and needs no sudo.
 

@@ -2,7 +2,7 @@
   "id": "1",
   "name": "Red Mug",
   "price": 1299,
-  "imageUrl": "http://2.56.204.151:8080/images/1.png",
+  "imageUrl": "http://localhost:8080/images/1.png",
   "description": "A red ceramic mug.",
   "availableQuantity": 12
 }

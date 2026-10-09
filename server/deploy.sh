@@ -9,6 +9,8 @@ INSTALL_DIR="$HOME/server/shoppingapp"
 SERVICE=shoppingapp-server
 # The ports of all servers on this machine are listed in ~/server/README.md.
 PORT=8080
+# The address the app reaches the server at (ServerConfig.BASE_URL in core/config); image addresses start with it.
+PUBLIC_URL="http://2.56.204.151:$PORT"
 
 : "${JAVA_HOME:?JAVA_HOME must point to JDK 21: the server builds and runs on it}"
 
@@ -31,6 +33,7 @@ Description=ShoppingApp server
 Environment=JAVA_HOME=$JAVA_HOME
 Environment=PORT=$PORT
 Environment=DATA_DIR=$INSTALL_DIR/data
+Environment=PUBLIC_URL=$PUBLIC_URL
 ExecStart=$INSTALL_DIR/app/bin/server
 Restart=on-failure
 RestartSec=5

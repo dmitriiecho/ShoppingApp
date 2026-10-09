@@ -77,7 +77,7 @@ class ProductRepositoryImplTest {
         id = "1",
         name = "Red Mug",
         price = 1299,
-        imageUrl = "http://2.56.204.151:8080/images/1.png",
+        imageUrl = "http://localhost:8080/images/1.png",
         description = "A red ceramic mug.",
         availableQuantity = 12,
     )
@@ -85,7 +85,7 @@ class ProductRepositoryImplTest {
         id = "2",
         name = "Blue Mug",
         price = 1000,
-        imageUrl = "http://2.56.204.151:8080/images/2.png",
+        imageUrl = "http://localhost:8080/images/2.png",
         description = "A blue ceramic mug.",
         availableQuantity = 2,
     )

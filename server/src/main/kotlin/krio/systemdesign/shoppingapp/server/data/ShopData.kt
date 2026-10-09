@@ -4,12 +4,11 @@ import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
 // Read once at startup: an edited data file takes effect after a redeploy.
 class ShopData(
-    val products: List<ProductDTO>,
+    val products: List<Product>,
     val promoCodes: List<PromoCodeDTO>,
 ) {
     init {

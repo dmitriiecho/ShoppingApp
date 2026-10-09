@@ -19,10 +19,10 @@ import kotlin.io.path.writeBytes
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import krio.systemdesign.shoppingapp.server.data.Product
 import krio.systemdesign.shoppingapp.server.data.ShopData
 import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
 import krio.systemdesign.shoppingapp.server.dto.CartValidationRequestDTO
-import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
 // The server in memory on the test's data and product images (file name to content), with a client that reads
@@ -36,7 +36,7 @@ fun serverTest(
     try {
         images.forEach { (name, content) -> imagesDir.resolve(name).writeBytes(content) }
         testApplication {
-            application { module(data, imagesDir) }
+            application { module(data, imagesDir, TEST_PUBLIC_URL) }
             block(createClient { install(ContentNegotiation) { json(serverJson) } })
         }
     } finally {
@@ -44,8 +44,11 @@ fun serverTest(
     }
 }
 
+// The server's address in tests, the same as in the API samples' image addresses.
+const val TEST_PUBLIC_URL = "http://localhost:8080"
+
 fun testShopData(
-    products: List<ProductDTO> = emptyList(),
+    products: List<Product> = emptyList(),
     promoCodes: List<PromoCodeDTO> = emptyList(),
 ) = ShopData(products = products, promoCodes = promoCodes)
 
@@ -54,12 +57,13 @@ fun testProduct(
     name: String = "Product $id",
     price: Long = 1000,
     availableQuantity: Int = 10,
-) = ProductDTO(
+    description: String = "",
+) = Product(
     id = id,
     name = name,
     price = price,
-    imageUrl = "https://example.com/$id.png",
-    description = "",
+    image = "$id.png",
+    description = description,
     availableQuantity = availableQuantity,
 )
 

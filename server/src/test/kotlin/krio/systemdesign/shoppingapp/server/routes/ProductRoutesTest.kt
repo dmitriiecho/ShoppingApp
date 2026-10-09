@@ -4,12 +4,15 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
+import assertk.assertions.isTrue
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlin.test.Test
 import kotlinx.serialization.json.decodeFromJsonElement
+import krio.systemdesign.shoppingapp.server.TEST_PUBLIC_URL
 import krio.systemdesign.shoppingapp.server.apiSample
 import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.ProductsPageDTO
@@ -27,21 +30,24 @@ class ProductRoutesTest {
     fun `page holds the requested number of products in file order`() = serverTest(threeProducts) { client ->
         val page = client.get("/products?query=&page=1&pageSize=2").body<ProductsPageDTO>()
 
-        assertThat(page).isEqualTo(ProductsPageDTO(listOf(testProduct("1"), testProduct("2")), endReached = false))
+        assertThat(page.products.map { it.id }).containsExactly("1", "2")
+        assertThat(page.endReached).isFalse()
     }
 
     @Test
     fun `last page is marked as the end`() = serverTest(threeProducts) { client ->
         val page = client.get("/products?query=&page=2&pageSize=2").body<ProductsPageDTO>()
 
-        assertThat(page).isEqualTo(ProductsPageDTO(listOf(testProduct("3")), endReached = true))
+        assertThat(page.products.map { it.id }).containsExactly("3")
+        assertThat(page.endReached).isTrue()
     }
 
     @Test
     fun `page past the end is empty and marked as the end`() = serverTest(threeProducts) { client ->
         val page = client.get("/products?query=&page=3&pageSize=2").body<ProductsPageDTO>()
 
-        assertThat(page).isEqualTo(ProductsPageDTO(emptyList(), endReached = true))
+        assertThat(page.products).isEmpty()
+        assertThat(page.endReached).isTrue()
     }
 
     @Test
@@ -76,7 +82,15 @@ class ProductRoutesTest {
     fun `product is found by id`() = serverTest(threeProducts) { client ->
         val product = client.get("/products/2").body<ProductDTO>()
 
-        assertThat(product).isEqualTo(testProduct("2"))
+        assertThat(product.id).isEqualTo("2")
+    }
+
+    // The data holds only the file name: where the server runs decides the address.
+    @Test
+    fun `product image address is the image file on this server`() = serverTest(threeProducts) { client ->
+        val product = client.get("/products/2").body<ProductDTO>()
+
+        assertThat(product.imageUrl).isEqualTo("$TEST_PUBLIC_URL/images/2.png")
     }
 
     @Test
@@ -103,7 +117,7 @@ class ProductRoutesTest {
 
     // The sample page's products and one more, so that the page isn't the last.
     private fun samplePageData() = testShopData(
-        products = serverJson.decodeFromJsonElement<ProductsPageDTO>(apiSample("products-page.json")).products +
-            testProduct("3"),
+        products = serverJson.decodeFromJsonElement<ProductsPageDTO>(apiSample("products-page.json")).products
+            .map { testProduct(it.id, it.name, it.price, it.availableQuantity, it.description) } + testProduct("3"),
     )
 }

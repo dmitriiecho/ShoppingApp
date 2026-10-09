@@ -240,7 +240,7 @@ private fun ProductCardCartSingleIssuePreview() {
             ) {
                 ProductCard(
                     name = "USB-C Hub",
-                    imageUrl = "http://2.56.204.151:8080/images/3.png",
+                    imageUrl = "",
                     price = formatPrice(2_999L),
                     onClick = {},
                     unitPrice = formatPrice(2_999L),
@@ -263,7 +263,7 @@ private fun ProductCardCartSingleIssuePreview() {
                 }
                 ProductCard(
                     name = "Cutting Board",
-                    imageUrl = "http://2.56.204.151:8080/images/40.png",
+                    imageUrl = "",
                     price = formatPrice(4_900L),
                     onClick = {},
                     unitPrice = formatPrice(4_900L),
@@ -317,7 +317,7 @@ private fun ProductCardCartMultipleIssuesPreview() {
         Surface {
             ProductCard(
                 name = "Notebook",
-                imageUrl = "http://2.56.204.151:8080/images/32.png",
+                imageUrl = "",
                 price = formatPrice(995L * 10),
                 onClick = {},
                 modifier = Modifier.padding(8.dp),

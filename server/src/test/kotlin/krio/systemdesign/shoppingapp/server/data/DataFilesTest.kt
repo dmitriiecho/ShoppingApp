@@ -23,9 +23,6 @@ class DataFilesTest {
     private val dataDir = Path("data")
     private val data = ShopData.load(dataDir)
 
-    // Products whose imageUrl points to this server's /images/, not to an outside host.
-    private val hostedImageProducts = data.products.filter { "/images/" in it.imageUrl }
-
     @Test
     fun `data files hold products and promo codes`() {
         assertThat(data.products).isNotEmpty()
@@ -33,19 +30,17 @@ class DataFilesTest {
     }
 
     @Test
-    fun `hosted image is named after its product`() {
-        val misnamed = hostedImageProducts.filter {
-            it.imageUrl.substringAfterLast('/').substringBefore('?') != "${it.id}.png"
-        }
+    fun `image is named after its product`() {
+        val misnamed = data.products.filter { it.image != "${it.id}.png" }
 
         assertThat(misnamed).isEmpty()
     }
 
     @Test
-    fun `every hosted image has a file except the hub's`() {
-        val missing = hostedImageProducts
+    fun `every image has a file except the hub's`() {
+        val missing = data.products
             .filter { it.id != HUB_ID }
-            .filterNot { dataDir.resolve("images/${it.id}.png").exists() }
+            .filterNot { dataDir.resolve("images/${it.image}").exists() }
 
         assertThat(missing).isEmpty()
     }
