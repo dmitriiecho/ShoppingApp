@@ -51,6 +51,6 @@ The main libraries and tools:
 | Navigation | Navigation Compose with type-safe routes |
 | Data | Room, DataStore, Paging 3 |
 | Network | Retrofit, OkHttp, kotlinx.serialization, Coil for images |
-| Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; minSdk 26, targetSdk 36, compileSdk 37 |
+| Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; minSdk 26, targetSdk 37, compileSdk 37 |
 | Server | Ktor 3.6, data in JSON files |
 | Tests | kotlin.test, AssertK, kotlinx-coroutines-test, Turbine, MockWebServer, Robolectric, Roborazzi with ComposablePreviewScanner |
