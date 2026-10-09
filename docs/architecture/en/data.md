@@ -120,7 +120,10 @@ The cart and the settings are stored on the device:
 | Room (`shopping.db`) | cart items and the applied promo code; the schema is exported to `shared/data/schemas/` |
 | DataStore Preferences | the theme and the request delay from the settings |
 
-The app isn't released, so schema changes need no migrations yet: on a schema change a debug build recreates the database.
+The app isn't released, so a schema change needs no migration yet:
+
+- **Every schema change bumps `version`** in `ShoppingDatabase`. Room recreates the database only when the version changes: with the old version and a new schema it stops with an error.
+- **A new version recreates the database** in every build, debug and release alike: the cart and the promo code are lost, the app keeps working. The release APK from the README is installed over older ones too.
 
 &nbsp;
 

@@ -13,7 +13,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import krio.systemdesign.shoppingapp.shared.data.BuildConfig
 import krio.systemdesign.shoppingapp.shared.data.api.CartApi
 import krio.systemdesign.shoppingapp.shared.data.database.ShoppingDatabase
 import krio.systemdesign.shoppingapp.shared.data.database.dao.AppliedPromoCodeDao
@@ -29,11 +28,9 @@ internal object DataModule {
     fun provideDatabase(@ApplicationContext context: Context): ShoppingDatabase =
         Room.databaseBuilder(context, ShoppingDatabase::class.java, DATABASE_NAME)
             .setQueryCoroutineContext(Dispatchers.IO)
-            .apply {
-                if (BuildConfig.DEBUG) {
-                    fallbackToDestructiveMigration(dropAllTables = true)
-                }
-            }
+            // No migrations before the first release: a new database version recreates the database, losing
+            // the cart. Room does it only when the version changes, so every schema change bumps it.
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
     @Provides

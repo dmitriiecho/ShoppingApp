@@ -7,10 +7,6 @@ plugins {
 
 android {
     namespace = "krio.systemdesign.shoppingapp.shared.data"
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 room {
