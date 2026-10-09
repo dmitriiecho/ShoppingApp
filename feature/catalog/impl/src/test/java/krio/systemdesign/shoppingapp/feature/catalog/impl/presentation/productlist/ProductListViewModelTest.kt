@@ -24,6 +24,7 @@ import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.ProductsSear
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.TestProductRepository
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.usecase.GetProductsUseCase
+import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.ProductListViewModel.Companion.PAGE_SIZE
 import krio.systemdesign.shoppingapp.shared.analytics.TestAnalytics
 import krio.systemdesign.shoppingapp.shared.analytics.sent
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
@@ -53,7 +54,7 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel()
 
         viewModel.uiState.value.searchQuery.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS - 1)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS - 1)
 
         assertThat(productRepository.pageRequests).containsExactly("" to 1)
     }
@@ -63,7 +64,7 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel()
 
         viewModel.uiState.value.searchQuery.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
         assertThat(productRepository.pageRequests).containsExactly("" to 1, "mug" to 1)
@@ -74,11 +75,11 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel()
         val field = viewModel.uiState.value.searchQuery
         field.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
         field.typeText(" mug ")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
         assertThat(productRepository.pageRequests).containsExactly("" to 1, "mug" to 1)
@@ -89,7 +90,7 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel()
 
         viewModel.uiState.value.searchQuery.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
         assertThat(analytics.sentEvents).containsExactly(ProductsSearchedAnalyticsEvent(queryLength = 3).sent())
@@ -122,7 +123,7 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel(savedStateHandle)
 
         viewModel.uiState.value.searchQuery.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
         assertThat(productRepository.pageRequests).containsExactly("" to 1, "" to 3, "mug" to 1)
@@ -150,11 +151,5 @@ class ProductListViewModelTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             products.collectLatest(presenter::collectFrom)
         }
-    }
-
-    private companion object {
-        // SEARCH_DEBOUNCE_MS and PAGE_SIZE in ProductListViewModel.kt.
-        const val SEARCH_DEBOUNCE_MILLIS = 300L
-        const val PAGE_SIZE = 10
     }
 }

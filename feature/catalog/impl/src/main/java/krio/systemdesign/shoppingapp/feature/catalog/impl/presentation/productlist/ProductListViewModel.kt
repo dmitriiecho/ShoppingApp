@@ -175,11 +175,11 @@ internal class ProductListViewModel @Inject constructor(
         pagingSourceFactory = { ProductPagingSource(getProducts, query, PAGE_SIZE) },
     )
 
-    private companion object {
-        const val KEY_SEARCH_QUERY = "search_query"
-        const val KEY_FIRST_VISIBLE_PAGE = "first_visible_page"
+    companion object {
+        private const val KEY_SEARCH_QUERY = "search_query"
+        private const val KEY_FIRST_VISIBLE_PAGE = "first_visible_page"
         const val PAGE_SIZE = 10
-        const val PREFETCH_DISTANCE = 3
+        private const val PREFETCH_DISTANCE = 3
     }
 }
 
@@ -191,4 +191,4 @@ private fun Flow<String>.searchTerms(): Flow<String> = this
     .debounce { if (it.isEmpty()) 0L else SEARCH_DEBOUNCE_MS }
     .distinctUntilChanged()
 
-private const val SEARCH_DEBOUNCE_MS = 300L
+internal const val SEARCH_DEBOUNCE_MS = 300L
