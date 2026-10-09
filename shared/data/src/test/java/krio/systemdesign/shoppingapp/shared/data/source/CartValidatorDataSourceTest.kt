@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.core.network.apiRequest
 import krio.systemdesign.shoppingapp.core.network.apiSample
 import krio.systemdesign.shoppingapp.core.network.networkJson
 import krio.systemdesign.shoppingapp.core.network.networkTest
@@ -62,7 +63,17 @@ class CartValidatorDataSourceTest {
     }
 
     @Test
-    fun `cart is sent as in the API sample`() = networkTest<CartApi> { server, api ->
+    fun `cart is sent to the address in the API sample`() = networkTest<CartApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("cart-validation-response.json").toString()).build())
+
+        CartValidatorDataSource(api).validate(sampleCart)
+
+        val request = server.takeRequest()
+        assertThat("${request.method} ${request.target}").isEqualTo(apiRequest("cart-validation"))
+    }
+
+    @Test
+    fun `cart is sent with the body in the API sample`() = networkTest<CartApi> { server, api ->
         server.enqueue(MockResponse.Builder().body(apiSample("cart-validation-response.json").toString()).build())
 
         CartValidatorDataSource(api).validate(sampleCart)

@@ -11,6 +11,7 @@ import kotlin.test.Test
 import kotlinx.serialization.json.decodeFromJsonElement
 import krio.systemdesign.shoppingapp.server.apiSample
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
+import krio.systemdesign.shoppingapp.server.sendApiRequest
 import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest
 import krio.systemdesign.shoppingapp.server.testShopData
@@ -55,14 +56,14 @@ class PromoCodeRoutesTest {
 
     @Test
     fun `promo code is written as in the API sample`() = serverTest(samplePromoCodes()) { client ->
-        val response = client.get("/promo-codes/SALE10")
+        val response = client.sendApiRequest("promo-code")
 
         assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("promo-code.json"))
     }
 
     @Test
     fun `promo codes are written as in the API sample`() = serverTest(samplePromoCodes()) { client ->
-        val response = client.get("/promo-codes")
+        val response = client.sendApiRequest("promo-codes")
 
         assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("promo-codes.json"))
     }

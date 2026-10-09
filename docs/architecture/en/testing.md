@@ -164,14 +164,14 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
 
 ### Contract with the server
 
-The app and the server each describe the API's JSON in their own DTOs. What keeps them in step is [`server/api-samples/`](../../../server/api-samples/): one JSON file per request or answer the app relies on. `apiSample("product.json")` reads one on both sides, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter but a renamed, extra or missing field does:
+The app and the server each describe the API's JSON in their own DTOs. What keeps them in step is [`server/api-samples/`](../../../server/api-samples/): one JSON file per request or answer the app relies on. `apiSample("product.json")` reads one on both sides, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter but a renamed, extra or missing field does. Where each request goes is in `requests.json`, as the method and the address: `"product": "GET /products/1"` is the request answered by `product.json`.
 
 | Side | Checks |
 |---|---|
-| Server | it accepts the request samples and answers exactly like the answer samples |
-| App | it sends requests exactly like the request samples and reads the answer samples into the expected models |
+| Server | it accepts the request samples at their addresses and answers exactly like the answer samples |
+| App | it sends requests exactly like the request samples, to their addresses, and reads the answer samples into the expected models |
 
-A format change on one side fails that side's tests, until the sample, and then the other side, are changed too. The build declares the folder as an input of every test task, so an edited sample runs the tests again.
+A change of a format or an address on one side fails that side's tests, until the sample, and then the other side, are changed too. The build declares the folder as an input of every test task, so an edited sample runs the tests again.
 
 ### Screenshots
 

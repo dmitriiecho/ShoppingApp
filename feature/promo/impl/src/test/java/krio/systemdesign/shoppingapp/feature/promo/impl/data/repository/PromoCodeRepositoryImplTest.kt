@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isTrue
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.core.network.apiRequest
 import krio.systemdesign.shoppingapp.core.network.apiSample
 import krio.systemdesign.shoppingapp.core.network.networkTest
 import krio.systemdesign.shoppingapp.feature.promo.impl.data.api.PromoApi
@@ -56,12 +57,32 @@ class PromoCodeRepositoryImplTest {
     }
 
     @Test
+    fun `promo code is requested as in the API sample`() = networkTest<PromoApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("promo-code.json").toString()).build())
+
+        PromoCodeRepositoryImpl(api).checkPromoCode("SALE10")
+
+        val request = server.takeRequest()
+        assertThat("${request.method} ${request.target}").isEqualTo(apiRequest("promo-code"))
+    }
+
+    @Test
     fun `promo code from the API sample is read`() = networkTest<PromoApi> { server, api ->
         server.enqueue(MockResponse.Builder().body(apiSample("promo-code.json").toString()).build())
 
         val result = PromoCodeRepositoryImpl(api).checkPromoCode("sale10")
 
         assertThat(result).isEqualTo(PromoCodeCheckResult.Valid(PromoCode("SALE10", 10)))
+    }
+
+    @Test
+    fun `promo codes are requested as in the API sample`() = networkTest<PromoApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("promo-codes.json").toString()).build())
+
+        PromoCodeRepositoryImpl(api).getPromoCodes()
+
+        val request = server.takeRequest()
+        assertThat("${request.method} ${request.target}").isEqualTo(apiRequest("promo-codes"))
     }
 
     @Test

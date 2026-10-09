@@ -5,6 +5,8 @@ import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import mockwebserver3.MockWebServer
 import retrofit2.Retrofit
 
@@ -26,3 +28,7 @@ inline fun <reified T : Any> networkTest(
 // A sample from server/api-samples: the JSON the app and the server agree on. The server's tests read the same files.
 fun apiSample(name: String): JsonElement =
     networkJson.parseToJsonElement(File(System.getProperty("apiSamplesDir"), name).readText())
+
+// A request from server/api-samples/requests.json, as the method and the target: "GET /products/1".
+// The server's tests send the same requests.
+fun apiRequest(name: String): String = apiSample("requests.json").jsonObject.getValue(name).jsonPrimitive.content

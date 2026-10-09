@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.core.network.apiRequest
 import krio.systemdesign.shoppingapp.core.network.apiSample
 import krio.systemdesign.shoppingapp.core.network.networkTest
 import krio.systemdesign.shoppingapp.feature.catalog.impl.data.api.ProductApi
@@ -34,12 +35,32 @@ class ProductRepositoryImplTest {
     }
 
     @Test
+    fun `product is requested as in the API sample`() = networkTest<ProductApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("product.json").toString()).build())
+
+        ProductRepositoryImpl(api).getProduct("1")
+
+        val request = server.takeRequest()
+        assertThat("${request.method} ${request.target}").isEqualTo(apiRequest("product"))
+    }
+
+    @Test
     fun `product from the API sample is read`() = networkTest<ProductApi> { server, api ->
         server.enqueue(MockResponse.Builder().body(apiSample("product.json").toString()).build())
 
         val result = ProductRepositoryImpl(api).getProduct("1")
 
         assertThat(result).isEqualTo(ProductLoadResult.Success(redMug))
+    }
+
+    @Test
+    fun `page is requested as in the API sample`() = networkTest<ProductApi> { server, api ->
+        server.enqueue(MockResponse.Builder().body(apiSample("products-page.json").toString()).build())
+
+        ProductRepositoryImpl(api).getProducts(query = "", page = 1, pageSize = 2)
+
+        val request = server.takeRequest()
+        assertThat("${request.method} ${request.target}").isEqualTo(apiRequest("products-page"))
     }
 
     @Test

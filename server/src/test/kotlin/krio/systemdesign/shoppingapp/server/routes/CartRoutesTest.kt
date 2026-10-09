@@ -19,6 +19,7 @@ import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
 import krio.systemdesign.shoppingapp.server.dto.CartValidationResponseDTO
 import krio.systemdesign.shoppingapp.server.dto.ItemIssueDTO
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
+import krio.systemdesign.shoppingapp.server.sendApiRequest
 import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest
 import krio.systemdesign.shoppingapp.server.testProduct
@@ -136,10 +137,7 @@ class CartRoutesTest {
             promoCodes = listOf(PromoCodeDTO("SALE10", 10)),
         ),
     ) { client ->
-        val response = client.post("/cart/validate") {
-            contentType(ContentType.Application.Json)
-            setBody(apiSample("cart-validation-request.json").toString())
-        }
+        val response = client.sendApiRequest("cart-validation", body = apiSample("cart-validation-request.json"))
 
         assertThat(serverJson.parseToJsonElement(response.bodyAsText()))
             .isEqualTo(apiSample("cart-validation-response.json"))
