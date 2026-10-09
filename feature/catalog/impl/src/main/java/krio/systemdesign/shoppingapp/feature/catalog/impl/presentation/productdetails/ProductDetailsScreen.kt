@@ -1,7 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

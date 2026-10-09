@@ -1,6 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout
 
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

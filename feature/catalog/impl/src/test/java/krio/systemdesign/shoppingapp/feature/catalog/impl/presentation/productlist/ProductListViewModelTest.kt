@@ -6,8 +6,6 @@ import androidx.paging.PagingDataEvent
 import androidx.paging.PagingDataPresenter
 import assertk.assertThat
 import assertk.assertions.containsExactly
-import assertk.assertions.isEmpty
-import assertk.assertions.isEqualTo
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
