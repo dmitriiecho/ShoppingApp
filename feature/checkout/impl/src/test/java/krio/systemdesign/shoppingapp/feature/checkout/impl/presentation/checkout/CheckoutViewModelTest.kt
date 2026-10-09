@@ -120,9 +120,8 @@ class CheckoutViewModelTest {
     @Test
     fun `payment method stays chosen when the screen is recreated`() = viewModelTest {
         val savedStateHandle = SavedStateHandle()
-        checkoutViewModel(
-            savedStateHandle,
-        ).onEvent(CheckoutEvent.OnPaymentMethodChange(CheckoutUiState.PaymentMethod.Cash))
+        val choosingCash = CheckoutEvent.OnPaymentMethodChange(CheckoutUiState.PaymentMethod.Cash)
+        checkoutViewModel(savedStateHandle).onEvent(choosingCash)
 
         val recreated = checkoutViewModel(savedStateHandle)
 

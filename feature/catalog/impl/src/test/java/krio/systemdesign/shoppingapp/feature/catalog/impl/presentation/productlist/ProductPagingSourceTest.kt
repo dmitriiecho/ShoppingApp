@@ -83,9 +83,9 @@ class ProductPagingSourceTest {
 
         val result = source.load(PagingSource.LoadParams.Refresh(key = 1, loadSize = 2, placeholdersEnabled = true))
 
-        assertThat(
-            result,
-        ).isInstanceOf<LoadResult.Error<Int, Product>>().prop(LoadResult.Error<Int, Product>::throwable)
+        assertThat(result)
+            .isInstanceOf<LoadResult.Error<Int, Product>>()
+            .prop(LoadResult.Error<Int, Product>::throwable)
             .isEqualTo(error)
     }
 

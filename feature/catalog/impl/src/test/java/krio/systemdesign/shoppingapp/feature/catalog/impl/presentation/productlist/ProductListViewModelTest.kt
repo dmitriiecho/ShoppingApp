@@ -99,12 +99,8 @@ class ProductListViewModelTest {
     @Test
     fun `reopened list starts at the page the user stopped at`() = viewModelTest {
         val savedStateHandle = SavedStateHandle()
-        productListViewModel(savedStateHandle).onEvent(
-            ProductListEvent.OnFirstVisibleItemChange(
-                index =
-                    2 * PAGE_SIZE + 5,
-            ),
-        )
+        val itemOnThirdPage = 2 * PAGE_SIZE + 5
+        productListViewModel(savedStateHandle).onEvent(ProductListEvent.OnFirstVisibleItemChange(itemOnThirdPage))
 
         productListViewModel(savedStateHandle)
 
@@ -114,12 +110,8 @@ class ProductListViewModelTest {
     @Test
     fun `new search starts at the first page`() = viewModelTest {
         val savedStateHandle = SavedStateHandle()
-        productListViewModel(savedStateHandle).onEvent(
-            ProductListEvent.OnFirstVisibleItemChange(
-                index =
-                    2 * PAGE_SIZE + 5,
-            ),
-        )
+        val itemOnThirdPage = 2 * PAGE_SIZE + 5
+        productListViewModel(savedStateHandle).onEvent(ProductListEvent.OnFirstVisibleItemChange(itemOnThirdPage))
         val viewModel = productListViewModel(savedStateHandle)
 
         viewModel.uiState.value.searchQuery.typeText("mug")

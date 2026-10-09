@@ -35,8 +35,7 @@ class DataFilesTest {
     @Test
     fun `hosted image is named after its product`() {
         val misnamed = hostedImageProducts.filter {
-            it.imageUrl.substringAfterLast('/').substringBefore('?') !=
-                "${it.id}.png"
+            it.imageUrl.substringAfterLast('/').substringBefore('?') != "${it.id}.png"
         }
 
         assertThat(misnamed).isEmpty()
