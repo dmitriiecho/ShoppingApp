@@ -200,6 +200,7 @@ These tests don't say whether a screen looks right: they catch changes nobody as
 - **A failed one leaves a comparison image** next to the build: `build/outputs/roborazzi/*_compare.png`, the saved image, the difference in red and the new one. In CI they are attached to the run as `changed-screenshots` and shown in a comment on the pull request.
 - **The clock is stopped**: `PausedClockPreviewTester` draws every preview at its first frame, so an endless animation (the shimmer, a spinner) doesn't hang the test and every run draws the same image.
 - **Old images are deleted only when recording**, by that flag: Roborazzi deletes every image the run didn't draw, so with the flag always on, running one test from Android Studio would delete the rest of the module's images.
+- **A dialog is drawn on the whole screen**, its dimmed background included, so a dialog gets a preview like any other component.
 - **Private previews count too**: Slack's lint rules make them private, and the plugin includes them.
 - **The UI kit app has no screenshots of its own**: its sections show the same components that are already drawn in their own modules.
 
