@@ -14,7 +14,7 @@ import mockwebserver3.MockResponse
 import retrofit2.Response
 import retrofit2.http.GET
 
-class NetworkCallTest {
+class NetworkResultTest {
 
     @Test
     fun `successful response returns its body`() = networkTest<TestApi> { server, api ->
