@@ -87,8 +87,9 @@ A check before an action reads the source itself, not `uiState`: the state gets 
 
 ```kotlin
 private fun submitOrder() {
-    if (isSubmitting.value || !uiState.value.canSubmit) return
-    isSubmitting.value = true
+    if (submission.value is Submission.Submitting || !uiState.value.canSubmit) return
+    val order = uiState.value.order as? CheckoutUiState.Order.Loaded ?: return
+    submission.value = Submission.Submitting(order)
     // ...
 }
 ```
@@ -170,8 +171,8 @@ To make an object change only when its source does, the source is mapped before 
 val uiState = combine(
     observeCart().map { it.toOrder() },  // a new order only when the cart changes
     paymentMethod,
-    isSubmitting,
-) { order, payment, submitting -> CheckoutUiState(/* ... */) }
+    submission,
+) { cartOrder, payment, latestSubmission -> CheckoutUiState(/* ... */) }
 ```
 
 Models from `:shared:domain` are unstable for Compose: that module has no Compose compiler, and no Compose annotations go there. That matters for a list whose cards change one by one, like the cart: there the screen gets its own UI model with plain values, `CartUiState.Item`. A screen that shows the data as is, like checkout, keeps the domain models.

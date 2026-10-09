@@ -87,8 +87,9 @@ data class CartUiState(
 
 ```kotlin
 private fun submitOrder() {
-    if (isSubmitting.value || !uiState.value.canSubmit) return
-    isSubmitting.value = true
+    if (submission.value is Submission.Submitting || !uiState.value.canSubmit) return
+    val order = uiState.value.order as? CheckoutUiState.Order.Loaded ?: return
+    submission.value = Submission.Submitting(order)
     // ...
 }
 ```
@@ -170,8 +171,8 @@ Strong skipping включён, поэтому по умолчанию ниче�
 val uiState = combine(
     observeCart().map { it.toOrder() },  // новый заказ — только при изменении корзины
     paymentMethod,
-    isSubmitting,
-) { order, payment, submitting -> CheckoutUiState(/* ... */) }
+    submission,
+) { cartOrder, payment, latestSubmission -> CheckoutUiState(/* ... */) }
 ```
 
 Модели из `:shared:domain` для Compose нестабильны: этот модуль собирается без компилятора Compose, и аннотаций Compose там нет. Это важно для списка, карточки которого меняются по одной, как в корзине: там экран получает свою UI-модель на простых значениях, `CartUiState.Item`. Экран, который показывает данные как есть, как оформление, оставляет доменные модели.
