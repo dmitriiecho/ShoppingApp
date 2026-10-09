@@ -25,7 +25,7 @@ fun ClearCartIconButton(
         Icon(
             imageVector = AppIcons.RemoveShoppingCart,
             contentDescription = stringResource(R.string.cart_ui_clear_cart),
-            tint = MaterialTheme.colorScheme.error,
+            tint = MaterialTheme.colorScheme.primary,
         )
     }
 }
