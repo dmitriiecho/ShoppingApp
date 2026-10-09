@@ -2,7 +2,7 @@
 
 [English version](../en/build.md) · [Все разделы](README.md)
 
-Общая настройка модулей лежит в [`build-logic/`](../../../build-logic/), включённой сборке (included build) с convention-плагинами. Модуль подключает один-два плагина и объявляет только свои зависимости.
+Общая настройка модулей лежит в [`build-logic/`](../../../build-logic/), включённой сборке (included build) с convention-плагинами. Модуль подключает несколько из них и объявляет только свои зависимости.
 
 &nbsp;
 
@@ -17,7 +17,7 @@
 | `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.android.hilt` | модули с Hilt | Hilt с KSP |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Hilt + serialization, библиотеки навигации и lifecycle |
-| `shoppingapp.android.screenshots` | каждый модуль с превью | [скриншот-тесты](testing.md#скриншоты) из превью |
+| `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты) из превью |
 | `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM без Android, анализ зависимостей, предупреждения как ошибки в CI, сообщение упавшего теста в логе |
 
 Поэтому build-файл модуля короткий:
@@ -27,6 +27,7 @@
 plugins {
     alias(libs.plugins.shoppingapp.android.library)
     alias(libs.plugins.shoppingapp.android.compose)
+    alias(libs.plugins.shoppingapp.android.screenshots)
 }
 
 android {

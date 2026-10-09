@@ -177,7 +177,7 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
 
 ### Скриншоты
 
-Каждый `@Preview` — это скриншот-тест, писать их не нужно. `shoppingapp.android.screenshots`, который подключает каждый модуль с превью, поручает [Roborazzi](https://github.com/takahirom/roborazzi) нарисовать каждое превью на Robolectric и сравнить с картинкой, сохранённой в папке модуля `screenshots/`:
+Каждый `@Preview` — это скриншот-тест, писать их не нужно. `shoppingapp.android.screenshots`, который подключает каждая библиотека с превью, поручает [Roborazzi](https://github.com/takahirom/roborazzi) нарисовать каждое превью на Robolectric и сравнить с картинкой, сохранённой в папке модуля `screenshots/`:
 
 | Команда | Что делает |
 |---|---|

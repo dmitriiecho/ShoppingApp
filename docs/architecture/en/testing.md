@@ -177,7 +177,7 @@ A change of a format or an address on one side fails that side's tests, until th
 
 ### Screenshots
 
-Every `@Preview` is a screenshot test: nobody writes them. `shoppingapp.android.screenshots`, applied by each module with previews, has [Roborazzi](https://github.com/takahirom/roborazzi) draw each preview on Robolectric and compare it with the image saved in the module's `screenshots/` folder:
+Every `@Preview` is a screenshot test: nobody writes them. `shoppingapp.android.screenshots`, applied by each library module with previews, has [Roborazzi](https://github.com/takahirom/roborazzi) draw each preview on Robolectric and compare it with the image saved in the module's `screenshots/` folder:
 
 | Command | Does |
 |---|---|

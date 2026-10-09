@@ -2,7 +2,7 @@
 
 [Русская версия](../ru/build.md) · [All pages](README.md)
 
-The common setup of modules lives in [`build-logic/`](../../../build-logic/), an included build with convention plugins. A module applies one or two plugins and declares only its own dependencies.
+The common setup of modules lives in [`build-logic/`](../../../build-logic/), an included build with convention plugins. A module applies a few of them and declares only its own dependencies.
 
 &nbsp;
 
@@ -17,7 +17,7 @@ Each kind of module has its own plugin:
 | `shoppingapp.android.compose` | modules with Compose | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.android.hilt` | modules with Hilt | Hilt with KSP |
 | `shoppingapp.android.feature` | every `:feature:<name>:impl` | library + Compose + Hilt + serialization, navigation and lifecycle libraries |
-| `shoppingapp.android.screenshots` | every module with previews | [screenshot tests](testing.md#screenshots) made from the previews |
+| `shoppingapp.android.screenshots` | every library module with previews | [screenshot tests](testing.md#screenshots) made from the previews |
 | `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM without Android, dependency analysis, warnings as errors in CI, a failed test's message in the log |
 
 So a module's build file is short:
@@ -27,6 +27,7 @@ So a module's build file is short:
 plugins {
     alias(libs.plugins.shoppingapp.android.library)
     alias(libs.plugins.shoppingapp.android.compose)
+    alias(libs.plugins.shoppingapp.android.screenshots)
 }
 
 android {

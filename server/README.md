@@ -113,7 +113,7 @@ Response:
 |---|---|
 | `data/products.json` | Products |
 | `data/promo-codes.json` | Promo codes |
-| `data/images/` | Product images |
+| `data/images/` | Product images, `<id>.png` |
 
 The JSON files are read once at startup: after an edit, run `./deploy.sh`. Images are read on every request.
 
@@ -125,6 +125,7 @@ The JSON files are read once at startup: after an edit, run `./deploy.sh`. Image
 - **`availableQuantity`** is never negative.
 - **`discountPercent`** is from 1 to 100 and never changes: a different discount gets a new code.
 - **A removed promo code** stops working: an app that applied it finds out at cart validation.
+- **Product `3` (USB-C Hub) has no image file** on purpose: the app shows on it what it draws when an image fails to load. Every other product has its `<id>.png`; `DataFilesTest` checks both.
 
 The server refuses to start on duplicate ids or codes, a JSON error or an unknown field, and the tests catch these at build time.
 

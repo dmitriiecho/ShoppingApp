@@ -49,6 +49,7 @@
 // feature/cart/impl/build.gradle.kts
 plugins {
     alias(libs.plugins.shoppingapp.android.feature)
+    alias(libs.plugins.shoppingapp.android.screenshots)
 }
 
 dependencies {
