@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
@@ -31,7 +32,7 @@ fun LoadingButton(
     // Button doesn't animate its background when enabled changes, so we animate it here for both states.
     val defaultColors = ButtonDefaults.buttonColors()
     val containerColor by animateColorAsState(
-        targetValue = if (enabled) defaultColors.containerColor else defaultColors.disabledContainerColor,
+        targetValue = if (enabled) Color.Red else defaultColors.disabledContainerColor,
         animationSpec = tween(CONTAINER_COLOR_DURATION_MS),
         label = "loadingButtonContainerColor",
     )
