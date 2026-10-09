@@ -36,6 +36,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 }
                 lint.warningsAsErrors = warningsAsErrors
             }
+            alignCoreKtx()
             configureKotlinWarnings()
             configureTestLogging()
 

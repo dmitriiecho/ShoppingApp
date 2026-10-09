@@ -23,5 +23,12 @@ internal fun configureAndroid(android: CommonExtension) {
     android.compileOptions.targetCompatibility = AndroidConfig.JAVA_VERSION
 }
 
+// androidx.core 1.19 took in core-ktx's classes and left core-ktx empty, but limits core-ktx to its own version
+// only at run time. Libraries built against core-ktx 1.18 then put the same classes on the compile classpath
+// twice; this limit holds there too.
+internal fun Project.alignCoreKtx() {
+    dependencies.constraints.add("implementation", libs.androidx.core.ktx)
+}
+
 internal val Project.libs: LibrariesForLibs
     get() = the<LibrariesForLibs>()

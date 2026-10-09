@@ -37,6 +37,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     }
                 }
             }
+            alignCoreKtx()
             configureKotlinWarnings()
         }
     }
