@@ -7,6 +7,7 @@ import assertk.assertions.isInstanceOf
 import assertk.assertions.prop
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import mockwebserver3.MockResponse
@@ -71,7 +72,7 @@ class NetworkCallTest {
 
     // A cancelled request must stay cancelled: Failure would let the caller carry on as after a network error.
     @Test
-    fun `cancellation is rethrown, not turned into Failure`() = networkTest<TestApi> { _, _ ->
+    fun `cancellation is rethrown, not turned into Failure`() = runTest {
         assertFailure { networkCall<JsonObject> { throw CancellationException("Canceled") } }
             .isInstanceOf<CancellationException>()
     }
