@@ -50,8 +50,8 @@ jobs:
   android:
     name: Android
     runs-on: ubuntu-latest
-    # A normal run takes 3 to 7 minutes, depending on how much the build cache holds; the unit tests take
-    # under half a minute of it. A hung one would otherwise hold the runner for GitHub's default 6 hours.
+    # A normal run takes 2 to 8 minutes, depending on how much the build cache holds; the tests, screenshots
+    # included, take up to 2 minutes of it. A hung one would otherwise hold the runner for GitHub's default 6 hours.
     timeout-minutes: 30
     # Gradle reads ORG_GRADLE_PROJECT_<name> as the property <name>: here -PwarningsAsErrors=true.
     # With it, Kotlin and lint warnings fail the build, so they don't pile up (build-logic, WarningsAsErrors.kt).
@@ -114,8 +114,9 @@ jobs:
         if: ${{ !cancelled() }}
         run: ./gradlew test --continue
 
-      # Shows each failed test, with its message and line, at the top of the run's page and next to the test's
-      # line in the PR's Files changed; below, a summary with each failure's full stack trace.
+      # Shows each failed test, with its message and line, at the top of the run's page and, when the test file
+      # is among the PR's changes, next to the test's line in Files changed; below, a summary with each failure's
+      # full stack trace.
       # annotate_only: no check run of its own, which would need a token that can write.
       - name: Failed tests
         if: ${{ failure() && steps.tests.outcome == 'failure' }}

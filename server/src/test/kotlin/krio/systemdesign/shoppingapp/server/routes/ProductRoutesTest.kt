@@ -13,6 +13,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import krio.systemdesign.shoppingapp.server.apiSample
 import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.ProductsPageDTO
+import krio.systemdesign.shoppingapp.server.sendApiRequest
 import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest
 import krio.systemdesign.shoppingapp.server.testProduct
@@ -88,14 +89,14 @@ class ProductRoutesTest {
     // The app reads products as in the samples; the server must write them so.
     @Test
     fun `product is written as in the API sample`() = serverTest(samplePageData()) { client ->
-        val response = client.get("/products/1")
+        val response = client.sendApiRequest("product")
 
         assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("product.json"))
     }
 
     @Test
     fun `page is written as in the API sample`() = serverTest(samplePageData()) { client ->
-        val response = client.get("/products?query=&page=1&pageSize=2")
+        val response = client.sendApiRequest("products-page")
 
         assertThat(serverJson.parseToJsonElement(response.bodyAsText())).isEqualTo(apiSample("products-page.json"))
     }

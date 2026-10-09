@@ -7,19 +7,15 @@ import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import kotlin.io.path.createTempDirectory
-import kotlin.io.path.writeBytes
 import kotlin.test.Test
 
 class ApplicationTest {
 
     @Test
     fun `product image is served as PNG`() {
-        val imagesDir = createTempDirectory("product-images")
         val image = byteArrayOf(1, 2, 3)
-        imagesDir.resolve("1.png").writeBytes(image)
 
-        serverTest(imagesDir = imagesDir) { client ->
+        serverTest(images = mapOf("1.png" to image)) { client ->
             val response = client.get("/images/1.png")
 
             assertThat(response.contentType()?.withoutParameters()).isEqualTo(ContentType.Image.PNG)

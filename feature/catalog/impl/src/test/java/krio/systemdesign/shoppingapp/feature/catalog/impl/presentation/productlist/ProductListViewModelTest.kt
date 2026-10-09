@@ -1,14 +1,20 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.paging.testing.asSnapshot
+import androidx.paging.PagingData
+import androidx.paging.PagingDataEvent
+import androidx.paging.PagingDataPresenter
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
@@ -18,8 +24,10 @@ import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.ProductsSear
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.TestProductRepository
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.usecase.GetProductsUseCase
+import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.ProductListViewModel.Companion.PAGE_SIZE
 import krio.systemdesign.shoppingapp.shared.analytics.TestAnalytics
 import krio.systemdesign.shoppingapp.shared.analytics.sent
+import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import krio.systemdesign.shoppingapp.shared.domain.model.testProduct
 import krio.systemdesign.shoppingapp.shared.domain.repository.TestCartRepository
 import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
@@ -27,7 +35,7 @@ import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 
-// advanceTimeBy and runCurrent are still marked experimental.
+// advanceTimeBy, runCurrent and UnconfinedTestDispatcher are still marked experimental.
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProductListViewModelTest {
 
@@ -46,9 +54,9 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel()
 
         viewModel.uiState.value.searchQuery.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS - 1)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS - 1)
 
-        assertThat(analytics.sentEvents).isEmpty()
+        assertThat(productRepository.pageRequests).containsExactly("" to 1)
     }
 
     @Test
@@ -56,10 +64,10 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel()
 
         viewModel.uiState.value.searchQuery.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
-        assertThat(analytics.sentEvents).containsExactly(ProductsSearchedAnalyticsEvent(queryLength = 3).sent())
+        assertThat(productRepository.pageRequests).containsExactly("" to 1, "mug" to 1)
     }
 
     @Test
@@ -67,11 +75,22 @@ class ProductListViewModelTest {
         val viewModel = productListViewModel()
         val field = viewModel.uiState.value.searchQuery
         field.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
         field.typeText(" mug ")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
+        runCurrent()
+
+        assertThat(productRepository.pageRequests).containsExactly("" to 1, "mug" to 1)
+    }
+
+    @Test
+    fun `search is reported with the query's length`() = viewModelTest {
+        val viewModel = productListViewModel()
+
+        viewModel.uiState.value.searchQuery.typeText("mug")
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
         runCurrent()
 
         assertThat(analytics.sentEvents).containsExactly(ProductsSearchedAnalyticsEvent(queryLength = 3).sent())
@@ -80,34 +99,26 @@ class ProductListViewModelTest {
     @Test
     fun `reopened list starts at the page the user stopped at`() = viewModelTest {
         val savedStateHandle = SavedStateHandle()
-        productListViewModel(savedStateHandle).onEvent(
-            ProductListEvent.OnFirstVisibleItemChange(
-                index =
-                    2 * PAGE_SIZE + 5,
-            ),
-        )
+        val itemOnThirdPage = 2 * PAGE_SIZE + 5
+        productListViewModel(savedStateHandle).onEvent(ProductListEvent.OnFirstVisibleItemChange(itemOnThirdPage))
 
-        productListViewModel(savedStateHandle).products.asSnapshot()
+        productListViewModel(savedStateHandle)
 
-        assertThat(productRepository.pageRequests.first()).isEqualTo("" to 3)
+        assertThat(productRepository.pageRequests).containsExactly("" to 1, "" to 3)
     }
 
     @Test
     fun `new search starts at the first page`() = viewModelTest {
         val savedStateHandle = SavedStateHandle()
-        productListViewModel(savedStateHandle).onEvent(
-            ProductListEvent.OnFirstVisibleItemChange(
-                index =
-                    2 * PAGE_SIZE + 5,
-            ),
-        )
+        val itemOnThirdPage = 2 * PAGE_SIZE + 5
+        productListViewModel(savedStateHandle).onEvent(ProductListEvent.OnFirstVisibleItemChange(itemOnThirdPage))
         val viewModel = productListViewModel(savedStateHandle)
 
         viewModel.uiState.value.searchQuery.typeText("mug")
-        advanceTimeBy(SEARCH_DEBOUNCE_MILLIS)
-        viewModel.products.asSnapshot()
+        advanceTimeBy(SEARCH_DEBOUNCE_MS)
+        runCurrent()
 
-        assertThat(productRepository.pageRequests.last()).isEqualTo("mug" to 1)
+        assertThat(productRepository.pageRequests).containsExactly("" to 1, "" to 3, "mug" to 1)
     }
 
     private fun TestScope.productListViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) =
@@ -121,13 +132,16 @@ class ProductListViewModelTest {
             savedStateHandle = savedStateHandle,
         ).also {
             keepCollecting(it.uiState)
-            // Searches start only while the list collects its products, as the screen does.
-            keepCollecting(it.products)
+            keepShowing(it.products)
         }
 
-    private companion object {
-        // SEARCH_DEBOUNCE_MS and PAGE_SIZE in ProductListViewModel.kt.
-        const val SEARCH_DEBOUNCE_MILLIS = 300L
-        const val PAGE_SIZE = 10
+    // Shows the products as the screen's list does: Paging loads pages only while something presents them.
+    private fun TestScope.keepShowing(products: Flow<PagingData<Product>>) {
+        val presenter = object : PagingDataPresenter<Product>() {
+            override suspend fun presentPagingDataEvent(event: PagingDataEvent<Product>) = Unit
+        }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            products.collectLatest(presenter::collectFrom)
+        }
     }
 }

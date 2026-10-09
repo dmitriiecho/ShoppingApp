@@ -1,0 +1,7 @@
+{
+  "cart-validation": "POST /cart/validate",
+  "product": "GET /products/1",
+  "products-page": "GET /products?query=&page=1&pageSize=2",
+  "promo-code": "GET /promo-codes/SALE10",
+  "promo-codes": "GET /promo-codes"
+}

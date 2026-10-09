@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import kotlin.io.path.createTempDirectory
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
@@ -17,6 +18,14 @@ import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 
 class AppSettingsRepositoryImplTest {
 
+    // A folder of its own for each test's settings file.
+    private val settingsDir = createTempDirectory("settings")
+
+    @AfterTest
+    fun deleteSettingsDir() {
+        settingsDir.toFile().deleteRecursively()
+    }
+
     @Test
     fun `saved theme is read back`() = runTest {
         val settings = AppSettingsRepositoryImpl(settingsDataStore())
@@ -24,6 +33,17 @@ class AppSettingsRepositoryImplTest {
         settings.setThemeMode(ThemeMode.Dark)
 
         assertThat(settings.observeThemeMode().first()).isEqualTo(ThemeMode.Dark)
+    }
+
+    // The file as the app writes it: renaming the key or a ThemeMode value would lose every user's choice.
+    @Test
+    fun `theme saved by an earlier version is read`() = runTest {
+        val dataStore = settingsDataStore()
+        dataStore.edit { it[stringPreferencesKey("theme_mode")] = "Dark" }
+
+        val themeMode = AppSettingsRepositoryImpl(dataStore).observeThemeMode().first()
+
+        assertThat(themeMode).isEqualTo(ThemeMode.Dark)
     }
 
     // A value the app no longer knows, e.g. saved by a version with another set of themes.
@@ -46,6 +66,17 @@ class AppSettingsRepositoryImplTest {
         assertThat(settings.observeNetworkDelay().first()).isEqualTo(NetworkDelay.TwoSeconds)
     }
 
+    // The file as the app writes it, as for the theme.
+    @Test
+    fun `network delay saved by an earlier version is read`() = runTest {
+        val dataStore = settingsDataStore()
+        dataStore.edit { it[stringPreferencesKey("network_delay")] = "TwoSeconds" }
+
+        val networkDelay = AppSettingsRepositoryImpl(dataStore).observeNetworkDelay().first()
+
+        assertThat(networkDelay).isEqualTo(NetworkDelay.TwoSeconds)
+    }
+
     @Test
     fun `unknown saved network delay falls back to none`() = runTest {
         val dataStore = settingsDataStore()
@@ -59,6 +90,6 @@ class AppSettingsRepositoryImplTest {
     // A real DataStore in a fresh file, as the app has, but without an Android Context.
     private fun TestScope.settingsDataStore(): DataStore<Preferences> = PreferenceDataStoreFactory.create(
         scope = backgroundScope,
-        produceFile = { createTempDirectory("settings").resolve("settings.preferences_pb").toFile() },
+        produceFile = { settingsDir.resolve("settings.preferences_pb").toFile() },
     )
 }

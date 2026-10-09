@@ -2,7 +2,7 @@
 
 [Русская версия](../ru/testing.md) · [All pages](README.md)
 
-Tests run on the JVM, with no emulator: the app's logic, its data layer and the server. The app and the server follow the same rules, so a test reads the same on both sides.
+Tests run on the JVM, with no emulator: the app's logic, ViewModels, data layer and screens (a screenshot of every preview), its contract with the server, and the server itself. The app and the server follow the same rules, so a test reads the same on both sides.
 
 &nbsp;
 
@@ -68,10 +68,11 @@ A helper used by tests of **two or more modules** lives in the **test fixtures**
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
-| `networkTest {}`, `apiSample()` | `:core:network` | `src/testFixtures` |
+| `networkTest {}`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
 | `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
+| `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
 A module uses another module's fixtures with `testImplementation(testFixtures(project(":shared:domain")))`. Fixtures see only the public API of their module. The [module graph check](modules.md#the-check) looks at `api` and `implementation` only, so test dependencies follow the levels by convention, not by the check.
 
@@ -119,11 +120,12 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 
 - **The ViewModel is created inside `viewModelTest {}`**, after `Dispatchers.Main` is replaced.
 - **The state is kept collected, as the screen does**: `keepCollecting(viewModel.uiState)` right after creating it, then the test reads `viewModel.uiState.value`. A `stateIn(WhileSubscribed)` flow with no collector keeps its initial value. Effects are one-off, so they are checked with Turbine.
+- **A Paging list is kept shown, as the screen's list does**: Paging loads pages only while something presents them, so the catalog's test keeps a `PagingDataPresenter` collecting `viewModel.products` and checks the pages the repository was asked for. `asSnapshot()` doesn't fit a debounce: it moves the virtual clock until everything is done.
 - **Typing goes through `typeText()`**: on a device Compose applies a field's change on the next frame, a test has no frames.
 - **Time is virtual**: `advanceTimeBy()` moves it past a debounce or an animation without waiting.
 - **State saved for process death** is checked only when it is a plain value in `SavedStateHandle` (a dialog, the payment method): the same handle is given to a new ViewModel. Text fields are saved through an Android `Bundle`, which a JVM test doesn't have.
 - **A request in progress** is a `CompletableDeferred` the answer waits for: the test changes the cart meanwhile, then completes it.
-- **Analytics events have no `equals`**, so `TestAnalytics.sentEvents` holds their name and params: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
+- **Analytics events have no `equals`**, so `TestAnalytics.sentEvents` holds their name and params: `assertThat(analytics.sentEvents).containsExactly(CheckoutStartedAnalyticsEvent(itemCount = 3, totalCents = 5000).sent())`.
 
 ### Database
 
@@ -164,14 +166,14 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
 
 ### Contract with the server
 
-The app and the server each describe the API's JSON in their own DTOs. What keeps them in step is [`server/api-samples/`](../../../server/api-samples/): one JSON file per request or answer the app relies on. `apiSample("product.json")` reads one on both sides, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter but a renamed, extra or missing field does:
+The app and the server each describe the API's JSON in their own DTOs. What keeps them in step is [`server/api-samples/`](../../../server/api-samples/): one JSON file per request or answer the app relies on. `apiSample("product.json")` reads one on both sides, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter but a renamed, extra or missing field does. Where each request goes is in `requests.json`, as the method and the address: `"product": "GET /products/1"` is the request answered by `product.json`.
 
 | Side | Checks |
 |---|---|
-| Server | it accepts the request samples and answers exactly like the answer samples |
-| App | it sends requests exactly like the request samples and reads the answer samples into the expected models |
+| Server | it accepts the request samples at their addresses and answers exactly like the answer samples |
+| App | it sends requests exactly like the request samples, to their addresses, and reads the answer samples into the expected models |
 
-A format change on one side fails that side's tests, until the sample, and then the other side, are changed too. The build declares the folder as an input of every test task, so an edited sample runs the tests again.
+A change of a format or an address on one side fails that side's tests, until the sample, and then the other side, are changed too. The build declares the folder as an input of every test task, so an edited sample runs the tests again.
 
 ### Screenshots
 
@@ -200,7 +202,7 @@ These tests don't say whether a screen looks right: they catch changes nobody as
 - **A failed one leaves a comparison image** next to the build: `build/outputs/roborazzi/*_compare.png`, the saved image, the difference in red and the new one. In CI they are attached to the run as `changed-screenshots` and shown in a comment on the pull request.
 - **The clock is stopped**: `PausedClockPreviewTester` draws every preview at its first frame, so an endless animation (the shimmer, a spinner) doesn't hang the test and every run draws the same image.
 - **Old images are deleted only when recording**, by that flag: Roborazzi deletes every image the run didn't draw, so with the flag always on, running one test from Android Studio would delete the rest of the module's images.
-- **A dialog is drawn on the whole screen**, its dimmed background included, so a dialog gets a preview like any other component.
+- **A dialog is drawn on the whole screen**, its dimmed background included, so a dialog gets a preview like any other component. Android Studio draws only the main window, so there the preview is blank; Run Preview shows it on a device.
 - **Private previews count too**: Slack's lint rules make them private, and the plugin includes them.
 - **The UI kit app has no screenshots of its own**: its sections show the same components that are already drawn in their own modules.
 
@@ -208,4 +210,4 @@ Google's Compose Preview Screenshot Testing does the same with Android Studio's 
 
 ### Server
 
-`serverTest {}` starts the server in memory with Ktor's `testApplication`, on the data the test passes (`testShopData(products = …)`), and gives a client that reads JSON with the server's own `serverJson`. More on the server's API in [`server/README.md`](../../../server/README.md).
+`serverTest {}` starts the server in memory with Ktor's `testApplication`, on the data and the product images the test passes (`testShopData(products = …)`, `images = mapOf("1.png" to …)`), and gives a client that reads JSON with the server's own `serverJson`. The images are in a temporary folder, deleted after the test. A request from the samples is sent with `sendApiRequest("product")`, which fails on any status but a success. More on the server's API in [`server/README.md`](../../../server/README.md).

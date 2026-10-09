@@ -117,5 +117,5 @@ Rejected promo codes are the exception: the code is sent as typed, because the f
 A few parts that look obvious were left out on purpose:
 
 - **No `:core:analytics` module.** The list of systems belongs to this app, so events and `Analytics` live in `:shared:analytics`; what would stay in `core` is too small for a module.
-- **No `Analytics` interface.** There is one implementation; a test can pass a recording client instead.
+- **No `Analytics` interface.** There is one implementation; a test gives it `TestAnalyticsClient`s, which record what is sent.
 - **No event roles or labels** (product, marketing, ads): an event names its systems directly.

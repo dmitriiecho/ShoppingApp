@@ -13,12 +13,12 @@ Each kind of module has its own plugin:
 | Plugin | For | Adds |
 |---|---|---|
 | `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | the Android setup, targetSdk, signing, R8 in release, the [module graph check](modules.md#the-check), dependency analysis, warnings as errors in CI |
-| `shoppingapp.android.library` | every Android library | compileSdk, minSdk, Java, dependency analysis, warnings as errors in CI, the [test setup for Robolectric](testing.md#database) |
+| `shoppingapp.android.library` | every Android library | compileSdk, minSdk, Java, dependency analysis, warnings as errors in CI, the test setup: unit tests on debug only, [Robolectric](testing.md#database), the [API samples](testing.md#contract-with-the-server), a failed test's message in the log |
 | `shoppingapp.android.compose` | modules with Compose | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.android.hilt` | modules with Hilt | Hilt with KSP |
 | `shoppingapp.android.feature` | every `:feature:<name>:impl` | library + Compose + Hilt + serialization, navigation and lifecycle libraries |
 | `shoppingapp.android.screenshots` | every module with previews | [screenshot tests](testing.md#screenshots) made from the previews |
-| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM without Android, dependency analysis, warnings as errors in CI |
+| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM without Android, dependency analysis, warnings as errors in CI, a failed test's message in the log |
 
 So a module's build file is short:
 
@@ -85,14 +85,14 @@ Comments are in English, short, and explain what the code can't say: a reason, a
 
 | Job | Steps |
 |---|---|
-| Android | code style (ktlint) → dependencies between modules (`assertModuleGraph`) → unused dependencies (`buildHealth`) → problems in code and resources (Android lint with Slack's Compose rules) → [unit tests](testing.md) → both apps compile |
+| Android | code style (ktlint) → dependencies between modules (`assertModuleGraph`) → unused dependencies (`buildHealth`) → problems in code and resources (Android lint with Slack's Compose rules) → [unit and screenshot tests](testing.md) → both apps compile |
 | Server | code style (ktlint) → API and data files (tests, including the check of `data/*.json` and the [API samples](testing.md#contract-with-the-server)) |
 
 - **Every check runs even if one before it failed**, so one run shows all the problems.
 - **Warnings are errors in CI**, Kotlin's and lint's alike: CI passes `-PwarningsAsErrors=true`, read by the convention plugins ([`WarningsAsErrors.kt`](../../../build-logic/src/main/kotlin/WarningsAsErrors.kt)) and by the server build. A local build only prints them.
 - **Unused dependencies** are found by the [Dependency Analysis](https://github.com/autonomousapps/dependency-analysis-gradle-plugin) plugin; its rules, with the advice it ignores and why, are in the root [`build.gradle.kts`](../../../build.gradle.kts).
 - **Lint exceptions** are in the root [`lint.xml`](../../../lint.xml): the CompositionLocals the project creates on purpose, and "a newer version is available", reported as a hint so a library's release doesn't fail CI.
-- **Failed tests are shown where you look anyway**: each one, with its message and line, at the top of the run's page and next to the test's line in the PR's Files changed, and in a summary below with the full stack trace ([action-junit-report](https://github.com/mikepenz/action-junit-report), the one action in CI that isn't GitHub's or Gradle's).
+- **Failed tests are shown where you look anyway**: each one, with its message and line, at the top of the run's page, next to the test's line in the PR's Files changed when the test file is among the PR's changes, and in a summary below with the full stack trace ([action-junit-report](https://github.com/mikepenz/action-junit-report), the one action in CI that isn't GitHub's or Gradle's).
 - **Robolectric's Android is cached** between runs: Robolectric downloads it into `~/.m2`, which Gradle's cache doesn't cover.
 - **A job is stopped after 30 minutes** (the server's after 15) instead of hanging for GitHub's default 6 hours.
 
@@ -131,7 +131,8 @@ The main commands, from the project root:
 ./gradlew assertModuleGraph            # dependencies between modules
 ./gradlew buildHealth                  # unused dependencies
 ./gradlew lintDebug                    # Android lint for every module
-./gradlew test                         # app tests
+./gradlew test                         # app tests, screenshots included
+./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # new screenshots after a UI change
 cd server && ./gradlew test            # server tests
 ```
 
