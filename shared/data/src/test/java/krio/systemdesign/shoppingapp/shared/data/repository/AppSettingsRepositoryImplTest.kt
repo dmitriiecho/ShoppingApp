@@ -35,6 +35,17 @@ class AppSettingsRepositoryImplTest {
         assertThat(settings.observeThemeMode().first()).isEqualTo(ThemeMode.Dark)
     }
 
+    // The file as the app writes it: renaming the key or a ThemeMode value would lose every user's choice.
+    @Test
+    fun `theme saved by an earlier version is read`() = runTest {
+        val dataStore = settingsDataStore()
+        dataStore.edit { it[stringPreferencesKey("theme_mode")] = "Dark" }
+
+        val themeMode = AppSettingsRepositoryImpl(dataStore).observeThemeMode().first()
+
+        assertThat(themeMode).isEqualTo(ThemeMode.Dark)
+    }
+
     // A value the app no longer knows, e.g. saved by a version with another set of themes.
     @Test
     fun `unknown saved theme falls back to the system's`() = runTest {
@@ -53,6 +64,17 @@ class AppSettingsRepositoryImplTest {
         settings.setNetworkDelay(NetworkDelay.TwoSeconds)
 
         assertThat(settings.observeNetworkDelay().first()).isEqualTo(NetworkDelay.TwoSeconds)
+    }
+
+    // The file as the app writes it, as for the theme.
+    @Test
+    fun `network delay saved by an earlier version is read`() = runTest {
+        val dataStore = settingsDataStore()
+        dataStore.edit { it[stringPreferencesKey("network_delay")] = "TwoSeconds" }
+
+        val networkDelay = AppSettingsRepositoryImpl(dataStore).observeNetworkDelay().first()
+
+        assertThat(networkDelay).isEqualTo(NetworkDelay.TwoSeconds)
     }
 
     @Test
