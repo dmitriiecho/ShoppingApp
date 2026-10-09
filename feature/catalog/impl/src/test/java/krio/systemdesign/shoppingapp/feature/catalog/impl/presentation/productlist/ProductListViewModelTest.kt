@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingDataEvent
 import androidx.paging.PagingDataPresenter
+import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.containsExactly
+import assertk.assertions.isEqualTo
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -16,8 +18,10 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
+import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.typeText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
+import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.ProductsSearchedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.TestProductRepository
@@ -117,6 +121,19 @@ class ProductListViewModelTest {
         runCurrent()
 
         assertThat(productRepository.pageRequests).containsExactly("" to 1, "" to 3, "mug" to 1)
+    }
+
+    @Test
+    fun `failed refresh says the products couldn't be loaded`() = viewModelTest {
+        val viewModel = productListViewModel()
+
+        viewModel.effects.test {
+            viewModel.onEvent(ProductListEvent.OnRefreshFailed)
+
+            assertThat(
+                awaitItem(),
+            ).isEqualTo(ProductListEffect.ShowSnackBar(UiText.Resource(R.string.catalog_load_error)))
+        }
     }
 
     private fun TestScope.productListViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) =
