@@ -15,13 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.SingleChoiceButtons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.BrightnessAuto
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Contrast
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.DarkMode
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.HourglassEmpty
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Inventory2
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.LightMode
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Link
+import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Info
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.OpenInNew
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
@@ -51,46 +45,31 @@ private fun AppListItemPreview() {
         Surface {
             Column {
                 AppListItem(
-                    icon = AppIcons.Contrast,
-                    title = "Theme",
-                    description = "System",
+                    icon = AppIcons.Info,
+                    title = "List item",
+                    description = "Selected: 1",
                     trailing = {
                         SingleChoiceButtons(
-                            options = listOf(AppIcons.BrightnessAuto, AppIcons.LightMode, AppIcons.DarkMode),
-                            selected = AppIcons.BrightnessAuto,
+                            options = listOf(1, 2, 3),
+                            selected = 1,
                             onSelect = {},
                             modifier = Modifier.width(168.dp),
-                        ) { icon ->
-                            Icon(icon, contentDescription = null)
+                        ) { option ->
+                            Text(option.toString())
                         }
                     },
                 )
                 AppListItem(
-                    icon = AppIcons.HourglassEmpty,
-                    title = "Request delay",
-                    description = "No delay",
-                    trailing = {
-                        SingleChoiceButtons(
-                            options = listOf(0, 2, 4),
-                            selected = 0,
-                            onSelect = {},
-                            modifier = Modifier.width(168.dp),
-                        ) { seconds ->
-                            Text(seconds.toString())
-                        }
-                    },
-                )
-                AppListItem(
-                    icon = AppIcons.Link,
-                    title = "Deep links",
-                    description = "Opens a page with the links in your browser",
+                    icon = AppIcons.Info,
+                    title = "List item",
+                    description = "Item description",
                     onClick = {},
                     trailing = { Icon(AppIcons.OpenInNew, contentDescription = null) },
                 )
                 AppListItem(
-                    icon = AppIcons.Inventory2,
-                    title = "Add an out-of-stock item to the cart",
-                    description = "To check how the cart shows an unavailable item",
+                    icon = AppIcons.Info,
+                    title = "List item",
+                    description = "A longer description that doesn't fit on one line and goes on to the next one",
                     onClick = {},
                 )
             }

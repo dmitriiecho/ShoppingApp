@@ -20,9 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Info
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.SearchOff
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ShoppingCart
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Storefront
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
 @Composable
@@ -72,19 +71,14 @@ private fun EmptyStatePreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 EmptyState(
-                    icon = AppIcons.ShoppingCart,
-                    message = "Add products from the catalog",
+                    icon = AppIcons.Info,
+                    message = "Content will appear here",
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Your cart is empty",
-                )
-                EmptyState(
-                    icon = AppIcons.Storefront,
-                    message = "The catalog is empty",
-                    modifier = Modifier.fillMaxWidth(),
+                    title = "Nothing here yet",
                 )
                 EmptyState(
                     icon = AppIcons.SearchOff,
-                    message = "Nothing found for “drone”",
+                    message = "Nothing found for “zzzz”",
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

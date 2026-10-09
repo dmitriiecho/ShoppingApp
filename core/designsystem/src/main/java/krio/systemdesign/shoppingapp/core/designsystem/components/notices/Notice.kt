@@ -27,9 +27,6 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.CheckCircle
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Error
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Info
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Inventory2
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ProductionQuantityLimits
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Sell
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
 @Composable
@@ -126,7 +123,7 @@ private const val NOTICE_BACKGROUND_ALPHA = 0.14f
 @Preview(name = "Light")
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun NoticeProductIssuesPreview() {
+private fun NoticePreview() {
     ShoppingAppTheme {
         Surface(color = ShoppingAppTheme.colors.cardContainer) {
             Column(
@@ -134,19 +131,25 @@ private fun NoticeProductIssuesPreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Notice(
-                    icon = AppIcons.Inventory2,
-                    title = "Out of stock",
+                    icon = AppIcons.Error,
+                    title = "Something went wrong",
                     style = NoticeStyle.Error,
                 )
                 Notice(
-                    icon = AppIcons.Sell,
-                    title = "Price changed: now $149.99",
-                    style = NoticeStyle.Error,
+                    icon = AppIcons.CheckCircle,
+                    title = "Done",
+                    style = NoticeStyle.Success,
                 )
                 Notice(
-                    icon = AppIcons.ProductionQuantityLimits,
-                    title = "Only 1 available to order now",
-                    style = NoticeStyle.Error,
+                    icon = AppIcons.Info,
+                    title = "For your information",
+                    style = NoticeStyle.Neutral,
+                    subtitle = "A short explanation",
+                )
+                Notice(
+                    icon = AppIcons.Info,
+                    title = "A longer message that doesn't fit on one line and goes on to the next one",
+                    style = NoticeStyle.Neutral,
                 )
             }
         }
@@ -156,7 +159,7 @@ private fun NoticeProductIssuesPreview() {
 @Preview(name = "Light")
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun NoticePromoCodePreview() {
+private fun NoticeWithActionPreview() {
     ShoppingAppTheme {
         Surface(color = ShoppingAppTheme.colors.cardContainer) {
             Column(
@@ -165,42 +168,20 @@ private fun NoticePromoCodePreview() {
             ) {
                 NoticeWithAction(
                     icon = AppIcons.Error,
-                    title = "Promo code SALE10 is no longer valid",
+                    title = "Something went wrong",
                     style = NoticeStyle.Error,
-                    actionText = "Remove",
+                    actionText = "Action",
                     onAction = {},
-                    subtitle = "Remove it to place your order",
+                    subtitle = "A short explanation",
                 )
                 NoticeWithAction(
                     icon = AppIcons.CheckCircle,
-                    title = "Promo code SALE10 · −10%",
+                    title = "Done",
                     style = NoticeStyle.Success,
-                    actionText = "Remove",
+                    actionText = "Action",
                     onAction = {},
                 )
-                Notice(
-                    icon = AppIcons.CheckCircle,
-                    title = "Promo code SALE25 · −25%",
-                    style = NoticeStyle.Success,
-                )
             }
-        }
-    }
-}
-
-@Preview(name = "Light")
-@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun NoticeCheckoutPreview() {
-    ShoppingAppTheme {
-        Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
-            Notice(
-                icon = AppIcons.Info,
-                title = "This is a demo app: the order isn't sent anywhere. " +
-                    "Placing it empties the cart and its promo code",
-                style = NoticeStyle.Neutral,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            )
         }
     }
 }

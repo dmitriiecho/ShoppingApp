@@ -55,10 +55,10 @@ private fun SearchFieldPreview() {
                 modifier = Modifier.padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                listOf("", "headphones").forEach { query ->
+                listOf("", "Text").forEach { query ->
                     SearchField(
                         state = rememberTextFieldState(query),
-                        placeholder = "Search products",
+                        placeholder = "Search",
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }

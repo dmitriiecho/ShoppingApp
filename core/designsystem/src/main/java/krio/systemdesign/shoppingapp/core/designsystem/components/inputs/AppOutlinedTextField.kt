@@ -56,23 +56,23 @@ private fun AppOutlinedTextFieldPreview() {
             ) {
                 AppOutlinedTextField(
                     state = rememberTextFieldState(),
-                    label = "Promo code",
+                    label = "Label",
                     modifier = Modifier.fillMaxWidth(),
                 )
                 AppOutlinedTextField(
-                    state = rememberTextFieldState("SALE10"),
-                    label = "Promo code",
+                    state = rememberTextFieldState("Text"),
+                    label = "Label",
                     modifier = Modifier.fillMaxWidth(),
                 )
                 AppOutlinedTextField(
-                    state = rememberTextFieldState("SALE99"),
-                    label = "Promo code",
-                    error = "Promo code not found",
+                    state = rememberTextFieldState("Text"),
+                    label = "Label",
+                    error = "Error message",
                     modifier = Modifier.fillMaxWidth(),
                 )
                 AppOutlinedTextField(
-                    state = rememberTextFieldState("SALE10"),
-                    label = "Promo code",
+                    state = rememberTextFieldState("Text"),
+                    label = "Label",
                     enabled = false,
                     modifier = Modifier.fillMaxWidth(),
                 )

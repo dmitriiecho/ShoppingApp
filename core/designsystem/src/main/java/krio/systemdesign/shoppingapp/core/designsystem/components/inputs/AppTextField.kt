@@ -68,23 +68,25 @@ private fun AppTextFieldPreview() {
                     ) {
                         AppTextField(
                             state = rememberTextFieldState(),
-                            label = "Street *",
+                            label = "Label",
                             modifier = Modifier.fillMaxWidth(),
                         )
                         AppTextField(
-                            state = rememberTextFieldState("Baker Street, 221"),
-                            label = "Street *",
+                            state = rememberTextFieldState("Text"),
+                            label = "Label",
                             modifier = Modifier.fillMaxWidth(),
                         )
                         AppTextField(
-                            state = rememberTextFieldState("Baker Street, 221"),
-                            label = "Street *",
+                            state = rememberTextFieldState("Text"),
+                            label = "Label",
                             modifier = Modifier.fillMaxWidth(),
                             enabled = false,
                         )
                         AppTextField(
-                            state = rememberTextFieldState("Please call when you arrive, the intercom doesn't work."),
-                            label = "Comment for the courier",
+                            state = rememberTextFieldState(
+                                "A longer text that doesn't fit on one line and goes on to the next one",
+                            ),
+                            label = "Multiline field",
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = false,
                         )

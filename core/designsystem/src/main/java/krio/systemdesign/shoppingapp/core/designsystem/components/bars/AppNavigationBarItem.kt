@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.HomeFilled
+import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.NotificationsFilled
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.SettingsFilled
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ShoppingCartFilled
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
 @Composable
@@ -83,23 +83,23 @@ private fun AppNavigationBarItemPreview() {
                             selected = selected,
                             onClick = {},
                             icon = AppIcons.HomeFilled,
-                            label = "Catalog",
+                            label = "Home",
                         )
                     },
                     { selected ->
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = AppIcons.ShoppingCartFilled,
-                            label = "Cart",
+                            icon = AppIcons.NotificationsFilled,
+                            label = "Notifications",
                         )
                     },
                     { selected ->
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = AppIcons.ShoppingCartFilled,
-                            label = "Cart",
+                            icon = AppIcons.NotificationsFilled,
+                            label = "Notifications",
                             badgeCount = 3,
                         )
                     },
@@ -107,8 +107,8 @@ private fun AppNavigationBarItemPreview() {
                         AppNavigationBarItem(
                             selected = selected,
                             onClick = {},
-                            icon = AppIcons.ShoppingCartFilled,
-                            label = "Cart",
+                            icon = AppIcons.NotificationsFilled,
+                            label = "Notifications",
                             badgeCount = 120,
                         )
                     },

@@ -66,9 +66,8 @@ private fun ErrorStatePreview() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 listOf(
-                    "Couldn't load products",
-                    "Couldn't load the product",
-                    "Product not found",
+                    "Couldn't load data",
+                    "Couldn't load data. A longer message goes on to the next line",
                 ).forEach { message ->
                     ErrorState(
                         message = message,

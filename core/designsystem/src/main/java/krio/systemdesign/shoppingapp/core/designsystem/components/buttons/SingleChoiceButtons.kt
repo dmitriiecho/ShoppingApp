@@ -24,10 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.BrightnessAuto
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.CreditCard
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.DarkMode
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.LightMode
-import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Payments
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,14 +97,14 @@ private fun SingleChoiceButtonsPreview() {
                         modifier = Modifier.padding(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        val paymentMethods = listOf(
-                            AppIcons.CreditCard to "Card",
-                            AppIcons.Payments to "Cash",
+                        val modes = listOf(
+                            AppIcons.LightMode to "Light",
+                            AppIcons.DarkMode to "Dark",
                         )
                         listOf(true, false).forEach { enabled ->
                             SingleChoiceButtons(
-                                options = paymentMethods,
-                                selected = paymentMethods.first(),
+                                options = modes,
+                                selected = modes.first(),
                                 onSelect = {},
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = enabled,

@@ -69,7 +69,7 @@ private fun ErrorBannerPreview() {
     ShoppingAppTheme {
         Surface {
             ErrorBanner(
-                message = "Couldn't load products",
+                message = "Couldn't load data",
                 onRetry = {},
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
