@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
@@ -32,6 +33,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.drop
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
 import krio.systemdesign.shoppingapp.core.designsystem.components.inputs.SearchField
@@ -132,24 +134,32 @@ private fun ProductListContent(
     onEvent: (ProductListEvent) -> Unit,
 ) {
     val refresh = products.loadState.refresh
-    // A pull-to-refresh keeps the list: the old products stay, with the indicator on top.
-    // Other loads from scratch (the first one, after a new query, on Retry) show placeholder cards instead.
-    var isPullRefreshing by remember { mutableStateOf(false) }
+    // A pull-to-refresh keeps the old products on screen; other loads show placeholders and a full-screen error.
+    var isPullRefresh by remember { mutableStateOf(false) }
+    val keepsList = isPullRefresh && products.itemCount > 0
     LaunchedEffect(refresh) {
-        if (refresh !is LoadState.Loading) isPullRefreshing = false
+        when (refresh) {
+            is LoadState.NotLoading -> isPullRefresh = false
+            is LoadState.Error -> if (keepsList) onEvent(ProductListEvent.OnRefreshFailed) else isPullRefresh = false
+            LoadState.Loading -> Unit
+        }
+    }
+    // A new query ends the pull-to-refresh: the old products aren't its results.
+    LaunchedEffect(searchQuery) {
+        snapshotFlow { searchQuery.text.toString().trim() }.drop(1).collect { isPullRefresh = false }
     }
 
     PullToRefreshBox(
-        isRefreshing = isPullRefreshing && refresh is LoadState.Loading,
+        isRefreshing = isPullRefresh && refresh is LoadState.Loading,
         onRefresh = {
-            isPullRefreshing = true
+            isPullRefresh = true
             products.refresh()
         },
         modifier = Modifier.fillMaxSize(),
     ) {
         when {
-            refresh is LoadState.Loading && !isPullRefreshing -> ProductListPlaceholder()
-            refresh is LoadState.Error -> ErrorState(
+            refresh is LoadState.Loading && !isPullRefresh -> ProductListPlaceholder()
+            refresh is LoadState.Error && !keepsList -> ErrorState(
                 message = stringResource(R.string.catalog_load_error),
                 onRetry = { products.retry() },
                 modifier = Modifier.fillMaxSize(),

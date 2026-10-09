@@ -17,6 +17,9 @@ internal sealed interface ProductListEvent {
 
     data class OnFirstVisibleItemChange(val index: Int) : ProductListEvent
 
+    // A pull-to-refresh failed, and the old products stay on screen.
+    data object OnRefreshFailed : ProductListEvent
+
     // There's no Back button in the tab; it's for when the screen is embedded in a flow the user can leave.
     data object OnBackClick : ProductListEvent
 }

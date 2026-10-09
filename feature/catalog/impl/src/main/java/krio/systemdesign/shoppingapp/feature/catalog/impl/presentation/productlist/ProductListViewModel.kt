@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
@@ -95,6 +96,7 @@ internal class ProductListViewModel @Inject constructor(
             is ProductListEvent.OnQuantityChange -> changeQuantity(event.productId, event.quantity)
             is ProductListEvent.OnRemoveFromCartClick -> removeProductFromCart(event.productId)
             is ProductListEvent.OnFirstVisibleItemChange -> saveFirstVisiblePage(event.index)
+            ProductListEvent.OnRefreshFailed -> showSnackBar(R.string.catalog_load_error)
             ProductListEvent.OnBackClick -> send(ProductListEffect.NavigateBack)
         }
     }
@@ -149,10 +151,12 @@ internal class ProductListViewModel @Inject constructor(
         viewModelScope.launch {
             action()
                 .onSuccess { onSuccess() }
-                .onFailure {
-                    send(ProductListEffect.ShowSnackBar(UiText.Resource(R.string.catalog_cart_update_error)))
-                }
+                .onFailure { showSnackBar(R.string.catalog_cart_update_error) }
         }
+    }
+
+    private fun showSnackBar(@StringRes message: Int) {
+        send(ProductListEffect.ShowSnackBar(UiText.Resource(message)))
     }
 
     private fun send(effect: ProductListEffect) {
