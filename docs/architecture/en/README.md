@@ -31,7 +31,7 @@ Each page can be read on its own:
 |---|---|
 | [Modules](modules.md) | the levels, where new code goes, what a feature shows outside, the module graph check |
 | [Navigation](navigation.md) | how the app joins the features, tabs, screen results, deep links |
-| [Screens](screens.md) | the files of a screen, UI state, events and effects, text fields, Compose stability |
+| [Screens](screens.md) | the files of a screen, UI state, events and effects, text fields, Compose stability, wide screens |
 | [Data](data.md) | use cases, repositories, error types, local storage, network, prices, the contract with the server |
 | [Analytics](analytics.md) | events, analytics systems, screen views, what may be sent |
 | [Build](build.md) | convention plugins, the version catalog, code style, CI, signing |

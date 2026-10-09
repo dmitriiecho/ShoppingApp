@@ -1,11 +1,16 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,11 +22,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
@@ -33,6 +40,8 @@ import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.E
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.LinkOff
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails.components.CartControlSection
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails.components.ProductInfoSection
@@ -71,12 +80,32 @@ internal fun ProductDetailsScreen(
     onEvent: (ProductDetailsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    BoxWithConstraints(modifier = modifier) {
+        // A wide screen held sideways: below a square image the details would start off the screen, so they go
+        // beside it, and the bar spans both columns.
+        val twoColumns = maxWidth > maxHeight && maxWidth >= TWO_COLUMNS_MIN_WIDTH
+        ProductDetailsScaffold(
+            uiState = uiState,
+            snackbarHostState = snackbarHostState,
+            twoColumns = twoColumns,
+            onEvent = onEvent,
+        )
+    }
+}
+
+@Composable
+private fun ProductDetailsScaffold(
+    uiState: ProductDetailsUiState,
+    snackbarHostState: SnackbarHostState,
+    twoColumns: Boolean,
+    onEvent: (ProductDetailsEvent) -> Unit,
+) {
     Scaffold(
-        modifier = modifier,
         topBar = {
             ProductDetailsTopBar(
                 title = uiState.name,
                 onBack = { onEvent(ProductDetailsEvent.OnBackClick) },
+                modifier = if (twoColumns) Modifier else Modifier.contentBarWidth(),
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -96,11 +125,11 @@ internal fun ProductDetailsScreen(
                 onRetry = { onEvent(ProductDetailsEvent.OnRetryClick) },
                 modifier = contentModifier,
             )
-            ProductDetailsUiState.Details.Loading, is ProductDetailsUiState.Details.Loaded -> ProductDetailsContent(
-                state = uiState,
-                onEvent = onEvent,
-                modifier = contentModifier,
-            )
+            ProductDetailsUiState.Details.Loading, is ProductDetailsUiState.Details.Loaded -> if (twoColumns) {
+                ProductDetailsTwoColumns(state = uiState, onEvent = onEvent, modifier = contentModifier)
+            } else {
+                ProductDetailsOneColumn(state = uiState, onEvent = onEvent, modifier = contentModifier)
+            }
         }
     }
 }
@@ -110,18 +139,20 @@ internal fun ProductDetailsScreen(
 private fun ProductDetailsTopBar(
     title: String?,
     onBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         title = { Text(title ?: stringResource(R.string.catalog_product_title)) },
+        modifier = modifier,
         navigationIcon = { NavigateBackIconButton(onClick = onBack) },
     )
 }
 
 // From the first frame the screen is laid out as if the product had loaded: the image (or its placeholder
-// when the URL is unknown) with placeholders below. So the image has a place to fly to from the list,
+// when the URL is unknown) with placeholders beside or below it. So the image has a place to fly to from the list,
 // and nothing shifts when the product loads.
 @Composable
-private fun ProductDetailsContent(
+private fun ProductDetailsOneColumn(
     state: ProductDetailsUiState,
     onEvent: (ProductDetailsEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -130,25 +161,82 @@ private fun ProductDetailsContent(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .contentWidth(),
         ) {
             ProductDetailsImage(
                 productId = state.productId,
                 imageUrl = state.imageUrl,
                 name = state.name,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
             )
             ProductInfoSection(
                 name = state.name,
                 details = state.details,
             )
         }
-        CartControlSection(
+        ProductCartControl(
             details = state.details,
-            onAddToCart = { onEvent(ProductDetailsEvent.OnAddToCartClick) },
-            onQuantityChange = { onEvent(ProductDetailsEvent.OnQuantityChange(it)) },
-            onRemoveFromCart = { onEvent(ProductDetailsEvent.OnRemoveFromCartClick) },
+            onEvent = onEvent,
+            modifier = Modifier.contentWidth(),
         )
     }
+}
+
+// The image on the left, a square as tall as the screen; the details and the cart buttons take the rest and start
+// right after it. On a nearly square screen (an unfolded foldable) the image gives way, so the details keep
+// DETAILS_MIN_WIDTH.
+@Composable
+private fun ProductDetailsTwoColumns(
+    state: ProductDetailsUiState,
+    onEvent: (ProductDetailsEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(modifier = modifier) {
+        val imageSize = min(maxHeight, maxWidth - DETAILS_MIN_WIDTH)
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ProductDetailsImage(
+                productId = state.productId,
+                imageUrl = state.imageUrl,
+                name = state.name,
+                modifier = Modifier.size(imageSize),
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            ) {
+                ProductInfoSection(
+                    name = state.name,
+                    details = state.details,
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                )
+                ProductCartControl(details = state.details, onEvent = onEvent)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProductCartControl(
+    details: ProductDetailsUiState.Details,
+    onEvent: (ProductDetailsEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    CartControlSection(
+        details = details,
+        onAddToCart = { onEvent(ProductDetailsEvent.OnAddToCartClick) },
+        onQuantityChange = { onEvent(ProductDetailsEvent.OnQuantityChange(it)) },
+        onRemoveFromCart = { onEvent(ProductDetailsEvent.OnRemoveFromCartClick) },
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -156,21 +244,19 @@ private fun ProductDetailsImage(
     productId: String,
     imageUrl: String?,
     name: String?,
+    modifier: Modifier = Modifier,
 ) {
-    val imageModifier = Modifier
-        .fillMaxWidth()
-        .aspectRatio(1f)
     if (imageUrl != null) {
         ProductImage(
             imageUrl = imageUrl,
             contentDescription = name,
-            modifier = imageModifier,
+            modifier = modifier,
             cornerRadius = 0.dp,
             contentPadding = 32.dp,
             sharedElementKey = ProductImageKey(productId),
         )
     } else {
-        ShimmerPlaceholder(modifier = imageModifier) {
+        ShimmerPlaceholder(modifier = modifier) {
             ProductImagePlaceholder(
                 modifier = Modifier.fillMaxSize(),
                 cornerRadius = 0.dp,
@@ -178,6 +264,9 @@ private fun ProductDetailsImage(
         }
     }
 }
+
+private val TWO_COLUMNS_MIN_WIDTH = 600.dp
+private val DETAILS_MIN_WIDTH = 300.dp
 
 private fun previewState(
     details: ProductDetailsUiState.Details,
@@ -210,6 +299,14 @@ private fun ProductDetailsScreenPreview(state: ProductDetailsUiState) {
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ProductDetailsScreenLoadedPreview() {
+    ProductDetailsScreenPreview(previewState(previewLoaded))
+}
+
+// A small tablet held sideways: the image and the details side by side.
+@Preview(name = "Light", widthDp = 960, heightDp = 600)
+@Preview(name = "Dark", widthDp = 960, heightDp = 600, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProductDetailsScreenLandscapePreview() {
     ProductDetailsScreenPreview(previewState(previewLoaded))
 }
 

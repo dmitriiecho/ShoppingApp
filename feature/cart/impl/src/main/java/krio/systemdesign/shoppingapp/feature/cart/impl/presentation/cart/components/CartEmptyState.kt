@@ -15,6 +15,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.E
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ShoppingCart
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartUiState
 
@@ -41,7 +42,8 @@ internal fun CartEmptyState(
                 onRemove = onRemovePromo,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(24.dp),
+                    .padding(24.dp)
+                    .contentWidth(),
             )
         }
     }

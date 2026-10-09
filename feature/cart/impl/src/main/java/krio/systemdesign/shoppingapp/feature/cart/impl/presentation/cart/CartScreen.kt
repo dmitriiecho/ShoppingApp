@@ -31,6 +31,8 @@ import krio.systemdesign.shoppingapp.core.composeutils.text.asString
 import krio.systemdesign.shoppingapp.core.designsystem.components.dialogs.ConfirmationDialog
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.components.CartBottomBar
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.components.CartEmptyState
@@ -142,6 +144,7 @@ private fun CartTopBar(
 ) {
     TopAppBar(
         title = { Text(stringResource(R.string.cart_title)) },
+        modifier = Modifier.contentBarWidth(),
         actions = {
             TextButton(onClick = onPromoClick) {
                 Text(stringResource(R.string.cart_promo_code))
@@ -188,6 +191,7 @@ private fun CartContent(
                 onClick = { onEvent(CartEvent.OnItemClick(it.productId, it.name, it.imageUrl)) },
                 onQuantityChange = { productId, quantity -> onEvent(CartEvent.OnQuantityChange(productId, quantity)) },
                 onRemove = { onEvent(CartEvent.OnRemoveFromCartClick(it)) },
+                modifier = Modifier.contentWidth(),
             )
         }
         item(key = "totals") {
@@ -195,7 +199,9 @@ private fun CartContent(
                 promoCode = content.promoCode,
                 totals = content.totals,
                 onRemovePromo = { onEvent(CartEvent.OnRemovePromoCodeClick) },
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .contentWidth(),
             )
         }
     }

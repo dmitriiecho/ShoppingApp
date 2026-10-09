@@ -15,7 +15,8 @@
 
         <!--
             uiMode: a system dark mode change doesn't recreate the activity, Compose recolors it without a flicker.
-            portrait: phones only; on Android 16+ large screens (600 dp and wider) ignore it and the app rotates.
+            portrait: phones only, their landscape isn't laid out yet. Android 16+ ignores it on screens 600 dp and
+            wider; there the app rotates and lays its screens out for the width.
         -->
         <activity
             android:name=".MainActivity"
