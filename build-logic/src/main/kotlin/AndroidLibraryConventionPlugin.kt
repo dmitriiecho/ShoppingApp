@@ -28,8 +28,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     // a module with no tests Gradle sees classes without tests and fails. Only a module that has
                     // tests can have tests that weren't found.
                     test.failOnNoDiscoveredTests.set(file("src/test").exists())
-                    // The JSON samples the app and the server agree on (apiSample in :core:network). Declared as an
-                    // input, so an edited sample runs the tests again.
+                    // The JSON samples the app and the server agree on (apiSample and apiRequest in :core:network).
+                    // Declared as an input, so an edited sample runs the tests again.
                     val apiSamples = rootDir.resolve("server/api-samples")
                     test.systemProperty("apiSamplesDir", apiSamples.path)
                     test.inputs.dir(apiSamples).withPathSensitivity(PathSensitivity.RELATIVE)

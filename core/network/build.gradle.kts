@@ -22,7 +22,8 @@ dependencies {
 
     debugImplementation(libs.okhttp.logging)
 
-    // networkTest: MockWebServer with a Retrofit client that reads JSON as the app does.
+    // networkTest: MockWebServer with a Retrofit client that reads JSON as the app does; apiSample and apiRequest
+    // read server/api-samples.
     testFixturesApi(libs.okhttp.mockwebserver)
     testFixturesApi(libs.kotlinx.coroutines.test)
 

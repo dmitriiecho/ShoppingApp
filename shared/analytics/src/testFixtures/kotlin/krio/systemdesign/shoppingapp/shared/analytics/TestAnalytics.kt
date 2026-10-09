@@ -3,7 +3,8 @@ package krio.systemdesign.shoppingapp.shared.analytics
 import krio.systemdesign.shoppingapp.shared.analytics.system.AnalyticsSystem
 import krio.systemdesign.shoppingapp.shared.analytics.system.TestAnalyticsClient
 
-// Analytics for a ViewModel test, with a TestAnalyticsClient for every system. A failing client fails the test.
+// Analytics for a ViewModel test, with a TestAnalyticsClient for every system. onClientError rethrows, so an error
+// inside analytics is never hidden from a test.
 class TestAnalytics {
     private val events = mutableListOf<AnalyticsEvent>()
 

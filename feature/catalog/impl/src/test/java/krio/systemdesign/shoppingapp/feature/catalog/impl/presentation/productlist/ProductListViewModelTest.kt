@@ -35,7 +35,7 @@ import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 
-// advanceTimeBy and runCurrent are still marked experimental.
+// advanceTimeBy, runCurrent and UnconfinedTestDispatcher are still marked experimental.
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProductListViewModelTest {
 
