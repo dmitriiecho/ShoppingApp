@@ -17,6 +17,12 @@ internal interface CartItemDao {
     @Upsert
     suspend fun upsert(entity: CartItemEntity)
 
+    @Query("UPDATE cart_items SET quantity = :quantity WHERE productId = :productId")
+    suspend fun updateQuantity(
+        productId: String,
+        quantity: Int,
+    )
+
     @Query("DELETE FROM cart_items WHERE productId = :productId")
     suspend fun delete(productId: String)
 

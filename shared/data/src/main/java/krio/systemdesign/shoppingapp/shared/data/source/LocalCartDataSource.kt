@@ -47,9 +47,9 @@ internal class LocalCartDataSource @Inject constructor(
         quantity: Int,
     ): Result<Unit> = databaseCall {
         require(quantity > 0) { "quantity must be positive" }
-        // Already removed, e.g. by a fast tap on Remove just before this "+": nothing to change.
-        val existing = cartItemDao.find(productId) ?: return@databaseCall
-        cartItemDao.upsert(existing.copy(quantity = quantity))
+        // One statement, so a fast tap on Remove can't slip in between a read and a write and the item stays
+        // removed: an UPDATE of a removed item changes nothing.
+        cartItemDao.updateQuantity(productId, quantity)
     }
 
     suspend fun removeItem(productId: String): Result<Unit> = databaseCall {

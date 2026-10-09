@@ -42,6 +42,16 @@ class LocalCartDataSourceTest {
         assertThat(cart.current().items.single().availableQuantity).isEqualTo(4)
     }
 
+    @Test
+    fun `new quantity replaces the old one`() = databaseTest { database ->
+        val cart = cartOf(database)
+        cart.addItem(testProduct(id = "1"), quantity = 2)
+
+        cart.setQuantity("1", quantity = 5)
+
+        assertThat(cart.current().quantityOf("1")).isEqualTo(5)
+    }
+
     // A fast tap on "+" right after Remove must not bring the item back.
     @Test
     fun `new quantity of a removed item doesn't bring it back`() = databaseTest { database ->
