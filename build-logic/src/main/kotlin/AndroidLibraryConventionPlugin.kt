@@ -48,7 +48,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
 
             // Kotlin LSP ("Kotlin by JetBrains") adds R.jar only to app modules, so R is unresolved in libraries.
-            // The property is set only by its project import; R.jar exists after the module's first build.
+            // The property is set only by its project import. builtBy declares where the jar comes from: the import
+            // compiles release too, and Gradle fails a task that reads another task's output without a dependency.
             if (providers.systemProperty("com.jetbrains.ls.imports.gradle").isPresent) {
                 dependencies {
                     add(
@@ -57,7 +58,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                             layout.buildDirectory.file(
                                 "intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar",
                             ),
-                        ),
+                        ).builtBy("generateDebugRFile"),
                     )
                 }
             }
