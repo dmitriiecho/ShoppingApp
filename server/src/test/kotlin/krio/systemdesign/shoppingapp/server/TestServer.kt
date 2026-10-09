@@ -12,10 +12,10 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.readText
+import kotlin.io.path.writeBytes
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -25,14 +25,23 @@ import krio.systemdesign.shoppingapp.server.dto.CartValidationRequestDTO
 import krio.systemdesign.shoppingapp.server.dto.ProductDTO
 import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
-// The server in memory on the test's data, with a client that reads JSON as the app does.
+// The server in memory on the test's data and product images (file name to content), with a client that reads
+// JSON as the app does. The images are in a folder of their own, deleted after the test.
 fun serverTest(
     data: ShopData = testShopData(),
-    imagesDir: Path = createTempDirectory("product-images"),
+    images: Map<String, ByteArray> = emptyMap(),
     block: suspend (client: HttpClient) -> Unit,
-) = testApplication {
-    application { module(data, imagesDir) }
-    block(createClient { install(ContentNegotiation) { json(serverJson) } })
+) {
+    val imagesDir = createTempDirectory("product-images")
+    try {
+        images.forEach { (name, content) -> imagesDir.resolve(name).writeBytes(content) }
+        testApplication {
+            application { module(data, imagesDir) }
+            block(createClient { install(ContentNegotiation) { json(serverJson) } })
+        }
+    } finally {
+        imagesDir.toFile().deleteRecursively()
+    }
 }
 
 fun testShopData(

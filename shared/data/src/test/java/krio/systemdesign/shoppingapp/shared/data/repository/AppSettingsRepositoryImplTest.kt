@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import kotlin.io.path.createTempDirectory
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
@@ -16,6 +17,14 @@ import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 
 class AppSettingsRepositoryImplTest {
+
+    // A folder of its own for each test's settings file.
+    private val settingsDir = createTempDirectory("settings")
+
+    @AfterTest
+    fun deleteSettingsDir() {
+        settingsDir.toFile().deleteRecursively()
+    }
 
     @Test
     fun `saved theme is read back`() = runTest {
@@ -59,6 +68,6 @@ class AppSettingsRepositoryImplTest {
     // A real DataStore in a fresh file, as the app has, but without an Android Context.
     private fun TestScope.settingsDataStore(): DataStore<Preferences> = PreferenceDataStoreFactory.create(
         scope = backgroundScope,
-        produceFile = { createTempDirectory("settings").resolve("settings.preferences_pb").toFile() },
+        produceFile = { settingsDir.resolve("settings.preferences_pb").toFile() },
     )
 }
