@@ -5,13 +5,17 @@ import krio.systemdesign.shoppingapp.shared.analytics.system.TestAnalyticsClient
 
 // Analytics for a ViewModel test, with a TestAnalyticsClient for every system. A failing client fails the test.
 class TestAnalytics {
-    private val clients = AnalyticsSystem.entries.map(::TestAnalyticsClient)
+    private val events = mutableListOf<AnalyticsEvent>()
 
-    val analytics = Analytics(clients.toSet(), onClientError = { _, e -> throw e })
+    val analytics = Analytics(
+        clients = AnalyticsSystem.entries.map { TestAnalyticsClient(it, events) }.toSet(),
+        onClientError = { _, e -> throw e },
+    )
 
-    // Every event once, even when it went to several systems.
+    // Every event in the order it was sent. An event sent to several systems is in events once per system,
+    // one after another, so it is kept once.
     val sentEvents: List<SentEvent>
-        get() = clients.flatMap { it.events }.distinct().map { it.sent() }
+        get() = events.filterIndexed { i, event -> i == 0 || events[i - 1] !== event }.map { it.sent() }
 }
 
 // Events have no equals, so tests compare what was sent: the name and the params.
