@@ -47,6 +47,18 @@ class CheckoutViewModelTest {
         }
     }
 
+    // Placing the order empties the cart, and the screen shows the cart's order until it closes.
+    @Test
+    fun `placed order stays on screen while the screen closes`() = viewModelTest {
+        val viewModel = checkoutViewModel()
+        viewModel.uiState.value.address.street.typeText("1 Main St")
+        val order = viewModel.uiState.value.order
+
+        viewModel.onEvent(CheckoutEvent.OnPlaceOrderClick)
+
+        assertThat(viewModel.uiState.value.order).isEqualTo(order)
+    }
+
     @Test
     fun `double tap places one order`() = viewModelTest {
         val placing = CompletableDeferred<Unit>()

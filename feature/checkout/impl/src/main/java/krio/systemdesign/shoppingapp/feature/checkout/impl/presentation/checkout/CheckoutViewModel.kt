@@ -39,20 +39,23 @@ internal class CheckoutViewModel @Inject constructor(
         courierComment = savedStateHandle.savedTextField(KEY_COURIER_COMMENT),
     )
     private val paymentMethod = savedStateHandle.getStateFlow(KEY_PAYMENT_METHOD, CheckoutUiState.PaymentMethod.Card)
-    private val isSubmitting = MutableStateFlow(false)
+    private val submission = MutableStateFlow<Submission>(Submission.Idle)
 
     val uiState: StateFlow<CheckoutUiState> = combine(
         // Mapped here, not inside combine: a new order only when the cart changes, so a payment or
         // submitting change reuses the same object and Compose skips redrawing the order.
         observeCart().map { it.toOrder() },
         paymentMethod,
-        isSubmitting,
-    ) { order, payment, submitting ->
+        submission,
+    ) { cartOrder, payment, latestSubmission ->
         CheckoutUiState(
-            order = order,
+            order = when (latestSubmission) {
+                Submission.Idle -> cartOrder
+                is Submission.Submitting -> latestSubmission.order
+            },
             address = address,
             paymentMethod = payment,
-            isSubmitting = submitting,
+            isSubmitting = latestSubmission is Submission.Submitting,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -75,13 +78,12 @@ internal class CheckoutViewModel @Inject constructor(
         savedStateHandle[KEY_PAYMENT_METHOD] = method
     }
 
-    // Places the order at most once: the check reads isSubmitting itself, since uiState gets it only after
-    // combine and a fast second tap would slip through; on success the flag stays true while the screen closes.
+    // Places the order at most once: the check reads submission itself, since uiState gets it only after
+    // combine and a fast second tap would slip through; on success it stays Submitting while the screen closes.
     private fun submitOrder() {
-        if (isSubmitting.value || !uiState.value.canSubmit) return
-        // Taken before placing: the order resets the cart.
+        if (submission.value is Submission.Submitting || !uiState.value.canSubmit) return
         val order = uiState.value.order as? CheckoutUiState.Order.Loaded ?: return
-        isSubmitting.value = true
+        submission.value = Submission.Submitting(order)
         viewModelScope.launch {
             placeOrder()
                 .onSuccess {
@@ -90,7 +92,7 @@ internal class CheckoutViewModel @Inject constructor(
                 }
                 .onFailure {
                     send(CheckoutEffect.ShowSnackBar(UiText.Resource(R.string.checkout_place_order_error)))
-                    isSubmitting.value = false
+                    submission.value = Submission.Idle
                 }
         }
     }
@@ -105,6 +107,13 @@ internal class CheckoutViewModel @Inject constructor(
         const val KEY_COURIER_COMMENT = "courier_comment"
         const val KEY_PAYMENT_METHOD = "payment_method"
     }
+}
+
+private sealed interface Submission {
+    data object Idle : Submission
+
+    // Placing the order empties the cart, so the screen shows the order taken before that until it closes.
+    data class Submitting(val order: CheckoutUiState.Order.Loaded) : Submission
 }
 
 private fun CheckoutUiState.Order.Loaded.toAnalyticsEvent() = OrderPlacedAnalyticsEvent(
