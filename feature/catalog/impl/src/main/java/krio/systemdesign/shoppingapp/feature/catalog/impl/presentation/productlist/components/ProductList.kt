@@ -37,6 +37,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.Scroll
 import krio.systemdesign.shoppingapp.core.designsystem.components.notices.ErrorBanner
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.ui.OutOfStockButton
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
@@ -77,7 +78,8 @@ internal fun ProductList(
             products = products,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(horizontal = Spacing.ScreenPadding, vertical = 8.dp),
+                .padding(horizontal = Spacing.ScreenPadding, vertical = 8.dp)
+                .contentWidth(),
         )
         BackToTopButton(
             listState = listState,
@@ -165,7 +167,10 @@ private fun ProductCards(
             val product = products[index]
             if (product == null) {
                 // The places above stop shimmering once their page has failed: they won't load until Retry.
-                ProductCardPlaceholder(isAnimating = prepend !is LoadState.Error)
+                ProductCardPlaceholder(
+                    modifier = Modifier.contentWidth(),
+                    isAnimating = prepend !is LoadState.Error,
+                )
                 return@items
             }
             ProductListItem(
@@ -175,17 +180,19 @@ private fun ProductCards(
                 onAddToCart = { onAddToCart(product) },
                 onQuantityChange = { quantity -> onQuantityChange(product.id, quantity) },
                 onRemoveFromCart = { onRemoveFromCart(product.id) },
+                modifier = Modifier.contentWidth(),
             )
         }
 
         when (append) {
             is LoadState.Loading -> item(key = "append_loading") {
-                ProductCardPlaceholder()
+                ProductCardPlaceholder(modifier = Modifier.contentWidth())
             }
             is LoadState.Error -> item(key = "append_error") {
                 ErrorBanner(
                     message = stringResource(R.string.catalog_load_error),
                     onRetry = { products.retry() },
+                    modifier = Modifier.contentWidth(),
                 )
             }
             is LoadState.NotLoading -> Unit
@@ -204,7 +211,7 @@ internal fun ProductListPlaceholder(modifier: Modifier = Modifier) {
         userScrollEnabled = false,
     ) {
         items(PLACEHOLDER_COUNT) {
-            ProductCardPlaceholder()
+            ProductCardPlaceholder(modifier = Modifier.contentWidth())
         }
     }
 }
@@ -217,12 +224,14 @@ private fun ProductListItem(
     onAddToCart: () -> Unit,
     onQuantityChange: (Int) -> Unit,
     onRemoveFromCart: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ProductCard(
         name = product.name,
         imageUrl = product.imageUrl,
         price = formatPrice(product.price),
         onClick = onClick,
+        modifier = modifier,
         sharedElementKey = ProductImageKey(product.id),
     ) {
         if (product.isAvailable) {

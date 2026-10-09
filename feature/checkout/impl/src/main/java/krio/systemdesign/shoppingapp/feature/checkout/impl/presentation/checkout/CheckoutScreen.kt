@@ -32,6 +32,8 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ShoppingCart
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.feature.checkout.impl.R
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.components.CheckoutBottomBar
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.components.DeliveryAddressSection
@@ -116,6 +118,7 @@ internal fun CheckoutScreen(
 private fun CheckoutTopBar(onClose: () -> Unit) {
     TopAppBar(
         title = { Text(stringResource(R.string.checkout_title)) },
+        modifier = Modifier.contentBarWidth(),
         actions = {
             CloseIconButton(onClick = onClose)
         },
@@ -144,7 +147,8 @@ private fun CheckoutContent(
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(Spacing.ScreenPadding),
+            .padding(Spacing.ScreenPadding)
+            .contentWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.SectionSpacing),
     ) {
         OrderItemsSection(items = order.items)

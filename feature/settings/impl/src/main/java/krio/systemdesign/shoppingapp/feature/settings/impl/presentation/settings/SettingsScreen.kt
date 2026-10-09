@@ -27,6 +27,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.feature.settings.impl.R
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.NetworkDelayItem
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.TestActions
@@ -77,6 +79,7 @@ internal fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings_title)) },
+                modifier = Modifier.contentBarWidth(),
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -101,7 +104,11 @@ private fun SettingsContent(
     onEvent: (SettingsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .contentWidth(),
+    ) {
         ThemeModeItem(
             selected = values.themeMode,
             onSelect = { onEvent(SettingsEvent.OnThemeModeChange(it)) },

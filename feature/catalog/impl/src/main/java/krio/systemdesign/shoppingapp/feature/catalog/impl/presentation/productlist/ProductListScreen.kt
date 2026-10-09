@@ -43,6 +43,8 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.SearchOff
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Storefront
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.components.ProductList
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.components.ProductListPlaceholder
@@ -101,8 +103,8 @@ internal fun ProductListScreen(
                 state = uiState.searchQuery,
                 placeholder = stringResource(R.string.catalog_search_placeholder),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Spacing.ScreenPadding),
+                    .padding(horizontal = Spacing.ScreenPadding)
+                    .contentWidth(),
             )
             ProductListContent(
                 searchQuery = uiState.searchQuery,
@@ -119,6 +121,7 @@ internal fun ProductListScreen(
 private fun ProductListTopBar() {
     TopAppBar(
         title = { Text(stringResource(R.string.catalog_title)) },
+        modifier = Modifier.contentBarWidth(),
     )
 }
 
