@@ -125,7 +125,7 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 - **Время виртуальное**: `advanceTimeBy()` проматывает debounce или анимацию без ожидания.
 - **Сохранение на случай смерти процесса** проверяется, только когда это обычное значение в `SavedStateHandle` (диалог, способ оплаты): тот же handle передаётся новой ViewModel. Поля ввода сохраняются через Android `Bundle`, которого в JVM-тесте нет.
 - **Запрос «в процессе»** — это `CompletableDeferred`, которого ждёт ответ: тест тем временем меняет корзину, а потом завершает его.
-- **У событий аналитики нет `equals`**, поэтому `TestAnalytics.sentEvents` хранит их имя и параметры: `assertThat(analytics.sentEvents).containsExactly(CartClearedAnalyticsEvent().sent())`.
+- **У событий аналитики нет `equals`**, поэтому `TestAnalytics.sentEvents` хранит их имя и параметры: `assertThat(analytics.sentEvents).containsExactly(CheckoutStartedAnalyticsEvent(itemCount = 3, totalCents = 5000).sent())`.
 
 ### База данных
 
