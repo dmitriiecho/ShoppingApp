@@ -28,7 +28,7 @@ fun LoadingButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    // Button doesn't animate its background when enabled changes, so we animate it here for both states.
+    // Button doesn't animate its background when enabled changes, so it is animated here for both states.
     val defaultColors = ButtonDefaults.buttonColors()
     val containerColor by animateColorAsState(
         targetValue = if (enabled) defaultColors.containerColor else defaultColors.disabledContainerColor,
