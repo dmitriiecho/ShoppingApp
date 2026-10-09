@@ -6,6 +6,7 @@
 # The two jobs run in parallel, each on its own fresh virtual machine (a "runner").
 # The server is a separate Gradle build (server/), so it gets a job of its own.
 # Latest build (latest-build.yml) starts after this workflow passes on a push.
+# Screenshot comment (screenshot-comment.yml) starts after it on a pull request.
 
 name: CI
 
@@ -127,7 +128,8 @@ jobs:
           failed_summary_logs: true
 
       # A changed screenshot can't be shown in the summary: its saved image, the new one and the difference,
-      # side by side, are attached to the run for a week.
+      # side by side, are attached to the run for a week. Screenshot comment (screenshot-comment.yml) shows them
+      # in a comment on the pull request.
       - name: Changed screenshots
         if: ${{ failure() && steps.tests.outcome == 'failure' }}
         uses: actions/upload-artifact@v7
