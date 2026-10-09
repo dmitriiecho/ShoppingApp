@@ -119,6 +119,7 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 
 - **The ViewModel is created inside `viewModelTest {}`**, after `Dispatchers.Main` is replaced.
 - **The state is kept collected, as the screen does**: `keepCollecting(viewModel.uiState)` right after creating it, then the test reads `viewModel.uiState.value`. A `stateIn(WhileSubscribed)` flow with no collector keeps its initial value. Effects are one-off, so they are checked with Turbine.
+- **A Paging list is kept shown, as the screen's list does**: Paging loads pages only while something presents them, so the catalog's test keeps a `PagingDataPresenter` collecting `viewModel.products` and checks the pages the repository was asked for. `asSnapshot()` doesn't fit a debounce: it moves the virtual clock until everything is done.
 - **Typing goes through `typeText()`**: on a device Compose applies a field's change on the next frame, a test has no frames.
 - **Time is virtual**: `advanceTimeBy()` moves it past a debounce or an animation without waiting.
 - **State saved for process death** is checked only when it is a plain value in `SavedStateHandle` (a dialog, the payment method): the same handle is given to a new ViewModel. Text fields are saved through an Android `Bundle`, which a JVM test doesn't have.

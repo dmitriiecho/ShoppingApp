@@ -96,7 +96,6 @@ roborazzi-compose-preview-scanner-support = { group = "io.github.takahirom.robor
 composable-preview-scanner = { group = "io.github.sergio-sastre.ComposablePreviewScanner", name = "android", version.ref = "composablePreviewScanner" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver3", version.ref = "okhttp" }
 
 # Added to modules by the build-logic convention plugins. The IDE doesn't look there
