@@ -45,6 +45,8 @@ fun ConfirmationDialog(
     )
 }
 
+// Here mainly for the screenshot test, which draws the dialog on the whole screen. Android Studio draws only the
+// main window, so this preview is blank there; Run Preview shows it on a device.
 // The destructive kind, the one the app uses; the regular one differs only in the confirm button's color.
 @Preview(name = "Light")
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
