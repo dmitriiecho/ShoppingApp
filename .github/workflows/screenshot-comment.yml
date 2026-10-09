@@ -93,9 +93,11 @@ jobs:
           gh run download "$RUN_ID" --repo "$REPO" --name changed-screenshots --dir artifact
           find artifact -type f -name '*_compare.png' | while read -r FILE; do
             NAME=$(basename "$FILE")
-            if [[ "$NAME" =~ ^[A-Za-z0-9._-]+$ ]] && [ "$(file --brief --mime-type "$FILE")" = image/png ]; then
-              # The module is the path before build/: core/designsystem/build/... → :core:designsystem
-              MODULE=":$(dirname "${FILE#artifact/}" | sed 's|/build/.*||; s|/|:|g')"
+            # The module is the path before build/: core/designsystem/build/... → :core:designsystem
+            MODULE=":$(dirname "${FILE#artifact/}" | sed 's|/build/.*||; s|/|:|g')"
+            # Both go into the comment, so both must look like what the build makes.
+            if [[ "$NAME" =~ ^[A-Za-z0-9._-]+$ ]] && [[ "$MODULE" =~ ^(:[a-z0-9-]+)+$ ]] &&
+              [ "$(file --brief --mime-type "$FILE")" = image/png ]; then
               cp "$FILE" images/
               echo "$NAME $MODULE" >> images.txt
             fi
