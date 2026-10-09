@@ -22,6 +22,8 @@ import krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase.ClearCartI
 import krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase.RemovePromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase.ValidateCartUseCase
 import krio.systemdesign.shoppingapp.shared.analytics.TestAnalytics
+import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
+import krio.systemdesign.shoppingapp.shared.analytics.event.cart.CartQuantityChangedAnalyticsEvent
 import krio.systemdesign.shoppingapp.shared.analytics.sent
 import krio.systemdesign.shoppingapp.shared.domain.model.Cart
 import krio.systemdesign.shoppingapp.shared.domain.model.CartValidationResult
@@ -187,6 +189,16 @@ class CartViewModelTest {
 
             assertThat(awaitItem()).isEqualTo(snackBar(R.string.cart_update_error))
         }
+    }
+
+    @Test
+    fun `cart change is reported with the new quantity`() = viewModelTest {
+        val viewModel = cartViewModel()
+
+        viewModel.onEvent(CartEvent.OnQuantityChange("1", quantity = 3))
+
+        assertThat(analytics.sentEvents)
+            .containsExactly(CartQuantityChangedAnalyticsEvent("1", quantity = 3, screen = AnalyticsScreen.Cart).sent())
     }
 
     @Test
