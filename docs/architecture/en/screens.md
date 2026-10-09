@@ -80,7 +80,7 @@ data class CartUiState(
 - **Nested types are written through their owner**: `CartUiState.Item`; inside the owner the name isn't repeated: `PromoCodeUiState.Check`, not `PromoCodeCheck`.
 - **Fields are grouped by screen section**, not listed flat: checkout has `order`, `address`, `paymentMethod`.
 - **Loading is a state, not a flag or `null`**: sealed `Loading` / `Loaded` / `Error` with these names everywhere. `null` only means "unknown", such as a product name a deep link didn't pass.
-- **The state holds what the screen draws**, ready decisions such as `canAddOneMore` included, not domain models or raw data.
+- **The state holds what the screen draws.** A domain model the screen shows as is goes in as is: checkout's order items, the promo codes in the hint. A screen gets its own UI model on plain values when it needs ready decisions or [Compose stability](#compose-stability): `CartUiState.Item` holds `canAddOneMore` and the item's issues, so "+" redraws only its own card.
 - **Repeated conditions are getters** on the state, like `canCheckout` above.
 
 A check before an action reads the source itself, not `uiState`: the state gets a change only after `combine`, a moment later. Otherwise a fast double tap on "Place order" placed the order twice:
@@ -174,7 +174,7 @@ val uiState = combine(
 ) { order, payment, submitting -> CheckoutUiState(/* ... */) }
 ```
 
-Models from `:shared:domain` are unstable for Compose: that module has no Compose compiler, and no Compose annotations go there. Where it matters the screen gets its own UI model with plain values, like `CartUiState.Item` in the cart.
+Models from `:shared:domain` are unstable for Compose: that module has no Compose compiler, and no Compose annotations go there. That matters for a list whose cards change one by one, like the cart: there the screen gets its own UI model with plain values, `CartUiState.Item`. A screen that shows the data as is, like checkout, keeps the domain models.
 
 List callbacks take the item's id instead of capturing the item. So every card gets the same lambdas, and "+" redraws only its own card:
 
