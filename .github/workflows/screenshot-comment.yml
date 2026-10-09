@@ -1,0 +1,191 @@
+# Screenshot comment: shows a pull request's changed screenshots in a comment on it, so nobody has to download
+# the CI artifact to see them.
+#
+#   CI finishes on a pull request → its changed-screenshots artifact → a branch screenshots/pr-<N> → the comment
+#   the pull request is closed → the branch is deleted
+#
+# A comment can show only an image that has a link, so the images go to a branch of their own. The pull request's
+# one comment is updated on every run; when the screenshots match again, it says so.
+
+name: Screenshot comment
+
+
+# ============================================================================
+# When it runs
+# ============================================================================
+
+on:
+  # After every finished run of the CI workflow; the job below keeps only those of pull requests.
+  # GitHub runs this trigger only from the copy of this file on main, so a change to it can't be tried in a PR.
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  # A closed or merged pull request. Unlike pull_request, it gets a token that can write even for a pull request
+  # from a fork; that is safe here because the job only deletes a branch and never checks out the pull request's code.
+  pull_request_target:
+    types: [closed]
+
+# Unlike CI, this workflow writes to the repo. CI runs the pull request's code, so it can't have this access:
+# here nothing from the pull request runs, its images are only copied.
+permissions:
+  contents: write       # push and delete the screenshots/pr-<N> branches
+  pull-requests: write  # write the comment
+  actions: read         # download the artifact of the CI run
+
+
+jobs:
+
+  # ==========================================================================
+  # Comment: after CI on a pull request
+  # ==========================================================================
+
+  comment:
+    name: Comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # A cancelled CI run was replaced by a newer one, which will be commented on.
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion != 'cancelled'
+    # Runs for the same pull request go one after another, so two of them don't write the comment at once.
+    concurrency:
+      group: screenshot-comment-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+    # The branch name comes from the pull request's author, so it is passed to the scripts as a variable, never
+    # pasted into them: a name made of shell commands would otherwise run.
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      RUN_ID: ${{ github.event.workflow_run.id }}
+      RUN_URL: ${{ github.event.workflow_run.html_url }}
+      SHA: ${{ github.event.workflow_run.head_sha }}
+      HEAD: ${{ github.event.workflow_run.head_repository.owner.login }}:${{ github.event.workflow_run.head_branch }}
+      MARKER: '<!-- screenshot-comment -->'
+
+    steps:
+
+      # The run's event names its pull request only when the branch is in this repo, so it is looked up by the
+      # branch. A run of a commit that is no longer the pull request's newest is skipped: a newer run will comment.
+      - name: Find the pull request
+        id: pr
+        run: |
+          read -r NUMBER PR_SHA < <(gh api -X GET "repos/$REPO/pulls" -f state=open -f head="$HEAD" \
+            --jq '.[0] | "\(.number) \(.head.sha)"')
+          if [ "$NUMBER" = null ] || [ "$PR_SHA" != "$SHA" ]; then
+            echo "No open pull request has ${SHA:0:7} as its newest commit."
+            exit 0
+          fi
+          echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+          echo "comment=$(gh api "repos/$REPO/issues/$NUMBER/comments" --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$MARKER\"))) | .id" \
+            | head -1)" >> "$GITHUB_OUTPUT"
+
+      # CI attaches the artifact only when a screenshot differs from its saved image.
+      # Only its comparison images are kept, with names any link can hold: the artifact was made by the pull
+      # request's code, so nothing else of it is trusted.
+      - name: Download the changed screenshots
+        id: download
+        if: ${{ steps.pr.outputs.number }}
+        run: |
+          mkdir images
+          touch images.txt
+          if ! gh api "repos/$REPO/actions/runs/$RUN_ID/artifacts" --jq '.artifacts[].name' | grep -qx changed-screenshots; then
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          gh run download "$RUN_ID" --repo "$REPO" --name changed-screenshots --dir artifact
+          find artifact -type f -name '*_compare.png' | while read -r FILE; do
+            NAME=$(basename "$FILE")
+            if [[ "$NAME" =~ ^[A-Za-z0-9._-]+$ ]] && [ "$(file --brief --mime-type "$FILE")" = image/png ]; then
+              # The module is the path before build/: core/designsystem/build/... → :core:designsystem
+              MODULE=":$(dirname "${FILE#artifact/}" | sed 's|/build/.*||; s|/|:|g')"
+              cp "$FILE" images/
+              echo "$NAME $MODULE" >> images.txt
+            fi
+          done
+          echo "count=$(wc -l < images.txt)" >> "$GITHUB_OUTPUT"
+
+      # One commit with only the images, pushed over the branch's old one, so the branch keeps no history.
+      - name: Publish the images
+        id: images
+        if: ${{ steps.download.outputs.count > 0 }}
+        run: |
+          cd images
+          git init --quiet
+          git add .
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit --quiet --message "Changed screenshots of #${{ steps.pr.outputs.number }} at ${SHA:0:7}"
+          git push --quiet --force "https://x-access-token:$GH_TOKEN@github.com/$REPO.git" \
+            "HEAD:refs/heads/screenshots/pr-${{ steps.pr.outputs.number }}"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # Writes the comment, or rewrites the old one. With no changed screenshots, the comment is written only to
+      # replace an old one, which would otherwise still show images of a fixed problem.
+      - name: Write the comment
+        if: ${{ steps.pr.outputs.number && (steps.images.outputs.commit || steps.pr.outputs.comment) }}
+        env:
+          NUMBER: ${{ steps.pr.outputs.number }}
+          COMMENT: ${{ steps.pr.outputs.comment }}
+          COMMIT: ${{ steps.images.outputs.commit }}
+        run: |
+          {
+            echo "$MARKER"
+            if [ -n "$COMMIT" ]; then
+              echo "### Changed screenshots"
+              echo
+              echo "Previews that look different at ${SHA:0:7}: $(wc -l < images.txt) ([CI run]($RUN_URL))." \
+                "Each image is the saved one, the difference in red and the new one."
+              echo
+              echo "If the change is meant, record the new images and commit them:" \
+                "\`./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true\`." \
+                "If it isn't, the tests found a problem."
+              sort images.txt | while read -r NAME MODULE; do
+                # krio...LoadingButtonKt.LoadingButtonPreview.Dark_NIGHT_compare.png → LoadingButton · Dark
+                PREVIEW=$(echo "$NAME" | sed -E 's/_compare\.png$//' | awk -F. '{ print $(NF-1), $NF }')
+                read -r FUNCTION VARIANT <<< "$PREVIEW"
+                echo
+                echo "#### ${FUNCTION%Preview} · ${VARIANT%%_*}"
+                echo "\`$MODULE\`"
+                echo
+                echo "![$FUNCTION $VARIANT](https://github.com/$REPO/raw/$COMMIT/$NAME)"
+              done
+            else
+              echo "### Screenshots"
+              echo
+              echo "No changed screenshots at ${SHA:0:7} ([CI run]($RUN_URL))."
+            fi
+          } > comment.md
+          if [ -n "$COMMENT" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$COMMENT" -F body=@comment.md --silent
+          else
+            gh api -X POST "repos/$REPO/issues/$NUMBER/comments" -F body=@comment.md --silent
+          fi
+
+      # The images of a fixed problem are no longer shown, so their branch goes.
+      - name: Delete the old images
+        if: ${{ steps.pr.outputs.number && !steps.images.outputs.commit }}
+        env:
+          BRANCH: screenshots/pr-${{ steps.pr.outputs.number }}
+        run: |
+          if gh api "repos/$REPO/git/ref/heads/$BRANCH" --silent 2>/dev/null; then
+            gh api -X DELETE "repos/$REPO/git/refs/heads/$BRANCH"
+          fi
+
+  # ==========================================================================
+  # Clean up: after a pull request is closed
+  # ==========================================================================
+
+  clean-up:
+    name: Clean up
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request_target'
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      BRANCH: screenshots/pr-${{ github.event.pull_request.number }}
+
+    steps:
+      # Most pull requests never had changed screenshots, and so have no branch.
+      - name: Delete the images
+        run: |
+          if gh api "repos/$REPO/git/ref/heads/$BRANCH" --silent 2>/dev/null; then
+            gh api -X DELETE "repos/$REPO/git/refs/heads/$BRANCH"
+          fi
