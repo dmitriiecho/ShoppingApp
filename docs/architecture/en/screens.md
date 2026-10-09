@@ -188,4 +188,4 @@ onQuantityChange: (productId: String, quantity: Int) -> Unit
 
 A screen is built from ready components: every styled element comes from `:core:designsystem`, `:shared:ui` or the feature's `ui` module (see [Modules](modules.md#where-new-code-goes)). The screen doesn't style Material components itself.
 
-Previews sit next to what they preview, private, in the light and dark themes. A screen file previews states that look different as a whole screen; a section's states are previewed in the section's file.
+Previews sit next to what they preview, private, in the light and dark themes. A screen file previews states that look different as a whole screen; a section's states are previewed in the section's file. Every preview is also a [screenshot test](testing.md#screenshots), so a state that has a preview is guarded against changes nobody asked for.

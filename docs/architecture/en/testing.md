@@ -2,7 +2,7 @@
 
 [Русская версия](../ru/testing.md) · [All pages](README.md)
 
-Tests run on the JVM, with no emulator: the app's logic, its data layer and the server. The app and the server follow the same rules, so a test reads the same on both sides.
+Tests run on the JVM, with no emulator: the app's logic, ViewModels, data layer and screens (a screenshot of every preview), its contract with the server, and the server itself. The app and the server follow the same rules, so a test reads the same on both sides.
 
 &nbsp;
 
@@ -202,7 +202,7 @@ These tests don't say whether a screen looks right: they catch changes nobody as
 - **A failed one leaves a comparison image** next to the build: `build/outputs/roborazzi/*_compare.png`, the saved image, the difference in red and the new one. In CI they are attached to the run as `changed-screenshots` and shown in a comment on the pull request.
 - **The clock is stopped**: `PausedClockPreviewTester` draws every preview at its first frame, so an endless animation (the shimmer, a spinner) doesn't hang the test and every run draws the same image.
 - **Old images are deleted only when recording**, by that flag: Roborazzi deletes every image the run didn't draw, so with the flag always on, running one test from Android Studio would delete the rest of the module's images.
-- **A dialog is drawn on the whole screen**, its dimmed background included, so a dialog gets a preview like any other component.
+- **A dialog is drawn on the whole screen**, its dimmed background included, so a dialog gets a preview like any other component. Android Studio draws only the main window, so there the preview is blank; Run Preview shows it on a device.
 - **Private previews count too**: Slack's lint rules make them private, and the plugin includes them.
 - **The UI kit app has no screenshots of its own**: its sections show the same components that are already drawn in their own modules.
 
@@ -210,4 +210,4 @@ Google's Compose Preview Screenshot Testing does the same with Android Studio's 
 
 ### Server
 
-`serverTest {}` starts the server in memory with Ktor's `testApplication`, on the data the test passes (`testShopData(products = …)`), and gives a client that reads JSON with the server's own `serverJson`. More on the server's API in [`server/README.md`](../../../server/README.md).
+`serverTest {}` starts the server in memory with Ktor's `testApplication`, on the data and the product images the test passes (`testShopData(products = …)`, `images = mapOf("1.png" to …)`), and gives a client that reads JSON with the server's own `serverJson`. The images are in a temporary folder, deleted after the test. A request from the samples is sent with `sendApiRequest("product")`, which fails on any status but a success. More on the server's API in [`server/README.md`](../../../server/README.md).
