@@ -85,4 +85,4 @@ The app is developed with the AI agents Claude Code, Cursor and Grok Build, on C
 
 - **The rules are written down for the agents**: [CLAUDE.md](CLAUDE.md) describes the module layout, the code style and the conventions for screens.
 - **Changes go in small steps**, each discussed and checked before it is committed.
-- **Behaviour is checked on an emulator**, and CI checks the style, the module rules, unused dependencies, lint, the build and the server's tests.
+- **Behaviour is checked by tests** on the JVM: the logic, the ViewModels, the data layer, the contract with the server and a screenshot of every preview. CI runs them along with the style, the module rules, unused dependencies, lint and the build. Changes are also tried on an emulator.
