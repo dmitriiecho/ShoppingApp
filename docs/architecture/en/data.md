@@ -2,25 +2,25 @@
 
 [Русская версия](../ru/data.md) · [All pages](README.md)
 
-A ViewModel talks to use cases, a use case to a repository, a repository to Room, DataStore or the server. Which of these are shared and which belong to one feature follows the rule from [Modules](modules.md#where-new-code-goes).
+A ViewModel calls use cases, a use case calls a repository, and a repository talks to Room, DataStore or the server. Which of these are shared and which belong to a single feature follows the rule from [Modules](modules.md#where-new-code-goes).
 
 &nbsp;
 
 ## Layers
 
-Shared models and their storage live in `shared/`, and what one feature needs stays in that feature:
+Shared models and their storage live in `shared/`; anything only one feature needs stays in that feature:
 
 | Where | What |
 |---|---|
-| `:shared:domain` | models, repository interfaces and use cases that two or more features use; pure Kotlin, no Android |
-| `:shared:data` | their implementations: Room, DataStore, the cart API; all `internal` |
-| `feature/<name>/impl/…/domain`, `…/data` | a feature's own models, repositories and use cases: the catalog's products, promo code checks |
+| `:shared:domain` | models, repository interfaces and use cases used by two or more features; pure Kotlin, no Android |
+| `:shared:data` | their implementations: Room, DataStore, the cart API; everything is `internal` |
+| `feature/<name>/impl/…/domain`, `…/data` | a feature's own models, repositories and use cases, such as the catalog's products or promo code checks |
 
 &nbsp;
 
 ## Use cases
 
-A use case is one action through a repository. Many are one line long, but there is one for every action, so a ViewModel never depends on a repository:
+A use case performs one action through a repository. Many are a single line long, but every action has one, so a ViewModel never depends on a repository directly:
 
 ```kotlin
 class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepository) {
@@ -29,7 +29,7 @@ class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepos
 }
 ```
 
-Rules live in models, not in use cases. For example, the cart computes its own totals:
+Business rules live in the models, not in use cases. For example, the cart computes its own totals:
 
 ```kotlin
 data class Cart(val items: List<CartItem>, val promoCode: PromoCode? = null) {
@@ -39,9 +39,9 @@ data class Cart(val items: List<CartItem>, val promoCode: PromoCode? = null) {
 }
 ```
 
-In the same way `CartValidation` knows what the last cart check found and what is still unfixed, and `canAddOneMore` knows the stock limit.
+In the same way, `CartValidation` knows what the last cart check found and what hasn't been fixed yet, and `canAddOneMore` knows the stock limit.
 
-A name that promises more than the code does gets a comment:
+If a name promises more than the code actually does, it gets a comment:
 
 ```kotlin
 // Orders aren't sent anywhere: the server has no endpoint for them.
@@ -53,11 +53,11 @@ suspend operator fun invoke(): Result<Unit> = cartRepository.reset()
 
 ## Repositories
 
-A repository interface speaks only domain models. Room entities and server DTOs stay inside `data` and are mapped with `toDomain()` / `toEntity()`.
+A repository interface uses only domain models. Room entities and server DTOs stay inside `data` and are converted with `toDomain()` / `toEntity()`.
 
-A repository with one source works with it directly: `ProductRepositoryImpl` calls `ProductApi`, `AppSettingsRepositoryImpl` calls DataStore.
+A repository with a single source works with it directly: `ProductRepositoryImpl` calls `ProductApi`, `AppSettingsRepositoryImpl` calls DataStore.
 
-The cart has two sources, and each is a class of its own:
+The cart has two sources, and each one is a separate class:
 
 ```kotlin
 internal class CartRepositoryImpl @Inject constructor(
@@ -66,13 +66,13 @@ internal class CartRepositoryImpl @Inject constructor(
 ) : CartRepository
 ```
 
-The repository joins them and sees only domain models, and the long Room logic stays apart from the network code. The sources have no interfaces: each has one implementation.
+The repository combines them and works only with domain models, while the lengthy Room logic stays separate from the network code. The sources have no interfaces, since each has only one implementation.
 
 &nbsp;
 
 ## Results and errors
 
-Every failure has an explicit type. An operation that only succeeds or fails returns `kotlin.Result`. An operation with outcomes that aren't errors has a sealed type of its own:
+Every failure has an explicit type. An operation that can only succeed or fail returns `kotlin.Result`. An operation with other outcomes that aren't errors has its own sealed type:
 
 ```kotlin
 sealed interface ProductLoadResult {
@@ -84,7 +84,7 @@ sealed interface ProductLoadResult {
 
 `PromoCodeCheckResult` and `CartValidationResult` are built the same way.
 
-Two wrappers turn exceptions into these results. [`networkCall`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkResult.kt) returns a `NetworkResult`, and the repository turns it into its operation's result:
+Two wrappers convert exceptions into these results. [`networkCall`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkResult.kt) returns a `NetworkResult`, and the repository converts it into the result of its own operation:
 
 ```kotlin
 when (val result = networkCall { api.getProduct(productId) }) {
@@ -95,7 +95,7 @@ when (val result = networkCall { api.getProduct(productId) }) {
 }
 ```
 
-[`databaseCall`](../../../shared/data/src/main/java/krio/systemdesign/shoppingapp/shared/data/database/DatabaseCall.kt) catches only SQLite errors. A failed `require` is a bug, and the app crashes instead of passing it off as a database error:
+[`databaseCall`](../../../shared/data/src/main/java/krio/systemdesign/shoppingapp/shared/data/database/DatabaseCall.kt) catches only SQLite errors. A failed `require` is a bug, so the app crashes instead of disguising it as a database error:
 
 ```kotlin
 internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
@@ -107,7 +107,7 @@ internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
 ```
 
 > [!NOTE]
-> A broad exception type is never read as something it may not be: an `IOException` is not "no internet", files throw it too.
+> A broad exception type is never taken to mean something it might not be: an `IOException` doesn't necessarily mean "no internet", because file operations throw it too.
 
 &nbsp;
 
@@ -120,16 +120,16 @@ The cart and the settings are stored on the device:
 | Room (`shopping.db`) | cart items and the applied promo code; the schema is exported to `shared/data/schemas/` |
 | DataStore Preferences | the theme and the request delay from the settings |
 
-The app isn't released, so a schema change needs no migration yet:
+The app hasn't been released yet, so schema changes don't need migrations for now:
 
-- **Every schema change bumps `version`** in `ShoppingDatabase`. Room recreates the database only when the version changes: with the old version and a new schema it stops with an error.
-- **A new version recreates the database** in every build, debug and release alike: the cart and the promo code are lost, the app keeps working. The release APK from the README is installed over older ones too.
+- **Every schema change bumps `version`** in `ShoppingDatabase`. Room recreates the database only when the version changes: with the old version and a new schema, it fails with an error.
+- **A new version recreates the database** in every build, debug and release alike: the cart and the promo code are lost, but the app keeps working. This matters because the release APK from the README is also installed over older versions.
 
 &nbsp;
 
 ## Network
 
-Retrofit and Coil's image loading share one `OkHttpClient`: the same connections and timeouts. Interceptors come into it from Hilt as a set, so `:shared:data` adds the request delay without `:core:network` knowing about it:
+Retrofit and Coil's image loading share one `OkHttpClient`, with the same connections and timeouts. Interceptors are provided to it by Hilt as a set, so `:shared:data` can add the request delay without `:core:network` knowing about it:
 
 ```kotlin
 @Binds
@@ -138,31 +138,31 @@ Retrofit and Coil's image loading share one `OkHttpClient`: the same connections
 abstract fun bindNetworkDelayInterceptor(impl: NetworkDelayInterceptor): Interceptor
 ```
 
-- **The request delay** from the settings waits before every server request, images included, to show how screens behave while waiting.
+- **The request delay** from the settings is applied before every server request, including images, to show how screens behave while they wait.
 - **The HTTP log** is added only in debug.
-- **Plain HTTP is allowed only for the server's address** (`network_security_config.xml`): it has no domain, so no HTTPS.
+- **Plain HTTP is allowed only for the server's address** (`network_security_config.xml`): the server has no domain, so it can't use HTTPS.
 
 &nbsp;
 
 ## Prices
 
-Every price is in US dollars, as a `Long` number of cents: `14999` is $149.99. Server JSON, DTOs, Room and domain models use the same numbers. Prices are shown only through [`formatPrice`](../../../shared/ui/src/main/java/krio/systemdesign/shoppingapp/shared/ui/text/PriceFormat.kt), in US format whatever the phone's language:
+Every price is in US dollars, stored as a `Long` number of cents: `14999` is $149.99. The server's JSON, the DTOs, Room and the domain models all use the same numbers. Prices are displayed only through [`formatPrice`](../../../shared/ui/src/main/java/krio/systemdesign/shoppingapp/shared/ui/text/PriceFormat.kt), always in US format, whatever the phone's language:
 
 ```kotlin
 fun formatPrice(amountCents: Long): String =
     NumberFormat.getCurrencyInstance(Locale.US).format(BigDecimal.valueOf(amountCents, 2))
 ```
 
-There is no `Money` value class. It could live only in the domain: `:shared:ui` takes plain values, and a domain type in UI state would be unstable for Compose. Most code with prices is UI, so the type would protect little. It is worth adding together with a second currency or taxes.
+There is no `Money` value class. It could only live in the domain: `:shared:ui` takes plain values, and a domain type in UI state would be unstable for Compose. Since most of the code that deals with prices is UI code, such a type wouldn't protect much. It is worth adding once a second currency or taxes appear.
 
 &nbsp;
 
 ## The contract with the server
 
-The server's API and data rules are in [`server/README.md`](../../../server/README.md). What the app relies on:
+The server's API and data rules are described in [`server/README.md`](../../../server/README.md). Here is what the app relies on:
 
-- **DTOs are copies of the server's**, with a comment pointing to the other side. The JSON samples in [`server/api-samples/`](../../../server/api-samples/) keep them in step: [both sides' tests](testing.md#contract-with-the-server) check them.
-- **Paging by page number is safe**: the server never removes products and adds new ones at the end. A renamed product can still move within search results, so `ProductPagingSource` drops repeated ids.
-- **The server decides whether checkout opens.** The cart shows what its last check found, but "Checkout" opens only on a fresh `Success` from the server.
-- **A promo code's percent never changes**, so the server only checks that the code still exists.
-- **The settings' test items rely on four products** keeping their stock and prices; a server test checks them.
+- **The DTOs are copies of the server's**, each with a comment pointing to its counterpart. The JSON samples in [`server/api-samples/`](../../../server/api-samples/) keep the two sides in sync, and [tests on both sides](testing.md#contract-with-the-server) check against them.
+- **Paging by page number is safe**: the server never removes products and always adds new ones at the end. A renamed product can still move around in search results, so `ProductPagingSource` drops duplicate ids.
+- **The server decides whether checkout can open.** The cart shows what its last check found, but "Checkout" opens only after a fresh `Success` from the server.
+- **A promo code's discount percentage never changes**, so the server only checks that the code still exists.
+- **The test items in the settings rely on four products** keeping their stock and prices; a server test makes sure they do.

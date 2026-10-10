@@ -2,15 +2,15 @@
 
 [Русская версия](../ru/README.md)
 
-ShoppingApp is a demo shop for Android: a catalog with search, product details, a cart kept on the device and checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) serves the catalog and checks the cart.
+ShoppingApp is a demo store for Android: a searchable catalog, product details, a cart that lives on the device and is checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) provides the catalog and checks the cart.
 
-These pages explain how the app is built and why: each one has the rules, the reasons behind them and short pieces of the project's code.
+These pages explain how the app is built and why. Each one covers the rules, the reasons behind them and short excerpts from the project's code.
 
 &nbsp;
 
 ## Modules at a glance
 
-The app is laid out in four levels, from the bottom up:
+The app is organised in four levels, from the bottom up:
 
 ```text
 apps/     shop, uikit                                    the applications
@@ -19,7 +19,7 @@ shared/   domain, data, ui, analytics                    shop code used by two o
 core/     designsystem, compose-utils, network, config   knows nothing about the shop
 ```
 
-A module never depends on a level above its own, and features never depend on each other. The build checks it.
+A module never depends on a level above its own, and features never depend on each other. The build enforces both rules.
 
 &nbsp;
 
@@ -29,13 +29,13 @@ Each page can be read on its own:
 
 | Page | What it covers |
 |---|---|
-| [Modules](modules.md) | the levels, where new code goes, what a feature shows outside, the module graph check |
-| [Navigation](navigation.md) | how the app joins the features, tabs, screen results, deep links |
-| [Screens](screens.md) | the files of a screen, UI state, events and effects, text fields, Compose stability, wide screens |
+| [Modules](modules.md) | the levels, where new code goes, what a feature exposes, the module graph check |
+| [Navigation](navigation.md) | how the app connects the features, tabs, screen results, deep links |
+| [Screens](screens.md) | how a screen is split into files, UI state, events and effects, text fields, Compose stability, wide screens |
 | [Data](data.md) | use cases, repositories, error types, local storage, network, prices, the contract with the server |
-| [Analytics](analytics.md) | events, analytics systems, screen views, what may be sent |
+| [Analytics](analytics.md) | events, analytics systems, screen views, what is allowed to be sent |
 | [Build](build.md) | convention plugins, the version catalog, code style, CI, signing |
-| [Testing](testing.md) | how tests are written, names and places of test helpers, tools, kinds of tests |
+| [Testing](testing.md) | how tests are written, where test helpers live and how they are named, tools, kinds of tests |
 
 &nbsp;
 

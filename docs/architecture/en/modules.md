@@ -8,7 +8,7 @@ The folders are levels, from the bottom up: `core/` → `shared/` → `feature/`
 
 ## Levels
 
-Each level has its own modules and its own meaning:
+Each level has its own modules and its own purpose:
 
 | Level | Modules | What it holds |
 |---|---|---|
@@ -17,25 +17,25 @@ Each level has its own modules and its own meaning:
 | `feature/` | `catalog`, `cart`, `promo`, `checkout`, `settings` | one feature each, split into `ui` and `impl` |
 | `apps/` | `shop`, `uikit` | the applications; nothing depends on them |
 
-The levels are folders, not only dependencies: keeping everything under `core/`, as many projects do, hides which code knows about the shop. And there are no catch-all modules such as `:core:common` that every feature edits: `shared/` has four modules with strict roles.
+The levels are folders, not just dependency rules: putting everything under `core/`, as many projects do, hides which code knows about the shop. There are also no catch-all modules like `:core:common` that every feature ends up editing: `shared/` has four modules, each with a clear role.
 
 &nbsp;
 
 ## Where new code goes
 
-Code stays in the feature that uses it. When a second feature needs it, it is moved to `shared/`:
+Code stays in the feature that uses it. When a second feature needs it, it moves to `shared/`:
 
 - **Used by one feature** — stays in that feature.
 - **Needed by a second feature** — moves to `shared/`: models, repositories and use cases to `:shared:domain` / `:shared:data`, shop UI components (the product card, the cart quantity control) to `:shared:ui`.
 - **Knows nothing about the shop** — goes to `core/`.
 
-A styled component goes by the same rule:
+Styled components follow the same rule:
 
 | The component | Module |
 |---|---|
 | would fit any other app unchanged | `:core:designsystem` |
-| knows shop words (product, cart, promo, price, stock) and two or more features use it | `:shared:ui` |
-| knows shop words and one feature uses it | `:feature:<name>:ui` |
+| refers to shop concepts (product, cart, promo, price, stock) and is used by two or more features | `:shared:ui` |
+| refers to shop concepts and is used by only one feature | `:feature:<name>:ui` |
 
 Features don't style Material components themselves, and every styled component has a sample in the UI kit app (`:apps:uikit`).
 
@@ -43,7 +43,7 @@ Features don't style Material components themselves, and every styled component 
 
 ## A feature: `ui` + `impl`
 
-Every feature is two modules. `impl` holds everything the feature does, and `ui` holds its UI components on plain values:
+Every feature consists of two modules. `impl` holds everything the feature does, and `ui` holds its UI components, which take plain values:
 
 ```kotlin
 // feature/cart/impl/build.gradle.kts
@@ -62,15 +62,15 @@ dependencies {
 }
 ```
 
-- **`ui` is separate so the UI kit can show it** without seeing screens, ViewModels or data. A feature without such components has no `ui` module (`settings`).
-- **There is no `api` module.** Features never depend on each other, so only the app needs a feature's API, and it joins the features with callbacks (see [Navigation](navigation.md)).
+- **`ui` is a separate module so the UI kit can show it** without seeing screens, ViewModels or data. A feature without such components has no `ui` module (for example, `settings`).
+- **There is no `api` module.** Features never depend on each other, so only the app needs a feature's API, and it connects the features through callbacks (see [Navigation](navigation.md)).
 - **Only `:apps:shop` depends on `:shared:data`.** Features see repository interfaces from `:shared:domain`; Hilt in the app provides the implementations.
 
 &nbsp;
 
-## What a feature shows outside
+## What a feature exposes
 
-In an `impl` module only what the app wires is public, all in `presentation/navigation` (plus the screen names for analytics, see [Analytics](analytics.md)). Everything else — screens, ViewModels, UI state, use cases, repositories — is `internal`:
+In an `impl` module, only what the app wires up is public, and all of it lives in `presentation/navigation` (plus the screen names for analytics, see [Analytics](analytics.md)). Everything else — screens, ViewModels, UI state, use cases, repositories — is `internal`:
 
 ```kotlin
 object CatalogRoutes {
@@ -82,7 +82,7 @@ object CatalogRoutes {
 fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
 ```
 
-The app needs one screen directly: it shows the catalog's product details inside the cart tab through the inline function `productDetailsScreen<T>()`. An inline function is copied into the app's code, so the screen is marked like this:
+The app needs one screen directly: it shows the catalog's product details inside the cart tab through the inline function `productDetailsScreen<T>()`. An inline function is copied into the calling code, so the screen is marked like this:
 
 ```kotlin
 @Composable
@@ -93,7 +93,7 @@ internal fun ProductDetailsScreen(
 )
 ```
 
-The copied code of that function can call it; the app can't call it by hand.
+The inlined code of that function can call it, but the app's own code can't.
 
 &nbsp;
 
@@ -108,13 +108,13 @@ A library's package mirrors its module path, and an app's package is its applica
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (the hyphen is dropped) |
 | `:apps:shop` | `krio.systemdesign.shoppingapp` |
 
-An app's package is tied to its applicationId, so it doesn't change when the app moves to another folder.
+Because an app's package is tied to its applicationId, it doesn't change when the app moves to another folder.
 
 &nbsp;
 
 ## The check
 
-`./gradlew assertModuleGraph` checks every dependency between modules against an allowlist in [`ModuleGraphRules.kt`](../../../build-logic/src/main/kotlin/ModuleGraphRules.kt), and CI runs it on every pull request. Each rule is one regex over the "from → to" text:
+`./gradlew assertModuleGraph` checks every dependency between modules against an allowlist in [`ModuleGraphRules.kt`](../../../build-logic/src/main/kotlin/ModuleGraphRules.kt), and CI runs it on every pull request. Each rule is a single regex matched against the "from -> to" string:
 
 ```kotlin
 allowed = arrayOf(
@@ -129,10 +129,10 @@ allowed = arrayOf(
 )
 ```
 
-A dependency no rule allows fails the build:
+Any dependency that no rule allows fails the build:
 
 ```text
 [':feature:catalog:impl' -> ':feature:cart:impl'] not allowed by any of [...]
 ```
 
-A new kind of dependency between modules is a decision: it needs a new rule in that file, which shows up in the diff.
+Adding a new kind of dependency between modules is a deliberate decision: it needs a new rule in that file, and the rule shows up in the diff.
