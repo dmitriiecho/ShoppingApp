@@ -70,7 +70,7 @@ dependencies {
 
 ## What a feature shows outside
 
-In an `impl` module only what the app wires is public, all in `presentation/navigation`. Everything else — screens, ViewModels, UI state, use cases, repositories — is `internal`:
+In an `impl` module only what the app wires is public, all in `presentation/navigation` (plus the screen names for analytics, see [Analytics](analytics.md)). Everything else — screens, ViewModels, UI state, use cases, repositories — is `internal`:
 
 ```kotlin
 object CatalogRoutes {
@@ -80,8 +80,6 @@ object CatalogRoutes {
 }
 
 fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
-
-fun NavDestination.catalogAnalyticsScreen(): AnalyticsScreen? = /* ... */
 ```
 
 The app needs one screen directly: it shows the catalog's product details inside the cart tab through the inline function `productDetailsScreen<T>()`. An inline function is copied into the app's code, so the screen is marked like this:

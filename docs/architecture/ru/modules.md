@@ -70,7 +70,7 @@ dependencies {
 
 ## Что фича показывает наружу
 
-В модуле `impl` публично только то, что подключает приложение, и всё это лежит в `presentation/navigation`. Остальное — экраны, ViewModel'и, UI state, use case'ы, репозитории — `internal`:
+В модуле `impl` публично только то, что подключает приложение, и всё это лежит в `presentation/navigation` (плюс имена экранов для аналитики, см. [Аналитику](analytics.md)). Остальное — экраны, ViewModel'и, UI state, use case'ы, репозитории — `internal`:
 
 ```kotlin
 object CatalogRoutes {
@@ -80,8 +80,6 @@ object CatalogRoutes {
 }
 
 fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
-
-fun NavDestination.catalogAnalyticsScreen(): AnalyticsScreen? = /* ... */
 ```
 
 Один экран нужен приложению напрямую: карточку товара каталога оно показывает во вкладке корзины через inline-функцию `productDetailsScreen<T>()`. Inline-функция встраивается в код приложения, поэтому экран помечен так:
