@@ -2,7 +2,7 @@
 
 [Русская версия](../ru/modules.md) · [All pages](README.md)
 
-The folders are levels, from the bottom up: `core/` → `shared/` → `feature/` → `apps/`. A module depends on modules of lower levels, and within its own level only in three cases: `core` modules on each other, `shared:data` on `shared:domain`, and a feature's `impl` on its own `ui`. Features never depend on each other, and neither do the apps. So the level of any code is seen right from its path.
+The folders are levels, from the bottom up: `core/` → `shared/` → `feature/` → `apps/`. A module never depends on a level above its own, and features never depend on each other.
 
 &nbsp;
 

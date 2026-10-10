@@ -19,7 +19,7 @@ shared/   domain, data, ui, analytics                    shop code used by two o
 core/     designsystem, compose-utils, network, config   knows nothing about the shop
 ```
 
-A module depends on modules of lower levels; features never depend on each other, and neither do the apps. The build checks it.
+A module never depends on a level above its own, and features never depend on each other. The build checks it.
 
 &nbsp;
 
