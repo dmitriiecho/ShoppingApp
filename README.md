@@ -26,8 +26,11 @@ The three main flows, as they run in the app:
 
 | Catalog | Promo code | Cart and checkout |
 |:---:|:---:|:---:|
-| <img src=".github/readme/catalog.webp" width="260" alt="Opening a product and going back, scrolling the catalog, opening another product and adding two to the cart"> | <img src=".github/readme/promo.webp" width="260" alt="Applying a promo code from the hint and the discount in the totals"> | <img src=".github/readme/checkout.webp" width="260" alt="Accepting a new price in the cart, lowering the quantity to what is in stock and opening checkout"> |
-| the image flies into the product and back, two in the cart | a code from the hint, the discount in the totals | the server found a new price and a stock shortage: accept, lower to what is left, checkout |
+| <img src=".github/readme/catalog.webp" width="240" alt="Opening a product and going back, scrolling the catalog, opening another product and adding two to the cart"> | <img src=".github/readme/promo.webp" width="240" alt="Applying a promo code from the hint and the discount in the totals"> | <img src=".github/readme/checkout.webp" width="240" alt="Accepting a new price in the cart, lowering the quantity to what is in stock and opening checkout"> |
+
+- **Catalog**: the image flies into the product and back, two in the cart.
+- **Promo code**: a code from the hint, the discount in the totals.
+- **Cart and checkout**: the server found a new price and a stock shortage: accept, lower to what is left, checkout.
 
 &nbsp;
 
