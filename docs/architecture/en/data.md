@@ -14,13 +14,13 @@ Shared models and their storage live in `shared/`; anything only one feature nee
 |---|---|
 | `:shared:domain` | models, repository interfaces and use cases used by two or more features; pure Kotlin, no Android |
 | `:shared:data` | their implementations: Room, DataStore, the cart API; everything is `internal` |
-| `feature/<name>/impl/…/domain`, `…/data` | a feature's own models, repositories and use cases, such as the catalog's products or promo code checks |
+| `feature/<name>/impl/…/domain`, `…/data` | a feature's own models, repositories and use cases |
 
 &nbsp;
 
 ## Use cases
 
-A use case performs one action through a repository. Many are a single line long, but every action has one, so a ViewModel never depends on a repository directly:
+A use case performs one action through a repository:
 
 ```kotlin
 class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepository) {
@@ -29,7 +29,7 @@ class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepos
 }
 ```
 
-Business rules live in the models, not in use cases. For example, the cart computes its own totals:
+Business rules can live in use cases as well as in models. For example, the `Cart` model computes its own totals:
 
 ```kotlin
 data class Cart(val items: List<CartItem>, val promoCode: PromoCode? = null) {
@@ -40,14 +40,6 @@ data class Cart(val items: List<CartItem>, val promoCode: PromoCode? = null) {
 ```
 
 In the same way, `CartValidation` knows what the last cart check found and what hasn't been fixed yet, and `canAddOneMore` knows the stock limit.
-
-If a name promises more than the code actually does, it gets a comment:
-
-```kotlin
-// Orders aren't sent anywhere: the server has no endpoint for them.
-// Placing one only resets the cart (items and promo code).
-suspend operator fun invoke(): Result<Unit> = cartRepository.reset()
-```
 
 &nbsp;
 

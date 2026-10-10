@@ -14,13 +14,13 @@ ViewModel обращается к use case'ам, use case — к репозит�
 |---|---|
 | `:shared:domain` | модели, интерфейсы репозиториев и use case'ы, нужные двум фичам и больше; чистый Kotlin без Android |
 | `:shared:data` | их реализации: Room, DataStore, API корзины; всё объявлено `internal` |
-| `feature/<name>/impl/…/domain`, `…/data` | собственные модели, репозитории и use case'ы фичи, например товары каталога или проверка промокода |
+| `feature/<name>/impl/…/domain`, `…/data` | собственные модели, репозитории и use case'ы фичи |
 
 &nbsp;
 
 ## Use case'ы
 
-Use case выполняет одно действие через репозиторий. Многие из них умещаются в одну строку, но они заведены для каждого действия, чтобы ViewModel никогда не зависела от репозитория напрямую:
+Use case выполняет одно действие через репозиторий:
 
 ```kotlin
 class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepository) {
@@ -29,7 +29,7 @@ class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepos
 }
 ```
 
-Бизнес-правила живут в моделях, а не в use case'ах. Например, итоги корзины считает сама `Cart`:
+Бизнес-правила могут жить как в use case'ах, так и в моделях. Например, итоги корзины считает сама модель `Cart`:
 
 ```kotlin
 data class Cart(val items: List<CartItem>, val promoCode: PromoCode? = null) {
@@ -40,14 +40,6 @@ data class Cart(val items: List<CartItem>, val promoCode: PromoCode? = null) {
 ```
 
 Точно так же `CartValidation` знает, что нашла последняя проверка корзины и что ещё не исправлено, а `canAddOneMore` — сколько товара осталось на складе.
-
-Если название обещает больше, чем на самом деле делает код, к нему добавлен комментарий:
-
-```kotlin
-// Orders aren't sent anywhere: the server has no endpoint for them.
-// Placing one only resets the cart (items and promo code).
-suspend operator fun invoke(): Result<Unit> = cartRepository.reset()
-```
 
 &nbsp;
 
