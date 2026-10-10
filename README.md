@@ -22,15 +22,13 @@ The same app is built on three slightly different stacks, each variant in its ow
 
 ## How it looks
 
-The three main flows, as they run in the app:
+The three main flows, as they run in the app, from left to right: the catalog, the cart and a promo code, server changes and checkout.
 
-<table width="100%">
-  <tr>
-    <td align="center" width="33%"><img src=".github/readme/catalog.webp" width="240" alt="Opening a product and going back, scrolling the catalog, opening another product and adding two to the cart"><br><sub>Catalog</sub></td>
-    <td align="center" width="33%"><img src=".github/readme/promo.webp" width="240" alt="The cart with two laptop stands, applying a promo code from the hint and the discount in the totals"><br><sub>Cart and promo code</sub></td>
-    <td align="center" width="33%"><img src=".github/readme/checkout.webp" width="240" alt="The cart shows that the price and the stock changed on the server: accepting the new price, lowering the quantity to what is left and opening checkout"><br><sub>Server changes, checkout</sub></td>
-  </tr>
-</table>
+<p align="center">
+  <img src=".github/readme/catalog.webp" width="240" alt="Opening a product and going back, scrolling the catalog, opening another product and adding two to the cart">
+  <img src=".github/readme/promo.webp" width="240" alt="The cart with two laptop stands, applying a promo code from the hint and the discount in the totals">
+  <img src=".github/readme/checkout.webp" width="240" alt="The cart shows that the price and the stock changed on the server: accepting the new price, lowering the quantity to what is left and opening checkout">
+</p>
 
 &nbsp;
 
