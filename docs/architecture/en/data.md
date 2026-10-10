@@ -93,7 +93,7 @@ when (val result = networkCall { api.getProduct(productId) }) {
 internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
     Result.success(block())
 } catch (e: SQLiteException) {
-    Timber.e(e, "Database operation failed")
+    Logger.e(e) { "Database operation failed" }
     Result.failure(e)
 }
 ```

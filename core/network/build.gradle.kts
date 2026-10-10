@@ -18,7 +18,7 @@ dependencies {
 
     implementation(libs.okhttp)
     implementation(libs.retrofit.converter.kotlinx.serialization)
-    implementation(libs.timber)
+    implementation(libs.kermit)
 
     debugImplementation(libs.okhttp.logging)
 

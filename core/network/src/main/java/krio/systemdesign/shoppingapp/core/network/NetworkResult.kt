@@ -1,10 +1,10 @@
 package krio.systemdesign.shoppingapp.core.network
 
+import co.touchlab.kermit.Logger
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import retrofit2.HttpException
 import retrofit2.Response
-import timber.log.Timber
 
 sealed interface NetworkResult<out T> {
     data class Success<T>(val body: T) : NetworkResult<T>
@@ -29,9 +29,9 @@ suspend fun <T : Any> networkCall(request: suspend () -> Response<T>): NetworkRe
         val request = response.raw().request
         // 4xx is a warning: it can be a normal answer, e.g. 404 for an unknown promo code.
         if (response.code() >= 500) {
-            Timber.e("Server returned an error: %d %s %s", response.code(), request.method, request.url)
+            Logger.e { "Server returned an error: ${response.code()} ${request.method} ${request.url}" }
         } else {
-            Timber.w("Server rejected the request: %d %s %s", response.code(), request.method, request.url)
+            Logger.w { "Server rejected the request: ${response.code()} ${request.method} ${request.url}" }
         }
         NetworkResult.HttpError(response.code(), HttpException(response))
     }
@@ -39,10 +39,10 @@ suspend fun <T : Any> networkCall(request: suspend () -> Response<T>): NetworkRe
     throw e
 } catch (e: IOException) {
     // Warning, not error: a lost connection is usual on a phone.
-    Timber.w(e, "Request to the server failed")
+    Logger.w(e) { "Request to the server failed" }
     NetworkResult.Failure(e)
 } catch (e: Exception) {
     // Invalid JSON or an empty body: the server broke the contract.
-    Timber.e(e, "Server response could not be read")
+    Logger.e(e) { "Server response could not be read" }
     NetworkResult.Failure(e)
 }

@@ -20,7 +20,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.timber)
+    implementation(libs.kermit)
 
     ksp(libs.androidx.room.compiler)
 

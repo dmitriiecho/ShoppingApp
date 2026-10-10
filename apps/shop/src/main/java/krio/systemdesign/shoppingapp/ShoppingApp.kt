@@ -1,6 +1,7 @@
 package krio.systemdesign.shoppingapp
 
 import android.app.Application
+import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
@@ -9,7 +10,6 @@ import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import okhttp3.OkHttpClient
-import timber.log.Timber
 
 @HiltAndroidApp
 class ShoppingApp :
@@ -23,10 +23,11 @@ class ShoppingApp :
 
     override fun onCreate() {
         super.onCreate()
-        // Without a tree Timber drops every log. DebugTree writes to logcat, so debug only: logs hold user data.
-        // Release can plant other trees here, e.g. a crash reporter.
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
+        Logger.setTag("ShoppingApp")
+        // Kermit writes to logcat from the start. Logs hold user data, so release writes nowhere.
+        // Release can add other writers here, e.g. a crash reporter.
+        if (!BuildConfig.DEBUG) {
+            Logger.setLogWriters(emptyList())
         }
     }
 

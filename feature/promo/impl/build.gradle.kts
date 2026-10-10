@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":core:compose-utils"))
     implementation(project(":core:network"))
 
-    implementation(libs.timber)
+    implementation(libs.kermit)
 
     testImplementation(testFixtures(project(":shared:analytics")))
     testImplementation(testFixtures(project(":core:compose-utils")))
