@@ -193,6 +193,8 @@ Phones show the app upright only, by design. Android 16+ rotates it anyway on sc
 - **The top bar lines up with the column**, with `Modifier.contentBarWidth()`: as wide as the column with the screen padding around it, so the title and the buttons sit over the content's edges as on a phone.
 - **The product screen held sideways** puts the image and the details side by side: below a square image the details would start off the screen.
 
+<img src="../media/tablet.webp" width="720" alt="A tablet in landscape: a product from the catalog, two in the cart, a promo code in the cart and checkout scrolled down to the totals">
+
 &nbsp;
 
 ## Components and previews
