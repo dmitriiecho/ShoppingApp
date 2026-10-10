@@ -4,7 +4,10 @@
 
 [Русская версия](README.ru.md)
 
-ShoppingApp is a demo shop for Android: a catalog with search, a cart kept on the device and checked against the server, promo codes and checkout. An example of an app built on a current stack.
+ShoppingApp is an example of an Android app built on a current stack. The repo has two apps:
+
+- **The shop**, a demo shop: a catalog with search, a cart kept on the device and checked against the server, promo codes and checkout. It runs on phones and tablets.
+- **The UI kit**, a showcase of the design: every styled component of the shop, section by section, with a light and dark theme switch. It is there to look through and check the design without walking the shop's flows.
 
 &nbsp;
 
@@ -18,7 +21,7 @@ The same app is built on three slightly different stacks, each variant in its ow
 | `kmp-ready` | Android, with libraries replaced by ones that work in Kotlin Multiplatform | coming |
 | `kmp` | Kotlin Multiplatform | coming |
 
-Each branch has two APKs. **APK** is the shop itself. **UI kit APK** is a separate app that lays out every styled component of the shop, from the theme, icons and buttons to the product card and the order totals, so the design can be looked through without walking the shop's flows.
+Each branch has two APKs: the shop and the UI kit.
 
 &nbsp;
 
@@ -44,7 +47,7 @@ The app is small, but every screen has something to look at:
 - **Checkout**: the form survives process death, and a double tap won't place the order twice.
 - **Deep links** to the catalog, the cart and a product, with verified App Links.
 - **Settings**: the theme, a request delay and test items that put each possible change into the cart.
-- **UI kit**: a separate app with every styled component.
+- **Tablets and wide screens**: the content stays a column in the middle, and the product screen held sideways puts the image and the details side by side ([more](docs/architecture/en/screens.md#wide-screens)).
 
 &nbsp;
 
@@ -60,6 +63,13 @@ core/     designsystem, compose-utils, network, config   knows nothing about the
 ```
 
 How the modules, navigation, screens, data, analytics and the build work is in the [architecture docs](docs/architecture/en/README.md).
+
+&nbsp;
+
+## Tests and CI
+
+- **Tests** on the JVM: the logic, the ViewModels, the data layer, the contract with the server and a screenshot of every preview.
+- **CI** on every pull request: the code style, the module rules, unused dependencies, lint, the tests and the build of both apps. It shows the changed screenshots in a comment on the pull request, and after every change in `main` it rebuilds the APKs.
 
 &nbsp;
 
@@ -88,4 +98,4 @@ The app is developed with the AI agents Claude Code, Cursor and Grok Build, on C
 
 - **The rules are written down for the agents**: [CLAUDE.md](CLAUDE.md) describes the module layout, the code style and the conventions for screens.
 - **Changes go in small steps**, each discussed and checked before it is committed.
-- **Behaviour is checked by tests** on the JVM: the logic, the ViewModels, the data layer, the contract with the server and a screenshot of every preview. CI runs them along with the style, the module rules, unused dependencies, lint and the build. Changes are also tried on an emulator.
+- **Behaviour is checked by tests and CI** (see [above](#tests-and-ci)), and changes are also tried on an emulator.
