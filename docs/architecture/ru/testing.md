@@ -192,7 +192,7 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
    - **сначала запись**: записать (шаг 3), потом посмотреть, какие картинки изменились (`git status` или сами картинки в IDE). Быстрее, один прогон вместо двух, но старая картинка уже перезаписана, и картинки сравнения нет.
 
    В обоих случаях тридцать изменённых картинок после правки одной кнопки — это проблема, в которой надо разобраться.
-3. Записать, если ещё не записано: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`.
+3. Записать, если ещё не записано: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` или конфигурацией запуска Record screenshots в Android Studio.
 4. Закоммитить картинки вместе с кодом; pull request покажет старую и новую версию каждой рядом.
 
 > [!IMPORTANT]
