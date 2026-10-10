@@ -2,7 +2,7 @@
 
 [Русская версия](../ru/README.md)
 
-ShoppingApp is a demo shop for Android: a catalog with search, product details, a cart that the server checks before checkout, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) serves the catalog and checks the cart.
+ShoppingApp is a demo shop for Android: a catalog with search, product details, a cart kept on the device and checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) serves the catalog and checks the cart.
 
 These pages explain how the app is built and why: each one has the rules, the reasons behind them and short pieces of the project's code.
 
