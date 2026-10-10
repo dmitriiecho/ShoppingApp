@@ -192,7 +192,7 @@ These tests don't say whether a screen looks right: they catch changes nobody as
    - **record first**: record (step 3), then look at which images changed (`git status`, or the images in the IDE). Quicker, one run instead of two, but the old image is already overwritten, so there is no comparison image.
 
    Either way, thirty changed images after a change to one button is the problem to look into.
-3. Record, if not done yet: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`.
+3. Record, if not done yet: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`, or the Record screenshots run configuration in Android Studio.
 4. Commit the images with the code; the pull request shows each one's old and new version side by side.
 
 > [!IMPORTANT]

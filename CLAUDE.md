@@ -125,7 +125,7 @@ cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 1. Check that only the screens meant to change did, either way:
    - before recording: `./gradlew test` fails only those previews and leaves `build/outputs/roborazzi/*_compare.png`;
    - after recording: `git status` shows only their images.
-2. Record: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` saves the new screenshots and deletes those of removed previews.
+2. Record: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` saves the new screenshots and deletes those of removed previews; in Android Studio, the Record screenshots run configuration.
 3. Commit the images with the change.
 
 - **Don't record when a change wasn't meant to alter the UI**: a failed screenshot test is then a real problem.
