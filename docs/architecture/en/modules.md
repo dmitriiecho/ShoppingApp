@@ -23,7 +23,7 @@ The levels are folders, not only dependencies: keeping everything under `core/`,
 
 ## Where new code goes
 
-Code lives where it is needed and moves up to `shared/` only when a second feature needs it:
+Code stays in the feature that uses it. When a second feature needs it, it is moved to `shared/`:
 
 - **Used by one feature** — stays in that feature.
 - **Needed by a second feature** — moves to `shared/`: models, repositories and use cases to `:shared:domain` / `:shared:data`, shop UI components (the product card, the cart quantity control) to `:shared:ui`.
