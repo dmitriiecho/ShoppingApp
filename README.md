@@ -14,7 +14,7 @@ The same app is built on three slightly different stacks, each variant in its ow
 
 | Branch | Stack | Download |
 |---|---|---|
-| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android: Hilt, Retrofit + OkHttp, Room, Navigation Compose | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk) |
+| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android: Hilt, Retrofit + OkHttp, Room, Navigation Compose | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
 | `kmp-ready` | Android, with libraries replaced by ones that work in Kotlin Multiplatform | coming |
 | `kmp` | Kotlin Multiplatform | coming |
 
@@ -63,7 +63,7 @@ How the modules, navigation, screens, data, analytics and the build work is in t
 
 ## Running
 
-The easiest way is to download the [APK from `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): a release build for Android 8.0 and newer, rebuilt by CI after every code change in `main`.
+The easiest way is to download the [APK from `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): a release build for Android 8.0 and newer, rebuilt by CI after every code change in `main`. The UI kit app, with every styled component, is there too: [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk).
 
 To build it yourself you need JDK 21 and the Android SDK:
 

@@ -14,7 +14,7 @@ ShoppingApp — демо-магазин для Android: каталог с пои
 
 | Ветка | Стек | Скачать |
 |---|---|---|
-| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android: Hilt, Retrofit + OkHttp, Room, Navigation Compose | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk) |
+| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android: Hilt, Retrofit + OkHttp, Room, Navigation Compose | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
 | `kmp-ready` | Android, библиотеки заменены на те, что работают в Kotlin Multiplatform | скоро |
 | `kmp` | Kotlin Multiplatform | скоро |
 
@@ -63,7 +63,7 @@ core/     designsystem, compose-utils, network, config   ничего не зн�
 
 ## Запуск
 
-Проще всего скачать [APK из ветки `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): это release-сборка, она ставится на Android 8.0 и новее. Её пересобирает CI после каждого изменения кода в `main`.
+Проще всего скачать [APK из ветки `main`](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk): это release-сборка, она ставится на Android 8.0 и новее. Её пересобирает CI после каждого изменения кода в `main`. Там же лежит приложение UI kit со всеми стилизованными компонентами: [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk).
 
 Чтобы собрать самому, нужны JDK 21 и Android SDK:
 
