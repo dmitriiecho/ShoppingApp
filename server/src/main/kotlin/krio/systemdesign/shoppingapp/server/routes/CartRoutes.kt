@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.server.routes
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -19,6 +20,10 @@ fun Route.cartRoutes(
     val productsById = products.associateBy { it.id }
     post("/cart/validate") {
         val request = call.receive<CartValidationRequestDTO>()
+        if (request.items.any { it.quantity < 1 }) {
+            call.respond(HttpStatusCode.BadRequest)
+            return@post
+        }
         val issues = request.items.flatMap { it.issues(productsById[it.productId]) }
         // A code's percent never changes, so it is enough to check the code still exists.
         val promoCodeValid = request.promoCode == null || promoCodes.findPromoCode(request.promoCode) != null

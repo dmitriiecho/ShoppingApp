@@ -125,6 +125,15 @@ class CartRoutesTest {
         assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
     }
 
+    @Test
+    fun `cart with a quantity below 1 is rejected with 400`() = serverTest(
+        testShopData(products = listOf(testProduct(id = "1"))),
+    ) { client ->
+        val response = client.validateCart(CartItemDTO("1", price = 1000, quantity = 0))
+
+        assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
+    }
+
     // The app sends a cart like the request sample; the server must answer like the response sample.
     @Test
     fun `cart check answers as in the API sample`() = serverTest(

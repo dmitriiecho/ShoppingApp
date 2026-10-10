@@ -105,7 +105,7 @@ Response:
 - An `unavailable` item gets no other issues.
 - Price and stock are checked separately: one item can get both `priceChanged` and `notEnoughStock`.
 - `promoCodeValid` is `false` when the sent code is no longer in `promo-codes.json`, and `true` when no code is sent.
-- A body in the wrong format gets 400.
+- A body in the wrong format or a `quantity` below 1 gets 400.
 
 ## Data
 
