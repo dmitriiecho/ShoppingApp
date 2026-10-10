@@ -4,8 +4,8 @@
 kotlin = "2.3.21"
 ktor = "3.6.0"
 kotlinxSerialization = "1.11.0"
-logback = "1.5.38"
-spotless = "8.10.3"
+logback = "1.6.5"
+spotless = "8.10.4"
 ktlint = "1.8.0"
 # Same as the app (gradle/libs.versions.toml in the root).
 assertk = "0.28.1"
