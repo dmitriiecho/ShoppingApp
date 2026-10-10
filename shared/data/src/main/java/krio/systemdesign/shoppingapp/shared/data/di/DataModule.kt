@@ -2,8 +2,10 @@ package krio.systemdesign.shoppingapp.shared.data.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import dagger.Module
@@ -43,11 +45,15 @@ internal object DataModule {
     @Singleton
     fun provideCartApi(retrofit: Retrofit): CartApi = retrofit.create()
 
-    // One instance per file: DataStore requires it.
+    // One instance per file: DataStore requires it. A corrupted file is replaced with an empty one, the settings
+    // back to their defaults: otherwise every later save would fail on reading it.
     @Provides
     @Singleton
     fun provideSettingsDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(SETTINGS_FILE_NAME) }
+        PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+            produceFile = { context.preferencesDataStoreFile(SETTINGS_FILE_NAME) },
+        )
 
     private const val DATABASE_NAME = "shopping.db"
     private const val SETTINGS_FILE_NAME = "settings"
