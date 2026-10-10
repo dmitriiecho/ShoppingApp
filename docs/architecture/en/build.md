@@ -12,7 +12,7 @@ Each kind of module has its own plugin:
 
 | Plugin | For | Adds |
 |---|---|---|
-| `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | the Android setup, targetSdk, signing, R8 in release, the [module graph check](modules.md#the-check), dependency analysis, warnings as errors in CI |
+| `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | the Android setup, targetSdk, signing, R8 in release, the app's languages for the system settings, the [module graph check](modules.md#the-check), dependency analysis, warnings as errors in CI |
 | `shoppingapp.android.library` | every Android library | compileSdk, minSdk, Java, dependency analysis, warnings as errors in CI, the test setup: unit tests on debug only, [Robolectric](testing.md#database), the [API samples](testing.md#contract-with-the-server), a failed test's message in the log |
 | `shoppingapp.android.compose` | modules with Compose | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.android.hilt` | modules with Hilt | Hilt with KSP |

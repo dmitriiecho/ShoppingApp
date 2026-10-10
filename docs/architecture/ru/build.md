@@ -12,7 +12,7 @@
 
 | Плагин | Для чего | Что добавляет |
 |---|---|---|
-| `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | настройку Android, targetSdk, подпись, R8 в release, [проверку графа модулей](modules.md#проверка), анализ зависимостей, предупреждения как ошибки в CI |
+| `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | настройку Android, targetSdk, подпись, R8 в release, языки приложения для системных настроек, [проверку графа модулей](modules.md#проверка), анализ зависимостей, предупреждения как ошибки в CI |
 | `shoppingapp.android.library` | каждая Android-библиотека | compileSdk, minSdk, Java, анализ зависимостей, предупреждения как ошибки в CI, настройку тестов: unit-тесты только на debug, [Robolectric](testing.md#база-данных), [образцы API](testing.md#контракт-с-сервером), сообщение упавшего теста в логе |
 | `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.android.hilt` | модули с Hilt | Hilt с KSP |

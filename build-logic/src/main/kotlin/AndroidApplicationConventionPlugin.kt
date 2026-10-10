@@ -15,6 +15,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureAndroid(this)
                 defaultConfig.targetSdk = AndroidConfig.TARGET_SDK
                 lint.warningsAsErrors = warningsAsErrors
+                // Lists the app's languages (values-ru…) for Android 13+, so its language can be picked in the system
+                // settings. The language of the plain values folder is in src/main/res/resources.properties.
+                androidResources.generateLocaleConfig = true
 
                 // The debug key is kept in the repo, so a build from any computer has the same signature.
                 // Deep links depend on it: Android opens them in the app only if the key's SHA-256 is listed in
