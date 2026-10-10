@@ -82,19 +82,6 @@ object CatalogRoutes {
 fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
 ```
 
-The app needs one screen directly: it shows the catalog's product details inside the cart tab through the inline function `productDetailsScreen<T>()`. An inline function is copied into the calling code, so the screen is marked like this:
-
-```kotlin
-@Composable
-@PublishedApi
-internal fun ProductDetailsScreen(
-    onBack: () -> Unit,
-    viewModel: ProductDetailsViewModel = hiltViewModel(),
-)
-```
-
-The inlined code of that function can call it, but the app's own code can't.
-
 &nbsp;
 
 ## Packages

@@ -82,19 +82,6 @@ object CatalogRoutes {
 fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
 ```
 
-Один экран приложению нужен напрямую: карточку товара из каталога оно показывает во вкладке корзины через inline-функцию `productDetailsScreen<T>()`. Inline-функция встраивается в код, который её вызывает, поэтому экран помечен так:
-
-```kotlin
-@Composable
-@PublishedApi
-internal fun ProductDetailsScreen(
-    onBack: () -> Unit,
-    viewModel: ProductDetailsViewModel = hiltViewModel(),
-)
-```
-
-Вызвать его может только встроенный код этой функции, а собственный код приложения — нет.
-
 &nbsp;
 
 ## Пакеты
