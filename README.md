@@ -18,6 +18,8 @@ The same app is built on three slightly different stacks, each variant in its ow
 | `kmp-ready` | Android, with libraries replaced by ones that work in Kotlin Multiplatform | coming |
 | `kmp` | Kotlin Multiplatform | coming |
 
+Each branch has two APKs. **APK** is the shop itself. **UI kit APK** is a separate app that lays out every styled component of the shop, from the theme, icons and buttons to the product card and the order totals, so the design can be looked through without walking the shop's flows.
+
 &nbsp;
 
 ## How it looks
