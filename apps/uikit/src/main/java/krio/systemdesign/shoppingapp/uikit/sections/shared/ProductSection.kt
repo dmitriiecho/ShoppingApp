@@ -166,14 +166,12 @@ internal fun ProductSection(innerPadding: PaddingValues) {
             SampleVariant(caption = stringResource(R.string.uikit_variant_loaded)) {
                 ProductImage(
                     imageUrl = SampleData.headphonesImageUrl,
-                    contentDescription = stringResource(R.string.uikit_sample_product_headphones),
                     modifier = Modifier.size(SAMPLE_IMAGE_SIZE),
                 )
             }
             SampleVariant(caption = stringResource(R.string.uikit_variant_load_failed)) {
                 ProductImage(
                     imageUrl = SampleData.missingImageUrl,
-                    contentDescription = null,
                     modifier = Modifier.size(SAMPLE_IMAGE_SIZE),
                 )
             }

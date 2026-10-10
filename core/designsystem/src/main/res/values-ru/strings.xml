@@ -2,6 +2,7 @@
     <string name="designsystem_close">Закрыть</string>
     <string name="designsystem_navigate_back">Назад</string>
     <string name="designsystem_retry">Повторить</string>
+    <string name="designsystem_clear">Очистить</string>
     <string name="designsystem_cancel">Отмена</string>
     <string name="designsystem_scroll_to_top">Наверх</string>
 </resources>

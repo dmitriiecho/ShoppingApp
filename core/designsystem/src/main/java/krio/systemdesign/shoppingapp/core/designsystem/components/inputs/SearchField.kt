@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.CloseIconButton
+import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.ClearIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Search
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
@@ -38,7 +38,7 @@ fun SearchField(
         },
         trailingIcon = {
             if (state.text.isNotEmpty()) {
-                CloseIconButton(onClick = { state.clearText() })
+                ClearIconButton(onClick = { state.clearText() })
             }
         },
         lineLimits = TextFieldLineLimits.SingleLine,

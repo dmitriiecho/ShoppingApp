@@ -69,7 +69,6 @@ fun ProductCard(
             ) {
                 ProductImage(
                     imageUrl = imageUrl,
-                    contentDescription = name,
                     modifier = Modifier.size(PRODUCT_CARD_IMAGE_SIZE),
                     sharedElementKey = sharedElementKey,
                 )

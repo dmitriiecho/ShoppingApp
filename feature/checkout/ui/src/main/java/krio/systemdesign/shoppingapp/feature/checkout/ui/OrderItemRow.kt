@@ -38,7 +38,6 @@ fun OrderItemRow(
     ) {
         ProductImage(
             imageUrl = imageUrl,
-            contentDescription = name,
             modifier = Modifier.size(56.dp),
             cornerRadius = ShapeRadius.Small,
         )

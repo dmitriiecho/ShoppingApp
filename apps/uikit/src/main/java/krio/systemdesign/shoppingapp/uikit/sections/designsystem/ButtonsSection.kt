@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.ClearIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.CloseIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.LoadingButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.NavigateBackIconButton
@@ -89,6 +90,11 @@ internal fun ButtonsSection(innerPadding: PaddingValues) {
                 ) { option ->
                     Text(option.toString())
                 }
+            }
+        }
+        sampleGroup("ClearIconButton") {
+            SampleVariant {
+                ClearIconButton(onClick = {})
             }
         }
         sampleGroup("CloseIconButton") {

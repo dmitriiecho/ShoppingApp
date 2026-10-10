@@ -166,7 +166,6 @@ private fun ProductDetailsOneColumn(
             ProductDetailsImage(
                 productId = state.productId,
                 imageUrl = state.imageUrl,
-                name = state.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
@@ -202,7 +201,6 @@ private fun ProductDetailsTwoColumns(
             ProductDetailsImage(
                 productId = state.productId,
                 imageUrl = state.imageUrl,
-                name = state.name,
                 modifier = Modifier.size(imageSize),
             )
             Column(
@@ -242,13 +240,11 @@ private fun ProductCartControl(
 private fun ProductDetailsImage(
     productId: String,
     imageUrl: String?,
-    name: String?,
     modifier: Modifier = Modifier,
 ) {
     if (imageUrl != null) {
         ProductImage(
             imageUrl = imageUrl,
-            contentDescription = name,
             modifier = modifier,
             cornerRadius = 0.dp,
             contentPadding = 32.dp,

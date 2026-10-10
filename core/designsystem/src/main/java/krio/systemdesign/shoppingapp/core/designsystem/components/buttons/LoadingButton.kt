@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
@@ -46,7 +48,10 @@ fun LoadingButton(
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier.size(20.dp),
+                // The spinner replaces the text, so it carries the button's name for TalkBack.
+                modifier = Modifier
+                    .size(20.dp)
+                    .semantics { contentDescription = text },
                 strokeWidth = 2.dp,
             )
         } else {

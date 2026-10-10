@@ -16,15 +16,16 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Close
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
+// Empties a field: the same cross as CloseIconButton, but TalkBack says what it does here.
 @Composable
-fun CloseIconButton(
+fun ClearIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     IconButton(onClick = onClick, modifier = modifier) {
         Icon(
             imageVector = AppIcons.Close,
-            contentDescription = stringResource(R.string.designsystem_close),
+            contentDescription = stringResource(R.string.designsystem_clear),
         )
     }
 }
@@ -32,11 +33,11 @@ fun CloseIconButton(
 @Preview(name = "Light")
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun CloseIconButtonPreview() {
+private fun ClearIconButtonPreview() {
     ShoppingAppTheme {
-        // Same tint as in the app, in TopAppBar actions.
+        // Same tint as in the app, in SearchField.
         Surface(contentColor = MaterialTheme.colorScheme.onSurfaceVariant) {
-            CloseIconButton(onClick = {}, modifier = Modifier.padding(8.dp))
+            ClearIconButton(onClick = {}, modifier = Modifier.padding(8.dp))
         }
     }
 }

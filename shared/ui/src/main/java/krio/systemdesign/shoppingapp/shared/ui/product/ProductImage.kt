@@ -41,10 +41,10 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.HeadphonesF
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShapeRadius
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 
+// No description for TalkBack: the product's name is always shown next to the image, and would be read twice.
 @Composable
 fun ProductImage(
     imageUrl: String,
-    contentDescription: String?,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = ShapeRadius.Medium,
     contentPadding: Dp = 2.dp,
@@ -71,7 +71,6 @@ fun ProductImage(
         }
         ProductPhoto(
             imageUrl = imageUrl,
-            contentDescription = contentDescription,
             onLoadingChange = { isLoading = it },
             modifier = Modifier
                 .fillMaxSize()
@@ -85,7 +84,6 @@ fun ProductImage(
 @Composable
 private fun ProductPhoto(
     imageUrl: String,
-    contentDescription: String?,
     onLoadingChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -101,7 +99,7 @@ private fun ProductPhoto(
     }
     AsyncImage(
         model = request,
-        contentDescription = contentDescription,
+        contentDescription = null,
         modifier = modifier,
         // A URL that has failed shows the error picture from the first frame while it's retried (see FailedImageUrls).
         placeholder = if (imageUrl in FailedImageUrls) errorPainter else null,
@@ -159,7 +157,6 @@ private fun ProductImagePreview() {
                     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
                         ProductImage(
                             imageUrl = "",
-                            contentDescription = "Wireless Headphones",
                             modifier = Modifier.size(88.dp),
                         )
                     }
