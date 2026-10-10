@@ -23,27 +23,29 @@ sealed interface NetworkResult<out T> {
 
 // Performs the request and converts any outcome to NetworkResult.
 // Coroutine cancellation is rethrown, not turned into Failure, so that cancellation still works.
-// Ktor reads and parses the response in the caller's coroutine, so the request leaves the main thread here.
-suspend fun <T : Any> networkCall(request: suspend () -> T): NetworkResult<T> = try {
-    NetworkResult.Success(withContext(Dispatchers.IO) { request() })
-} catch (e: CancellationException) {
-    throw e
-} catch (e: ResponseException) {
-    val code = e.response.status.value
-    val request: HttpRequest = e.response.call.request
-    // 4xx is a warning: it can be a normal answer, e.g. 404 for an unknown promo code.
-    if (code >= 500) {
-        Logger.e { "Server returned an error: $code ${request.method.value} ${request.url}" }
-    } else {
-        Logger.w { "Server rejected the request: $code ${request.method.value} ${request.url}" }
+// Runs on IO: Ktor reads and parses the response in the caller's coroutine, which may be the main thread.
+suspend fun <T : Any> networkCall(request: suspend () -> T): NetworkResult<T> = withContext(Dispatchers.IO) {
+    try {
+        NetworkResult.Success(request())
+    } catch (e: ResponseException) {
+        val code = e.response.status.value
+        val request: HttpRequest = e.response.call.request
+        // 4xx is a warning: it can be a normal answer, e.g. 404 for an unknown promo code.
+        if (code >= 500) {
+            Logger.e { "Server returned an error: $code ${request.method.value} ${request.url}" }
+        } else {
+            Logger.w { "Server rejected the request: $code ${request.method.value} ${request.url}" }
+        }
+        NetworkResult.HttpError(code, e)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: IOException) {
+        // Warning, not error: a lost connection is usual on a phone.
+        Logger.w(e) { "Request to the server failed" }
+        NetworkResult.Failure(e)
+    } catch (e: Exception) {
+        // Invalid JSON or an empty body: the server broke the contract.
+        Logger.e(e) { "Server response could not be read" }
+        NetworkResult.Failure(e)
     }
-    NetworkResult.HttpError(code, e)
-} catch (e: IOException) {
-    // Warning, not error: a lost connection is usual on a phone.
-    Logger.w(e) { "Request to the server failed" }
-    NetworkResult.Failure(e)
-} catch (e: Exception) {
-    // Invalid JSON or an empty body: the server broke the contract.
-    Logger.e(e) { "Server response could not be read" }
-    NetworkResult.Failure(e)
 }
