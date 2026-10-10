@@ -22,7 +22,7 @@ Every screen is built the same way. Taking the cart as an example (`feature/cart
 
 ## Two screen overloads
 
-Instead of a Route + Screen pair, a screen has two functions with the same name. The first takes the ViewModel and collects the state and the effects, the second only draws:
+A screen has two functions with the same name. The first takes the ViewModel and collects the state and the effects, the second only draws:
 
 ```kotlin
 @Composable
