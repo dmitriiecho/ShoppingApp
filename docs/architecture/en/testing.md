@@ -68,7 +68,7 @@ A helper used by the tests of **two or more modules** lives in the **test fixtur
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
-| `networkTest {}`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
+| `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
 | `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
@@ -88,7 +88,7 @@ The libraries all work in Kotlin Multiplatform, except the ones for Android-only
 | [AssertK](https://github.com/assertk-org/assertk) | every check: `assertThat(actual).isEqualTo(expected)`, `isInstanceOf<T>()` narrows the type, `assertFailure {}` |
 | `kotlinx-coroutines-test` | `runTest` and the virtual clock |
 | [Turbine](https://github.com/cashapp/turbine) | a screen's one-off effects: `effects.test { awaitItem() }` |
-| MockWebServer | a local HTTP server for the network code |
+| Ktor `MockEngine` | answers the network code's requests without a real server (`TestServer`) |
 | [Robolectric](https://robolectric.org) | Android classes on the JVM, only for code that can't run without them (Room, screenshots) |
 | [Roborazzi](https://github.com/takahirom/roborazzi) | screenshot tests generated from the `@Preview` functions |
 
@@ -151,12 +151,12 @@ Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` gives t
 
 ### Network
 
-`networkTest {}` starts MockWebServer and provides a client for an API interface that reads JSON the same way the app does, using the same [`networkJson`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt):
+`networkTest {}` gives the test a `TestServer` and an API class built on a client with the app's settings ([`serverApi`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt)), so it reads JSON with the same `networkJson`. `TestServer` answers with the queued responses and records the requests; it runs on Ktor's `MockEngine`, without a real HTTP server:
 
 ```kotlin
 @Test
-fun `client error returns HttpError with its code`() = networkTest<TestApi> { server, api ->
-    server.enqueue(MockResponse.Builder().code(404).build())
+fun `client error returns HttpError with its code`() = networkTest(::TestApi) { server, api ->
+    server.enqueue(code = 404)
 
     val result = networkCall { api.item() }
 

@@ -11,14 +11,13 @@ import krio.systemdesign.shoppingapp.feature.catalog.impl.data.api.ProductApi
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductLoadResult
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
-import mockwebserver3.MockResponse
 
 class ProductRepositoryImplTest {
 
     // A link can point to a product the server doesn't have: that is not a failure, retrying won't help.
     @Test
-    fun `product the server doesn't have is not found`() = networkTest<ProductApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(404).build())
+    fun `product the server doesn't have is not found`() = networkTest(::ProductApi) { server, api ->
+        server.enqueue(code = 404)
 
         val result = ProductRepositoryImpl(api).getProduct("42")
 
@@ -26,8 +25,8 @@ class ProductRepositoryImplTest {
     }
 
     @Test
-    fun `server error loading a product is an error`() = networkTest<ProductApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(500).build())
+    fun `server error loading a product is an error`() = networkTest(::ProductApi) { server, api ->
+        server.enqueue(code = 500)
 
         val result = ProductRepositoryImpl(api).getProduct("1")
 
@@ -35,8 +34,8 @@ class ProductRepositoryImplTest {
     }
 
     @Test
-    fun `product is requested as in the API sample`() = networkTest<ProductApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("product.json").toString()).build())
+    fun `product is requested as in the API sample`() = networkTest(::ProductApi) { server, api ->
+        server.enqueue(body = apiSample("product.json").toString())
 
         ProductRepositoryImpl(api).getProduct("1")
 
@@ -45,8 +44,8 @@ class ProductRepositoryImplTest {
     }
 
     @Test
-    fun `product from the API sample is read`() = networkTest<ProductApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("product.json").toString()).build())
+    fun `product from the API sample is read`() = networkTest(::ProductApi) { server, api ->
+        server.enqueue(body = apiSample("product.json").toString())
 
         val result = ProductRepositoryImpl(api).getProduct("1")
 
@@ -54,8 +53,8 @@ class ProductRepositoryImplTest {
     }
 
     @Test
-    fun `page is requested as in the API sample`() = networkTest<ProductApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("products-page.json").toString()).build())
+    fun `page is requested as in the API sample`() = networkTest(::ProductApi) { server, api ->
+        server.enqueue(body = apiSample("products-page.json").toString())
 
         ProductRepositoryImpl(api).getProducts(query = "", page = 1, pageSize = 2)
 
@@ -64,8 +63,8 @@ class ProductRepositoryImplTest {
     }
 
     @Test
-    fun `page from the API sample is read`() = networkTest<ProductApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("products-page.json").toString()).build())
+    fun `page from the API sample is read`() = networkTest(::ProductApi) { server, api ->
+        server.enqueue(body = apiSample("products-page.json").toString())
 
         val result = ProductRepositoryImpl(api).getProducts(query = "", page = 1, pageSize = 2)
 

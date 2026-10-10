@@ -13,18 +13,18 @@ android {
 dependencies {
     implementation(project(":core:config"))
 
-    api(libs.retrofit)
+    api(libs.ktor.client.core)
     api(libs.kotlinx.serialization.json)
 
-    implementation(libs.okhttp)
-    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kermit)
 
-    debugImplementation(libs.okhttp.logging)
+    debugImplementation(libs.ktor.client.logging)
 
-    // networkTest: MockWebServer with a Retrofit client that reads JSON as the app does; apiSample and apiRequest
-    // read server/api-samples.
-    testFixturesApi(libs.okhttp.mockwebserver)
+    // networkTest: a client with the app's settings over TestServer; apiSample and apiRequest read server/api-samples.
+    testFixturesApi(libs.ktor.client.mock)
     testFixturesApi(libs.kotlinx.coroutines.test)
 
     testImplementation(libs.kotlin.test.junit)

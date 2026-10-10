@@ -50,7 +50,7 @@ core/     designsystem, compose-utils, network, config   ничего не зн�
 | DI | Hilt (KSP) |
 | Навигация | Navigation Compose с типизированными маршрутами |
 | Данные | Room, DataStore, Paging 3 |
-| Сеть | Retrofit, OkHttp, kotlinx.serialization, Coil для картинок |
+| Сеть | Ktor Client (движок OkHttp), kotlinx.serialization, Coil для картинок |
 | Сборка | Gradle 9.8, AGP 9.4, JDK 21, convention-плагины; minSdk 26, targetSdk 37, compileSdk 37 |
 | Сервер | Ktor 3.6, данные в JSON-файлах |
-| Тесты | kotlin.test, AssertK, kotlinx-coroutines-test, Turbine, MockWebServer, Robolectric, Roborazzi с ComposablePreviewScanner |
+| Тесты | kotlin.test, AssertK, kotlinx-coroutines-test, Turbine, Ktor MockEngine, Robolectric, Roborazzi с ComposablePreviewScanner |

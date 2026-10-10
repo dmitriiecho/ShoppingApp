@@ -5,11 +5,11 @@ import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
-import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
+import io.ktor.client.HttpClient
 import javax.inject.Inject
-import okhttp3.OkHttpClient
 
 @HiltAndroidApp
 class ShoppingApp :
@@ -19,7 +19,7 @@ class ShoppingApp :
     // The app's client: images share its connections and timeouts, and wait for the request delay from
     // the settings like any other server request. Lazy: built only when the first request needs it.
     @Inject
-    lateinit var okHttpClient: Lazy<OkHttpClient>
+    lateinit var httpClient: Lazy<HttpClient>
 
     override fun onCreate() {
         super.onCreate()
@@ -33,6 +33,6 @@ class ShoppingApp :
 
     // Coil's loader for every image in the app, created at the first image.
     override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
-        .components { add(OkHttpNetworkFetcherFactory(callFactory = { okHttpClient.get() })) }
+        .components { add(KtorNetworkFetcherFactory(httpClient = { httpClient.get() })) }
         .build()
 }

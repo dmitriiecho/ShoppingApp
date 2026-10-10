@@ -5,20 +5,20 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.prop
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import mockwebserver3.MockResponse
-import retrofit2.Response
-import retrofit2.http.GET
 
 class NetworkResultTest {
 
     @Test
-    fun `successful response returns its body`() = networkTest<TestApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body("""{"name":"Mug"}""").build())
+    fun `successful response returns its body`() = networkTest(::TestApi) { server, api ->
+        server.enqueue(body = """{"name":"Mug"}""")
 
         val result = networkCall { api.item() }
 
@@ -26,8 +26,8 @@ class NetworkResultTest {
     }
 
     @Test
-    fun `client error returns HttpError with its code`() = networkTest<TestApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(404).build())
+    fun `client error returns HttpError with its code`() = networkTest(::TestApi) { server, api ->
+        server.enqueue(code = 404)
 
         val result = networkCall { api.item() }
 
@@ -35,8 +35,8 @@ class NetworkResultTest {
     }
 
     @Test
-    fun `server error returns HttpError with its code`() = networkTest<TestApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(500).build())
+    fun `server error returns HttpError with its code`() = networkTest(::TestApi) { server, api ->
+        server.enqueue(code = 500)
 
         val result = networkCall { api.item() }
 
@@ -44,8 +44,8 @@ class NetworkResultTest {
     }
 
     @Test
-    fun `malformed JSON returns Failure`() = networkTest<TestApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body("""{"name":""").build())
+    fun `malformed JSON returns Failure`() = networkTest(::TestApi) { server, api ->
+        server.enqueue(body = """{"name":""")
 
         val result = networkCall { api.item() }
 
@@ -53,8 +53,8 @@ class NetworkResultTest {
     }
 
     @Test
-    fun `success without a body returns Failure`() = networkTest<TestApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(204).build())
+    fun `success without a body returns Failure`() = networkTest(::TestApi) { server, api ->
+        server.enqueue(code = 204)
 
         val result = networkCall { api.item() }
 
@@ -62,8 +62,8 @@ class NetworkResultTest {
     }
 
     @Test
-    fun `unreachable server returns Failure`() = networkTest<TestApi> { server, api ->
-        server.close()
+    fun `unreachable server returns Failure`() = networkTest(::TestApi) { server, api ->
+        server.shutDown()
 
         val result = networkCall { api.item() }
 
@@ -77,8 +77,7 @@ class NetworkResultTest {
             .isInstanceOf<CancellationException>()
     }
 
-    private interface TestApi {
-        @GET("item")
-        suspend fun item(): Response<JsonObject>
+    private class TestApi(private val client: HttpClient) {
+        suspend fun item(): JsonObject = client.get("item").body()
     }
 }

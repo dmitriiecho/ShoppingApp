@@ -1,23 +1,27 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.data.api
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.http.appendPathSegments
+import javax.inject.Inject
 import krio.systemdesign.shoppingapp.feature.catalog.impl.data.dto.ProductDTO
 import krio.systemdesign.shoppingapp.feature.catalog.impl.data.dto.ProductsPageDTO
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
 
-internal interface ProductApi {
+internal class ProductApi @Inject constructor(private val client: HttpClient) {
     // Paging by page number is safe: the server never removes products (out-of-stock ones stay with zero
     // stock) and appends new ones to the end. A renamed product can still move within search results;
     // ProductPagingSource drops the duplicates this causes.
-    @GET("products")
     suspend fun getProducts(
-        @Query("query") query: String,
-        @Query("page") page: Int,
-        @Query("pageSize") pageSize: Int,
-    ): Response<ProductsPageDTO>
+        query: String,
+        page: Int,
+        pageSize: Int,
+    ): ProductsPageDTO = client.get("products") {
+        parameter("query", query)
+        parameter("page", page)
+        parameter("pageSize", pageSize)
+    }.body()
 
-    @GET("products/{id}")
-    suspend fun getProduct(@Path("id") id: String): Response<ProductDTO>
+    suspend fun getProduct(id: String): ProductDTO = client.get { url { appendPathSegments("products", id) } }.body()
 }

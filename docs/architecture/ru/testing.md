@@ -68,7 +68,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
-| `networkTest {}`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
+| `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
 | `databaseTest {}` | `:shared:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
@@ -88,7 +88,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | [AssertK](https://github.com/assertk-org/assertk) | все проверки: `assertThat(actual).isEqualTo(expected)`, `isInstanceOf<T>()` сужает тип, `assertFailure {}` |
 | `kotlinx-coroutines-test` | `runTest` и виртуальные часы |
 | [Turbine](https://github.com/cashapp/turbine) | разовые эффекты экрана: `effects.test { awaitItem() }` |
-| MockWebServer | локальный HTTP-сервер для сетевого кода |
+| `MockEngine` из Ktor | отвечает на запросы сетевого кода без настоящего сервера (`TestServer`) |
 | [Robolectric](https://robolectric.org) | классы Android на JVM, только для кода, который без них не работает (Room, скриншоты) |
 | [Roborazzi](https://github.com/takahirom/roborazzi) | скриншот-тесты, созданные из функций `@Preview` |
 
@@ -151,12 +151,12 @@ Robolectric работает на `targetSdk` приложения: `shoppingapp
 
 ### Сеть
 
-`networkTest {}` запускает MockWebServer и создаёт клиент для API-интерфейса, который читает JSON так же, как приложение, — тем же [`networkJson`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt):
+`networkTest {}` даёт тесту `TestServer` и API-класс на клиенте с настройками приложения ([`serverApi`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt)), поэтому JSON читается тем же `networkJson`. `TestServer` отвечает ответами из очереди и записывает запросы; он работает на `MockEngine` из Ktor, без настоящего HTTP-сервера:
 
 ```kotlin
 @Test
-fun `client error returns HttpError with its code`() = networkTest<TestApi> { server, api ->
-    server.enqueue(MockResponse.Builder().code(404).build())
+fun `client error returns HttpError with its code`() = networkTest(::TestApi) { server, api ->
+    server.enqueue(code = 404)
 
     val result = networkCall { api.item() }
 

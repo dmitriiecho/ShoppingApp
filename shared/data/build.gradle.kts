@@ -17,7 +17,6 @@ dependencies {
     implementation(project(":shared:domain"))
     implementation(project(":core:network"))
 
-    implementation(libs.okhttp)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kermit)
