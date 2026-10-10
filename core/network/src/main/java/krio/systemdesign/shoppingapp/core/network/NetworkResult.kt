@@ -1,10 +1,12 @@
 package krio.systemdesign.shoppingapp.core.network
 
 import co.touchlab.kermit.Logger
-import java.io.IOException
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.request.HttpRequest
 import kotlin.coroutines.cancellation.CancellationException
-import retrofit2.HttpException
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.io.IOException
 
 sealed interface NetworkResult<out T> {
     data class Success<T>(val body: T) : NetworkResult<T>
@@ -12,7 +14,7 @@ sealed interface NetworkResult<out T> {
     // The server responded with an error code: 404, 500…
     data class HttpError(
         val code: Int,
-        val error: HttpException,
+        val error: ResponseException,
     ) : NetworkResult<Nothing>
 
     // No response or it could not be parsed: no network, timeout, invalid JSON.
@@ -21,22 +23,21 @@ sealed interface NetworkResult<out T> {
 
 // Performs the request and converts any outcome to NetworkResult.
 // Coroutine cancellation is rethrown, not turned into Failure, so that cancellation still works.
-suspend fun <T : Any> networkCall(request: suspend () -> Response<T>): NetworkResult<T> = try {
-    val response = request()
-    if (response.isSuccessful) {
-        NetworkResult.Success(requireNotNull(response.body()))
-    } else {
-        val request = response.raw().request
-        // 4xx is a warning: it can be a normal answer, e.g. 404 for an unknown promo code.
-        if (response.code() >= 500) {
-            Logger.e { "Server returned an error: ${response.code()} ${request.method} ${request.url}" }
-        } else {
-            Logger.w { "Server rejected the request: ${response.code()} ${request.method} ${request.url}" }
-        }
-        NetworkResult.HttpError(response.code(), HttpException(response))
-    }
+// Ktor reads and parses the response in the caller's coroutine, so the request leaves the main thread here.
+suspend fun <T : Any> networkCall(request: suspend () -> T): NetworkResult<T> = try {
+    NetworkResult.Success(withContext(Dispatchers.IO) { request() })
 } catch (e: CancellationException) {
     throw e
+} catch (e: ResponseException) {
+    val code = e.response.status.value
+    val request: HttpRequest = e.response.call.request
+    // 4xx is a warning: it can be a normal answer, e.g. 404 for an unknown promo code.
+    if (code >= 500) {
+        Logger.e { "Server returned an error: $code ${request.method.value} ${request.url}" }
+    } else {
+        Logger.w { "Server rejected the request: $code ${request.method.value} ${request.url}" }
+    }
+    NetworkResult.HttpError(code, e)
 } catch (e: IOException) {
     // Warning, not error: a lost connection is usual on a phone.
     Logger.w(e) { "Request to the server failed" }

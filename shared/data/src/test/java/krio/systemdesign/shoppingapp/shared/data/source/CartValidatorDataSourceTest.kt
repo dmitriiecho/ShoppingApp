@@ -14,15 +14,14 @@ import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.shared.domain.model.testCart
 import krio.systemdesign.shoppingapp.shared.domain.model.testCartItem
-import mockwebserver3.MockResponse
 
 class CartValidatorDataSourceTest {
 
     private val cart = testCart(testCartItem(productId = "1"))
 
     @Test
-    fun `cart without issues and with a working promo code is valid`() = networkTest<CartApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body("""{"issues":[],"promoCodeValid":true}""").build())
+    fun `cart without issues and with a working promo code is valid`() = networkTest(::CartApi) { server, api ->
+        server.enqueue(body = """{"issues":[],"promoCodeValid":true}""")
 
         val result = CartValidatorDataSource(api).validate(cart)
 
@@ -30,11 +29,9 @@ class CartValidatorDataSourceTest {
     }
 
     @Test
-    fun `cart with issues is invalid with those issues`() = networkTest<CartApi> { server, api ->
+    fun `cart with issues is invalid with those issues`() = networkTest(::CartApi) { server, api ->
         server.enqueue(
-            MockResponse.Builder()
-                .body("""{"issues":[{"type":"priceChanged","productId":"1","newPrice":1200}],"promoCodeValid":true}""")
-                .build(),
+            body = """{"issues":[{"type":"priceChanged","productId":"1","newPrice":1200}],"promoCodeValid":true}""",
         )
 
         val result = CartValidatorDataSource(api).validate(cart)
@@ -45,8 +42,8 @@ class CartValidatorDataSourceTest {
     }
 
     @Test
-    fun `cart with a promo code that stopped working is invalid`() = networkTest<CartApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body("""{"issues":[],"promoCodeValid":false}""").build())
+    fun `cart with a promo code that stopped working is invalid`() = networkTest(::CartApi) { server, api ->
+        server.enqueue(body = """{"issues":[],"promoCodeValid":false}""")
 
         val result = CartValidatorDataSource(api).validate(cart)
 
@@ -54,8 +51,8 @@ class CartValidatorDataSourceTest {
     }
 
     @Test
-    fun `server error leaves the cart unchecked`() = networkTest<CartApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(500).build())
+    fun `server error leaves the cart unchecked`() = networkTest(::CartApi) { server, api ->
+        server.enqueue(code = 500)
 
         val result = CartValidatorDataSource(api).validate(cart)
 
@@ -63,8 +60,8 @@ class CartValidatorDataSourceTest {
     }
 
     @Test
-    fun `cart is sent to the address in the API sample`() = networkTest<CartApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("cart-validation-response.json").toString()).build())
+    fun `cart is sent to the address in the API sample`() = networkTest(::CartApi) { server, api ->
+        server.enqueue(body = apiSample("cart-validation-response.json").toString())
 
         CartValidatorDataSource(api).validate(sampleCart)
 
@@ -73,18 +70,18 @@ class CartValidatorDataSourceTest {
     }
 
     @Test
-    fun `cart is sent with the body in the API sample`() = networkTest<CartApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("cart-validation-response.json").toString()).build())
+    fun `cart is sent with the body in the API sample`() = networkTest(::CartApi) { server, api ->
+        server.enqueue(body = apiSample("cart-validation-response.json").toString())
 
         CartValidatorDataSource(api).validate(sampleCart)
 
-        val sent = networkJson.parseToJsonElement(checkNotNull(server.takeRequest().body).utf8())
+        val sent = networkJson.parseToJsonElement(server.takeRequest().body)
         assertThat(sent).isEqualTo(apiSample("cart-validation-request.json"))
     }
 
     @Test
-    fun `answer from the API sample is read with all its changes`() = networkTest<CartApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("cart-validation-response.json").toString()).build())
+    fun `answer from the API sample is read with all its changes`() = networkTest(::CartApi) { server, api ->
+        server.enqueue(body = apiSample("cart-validation-response.json").toString())
 
         val result = CartValidatorDataSource(api).validate(sampleCart)
 

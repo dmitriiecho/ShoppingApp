@@ -15,12 +15,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import krio.systemdesign.shoppingapp.shared.data.api.CartApi
 import krio.systemdesign.shoppingapp.shared.data.database.ShoppingDatabase
 import krio.systemdesign.shoppingapp.shared.data.database.dao.AppliedPromoCodeDao
 import krio.systemdesign.shoppingapp.shared.data.database.dao.CartItemDao
-import retrofit2.Retrofit
-import retrofit2.create
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -40,10 +37,6 @@ internal object DataModule {
 
     @Provides
     fun provideAppliedPromoCodeDao(database: ShoppingDatabase): AppliedPromoCodeDao = database.appliedPromoCodeDao()
-
-    @Provides
-    @Singleton
-    fun provideCartApi(retrofit: Retrofit): CartApi = retrofit.create()
 
     // One instance per file: DataStore requires it. A corrupted file is replaced with an empty one, the settings
     // back to their defaults: otherwise every later save would fail on reading it.

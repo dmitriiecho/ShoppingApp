@@ -82,7 +82,7 @@ Two wrappers convert exceptions into these results. [`networkCall`](../../../cor
 when (val result = networkCall { api.getProduct(productId) }) {
     is NetworkResult.Success -> ProductLoadResult.Success(result.body.toDomain())
     is NetworkResult.HttpError ->
-        if (result.code == HTTP_NOT_FOUND) ProductLoadResult.NotFound else ProductLoadResult.Error(result.error)
+        if (result.code == HttpStatusCode.NotFound.value) ProductLoadResult.NotFound else ProductLoadResult.Error(result.error)
     is NetworkResult.Failure -> ProductLoadResult.Error(result.error)
 }
 ```
@@ -121,16 +121,16 @@ The app hasn't been released yet, so schema changes don't need migrations for no
 
 ## Network
 
-Retrofit and Coil's image loading share one `OkHttpClient`, with the same connections and timeouts. Interceptors are provided to it by Hilt as a set, so `:shared:data` can add the request delay without `:core:network` knowing about it:
+The API classes and Coil's image loading share one Ktor `HttpClient`, with the same connections and timeouts. Other modules add to it through `HttpClientSetup`, which Hilt provides as a set, so `:shared:data` can add the request delay without `:core:network` knowing about it:
 
 ```kotlin
 @Binds
 @IntoSet
-@ApplicationInterceptor
-abstract fun bindNetworkDelayInterceptor(impl: NetworkDelayInterceptor): Interceptor
+abstract fun bindNetworkDelayPlugin(impl: NetworkDelayPlugin): HttpClientSetup
 ```
 
-- **The request delay** from the settings is applied before every server request, including images, to show how screens behave while they wait.
+- **The request delay** from the settings is applied before every server request, including images, to show how screens behave while they wait. It is a Ktor plugin that suspends the request, so leaving the screen cancels the wait at once.
+- **4xx and 5xx answers** throw Ktor's `ResponseException`, which `networkCall` turns into `NetworkResult.HttpError`.
 - **The HTTP log** is added only in debug.
 - **Plain HTTP is allowed only for the server's address** (`network_security_config.xml`): the server has no domain, so it can't use HTTPS.
 

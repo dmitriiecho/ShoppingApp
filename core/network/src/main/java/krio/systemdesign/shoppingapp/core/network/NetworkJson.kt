@@ -1,9 +1,10 @@
 package krio.systemdesign.shoppingapp.core.network
 
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import retrofit2.Converter
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 // How the app reads and writes the server's JSON. Public so that tests read it the same way (networkTest).
 // The server has the same settings (serverJson in server/.../ServerJson.kt).
@@ -13,6 +14,10 @@ val networkJson: Json = Json {
     encodeDefaults = true
 }
 
-// Retrofit's converter for networkJson.
-val networkJsonConverterFactory: Converter.Factory =
-    networkJson.asConverterFactory("application/json; charset=UTF-8".toMediaType())
+// The client settings the server's API relies on. Public so that tests set up their client the same way (networkTest).
+fun HttpClientConfig<*>.serverApi(baseUrl: String) {
+    defaultRequest { url(baseUrl) }
+    install(ContentNegotiation) { json(networkJson) }
+    // A 4xx or 5xx answer throws ResponseException, which networkCall turns into HttpError.
+    expectSuccess = true
+}

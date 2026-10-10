@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.data.repository
 
-import java.net.HttpURLConnection.HTTP_NOT_FOUND
+import io.ktor.http.HttpStatusCode
 import javax.inject.Inject
 import krio.systemdesign.shoppingapp.core.network.NetworkResult
 import krio.systemdesign.shoppingapp.core.network.networkCall
@@ -29,7 +29,7 @@ internal class ProductRepositoryImpl @Inject constructor(private val api: Produc
         return when (result) {
             is NetworkResult.Success -> ProductLoadResult.Success(result.body.toDomain())
             is NetworkResult.HttpError ->
-                if (result.code == HTTP_NOT_FOUND) {
+                if (result.code == HttpStatusCode.NotFound.value) {
                     ProductLoadResult.NotFound
                 } else {
                     ProductLoadResult.Error(result.error)

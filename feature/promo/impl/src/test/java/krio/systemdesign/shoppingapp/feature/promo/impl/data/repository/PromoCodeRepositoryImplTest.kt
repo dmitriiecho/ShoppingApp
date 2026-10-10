@@ -11,13 +11,12 @@ import krio.systemdesign.shoppingapp.core.network.networkTest
 import krio.systemdesign.shoppingapp.feature.promo.impl.data.api.PromoApi
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
-import mockwebserver3.MockResponse
 
 class PromoCodeRepositoryImplTest {
 
     @Test
-    fun `code the server doesn't have is not found`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(404).build())
+    fun `code the server doesn't have is not found`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(code = 404)
 
         val result = PromoCodeRepositoryImpl(api).checkPromoCode("SALE99")
 
@@ -25,8 +24,8 @@ class PromoCodeRepositoryImplTest {
     }
 
     @Test
-    fun `server error checking a code is an error`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(MockResponse.Builder().code(500).build())
+    fun `server error checking a code is an error`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(code = 500)
 
         val result = PromoCodeRepositoryImpl(api).checkPromoCode("SALE10")
 
@@ -35,8 +34,8 @@ class PromoCodeRepositoryImplTest {
 
     // PromoCode rejects a percent outside 1..100; such an answer must not crash the app.
     @Test
-    fun `code with a percent outside 1 to 100 is an error`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body("""{"code":"FREE","discountPercent":0}""").build())
+    fun `code with a percent outside 1 to 100 is an error`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(body = """{"code":"FREE","discountPercent":0}""")
 
         val result = PromoCodeRepositoryImpl(api).checkPromoCode("FREE")
 
@@ -44,12 +43,8 @@ class PromoCodeRepositoryImplTest {
     }
 
     @Test
-    fun `one code with a wrong percent fails the whole list`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(
-            MockResponse.Builder()
-                .body("""[{"code":"SALE10","discountPercent":10},{"code":"FREE","discountPercent":0}]""")
-                .build(),
-        )
+    fun `one code with a wrong percent fails the whole list`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(body = """[{"code":"SALE10","discountPercent":10},{"code":"FREE","discountPercent":0}]""")
 
         val result = PromoCodeRepositoryImpl(api).getPromoCodes()
 
@@ -57,8 +52,8 @@ class PromoCodeRepositoryImplTest {
     }
 
     @Test
-    fun `promo code is requested as in the API sample`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("promo-code.json").toString()).build())
+    fun `promo code is requested as in the API sample`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(body = apiSample("promo-code.json").toString())
 
         PromoCodeRepositoryImpl(api).checkPromoCode("SALE10")
 
@@ -67,8 +62,8 @@ class PromoCodeRepositoryImplTest {
     }
 
     @Test
-    fun `promo code from the API sample is read`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("promo-code.json").toString()).build())
+    fun `promo code from the API sample is read`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(body = apiSample("promo-code.json").toString())
 
         val result = PromoCodeRepositoryImpl(api).checkPromoCode("sale10")
 
@@ -76,8 +71,8 @@ class PromoCodeRepositoryImplTest {
     }
 
     @Test
-    fun `promo codes are requested as in the API sample`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("promo-codes.json").toString()).build())
+    fun `promo codes are requested as in the API sample`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(body = apiSample("promo-codes.json").toString())
 
         PromoCodeRepositoryImpl(api).getPromoCodes()
 
@@ -86,8 +81,8 @@ class PromoCodeRepositoryImplTest {
     }
 
     @Test
-    fun `promo codes from the API sample are read`() = networkTest<PromoApi> { server, api ->
-        server.enqueue(MockResponse.Builder().body(apiSample("promo-codes.json").toString()).build())
+    fun `promo codes from the API sample are read`() = networkTest(::PromoApi) { server, api ->
+        server.enqueue(body = apiSample("promo-codes.json").toString())
 
         val result = PromoCodeRepositoryImpl(api).getPromoCodes()
 

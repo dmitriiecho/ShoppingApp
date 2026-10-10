@@ -82,7 +82,7 @@ sealed interface ProductLoadResult {
 when (val result = networkCall { api.getProduct(productId) }) {
     is NetworkResult.Success -> ProductLoadResult.Success(result.body.toDomain())
     is NetworkResult.HttpError ->
-        if (result.code == HTTP_NOT_FOUND) ProductLoadResult.NotFound else ProductLoadResult.Error(result.error)
+        if (result.code == HttpStatusCode.NotFound.value) ProductLoadResult.NotFound else ProductLoadResult.Error(result.error)
     is NetworkResult.Failure -> ProductLoadResult.Error(result.error)
 }
 ```
@@ -121,16 +121,16 @@ internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
 
 ## Сеть
 
-Retrofit и загрузка картинок через Coil используют один `OkHttpClient` с общими соединениями и таймаутами. Перехватчики Hilt передаёт в него набором, поэтому `:shared:data` может добавить задержку запросов, а `:core:network` о ней ничего не знает:
+API-классы и загрузка картинок через Coil используют один `HttpClient` из Ktor с общими соединениями и таймаутами. Другие модули дополняют его через `HttpClientSetup`, который Hilt передаёт набором, поэтому `:shared:data` может добавить задержку запросов, а `:core:network` о ней ничего не знает:
 
 ```kotlin
 @Binds
 @IntoSet
-@ApplicationInterceptor
-abstract fun bindNetworkDelayInterceptor(impl: NetworkDelayInterceptor): Interceptor
+abstract fun bindNetworkDelayPlugin(impl: NetworkDelayPlugin): HttpClientSetup
 ```
 
-- **Задержка запросов** из настроек срабатывает перед каждым запросом к серверу, в том числе за картинками, чтобы показать, как экраны ведут себя, пока ждут ответа.
+- **Задержка запросов** из настроек срабатывает перед каждым запросом к серверу, в том числе за картинками, чтобы показать, как экраны ведут себя, пока ждут ответа. Это плагин Ktor, который приостанавливает запрос, поэтому уход с экрана сразу отменяет ожидание.
+- **Ответы 4xx и 5xx** выбрасывают `ResponseException` из Ktor, а `networkCall` превращает его в `NetworkResult.HttpError`.
 - **HTTP-лог** добавляется только в debug.
 - **Обычный HTTP разрешён только для адреса сервера** (`network_security_config.xml`): у сервера нет домена, а значит, нет и HTTPS.
 

@@ -1,7 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.data.repository
 
 import co.touchlab.kermit.Logger
-import java.net.HttpURLConnection.HTTP_NOT_FOUND
+import io.ktor.http.HttpStatusCode
 import javax.inject.Inject
 import krio.systemdesign.shoppingapp.core.network.NetworkResult
 import krio.systemdesign.shoppingapp.core.network.networkCall
@@ -25,7 +25,7 @@ internal class PromoCodeRepositoryImpl @Inject constructor(private val api: Prom
                 },
             )
             is NetworkResult.HttpError ->
-                if (result.code == HTTP_NOT_FOUND) {
+                if (result.code == HttpStatusCode.NotFound.value) {
                     PromoCodeCheckResult.NotFound
                 } else {
                     PromoCodeCheckResult.Error(result.error)

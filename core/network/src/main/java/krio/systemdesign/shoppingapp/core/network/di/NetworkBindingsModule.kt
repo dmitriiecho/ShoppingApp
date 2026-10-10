@@ -4,14 +4,13 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.Multibinds
-import okhttp3.Interceptor
+import krio.systemdesign.shoppingapp.core.network.HttpClientSetup
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class NetworkBindingsModule {
-    // The set is never empty now (NetworkDelayInterceptor),
+    // The set is never empty now (NetworkDelayPlugin),
     // kept @Multibinds in case it becomes empty: Dagger fails on that.
     @Multibinds
-    @ApplicationInterceptor
-    abstract fun applicationInterceptors(): Set<Interceptor>
+    abstract fun httpClientSetups(): Set<HttpClientSetup>
 }
