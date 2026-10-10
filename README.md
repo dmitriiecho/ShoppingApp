@@ -4,7 +4,7 @@
 
 [Русская версия](README.ru.md)
 
-ShoppingApp is a demo shop for Android: a catalog with search, a cart checked by the server, promo codes and checkout. An example of an app built on a current stack, where the module architecture, navigation, screen state and data handling are all thought through.
+ShoppingApp is a demo shop for Android: a catalog with search, a cart kept on the device and checked against the server, promo codes and checkout. An example of an app built on a current stack, where the module architecture, navigation, screen state and data handling are all thought through.
 
 &nbsp;
 
@@ -24,13 +24,13 @@ The same app is built on three slightly different stacks, each variant in its ow
 
 The three main flows, as they run in the app:
 
-| Catalog | Cart and promo code | Server changes, checkout |
-|:---:|:---:|:---:|
-| <img src=".github/readme/catalog.webp" width="240" alt="Opening a product and going back, scrolling the catalog, opening another product and adding two to the cart"> | <img src=".github/readme/promo.webp" width="240" alt="The cart with two laptop stands, applying a promo code from the hint and the discount in the totals"> | <img src=".github/readme/checkout.webp" width="240" alt="The cart shows that the price and the stock changed on the server: accepting the new price, lowering the quantity to what is left and opening checkout"> |
-
-- **Catalog**: the image flies into the product and back, two in the cart.
-- **Cart and promo code**: a code from the hint, the discount in the totals.
-- **Server changes, checkout**: the price and the stock changed on the server, and the cart shows it: accept the new price, lower the quantity to what is left, go to checkout.
+<table width="100%">
+  <tr>
+    <td align="center" width="33%"><img src=".github/readme/catalog.webp" width="240" alt="Opening a product and going back, scrolling the catalog, opening another product and adding two to the cart"><br><sub>Catalog</sub></td>
+    <td align="center" width="33%"><img src=".github/readme/promo.webp" width="240" alt="The cart with two laptop stands, applying a promo code from the hint and the discount in the totals"><br><sub>Cart and promo code</sub></td>
+    <td align="center" width="33%"><img src=".github/readme/checkout.webp" width="240" alt="The cart shows that the price and the stock changed on the server: accepting the new price, lowering the quantity to what is left and opening checkout"><br><sub>Server changes, checkout</sub></td>
+  </tr>
+</table>
 
 &nbsp;
 
@@ -39,7 +39,7 @@ The three main flows, as they run in the app:
 The app is small, but every screen has something to look at:
 
 - **Catalog**: search that waits for a pause in typing, pages loaded from the server, the product image flying into its details.
-- **Cart**, kept on the device and checked by the server each time it opens and before checkout: items gone, new prices, not enough stock.
+- **Cart**, stored only on the device (Room): the server keeps no carts, it only checks this one each time the cart opens and before checkout: items gone, new prices, not enough stock.
 - **Promo codes** checked by the server, with the discount right in the totals.
 - **Checkout**: the form survives process death, and a double tap won't place the order twice.
 - **Deep links** to the catalog, the cart and a product, with verified App Links.
