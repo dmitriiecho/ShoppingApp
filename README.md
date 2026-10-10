@@ -4,7 +4,7 @@
 
 [Русская версия](README.ru.md)
 
-ShoppingApp is a demo shop for Android: a catalog with search, a cart kept on the device and checked against the server, promo codes and checkout. An example of an app built on a current stack, where the module architecture, navigation, screen state and data handling are all thought through.
+ShoppingApp is a demo shop for Android: a catalog with search, a cart kept on the device and checked against the server, promo codes and checkout. An example of an app built on a current stack.
 
 &nbsp;
 
