@@ -1,5 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.data.repository
 
+import co.touchlab.kermit.Logger
 import java.net.HttpURLConnection.HTTP_NOT_FOUND
 import javax.inject.Inject
 import krio.systemdesign.shoppingapp.core.network.NetworkResult
@@ -9,7 +10,6 @@ import krio.systemdesign.shoppingapp.feature.promo.impl.data.dto.toDomain
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.repository.PromoCodeRepository
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
-import timber.log.Timber
 
 internal class PromoCodeRepositoryImpl @Inject constructor(private val api: PromoApi) : PromoCodeRepository {
     override suspend fun checkPromoCode(code: String): PromoCodeCheckResult {
@@ -20,7 +20,7 @@ internal class PromoCodeRepositoryImpl @Inject constructor(private val api: Prom
             is NetworkResult.Success -> runCatching { result.body.toDomain() }.fold(
                 onSuccess = { PromoCodeCheckResult.Valid(it) },
                 onFailure = {
-                    Timber.e(it, "Server sent an invalid promo code")
+                    Logger.e(it) { "Server sent an invalid promo code" }
                     PromoCodeCheckResult.Error(it)
                 },
             )
@@ -39,7 +39,7 @@ internal class PromoCodeRepositoryImpl @Inject constructor(private val api: Prom
         return when (result) {
             // As in checkPromoCode: a code with a discount outside 1..100 is a failure, the list isn't shown.
             is NetworkResult.Success -> runCatching { result.body.map { it.toDomain() } }
-                .onFailure { Timber.e(it, "Server sent an invalid promo code") }
+                .onFailure { Logger.e(it) { "Server sent an invalid promo code" } }
             is NetworkResult.HttpError -> Result.failure(result.error)
             is NetworkResult.Failure -> Result.failure(result.error)
         }

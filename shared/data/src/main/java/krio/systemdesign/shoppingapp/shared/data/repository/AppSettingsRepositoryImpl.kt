@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import co.touchlab.kermit.Logger
 import java.io.IOException
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.map
 import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.shared.domain.repository.AppSettingsRepository
-import timber.log.Timber
 
 // ktlint would wrap this long header before the supertype; the project puts one parameter per line instead.
 @Suppress("ktlint:standard:class-signature")
@@ -24,7 +24,7 @@ internal class AppSettingsRepositoryImpl @Inject constructor(
     private val preferences: Flow<Preferences> = dataStore.data
         .catch { e ->
             if (e !is IOException) throw e
-            Timber.w(e, "Failed to read settings")
+            Logger.w(e) { "Failed to read settings" }
             emit(emptyPreferences())
         }
 
@@ -38,7 +38,7 @@ internal class AppSettingsRepositoryImpl @Inject constructor(
         dataStore.edit { it[THEME_MODE_KEY] = mode.name }
         Result.success(Unit)
     } catch (e: IOException) {
-        Timber.e(e, "Failed to save theme")
+        Logger.e(e) { "Failed to save theme" }
         Result.failure(e)
     }
 
@@ -52,7 +52,7 @@ internal class AppSettingsRepositoryImpl @Inject constructor(
         dataStore.edit { it[NETWORK_DELAY_KEY] = delay.name }
         Result.success(Unit)
     } catch (e: IOException) {
-        Timber.e(e, "Failed to save network delay")
+        Logger.e(e) { "Failed to save network delay" }
         Result.failure(e)
     }
 

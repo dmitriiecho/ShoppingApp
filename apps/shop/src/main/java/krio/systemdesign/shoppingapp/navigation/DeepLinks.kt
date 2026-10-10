@@ -5,9 +5,9 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavGraph
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import co.touchlab.kermit.Logger
 import krio.systemdesign.shoppingapp.navigation.bottombar.BottomNavRoutes
 import krio.systemdesign.shoppingapp.navigation.bottombar.navigateToBottomTab
-import timber.log.Timber
 
 // Opens a link the way the user would: Back from /cart leaves the app, from /product/{id} returns to the catalog.
 internal fun NavHostController.openDeepLink(uri: Uri) {
@@ -18,7 +18,7 @@ internal fun NavHostController.openDeepLink(uri: Uri) {
     // A link no tab can open (e.g. /catalog/shoes) is ignored.
     val tab = BottomNavRoutes.all.firstOrNull { tabGraph(it).hasDeepLink(link) }
     if (tab == null) {
-        Timber.w("No screen opens deep link %s", uri)
+        Logger.w { "No screen opens deep link $uri" }
         return
     }
     val tabRoot = tabGraph(tab).findStartDestination()

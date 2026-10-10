@@ -39,7 +39,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
-    implementation(libs.timber)
+    implementation(libs.kermit)
 
     // Lets Coil load product images over the network (ProductImage in :shared:ui), with the app's OkHttpClient:
     // ShoppingApp creates Coil's image loader. asProvider(): coil is also a prefix of coil-network-okhttp.
