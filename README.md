@@ -18,7 +18,7 @@ The same app is built on three slightly different stacks, each in its own branch
 | Branch | Stack | Download |
 |---|---|---|
 | [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android: Hilt, Retrofit + OkHttp, Room, Navigation Compose | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
-| `kmp-ready` | Android, with libraries replaced by ones that work in Kotlin Multiplatform | coming |
+| [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp-ready) | Android: Metro, Ktor, Room, Navigation Compose, Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
 | `kmp` | Kotlin Multiplatform | coming |
 
 Each branch comes with two APKs: the shop and the UI kit.
