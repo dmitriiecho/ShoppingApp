@@ -21,6 +21,11 @@ The levels are folders, not just dependency rules: putting everything under `cor
 
 The middle level is named `crossfeature`, not `shared`: in Kotlin Multiplatform "shared" means code shared between platforms, and the `kmp` branch has that kind of code too.
 
+Two kinds of modules sit inside the levels:
+
+- **`testing` modules** hold test helpers that the tests of other modules use too, next to the module they belong to: `:core:network:testing`, `:crossfeature:domain:testing`. Kotlin Multiplatform modules have no test fixtures, so the helpers get a module of their own; only tests depend on it ([Testing](testing.md#names-and-places)).
+- **`:apps:shop:app`** is the part of the shop app both platforms share. For now it holds the iOS entry point and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)).
+
 &nbsp;
 
 ## Where new code goes
@@ -97,6 +102,7 @@ A library's package mirrors its module path, and an app's package is its applica
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (the hyphen is dropped) |
 | `:apps:shop` | `krio.systemdesign.shoppingapp` |
+| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: part of the app, so it has the app's package |
 
 Because an app's package is tied to its applicationId, it doesn't change when the app moves to another folder.
 

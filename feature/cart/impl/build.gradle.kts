@@ -20,8 +20,8 @@ dependencies {
     // ImmutableList in CartUiState, so Compose can compare an item's issues by content.
     implementation(libs.kotlinx.collections.immutable)
 
-    testImplementation(testFixtures(project(":crossfeature:domain")))
-    testImplementation(testFixtures(project(":crossfeature:analytics")))
+    testImplementation(project(":crossfeature:domain:testing"))
+    testImplementation(project(":crossfeature:analytics:testing"))
     testImplementation(testFixtures(project(":core:compose-utils")))
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.assertk)

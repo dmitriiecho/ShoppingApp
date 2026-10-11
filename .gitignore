@@ -12,3 +12,8 @@ build/
 *.dex
 .kotlin/
 CLAUDE.local.md
+
+# Xcode (apps/shop/ios): per-user state and build output.
+xcuserdata/
+*.xcuserstate
+DerivedData/

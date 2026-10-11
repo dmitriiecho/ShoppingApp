@@ -19,6 +19,11 @@ datastore = "1.2.1"
 composeBom = "2026.09.00"
 composeLints = "1.6.1"
 
+# Compose Multiplatform. On Android its libraries are the Jetpack ones of the same versions as the BOM's.
+composeMultiplatform = "1.12.1"
+# The latest stable one: on Android it is Jetpack Material3 1.4.0, as in the BOM.
+composeMultiplatformMaterial3 = "1.9.0"
+
 # DI
 metro = "1.4.5"
 
@@ -60,6 +65,7 @@ androidx-datastore-preferences = { group = "androidx.datastore", name = "datasto
 # Network and images
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
@@ -76,7 +82,18 @@ kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotli
 # Logging
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 
+# Compose Multiplatform
+jetbrains-compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeMultiplatform" }
+jetbrains-compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "composeMultiplatform" }
+jetbrains-compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "composeMultiplatform" }
+jetbrains-compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "composeMultiplatform" }
+jetbrains-compose-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "composeMultiplatform" }
+jetbrains-compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMultiplatformMaterial3" }
+jetbrains-compose-components-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "composeMultiplatform" }
+
 # Testing
+# kotlin.test for common tests (commonTest): Kotlin adds the test runner of each platform.
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 # kotlin.test annotations on the JUnit4 runner: Robolectric runs only on JUnit4.
 kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
@@ -115,13 +132,17 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 metro-gradlePlugin = { group = "dev.zacsweers.metro", name = "gradle-plugin", version.ref = "metro" }
 # For build-logic: the types of the screenshot tests' settings
 roborazzi-gradlePlugin = { group = "io.github.takahirom.roborazzi", name = "roborazzi-gradle-plugin", version.ref = "roborazzi" }
+# For build-logic: the types of the Compose Multiplatform settings (KmpComposeConventionPlugin)
+compose-multiplatform-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "composeMultiplatform" }
 # For build-logic: the types for the module rules (ModuleGraphRules.kt)
 module-graph-assertion-gradlePlugin = { group = "com.jraska.module.graph.assertion", name = "plugin", version.ref = "moduleGraphAssert" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -139,4 +160,5 @@ shoppingapp-android-compose = { id = "shoppingapp.android.compose" }
 shoppingapp-metro = { id = "shoppingapp.metro" }
 shoppingapp-android-feature = { id = "shoppingapp.android.feature" }
 shoppingapp-android-screenshots = { id = "shoppingapp.android.screenshots" }
-shoppingapp-jvm-library = { id = "shoppingapp.jvm.library" }
+shoppingapp-kmp-library = { id = "shoppingapp.kmp.library" }
+shoppingapp-kmp-compose = { id = "shoppingapp.kmp.compose" }

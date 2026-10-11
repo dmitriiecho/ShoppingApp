@@ -10,7 +10,7 @@ internal object AndroidConfig {
     const val MIN_SDK = 26
     const val TARGET_SDK = 37
 
-    // The pure Kotlin modules use it too (JvmLibraryConventionPlugin).
+    // The KMP modules use it too, for their Android target (KmpLibraryConventionPlugin).
     val JAVA_VERSION = JavaVersion.VERSION_21
 }
 

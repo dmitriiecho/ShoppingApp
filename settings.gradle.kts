@@ -34,17 +34,21 @@ dependencyResolutionManagement {
 rootProject.name = "ShoppingApp"
 
 include(":apps:shop")
+include(":apps:shop:app")
 include(":apps:uikit")
 
 include(":core:designsystem")
 include(":core:compose-utils")
 include(":core:network")
+include(":core:network:testing")
 include(":core:config")
 
 include(":crossfeature:domain")
+include(":crossfeature:domain:testing")
 include(":crossfeature:data")
 include(":crossfeature:ui")
 include(":crossfeature:analytics")
+include(":crossfeature:analytics:testing")
 
 include(":feature:catalog:impl")
 include(":feature:catalog:ui")

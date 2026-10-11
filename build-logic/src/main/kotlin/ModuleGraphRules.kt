@@ -10,6 +10,15 @@ internal fun Project.configureModuleGraphRules() {
     pluginManager.apply(libs.plugins.module.graph.assertion.get().pluginId)
 
     extensions.configure<GraphRulesExtension> {
+        // KMP modules declare their dependencies per source set; without these the check silently skips them.
+        configurations += setOf(
+            "commonMainApi",
+            "commonMainImplementation",
+            "androidMainApi",
+            "androidMainImplementation",
+            "iosMainApi",
+            "iosMainImplementation",
+        )
         allowed = arrayOf(
             // core knows nothing about the shop.
             """:core:.* -> :core:.*""",

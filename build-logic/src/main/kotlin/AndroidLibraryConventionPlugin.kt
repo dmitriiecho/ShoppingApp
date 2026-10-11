@@ -3,7 +3,6 @@ import com.android.build.api.variant.HostTestBuilder
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
@@ -21,15 +20,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 // oldest SDK, older than the app's minSdk.
                 testOptions.targetSdk = AndroidConfig.TARGET_SDK
                 testOptions.unitTests.isIncludeAndroidResources = true
-                // Robolectric reaches into JDK internals; on Java 17+ they have to be opened (robolectric.org).
-                testOptions.unitTests.all { test ->
-                    test.jvmArgs(ROBOLECTRIC_JVM_ARGS)
-                    // The JSON samples the app and the server agree on (apiSample and apiRequest in :core:network).
-                    // Declared as an input, so an edited sample runs the tests again.
-                    val apiSamples = rootDir.resolve("server/api-samples")
-                    test.systemProperty("apiSamplesDir", apiSamples.path)
-                    test.inputs.dir(apiSamples).withPathSensitivity(PathSensitivity.RELATIVE)
-                }
+                testOptions.unitTests.all { it.configureHostTest() }
                 lint.warningsAsErrors = warningsAsErrors
             }
             alignCoreKtx()
@@ -37,7 +28,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             configureTestLogging()
 
             // Unit tests run on debug only: release would repeat the same tests, and `./gradlew test` would run
-            // each one twice. So `test` runs every test of the app once, Android and pure Kotlin modules alike.
+            // each one twice. KMP modules have a single variant and run theirs with testAndroidHostTest.
             extensions.configure<LibraryAndroidComponentsExtension> {
                 beforeVariants(selector().withBuildType("release")) { variant ->
                     variant.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = false
@@ -62,15 +53,3 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         }
     }
 }
-
-private val ROBOLECTRIC_JVM_ARGS = listOf(
-    "--add-opens=java.base/java.lang=ALL-UNNAMED",
-    "--add-opens=java.base/java.util=ALL-UNNAMED",
-    "--add-opens=java.base/java.io=ALL-UNNAMED",
-    "--add-opens=java.base/java.net=ALL-UNNAMED",
-    "--add-opens=java.base/java.security=ALL-UNNAMED",
-    "--add-opens=java.base/java.text=ALL-UNNAMED",
-    "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
-    "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
-    "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
-)

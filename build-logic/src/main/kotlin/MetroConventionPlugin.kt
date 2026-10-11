@@ -4,7 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
-// Metro, compile-time DI. Apply after the Android or Kotlin JVM plugin.
+// Metro, compile-time DI. Apply after the Android or Kotlin Multiplatform plugin.
 class MetroConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

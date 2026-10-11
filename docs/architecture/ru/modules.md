@@ -21,6 +21,11 @@
 
 Средний уровень называется `crossfeature`, а не `shared`: в Kotlin Multiplatform «shared» означает код, общий для платформ, а в ветке `kmp` такой код тоже есть.
 
+Внутри уровней есть модули ещё двух видов:
+
+- **Модули `testing`** держат тестовых помощников, которые нужны и тестам других модулей, рядом с модулем, к которому они относятся: `:core:network:testing`, `:crossfeature:domain:testing`. У модулей на Kotlin Multiplatform нет test fixtures, поэтому помощники получают свой модуль; зависят от него только тесты ([Тестирование](testing.md#имена-и-расположение)).
+- **`:apps:shop:app`** — общая для обеих платформ часть приложения магазина. Пока в нём точка входа iOS, и он собирает фреймворк, который подключает Xcode-проект в `apps/shop/ios` ([Сборка](build.md#ios-приложение)).
+
 &nbsp;
 
 ## Куда класть новый код
@@ -97,6 +102,7 @@ fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Un
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (дефис убирается) |
 | `:apps:shop` | `krio.systemdesign.shoppingapp` |
+| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: это часть приложения, поэтому у неё пакет приложения |
 
 Пакет приложения привязан к applicationId, поэтому он не меняется, если приложение переедет в другую папку.
 
