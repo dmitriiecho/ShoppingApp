@@ -7,11 +7,11 @@ import dev.zacsweers.metro.SingleIn
 import io.ktor.http.HttpStatusCode
 import krio.systemdesign.shoppingapp.core.network.NetworkResult
 import krio.systemdesign.shoppingapp.core.network.networkCall
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.impl.data.api.PromoApi
 import krio.systemdesign.shoppingapp.feature.promo.impl.data.dto.toDomain
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.repository.PromoCodeRepository
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)

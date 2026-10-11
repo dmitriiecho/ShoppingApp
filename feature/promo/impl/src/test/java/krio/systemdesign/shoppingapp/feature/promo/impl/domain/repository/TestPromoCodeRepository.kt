@@ -1,7 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.domain.repository
 
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 // Answers as the test decides. A test can suspend in an answer to act while the request is in progress.
 internal class TestPromoCodeRepository : PromoCodeRepository {

@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode
 
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 
 internal sealed interface PromoCodeEffect {
 

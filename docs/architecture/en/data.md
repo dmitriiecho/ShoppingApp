@@ -8,12 +8,12 @@ A ViewModel calls use cases, a use case calls a repository, and a repository tal
 
 ## Layers
 
-Shared models and their storage live in `shared/`; anything only one feature needs stays in that feature:
+Shared models and their storage live in `crossfeature/`; anything only one feature needs stays in that feature:
 
 | Where | What |
 |---|---|
-| `:shared:domain` | models, repository interfaces and use cases used by two or more features; pure Kotlin, no Android |
-| `:shared:data` | their implementations: Room, DataStore, the cart API; everything is `internal` |
+| `:crossfeature:domain` | models, repository interfaces and use cases used by two or more features; pure Kotlin, no Android |
+| `:crossfeature:data` | their implementations: Room, DataStore, the cart API; everything is `internal` |
 | `feature/<name>/impl/…/domain`, `…/data` | a feature's own models, repositories and use cases |
 
 &nbsp;
@@ -90,7 +90,7 @@ when (val result = networkCall { api.getProduct(productId) }) {
 }
 ```
 
-[`databaseCall`](../../../shared/data/src/main/java/krio/systemdesign/shoppingapp/shared/data/database/DatabaseCall.kt) catches only SQLite errors. A failed `require` is a bug, so the app crashes instead of disguising it as a database error:
+[`databaseCall`](../../../crossfeature/data/src/main/java/krio/systemdesign/shoppingapp/crossfeature/data/database/DatabaseCall.kt) catches only SQLite errors. A failed `require` is a bug, so the app crashes instead of disguising it as a database error:
 
 ```kotlin
 internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
@@ -112,7 +112,7 @@ The cart and the settings are stored on the device:
 
 | Storage | Holds |
 |---|---|
-| Room (`shopping.db`) | cart items and the applied promo code; the schema is exported to `shared/data/schemas/` |
+| Room (`shopping.db`) | cart items and the applied promo code; the schema is exported to `crossfeature/data/schemas/` |
 | DataStore Preferences | the theme and the request delay from the settings |
 
 The app hasn't been released yet, so schema changes don't need migrations for now:
@@ -124,7 +124,7 @@ The app hasn't been released yet, so schema changes don't need migrations for no
 
 ## Network
 
-The API classes and Coil's image loading share one Ktor `HttpClient`, with the same connections and timeouts. Other modules add to it through `HttpClientSetup`, which Metro collects into a set, so `:shared:data` can add the request delay without `:core:network` knowing about it:
+The API classes and Coil's image loading share one Ktor `HttpClient`, with the same connections and timeouts. Other modules add to it through `HttpClientSetup`, which Metro collects into a set, so `:crossfeature:data` can add the request delay without `:core:network` knowing about it:
 
 ```kotlin
 @ContributesIntoSet(AppScope::class)
@@ -147,7 +147,7 @@ fun formatPrice(amountCents: Long): String =
     NumberFormat.getCurrencyInstance(Locale.US).format(BigDecimal.valueOf(amountCents, 2))
 ```
 
-There is no `Money` value class. It could only live in the domain: `:shared:ui` takes plain values, and a domain type in UI state would be unstable for Compose. Since most of the code that deals with prices is UI code, such a type wouldn't protect much. It is worth adding once a second currency or taxes appear.
+There is no `Money` value class. It could only live in the domain: `:crossfeature:ui` takes plain values, and a domain type in UI state would be unstable for Compose. Since most of the code that deals with prices is UI code, such a type wouldn't protect much. It is worth adding once a second currency or taxes appear.
 
 &nbsp;
 

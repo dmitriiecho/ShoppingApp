@@ -6,7 +6,7 @@ A small Ktor server for the app: it serves the catalog and promo codes and valid
 
 - **Address:** `http://2.56.204.151:8080/` (there's no domain, so no HTTPS).
 - **Build:** a separate Gradle build that the app's `settings.gradle.kts` doesn't include.
-- **Formats** match the app's DTOs: `ProductDTO` in `feature/catalog`, `PromoCodeDTO` in `feature/promo`, `CartValidationDTO.kt` in `:shared:data`.
+- **Formats** match the app's DTOs: `ProductDTO` in `feature/catalog`, `PromoCodeDTO` in `feature/promo`, `CartValidationDTO.kt` in `:crossfeature:data`.
 
 ## API
 

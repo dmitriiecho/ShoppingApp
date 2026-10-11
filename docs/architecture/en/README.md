@@ -13,10 +13,10 @@ These pages explain how the app is built and why. Each one covers the rules, the
 The app is organised in four levels, from the bottom up:
 
 ```text
-apps/     shop, uikit                                    the applications
-feature/  catalog, cart, promo, checkout, settings       each one is ui + impl
-shared/   domain, data, ui, analytics                    shop code used by two or more features
-core/     designsystem, compose-utils, network, config   knows nothing about the shop
+apps/         shop, uikit                                    the applications
+feature/      catalog, cart, promo, checkout, settings       each one is ui + impl
+crossfeature/ domain, data, ui, analytics                    shop code used by two or more features
+core/         designsystem, compose-utils, network, config   knows nothing about the shop
 ```
 
 A module never depends on a level above its own, and features never depend on each other. The build enforces both rules.

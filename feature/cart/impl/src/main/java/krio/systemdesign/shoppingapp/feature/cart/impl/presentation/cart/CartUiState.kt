@@ -31,7 +31,7 @@ internal data class CartUiState(
         ) : Content
     }
 
-    // Plain values and ImmutableList, not :shared:domain models: Compose can compare these by content,
+    // Plain values and ImmutableList, not :crossfeature:domain models: Compose can compare these by content,
     // so "+" on one card doesn't redraw the others.
     data class Item(
         val productId: String,

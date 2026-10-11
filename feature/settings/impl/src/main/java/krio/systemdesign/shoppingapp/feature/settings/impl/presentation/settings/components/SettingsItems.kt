@@ -21,9 +21,9 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.DarkMode
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.HourglassEmpty
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.LightMode
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.NetworkDelay
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.feature.settings.impl.R
-import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
-import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 
 @Composable
 internal fun ThemeModeItem(

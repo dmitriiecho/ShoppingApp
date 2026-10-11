@@ -1,8 +1,8 @@
 package krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout
 
 import androidx.compose.foundation.text.input.TextFieldState
-import krio.systemdesign.shoppingapp.shared.domain.model.CartItem
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.CartItem
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 
 internal data class CheckoutUiState(
     val order: Order = Order.Loading,

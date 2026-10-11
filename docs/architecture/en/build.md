@@ -18,7 +18,7 @@ Each kind of module has its own plugin:
 | `shoppingapp.metro` | modules with DI, Android or pure Kotlin | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
 | `shoppingapp.android.feature` | every `:feature:<name>:impl` | library + Compose + Metro + serialization, navigation and lifecycle libraries |
 | `shoppingapp.android.screenshots` | every library module with previews | [screenshot tests](testing.md#screenshots) generated from the previews |
-| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM without Android, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
+| `shoppingapp.jvm.library` | `:crossfeature:domain`, `:crossfeature:analytics`, `:core:config` | Kotlin JVM without Android, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
 
 As a result, a module's build file is short:
 

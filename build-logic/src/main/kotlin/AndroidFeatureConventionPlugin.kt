@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 
 // A feature's impl module: Compose screens, ViewModels injected by Metro, kotlinx.serialization navigation routes.
-// Each feature declares its own project dependencies (:shared:domain, :core:designsystem…).
+// Each feature declares its own project dependencies (:crossfeature:domain, :core:designsystem…).
 class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

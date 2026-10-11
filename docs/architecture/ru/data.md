@@ -8,12 +8,12 @@ ViewModel обращается к use case'ам, use case — к репозит�
 
 ## Слои
 
-Общие модели и всё, что связано с их хранением, лежат в `shared/`, а то, что нужно только одной фиче, остаётся в ней:
+Общие модели и всё, что связано с их хранением, лежат в `crossfeature/`, а то, что нужно только одной фиче, остаётся в ней:
 
 | Где | Что |
 |---|---|
-| `:shared:domain` | модели, интерфейсы репозиториев и use case'ы, нужные двум фичам и больше; чистый Kotlin без Android |
-| `:shared:data` | их реализации: Room, DataStore, API корзины; всё объявлено `internal` |
+| `:crossfeature:domain` | модели, интерфейсы репозиториев и use case'ы, нужные двум фичам и больше; чистый Kotlin без Android |
+| `:crossfeature:data` | их реализации: Room, DataStore, API корзины; всё объявлено `internal` |
 | `feature/<name>/impl/…/domain`, `…/data` | собственные модели, репозитории и use case'ы фичи |
 
 &nbsp;
@@ -90,7 +90,7 @@ when (val result = networkCall { api.getProduct(productId) }) {
 }
 ```
 
-[`databaseCall`](../../../shared/data/src/main/java/krio/systemdesign/shoppingapp/shared/data/database/DatabaseCall.kt) ловит только ошибки SQLite. Сработавший `require` — это баг, поэтому приложение падает, а не выдаёт его за ошибку базы данных:
+[`databaseCall`](../../../crossfeature/data/src/main/java/krio/systemdesign/shoppingapp/crossfeature/data/database/DatabaseCall.kt) ловит только ошибки SQLite. Сработавший `require` — это баг, поэтому приложение падает, а не выдаёт его за ошибку базы данных:
 
 ```kotlin
 internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
@@ -112,7 +112,7 @@ internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
 
 | Хранилище | Что в нём |
 |---|---|
-| Room (`shopping.db`) | товары корзины и применённый промокод; схема экспортируется в `shared/data/schemas/` |
+| Room (`shopping.db`) | товары корзины и применённый промокод; схема экспортируется в `crossfeature/data/schemas/` |
 | DataStore Preferences | тема и задержка запросов из настроек |
 
 Приложение ещё не выпущено, поэтому миграции при изменении схемы пока не нужны:
@@ -124,7 +124,7 @@ internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
 
 ## Сеть
 
-API-классы и загрузка картинок через Coil используют один `HttpClient` из Ktor с общими соединениями и таймаутами. Другие модули дополняют его через `HttpClientSetup`, который Metro собирает в набор, поэтому `:shared:data` может добавить задержку запросов, а `:core:network` о ней ничего не знает:
+API-классы и загрузка картинок через Coil используют один `HttpClient` из Ktor с общими соединениями и таймаутами. Другие модули дополняют его через `HttpClientSetup`, который Metro собирает в набор, поэтому `:crossfeature:data` может добавить задержку запросов, а `:core:network` о ней ничего не знает:
 
 ```kotlin
 @ContributesIntoSet(AppScope::class)
@@ -147,7 +147,7 @@ fun formatPrice(amountCents: Long): String =
     NumberFormat.getCurrencyInstance(Locale.US).format(BigDecimal.valueOf(amountCents, 2))
 ```
 
-Value class `Money` в проекте нет. Он мог бы жить только в домене: `:shared:ui` принимает простые значения, а доменный тип в UI state был бы нестабилен для Compose. Большая часть кода, который работает с ценами, — это UI, так что такой тип защищал бы немногое. Его стоит ввести, когда появится вторая валюта или налоги.
+Value class `Money` в проекте нет. Он мог бы жить только в домене: `:crossfeature:ui` принимает простые значения, а доменный тип в UI state был бы нестабилен для Compose. Большая часть кода, который работает с ценами, — это UI, так что такой тип защищал бы немногое. Его стоит ввести, когда появится вторая валюта или налоги.
 
 &nbsp;
 

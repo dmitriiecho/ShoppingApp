@@ -10,10 +10,10 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.PRODUCT_IMAGE_TRANSITION_MILLIS
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.navigation.CartRoutes
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.navigation.CatalogRoutes
 import krio.systemdesign.shoppingapp.navigation.CartProductRoute
-import krio.systemdesign.shoppingapp.shared.ui.product.PRODUCT_IMAGE_TRANSITION_MILLIS
 
 // No transition: a fade made the app feel slow. Screens fade only where the product image flies,
 // in step with it (PRODUCT_IMAGE_TRANSITION_MILLIS).

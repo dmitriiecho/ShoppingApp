@@ -20,13 +20,13 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import krio.systemdesign.shoppingapp.core.composeutils.animation.LocalSharedTransitionScope
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.AnalyticsScreen
 import krio.systemdesign.shoppingapp.navigation.bottombar.AppBottomBar
 import krio.systemdesign.shoppingapp.navigation.bottombar.BottomNavRoutes
 import krio.systemdesign.shoppingapp.navigation.bottombar.bottomTab
 import krio.systemdesign.shoppingapp.navigation.transitions.appEnterTransition
 import krio.systemdesign.shoppingapp.navigation.transitions.appExitTransition
 import krio.systemdesign.shoppingapp.navigation.transitions.blockTouchesDuringTransitions
-import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
 
 @Composable
 fun AppNavHost(

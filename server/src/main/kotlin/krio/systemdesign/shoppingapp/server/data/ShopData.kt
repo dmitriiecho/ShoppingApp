@@ -23,7 +23,7 @@ class ShopData(
             require(sameCode.size == 1) { "Duplicate promo code $code" }
         }
         promoCodes.forEach {
-            // The app rejects any other percent: PromoCode in :shared:domain checks the same range.
+            // The app rejects any other percent: PromoCode in :crossfeature:domain checks the same range.
             require(it.discountPercent in 1..100) { "Promo code ${it.code} has discountPercent outside 1..100" }
         }
     }

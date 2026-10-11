@@ -64,17 +64,17 @@ A helper used by the tests of **two or more modules** lives in the **test fixtur
 
 | Helper | Module | Source set |
 |---|---|---|
-| `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
-| `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
-| `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
+| `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain` | `src/testFixtures` |
+| `TestCartRepository` | `:crossfeature:domain` | `src/testFixtures` |
+| `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
-| `databaseTest {}` | `:shared:data` | `src/test` |
+| `databaseTest {}` | `:crossfeature:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
-A module uses another module's fixtures through `testImplementation(testFixtures(project(":shared:domain")))`. Fixtures see only the public API of their module. The [module graph check](modules.md#the-check) looks only at `api` and `implementation`, so test dependencies follow the levels by convention rather than being enforced.
+A module uses another module's fixtures through `testImplementation(testFixtures(project(":crossfeature:domain")))`. Fixtures see only the public API of their module. The [module graph check](modules.md#the-check) looks only at `api` and `implementation`, so test dependencies follow the levels by convention rather than being enforced.
 
 &nbsp;
 

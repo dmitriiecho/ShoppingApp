@@ -13,10 +13,10 @@ ShoppingApp — демонстрационный интернет-магазин
 Приложение разделено на четыре уровня, снизу вверх:
 
 ```text
-apps/     shop, uikit                                    приложения
-feature/  catalog, cart, promo, checkout, settings       каждая фича — это ui + impl
-shared/   domain, data, ui, analytics                    код магазина, нужный двум фичам и больше
-core/     designsystem, compose-utils, network, config   ничего не знает о магазине
+apps/         shop, uikit                                    приложения
+feature/      catalog, cart, promo, checkout, settings       каждая фича — это ui + impl
+crossfeature/ domain, data, ui, analytics                    код магазина, нужный двум фичам и больше
+core/         designsystem, compose-utils, network, config   ничего не знает о магазине
 ```
 
 Модуль не зависит от уровней выше своего, а фичи не зависят друг от друга. Оба правила проверяет сборка.

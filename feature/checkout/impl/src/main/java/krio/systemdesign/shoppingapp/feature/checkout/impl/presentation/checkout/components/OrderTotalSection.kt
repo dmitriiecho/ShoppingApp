@@ -15,11 +15,11 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Receipt
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.ui.order.OrderTotals
+import krio.systemdesign.shoppingapp.crossfeature.ui.promo.AppliedPromoCodeNotice
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.checkout.impl.R
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.shared.ui.order.OrderTotals
-import krio.systemdesign.shoppingapp.shared.ui.promo.AppliedPromoCodeNotice
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 
 @Composable
 internal fun OrderTotalSection(

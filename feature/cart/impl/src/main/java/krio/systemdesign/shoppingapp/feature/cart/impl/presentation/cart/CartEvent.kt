@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart
 
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 
 internal sealed interface CartEvent {
 

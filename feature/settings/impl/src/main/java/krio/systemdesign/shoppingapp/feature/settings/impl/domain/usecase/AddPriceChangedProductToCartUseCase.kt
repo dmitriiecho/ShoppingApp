@@ -2,8 +2,8 @@ package krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase
 
 import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.core.config.ServerConfig
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
-import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.AddToCartUseCase
 
 // Adds an item at a price the server no longer has; the catalog always shows the current price.
 @Inject

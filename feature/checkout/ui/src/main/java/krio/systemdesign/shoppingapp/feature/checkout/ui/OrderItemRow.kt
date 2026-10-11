@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShapeRadius
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductImage
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductImage
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 
 @Composable
 fun OrderItemRow(

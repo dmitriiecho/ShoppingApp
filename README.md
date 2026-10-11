@@ -58,10 +58,10 @@ The app is small, but every screen has something worth a look:
 The modules are arranged in four levels, and the build checks that no module depends on a level above its own:
 
 ```text
-apps/     shop, uikit                                    the applications
-feature/  catalog, cart, promo, checkout, settings       each one is ui + impl
-shared/   domain, data, ui, analytics                    shop code used by two or more features
-core/     designsystem, compose-utils, network, config   knows nothing about the shop
+apps/         shop, uikit                                    the applications
+feature/      catalog, cart, promo, checkout, settings       each one is ui + impl
+crossfeature/ domain, data, ui, analytics                    shop code used by two or more features
+core/         designsystem, compose-utils, network, config   knows nothing about the shop
 ```
 
 How modules, navigation, screens, data, analytics and the build work is explained in the [architecture docs](docs/architecture/en/README.md).

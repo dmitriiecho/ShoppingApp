@@ -1,8 +1,8 @@
 package krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase
 
 import dev.zacsweers.metro.Inject
-import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
-import krio.systemdesign.shoppingapp.shared.domain.repository.CartRepository
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.crossfeature.domain.repository.CartRepository
 
 @Inject
 internal class AcceptCartChangesUseCase(private val cartRepository: CartRepository) {

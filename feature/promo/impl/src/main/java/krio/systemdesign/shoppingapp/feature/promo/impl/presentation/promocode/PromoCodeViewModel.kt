@@ -21,12 +21,12 @@ import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
+import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
 import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.analytics.PromoCodeRejectedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.CheckPromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.GetPromoCodesUseCase
-import krio.systemdesign.shoppingapp.shared.analytics.Analytics
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)

@@ -1,7 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings
 
-import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
-import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.NetworkDelay
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
 
 internal sealed interface SettingsEvent {
 

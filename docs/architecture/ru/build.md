@@ -18,7 +18,7 @@
 | `shoppingapp.metro` | модули с DI, Android и чистый Kotlin | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Metro + serialization, библиотеки навигации и lifecycle |
 | `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
-| `shoppingapp.jvm.library` | `:shared:domain`, `:shared:analytics`, `:core:config` | Kotlin JVM без Android, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
+| `shoppingapp.jvm.library` | `:crossfeature:domain`, `:crossfeature:analytics`, `:core:config` | Kotlin JVM без Android, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
 
 Поэтому build-файл модуля получается коротким:
 

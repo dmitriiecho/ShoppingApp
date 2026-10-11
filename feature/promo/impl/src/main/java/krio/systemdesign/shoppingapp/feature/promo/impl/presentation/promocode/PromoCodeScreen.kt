@@ -34,9 +34,9 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.components.AvailablePromoCodesHint
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 @Composable
 internal fun PromoCodeScreen(

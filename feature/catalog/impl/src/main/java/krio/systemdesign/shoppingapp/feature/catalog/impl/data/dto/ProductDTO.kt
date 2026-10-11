@@ -1,7 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.data.dto
 
 import kotlinx.serialization.Serializable
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
 
 @Serializable
 internal data class ProductDTO(

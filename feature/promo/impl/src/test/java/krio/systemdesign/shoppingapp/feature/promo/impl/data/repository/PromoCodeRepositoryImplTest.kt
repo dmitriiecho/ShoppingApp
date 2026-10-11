@@ -8,9 +8,9 @@ import kotlin.test.Test
 import krio.systemdesign.shoppingapp.core.network.apiRequest
 import krio.systemdesign.shoppingapp.core.network.apiSample
 import krio.systemdesign.shoppingapp.core.network.networkTest
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.impl.data.api.PromoApi
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 class PromoCodeRepositoryImplTest {
 

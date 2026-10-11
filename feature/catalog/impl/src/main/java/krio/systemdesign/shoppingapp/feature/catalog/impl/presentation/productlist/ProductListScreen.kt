@@ -46,11 +46,11 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.components.ProductList
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.components.ProductListPlaceholder
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist.components.previewProducts
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
 
 @Composable
 internal fun ProductListScreen(

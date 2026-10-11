@@ -16,9 +16,9 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Error
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.ui.promo.AppliedPromoCodeNotice
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartUiState
-import krio.systemdesign.shoppingapp.shared.ui.promo.AppliedPromoCodeNotice
 
 // Green while the code works; red, with a hint, once the cart validation finds it no longer does.
 // Both have a Remove button.

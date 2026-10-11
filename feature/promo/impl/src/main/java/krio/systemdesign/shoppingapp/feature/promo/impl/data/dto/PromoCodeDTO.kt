@@ -1,7 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.data.dto
 
 import kotlinx.serialization.Serializable
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 
 @Serializable
 internal data class PromoCodeDTO(

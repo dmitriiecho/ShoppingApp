@@ -8,8 +8,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared:domain"))
-    implementation(project(":shared:analytics"))
+    implementation(project(":crossfeature:domain"))
+    implementation(project(":crossfeature:analytics"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:compose-utils"))
     implementation(project(":core:config"))

@@ -2,7 +2,7 @@
 
 [English version](../en/modules.md) · [Все разделы](README.md)
 
-Папки — это уровни, снизу вверх: `core/` → `shared/` → `feature/` → `apps/`. Модуль не зависит от уровней выше своего, а фичи не зависят друг от друга.
+Папки — это уровни, снизу вверх: `core/` → `crossfeature/` → `feature/` → `apps/`. Модуль не зависит от уровней выше своего, а фичи не зависят друг от друга.
 
 &nbsp;
 
@@ -13,20 +13,22 @@
 | Уровень | Модули | Что в нём |
 |---|---|---|
 | `core/` | `designsystem`, `compose-utils`, `network`, `config` | код, который подошёл бы любому приложению: тема, иконки, общие компоненты, помощники для Compose, HTTP-клиент |
-| `shared/` | `domain`, `data`, `ui`, `analytics` | код магазина, который нужен двум фичам и больше |
+| `crossfeature/` | `domain`, `data`, `ui`, `analytics` | код магазина, который нужен двум фичам и больше |
 | `feature/` | `catalog`, `cart`, `promo`, `checkout`, `settings` | по одной фиче в каждой папке, из двух модулей: `ui` и `impl` |
 | `apps/` | `shop`, `uikit` | приложения; от них никто не зависит |
 
-Уровни — это именно папки, а не только правила зависимостей: если складывать всё в `core/`, как делают многие проекты, не видно, какой код знает о магазине. Нет здесь и модулей «для всего» вроде `:core:common`, которые правит каждая фича: в `shared/` четыре модуля, и у каждого своя чёткая роль.
+Уровни — это именно папки, а не только правила зависимостей: если складывать всё в `core/`, как делают многие проекты, не видно, какой код знает о магазине. Нет здесь и модулей «для всего» вроде `:core:common`, которые правит каждая фича: в `crossfeature/` четыре модуля, и у каждого своя чёткая роль.
+
+Средний уровень называется `crossfeature`, а не `shared`: в Kotlin Multiplatform «shared» означает код, общий для платформ, а в ветке `kmp` такой код тоже есть.
 
 &nbsp;
 
 ## Куда класть новый код
 
-Код лежит в той фиче, которой он нужен. Когда он понадобился второй фиче, его переносят в `shared/`:
+Код лежит в той фиче, которой он нужен. Когда он понадобился второй фиче, его переносят в `crossfeature/`:
 
 - **Нужен одной фиче** — остаётся в этой фиче.
-- **Понадобился второй фиче** — переезжает в `shared/`: модели, репозитории и use case'ы в `:shared:domain` / `:shared:data`, UI-компоненты магазина (карточка товара, счётчик количества в корзине) в `:shared:ui`.
+- **Понадобился второй фиче** — переезжает в `crossfeature/`: модели, репозитории и use case'ы в `:crossfeature:domain` / `:crossfeature:data`, UI-компоненты магазина (карточка товара, счётчик количества в корзине) в `:crossfeature:ui`.
 - **Ничего не знает о магазине** — идёт в `core/`.
 
 Стилизованные компоненты раскладываются по тому же правилу:
@@ -34,7 +36,7 @@
 | Компонент | Модуль |
 |---|---|
 | подошёл бы другому приложению без изменений | `:core:designsystem` |
-| использует понятия магазина (товар, корзина, промокод, цена, остаток) и нужен двум фичам и больше | `:shared:ui` |
+| использует понятия магазина (товар, корзина, промокод, цена, остаток) и нужен двум фичам и больше | `:crossfeature:ui` |
 | использует понятия магазина и нужен одной фиче | `:feature:<name>:ui` |
 
 Фичи не стилизуют компоненты Material сами, а у каждого стилизованного компонента есть пример в приложении UI kit (`:apps:uikit`).
@@ -54,9 +56,9 @@ plugins {
 
 dependencies {
     implementation(project(":feature:cart:ui"))
-    implementation(project(":shared:domain"))
-    implementation(project(":shared:ui"))
-    implementation(project(":shared:analytics"))
+    implementation(project(":crossfeature:domain"))
+    implementation(project(":crossfeature:ui"))
+    implementation(project(":crossfeature:analytics"))
     implementation(project(":core:designsystem"))
     // ...
 }
@@ -64,8 +66,8 @@ dependencies {
 
 - **`ui` вынесен в отдельный модуль, чтобы UI kit мог его показать**, не видя экранов, ViewModel и данных. Если таких компонентов у фичи нет, то нет и модуля `ui` (например, у `settings`).
 - **Модуля `api` нет.** Фичи никогда не зависят друг от друга, так что API фичи нужно только приложению, а оно связывает фичи через колбэки (см. [Навигацию](navigation.md)).
-- **От `:shared:data` зависит только `:apps:shop`.** Фичи видят интерфейсы репозиториев из `:shared:domain`, а реализации подставляет граф зависимостей приложения (Metro).
-- **`:apps:shop` напрямую зависит от каждого модуля с вкладами в DI** (`@ContributesTo`, `@ContributesBinding` и подобными), в том числе от `:core:network`, хотя код приложения его не использует. Metro строит граф при компиляции `:apps:shop` и видит только вклады из её compile classpath; по той же причине типы модуля, которые встречаются в его привязках, подключены как `api` (Room и DataStore в `:shared:data`).
+- **От `:crossfeature:data` зависит только `:apps:shop`.** Фичи видят интерфейсы репозиториев из `:crossfeature:domain`, а реализации подставляет граф зависимостей приложения (Metro).
+- **`:apps:shop` напрямую зависит от каждого модуля с вкладами в DI** (`@ContributesTo`, `@ContributesBinding` и подобными), в том числе от `:core:network`, хотя код приложения его не использует. Metro строит граф при компиляции `:apps:shop` и видит только вклады из её compile classpath; по той же причине типы модуля, которые встречаются в его привязках, подключены как `api` (Room и DataStore в `:crossfeature:data`).
 
 &nbsp;
 
@@ -91,7 +93,7 @@ fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Un
 
 | Модуль | Пакет |
 |---|---|
-| `:shared:ui` | `krio.systemdesign.shoppingapp.shared.ui` |
+| `:crossfeature:ui` | `krio.systemdesign.shoppingapp.crossfeature.ui` |
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (дефис убирается) |
 | `:apps:shop` | `krio.systemdesign.shoppingapp` |
@@ -107,13 +109,13 @@ fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Un
 ```kotlin
 allowed = arrayOf(
     """:core:.* -> :core:.*""",
-    """:shared:(domain|ui|analytics) -> :core:.*""",
-    """:shared:data -> :(core:.*|shared:domain)""",
-    """:feature:\w+:ui -> :(core:designsystem|shared:ui)""",
-    """:feature:\w+:impl -> :(core:.*|shared:(domain|ui|analytics))""",
+    """:crossfeature:(domain|ui|analytics) -> :core:.*""",
+    """:crossfeature:data -> :(core:.*|crossfeature:domain)""",
+    """:feature:\w+:ui -> :(core:designsystem|crossfeature:ui)""",
+    """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
     """:feature:(\w+):impl -> :feature:\1:ui""",   // только свой ui
-    """:apps:uikit -> :(core:designsystem|shared:ui|feature:\w+:ui)""",
-    """:apps:shop -> :(core|shared|feature):.*""",
+    """:apps:uikit -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
+    """:apps:shop -> :(core|crossfeature|feature):.*""",
 )
 ```
 

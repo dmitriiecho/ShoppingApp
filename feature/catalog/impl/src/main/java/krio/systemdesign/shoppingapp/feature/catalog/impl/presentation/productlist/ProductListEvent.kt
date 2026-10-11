@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist
 
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
 
 internal sealed interface ProductListEvent {
 

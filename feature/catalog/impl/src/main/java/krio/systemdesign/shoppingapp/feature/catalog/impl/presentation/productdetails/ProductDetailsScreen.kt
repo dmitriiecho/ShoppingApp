@@ -41,12 +41,12 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.LinkOff
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductImage
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductImageKey
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductImagePlaceholder
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails.components.CartControlSection
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails.components.ProductInfoSection
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductImage
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductImageKey
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductImagePlaceholder
 
 @Composable
 @PublishedApi

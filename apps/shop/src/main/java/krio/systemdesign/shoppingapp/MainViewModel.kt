@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.stateIn
 import krio.systemdesign.shoppingapp.analytics.ScreenViewedAnalyticsEvent
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
-import krio.systemdesign.shoppingapp.shared.analytics.Analytics
-import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
-import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveThemeModeUseCase
+import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.AnalyticsScreen
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveThemeModeUseCase
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)
