@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":core:compose-utils"))
     implementation(project(":core:config"))
     implementation(project(":core:network"))
+    implementation(libs.shoppingapp.contract)
 
     implementation(libs.androidx.paging.compose)
 

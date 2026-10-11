@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:compose-utils"))
     implementation(project(":core:network"))
+    implementation(libs.shoppingapp.contract)
 
     implementation(libs.kermit)
 

@@ -15,3 +15,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "server"
+
+// The API formats shared with the app (../contract): the server and the app use the same DTOs.
+includeBuild("../contract")

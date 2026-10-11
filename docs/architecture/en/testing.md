@@ -169,7 +169,7 @@ fun `client error returns HttpError with its code`() = networkTest(::TestApi) { 
 
 ### Contract with the server
 
-The app and the server each describe the API's JSON in their own DTOs. What keeps them in sync is [`server/api-samples/`](../../../server/api-samples/): one JSON file for each request or response the app relies on. `apiSample("product.json")` reads a sample on either side, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter, but a renamed, extra or missing field does. Where each request goes is listed in `requests.json`, as a method and an address: `"product": "GET /products/1"` is the request whose response is `product.json`.
+The app and the server share the API's DTOs ([`contract/`](../../../contract/)), so the types can't drift apart. What the types don't cover, the addresses of the requests and each side's `Json` settings, is checked against [`server/api-samples/`](../../../server/api-samples/): one JSON file for each request or response the app relies on. `apiSample("product.json")` reads a sample on either side, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter, but a renamed, extra or missing field does. Where each request goes is listed in `requests.json`, as a method and an address: `"product": "GET /products/1"` is the request whose response is `product.json`.
 
 | Side | Checks |
 |---|---|

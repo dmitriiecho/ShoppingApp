@@ -82,6 +82,9 @@ kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotli
 # Logging
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 
+# The API formats shared with the server: the included build in contract/, so no version.
+shoppingapp-contract = { group = "krio.systemdesign.shoppingapp", name = "contract" }
+
 # Compose Multiplatform
 jetbrains-compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeMultiplatform" }
 jetbrains-compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "composeMultiplatform" }

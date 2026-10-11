@@ -108,7 +108,7 @@ A library module with `@Preview`s applies `screenshots`: screenshot tests made f
 
 ## Server
 
-`server/` is the Ktor backend for the app (Kotlin 2.3, Ktor 3.6, data in JSON files): a separate Gradle build with its own wrapper and version catalog, not included in `settings.gradle.kts`. API, data rules and deploy: [`server/README.md`](server/README.md).
+`server/` is the Ktor backend for the app (Kotlin 2.4, Ktor 3.6, data in JSON files): a separate Gradle build with its own wrapper and version catalog, not included in `settings.gradle.kts`. The API's DTOs live in `contract/`, a KMP build (JVM, iOS) that both the app and the server include (`includeBuild`); the app keeps only the mappers to its domain models. API, data rules and deploy: [`server/README.md`](server/README.md).
 
 ## Build
 

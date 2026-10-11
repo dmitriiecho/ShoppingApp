@@ -5,7 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.appendPathSegments
-import krio.systemdesign.shoppingapp.feature.promo.impl.data.dto.PromoCodeDTO
+import krio.systemdesign.shoppingapp.contract.PromoCodeDTO
 
 @Inject
 internal class PromoApi(private val client: HttpClient) {

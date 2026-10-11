@@ -1,8 +1,8 @@
-package krio.systemdesign.shoppingapp.server.dto
+package krio.systemdesign.shoppingapp.contract
 
 import kotlinx.serialization.Serializable
 
-// Same format as ProductDTO and ProductsPageDTO in :feature:catalog:impl.
+// GET /products/{id}, and an item of GET /products.
 @Serializable
 data class ProductDTO(
     val id: String,
@@ -16,6 +16,7 @@ data class ProductDTO(
     val availableQuantity: Int,
 )
 
+// GET /products: a page of the catalog, filtered by the search query.
 @Serializable
 data class ProductsPageDTO(
     val products: List<ProductDTO>,

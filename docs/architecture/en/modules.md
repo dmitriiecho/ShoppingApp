@@ -26,6 +26,8 @@ Two kinds of modules sit inside the levels:
 - **`testing` modules** hold test helpers that the tests of other modules use too, next to the module they belong to: `:core:network:testing`, `:crossfeature:domain:testing`. Kotlin Multiplatform modules have no test fixtures, so the helpers get a module of their own; only tests depend on it ([Testing](testing.md#names-and-places)).
 - **`:apps:shop:app`** is the part of the shop app both platforms share. For now it holds the iOS entry point and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)).
 
+Outside the levels is [`contract/`](../../../contract/): the API's DTOs, shared with the server. It's a separate build that both the app and the server include, so the server, also a separate build, can use it without the app. `:crossfeature:data` and the features' `impl` modules that call the server depend on it ([Data](data.md#the-contract-with-the-server)).
+
 &nbsp;
 
 ## Where new code goes

@@ -14,11 +14,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.contract.CartItemDTO
+import krio.systemdesign.shoppingapp.contract.CartValidationResponseDTO
+import krio.systemdesign.shoppingapp.contract.ItemIssueDTO
+import krio.systemdesign.shoppingapp.contract.PromoCodeDTO
 import krio.systemdesign.shoppingapp.server.apiSample
-import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
-import krio.systemdesign.shoppingapp.server.dto.CartValidationResponseDTO
-import krio.systemdesign.shoppingapp.server.dto.ItemIssueDTO
-import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 import krio.systemdesign.shoppingapp.server.sendApiRequest
 import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest

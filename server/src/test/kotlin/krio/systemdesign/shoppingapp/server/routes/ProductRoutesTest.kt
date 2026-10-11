@@ -12,10 +12,10 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlin.test.Test
 import kotlinx.serialization.json.decodeFromJsonElement
+import krio.systemdesign.shoppingapp.contract.ProductDTO
+import krio.systemdesign.shoppingapp.contract.ProductsPageDTO
 import krio.systemdesign.shoppingapp.server.TEST_PUBLIC_URL
 import krio.systemdesign.shoppingapp.server.apiSample
-import krio.systemdesign.shoppingapp.server.dto.ProductDTO
-import krio.systemdesign.shoppingapp.server.dto.ProductsPageDTO
 import krio.systemdesign.shoppingapp.server.sendApiRequest
 import krio.systemdesign.shoppingapp.server.serverJson
 import krio.systemdesign.shoppingapp.server.serverTest

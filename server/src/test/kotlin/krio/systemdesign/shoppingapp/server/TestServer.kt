@@ -19,11 +19,11 @@ import kotlin.io.path.writeBytes
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import krio.systemdesign.shoppingapp.contract.CartItemDTO
+import krio.systemdesign.shoppingapp.contract.CartValidationRequestDTO
+import krio.systemdesign.shoppingapp.contract.PromoCodeDTO
 import krio.systemdesign.shoppingapp.server.data.Product
 import krio.systemdesign.shoppingapp.server.data.ShopData
-import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
-import krio.systemdesign.shoppingapp.server.dto.CartValidationRequestDTO
-import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
 // The server in memory on the test's data and product images (file name to content), with a client that reads
 // JSON as the app does. The images are in a folder of their own, deleted after the test.
