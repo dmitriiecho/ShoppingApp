@@ -1,14 +1,13 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.core.config.ServerConfig
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
 
 // Adds an item with an old price and more of it than is in stock: two changes on one cart item.
-internal class AddPriceChangedNotEnoughStockProductToCartUseCase @Inject constructor(
-    private val addToCart: AddToCartUseCase,
-) {
+@Inject
+internal class AddPriceChangedNotEnoughStockProductToCartUseCase(private val addToCart: AddToCartUseCase) {
     suspend operator fun invoke(): Result<Unit> = addToCart(PRODUCT, QUANTITY)
 
     private companion object {

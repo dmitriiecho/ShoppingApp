@@ -11,6 +11,8 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     // The same for the module rules: only the types of their extension.
     compileOnly(libs.module.graph.assertion.gradlePlugin)
+    // And Metro's settings (MetroConventionPlugin).
+    compileOnly(libs.metro.gradlePlugin)
     // And the screenshot tests' settings (AndroidScreenshotsConventionPlugin).
     compileOnly(libs.roborazzi.gradlePlugin)
     // Lets convention plugins use the type-safe libs accessors (gradle/gradle#15383).
@@ -31,9 +33,9 @@ gradlePlugin {
             id = libs.plugins.shoppingapp.android.compose.get().pluginId
             implementationClass = "AndroidComposeConventionPlugin"
         }
-        register("androidHilt") {
-            id = libs.plugins.shoppingapp.android.hilt.get().pluginId
-            implementationClass = "AndroidHiltConventionPlugin"
+        register("metro") {
+            id = libs.plugins.shoppingapp.metro.get().pluginId
+            implementationClass = "MetroConventionPlugin"
         }
         register("androidFeature") {
             id = libs.plugins.shoppingapp.android.feature.get().pluginId

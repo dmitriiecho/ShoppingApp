@@ -3,11 +3,12 @@
 <lint>
     <!-- CompositionLocals the project creates on purpose (Slack's Compose rules flag any new one):
          the shared element scopes, so a product image can fly between screens without passing them through
-         every screen (core/compose-utils, SharedElements.kt), and the app theme's own values next to
-         MaterialTheme (core/designsystem, Theme.kt). -->
+         every screen (core/compose-utils, SharedElements.kt), the app theme's own values next to
+         MaterialTheme (core/designsystem, Theme.kt), and the factory injectedViewModel() creates ViewModels
+         with, so screens don't reach for the app's graph (core/compose-utils, InjectedViewModel.kt). -->
     <issue id="ComposeCompositionLocalUsage">
         <option name="allowed-composition-locals"
-            value="LocalSharedTransitionScope,LocalNavAnimatedVisibilityScope,LocalDarkTheme,LocalAppColors" />
+            value="LocalSharedTransitionScope,LocalNavAnimatedVisibilityScope,LocalDarkTheme,LocalAppColors,LocalViewModelFactory" />
     </issue>
 
     <!-- "A newer version is available": still in the report as a hint, but not a warning, which CI turns into an

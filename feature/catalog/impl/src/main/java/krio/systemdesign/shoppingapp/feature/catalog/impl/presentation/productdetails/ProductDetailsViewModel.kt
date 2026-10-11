@@ -3,8 +3,7 @@ package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productd
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import dev.zacsweers.metro.ContributesIntoMap
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -18,6 +17,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.AddToCartAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.ProductViewedAnalyticsEvent
@@ -36,8 +37,9 @@ import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.shared.ui.product.PRODUCT_IMAGE_TRANSITION_MILLIS
 
-@HiltViewModel
-internal class ProductDetailsViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(ViewModelScope::class)
+internal class ProductDetailsViewModel(
     private val getProduct: GetProductUseCase,
     private val addToCart: AddToCartUseCase,
     private val updateCartQuantity: UpdateCartQuantityUseCase,

@@ -7,8 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import dev.zacsweers.metro.ContributesIntoMap
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +19,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.analytics.PromoCodeRejectedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
@@ -27,8 +28,9 @@ import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.CheckProm
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.GetPromoCodesUseCase
 import krio.systemdesign.shoppingapp.shared.analytics.Analytics
 
-@HiltViewModel
-internal class PromoCodeViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(ViewModelScope::class)
+internal class PromoCodeViewModel(
     private val checkPromoCode: CheckPromoCodeUseCase,
     private val getPromoCodes: GetPromoCodesUseCase,
     private val analytics: Analytics,

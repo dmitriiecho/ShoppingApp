@@ -1,9 +1,10 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.domain.usecase
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductLoadResult
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.ProductRepository
 
-internal class GetProductUseCase @Inject constructor(private val productRepository: ProductRepository) {
+@Inject
+internal class GetProductUseCase(private val productRepository: ProductRepository) {
     suspend operator fun invoke(productId: String): ProductLoadResult = productRepository.getProduct(productId)
 }

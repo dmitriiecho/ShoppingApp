@@ -64,7 +64,8 @@ dependencies {
 
 - **`ui` is a separate module so the UI kit can show it** without seeing screens, ViewModels or data. A feature without such components has no `ui` module (for example, `settings`).
 - **There is no `api` module.** Features never depend on each other, so only the app needs a feature's API, and it connects the features through callbacks (see [Navigation](navigation.md)).
-- **Only `:apps:shop` depends on `:shared:data`.** Features see repository interfaces from `:shared:domain`; Hilt in the app provides the implementations.
+- **Only `:apps:shop` depends on `:shared:data`.** Features see repository interfaces from `:shared:domain`; the app's dependency graph (Metro) provides the implementations.
+- **`:apps:shop` depends directly on every module with DI contributions** (`@ContributesTo`, `@ContributesBinding` and the like), `:core:network` included, though the app's code doesn't use it. Metro builds the graph when it compiles `:apps:shop` and sees only the contributions on its compile classpath; for the same reason a module's types used in its bindings are `api` (Room and DataStore in `:shared:data`).
 
 &nbsp;
 

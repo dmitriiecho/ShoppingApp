@@ -3,8 +3,7 @@ package krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkou
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import dev.zacsweers.metro.ContributesIntoMap
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,6 +15,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.feature.checkout.impl.R
 import krio.systemdesign.shoppingapp.feature.checkout.impl.analytics.OrderPlacedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.checkout.impl.domain.usecase.PlaceOrderUseCase
@@ -23,8 +24,9 @@ import krio.systemdesign.shoppingapp.shared.analytics.Analytics
 import krio.systemdesign.shoppingapp.shared.domain.model.Cart
 import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 
-@HiltViewModel
-internal class CheckoutViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(ViewModelScope::class)
+internal class CheckoutViewModel(
     observeCart: ObserveCartUseCase,
     private val placeOrder: PlaceOrderUseCase,
     private val analytics: Analytics,

@@ -1,18 +1,19 @@
 package krio.systemdesign.shoppingapp.analytics
 
 import co.touchlab.kermit.Logger
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import krio.systemdesign.shoppingapp.shared.analytics.Analytics
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AnalyticsModule {
+// Public: Metro rejects an internal binding container (nonPublicContributionSeverity in MetroConventionPlugin).
+@BindingContainer
+@ContributesTo(AppScope::class)
+object AnalyticsModule {
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideAnalytics(): Analytics = Analytics(
         clients = setOf(FakeInsightsClient(), FakeAdTrackerClient()),
         onClientError = { system, error ->

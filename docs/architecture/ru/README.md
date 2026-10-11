@@ -47,7 +47,7 @@ core/     designsystem, compose-utils, network, config   ничего не зн�
 |---|---|
 | Язык и UI | Kotlin 2.4, Jetpack Compose, Material 3 |
 | Устройство экранов | MVVM: одно состояние на экран и разовые эффекты |
-| DI | Hilt (KSP) |
+| DI | Metro (на этапе компиляции, плагин компилятора Kotlin) |
 | Навигация | Navigation Compose с типизированными маршрутами |
 | Данные | Room, DataStore, Paging 3 |
 | Сеть | Ktor Client (движок OkHttp), kotlinx.serialization, Coil для картинок |

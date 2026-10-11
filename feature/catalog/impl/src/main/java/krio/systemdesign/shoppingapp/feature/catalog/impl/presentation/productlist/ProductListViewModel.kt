@@ -10,8 +10,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import dev.zacsweers.metro.ContributesIntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -29,6 +28,8 @@ import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.AddToCartAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.ProductsSearchedAnalyticsEvent
@@ -43,8 +44,9 @@ import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 
-@HiltViewModel
-internal class ProductListViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(ViewModelScope::class)
+internal class ProductListViewModel(
     private val getProducts: GetProductsUseCase,
     private val addToCart: AddToCartUseCase,
     private val updateCartQuantity: UpdateCartQuantityUseCase,

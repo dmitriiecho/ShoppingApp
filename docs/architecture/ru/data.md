@@ -23,7 +23,8 @@ ViewModel обращается к use case'ам, use case — к репозит�
 Use case выполняет одно действие через репозиторий:
 
 ```kotlin
-class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepository) {
+@Inject
+class AddToCartUseCase(private val cartRepository: CartRepository) {
     suspend operator fun invoke(product: Product, quantity: Int = 1): Result<Unit> =
         cartRepository.addItem(product, quantity)
 }
@@ -52,7 +53,9 @@ data class Cart(val items: List<CartItem>, val promoCode: PromoCode? = null) {
 У корзины два источника, и каждый из них — отдельный класс:
 
 ```kotlin
-internal class CartRepositoryImpl @Inject constructor(
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)  // граф приложения получает его как CartRepository
+internal class CartRepositoryImpl(
     private val localCart: LocalCartDataSource,      // Room: транзакции, слияние товара, который уже есть
     private val validator: CartValidatorDataSource,  // проверка на сервере
 ) : CartRepository
@@ -121,12 +124,11 @@ internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
 
 ## Сеть
 
-API-классы и загрузка картинок через Coil используют один `HttpClient` из Ktor с общими соединениями и таймаутами. Другие модули дополняют его через `HttpClientSetup`, который Hilt передаёт набором, поэтому `:shared:data` может добавить задержку запросов, а `:core:network` о ней ничего не знает:
+API-классы и загрузка картинок через Coil используют один `HttpClient` из Ktor с общими соединениями и таймаутами. Другие модули дополняют его через `HttpClientSetup`, который Metro собирает в набор, поэтому `:shared:data` может добавить задержку запросов, а `:core:network` о ней ничего не знает:
 
 ```kotlin
-@Binds
-@IntoSet
-abstract fun bindNetworkDelayPlugin(impl: NetworkDelayPlugin): HttpClientSetup
+@ContributesIntoSet(AppScope::class)
+internal class NetworkDelayPlugin(private val appSettingsRepository: AppSettingsRepository) : HttpClientSetup
 ```
 
 - **Задержка запросов** из настроек срабатывает перед каждым запросом к серверу, в том числе за картинками, чтобы показать, как экраны ведут себя, пока ждут ответа. Это плагин Ktor, который приостанавливает запрос, поэтому уход с экрана сразу отменяет ожидание.

@@ -5,12 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.bars.AppNavigationBarItem
 import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.HomeFilled
@@ -21,7 +21,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ShoppingCar
 fun AppBottomBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    viewModel: AppBottomBarViewModel = hiltViewModel(),
+    viewModel: AppBottomBarViewModel = injectedViewModel(),
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // No bottom bar outside tabs (checkout).

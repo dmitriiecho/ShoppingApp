@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
@@ -36,6 +35,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.drop
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.inputs.SearchField
 import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.EmptyState
 import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.ErrorState
@@ -56,7 +56,7 @@ import krio.systemdesign.shoppingapp.shared.domain.model.Product
 internal fun ProductListScreen(
     onBack: () -> Unit,
     onOpenProduct: (productId: String, productName: String, imageUrl: String) -> Unit,
-    viewModel: ProductListViewModel = hiltViewModel(),
+    viewModel: ProductListViewModel = injectedViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val products = viewModel.products.collectAsLazyPagingItems()

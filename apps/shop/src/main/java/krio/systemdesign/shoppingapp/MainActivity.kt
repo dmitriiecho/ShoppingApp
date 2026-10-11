@@ -10,22 +10,24 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dagger.hilt.android.AndroidEntryPoint
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.LocalViewModelFactory
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.SystemBarsAppearance
 import krio.systemdesign.shoppingapp.navigation.AppNavHost
 import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModelFactory by lazy { (application as ShoppingApp).graph.viewModelFactory }
+
+    private val viewModel: MainViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,9 @@ class MainActivity : ComponentActivity() {
         // of its first call and brings back the translucent scrim under the navigation buttons.
         WindowCompat.enableEdgeToEdge(window)
         takeLaunchDeepLink(savedInstanceState)
-        setContent { ShoppingAppContent() }
+        setContent {
+            CompositionLocalProvider(LocalViewModelFactory provides viewModelFactory) { ShoppingAppContent() }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {

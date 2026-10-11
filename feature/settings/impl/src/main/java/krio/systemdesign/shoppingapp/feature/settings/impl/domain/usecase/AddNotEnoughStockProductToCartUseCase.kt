@@ -1,12 +1,13 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.core.config.ServerConfig
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
 
 // Adds more of an item than is in stock; in the catalog "+" stops at the stock.
-internal class AddNotEnoughStockProductToCartUseCase @Inject constructor(private val addToCart: AddToCartUseCase) {
+@Inject
+internal class AddNotEnoughStockProductToCartUseCase(private val addToCart: AddToCartUseCase) {
     suspend operator fun invoke(): Result<Unit> = addToCart(PRODUCT, QUANTITY)
 
     private companion object {

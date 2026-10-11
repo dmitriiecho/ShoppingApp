@@ -1,12 +1,13 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.core.config.ServerConfig
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
 
 // Adds an out-of-stock item; the catalog can't, it shows "Out of stock" instead of the button.
-internal class AddUnavailableProductToCartUseCase @Inject constructor(private val addToCart: AddToCartUseCase) {
+@Inject
+internal class AddUnavailableProductToCartUseCase(private val addToCart: AddToCartUseCase) {
     suspend operator fun invoke(): Result<Unit> = addToCart(PRODUCT)
 
     private companion object {

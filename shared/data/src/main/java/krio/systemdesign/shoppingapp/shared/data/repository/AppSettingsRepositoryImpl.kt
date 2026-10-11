@@ -6,8 +6,10 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import co.touchlab.kermit.Logger
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import java.io.IOException
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -15,11 +17,9 @@ import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.shared.domain.repository.AppSettingsRepository
 
-// ktlint would wrap this long header before the supertype; the project puts one parameter per line instead.
-@Suppress("ktlint:standard:class-signature")
-internal class AppSettingsRepositoryImpl @Inject constructor(
-    private val dataStore: DataStore<Preferences>,
-) : AppSettingsRepository {
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+internal class AppSettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : AppSettingsRepository {
 
     private val preferences: Flow<Preferences> = dataStore.data
         .catch { e ->

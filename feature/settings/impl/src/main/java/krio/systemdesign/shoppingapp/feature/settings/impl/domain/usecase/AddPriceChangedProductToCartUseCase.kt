@@ -1,12 +1,13 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.core.config.ServerConfig
 import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
 
 // Adds an item at a price the server no longer has; the catalog always shows the current price.
-internal class AddPriceChangedProductToCartUseCase @Inject constructor(private val addToCart: AddToCartUseCase) {
+@Inject
+internal class AddPriceChangedProductToCartUseCase(private val addToCart: AddToCartUseCase) {
     suspend operator fun invoke(): Result<Unit> = addToCart(PRODUCT)
 
     private companion object {

@@ -1,7 +1,9 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.data.repository
 
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import io.ktor.http.HttpStatusCode
-import javax.inject.Inject
 import krio.systemdesign.shoppingapp.core.network.NetworkResult
 import krio.systemdesign.shoppingapp.core.network.networkCall
 import krio.systemdesign.shoppingapp.feature.catalog.impl.data.api.ProductApi
@@ -10,7 +12,9 @@ import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductLo
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.ProductRepository
 
-internal class ProductRepositoryImpl @Inject constructor(private val api: ProductApi) : ProductRepository {
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+internal class ProductRepositoryImpl(private val api: ProductApi) : ProductRepository {
     override suspend fun getProducts(
         query: String,
         page: Int,

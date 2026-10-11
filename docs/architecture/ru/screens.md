@@ -30,7 +30,7 @@ internal fun CartScreen(
     onBack: () -> Unit,
     onOpenCheckout: () -> Unit,
     // ...
-    viewModel: CartViewModel = hiltViewModel(),
+    viewModel: CartViewModel = injectedViewModel(),
 )
 
 @Composable
@@ -42,7 +42,19 @@ internal fun CartScreen(
 )
 ```
 
-Вторая не зависит от Hilt, поэтому её можно показать в превью в любом состоянии.
+Вторая не зависит от DI, поэтому её можно показать в превью в любом состоянии.
+
+`injectedViewModel()` берёт ViewModel записи экрана в стеке навигации, а в первый раз создаёт её через `InjectedViewModelFactory` приложения. Фабрика строит для каждой новой ViewModel маленький граф Metro, `ViewModelGraph`, с собственным `SavedStateHandle` этой ViewModel (так же устроен `ViewModelComponent` в Hilt), поэтому ViewModel получает его в конструкторе, как любую другую зависимость. В этот граф ViewModel попадает двумя аннотациями:
+
+```kotlin
+@ViewModelKey
+@ContributesIntoMap(ViewModelScope::class)
+internal class CartViewModel(
+    private val observeCart: ObserveCartUseCase,
+    // ...
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel()
+```
 
 `onEvent` не выходит за пределы этого файла: его получают только сам экран, `CartContent` и мелкие приватные помощники. Секции из `components/` получают конкретные колбэки, поэтому ничего не знают о событиях экрана, и их можно показать в превью отдельно:
 
