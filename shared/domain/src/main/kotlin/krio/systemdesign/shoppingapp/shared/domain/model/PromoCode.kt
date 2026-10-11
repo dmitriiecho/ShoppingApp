@@ -1,10 +1,5 @@
 package krio.systemdesign.shoppingapp.shared.domain.model
 
-import kotlinx.serialization.Serializable
-
-// kotlinx.serialization, for passing an applied code between screens as a string
-// (SavedStateHandle can't hold this pure-Kotlin class).
-@Serializable
 data class PromoCode(
     val code: String,
     val discountPercent: Int,

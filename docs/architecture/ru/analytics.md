@@ -81,9 +81,9 @@ launchCartAction(
 Просмотры экранов отправляет приложение, а не экраны ([`ScreenViews.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/ScreenViews.kt)). Оно следит за стеком и сообщает о верхнем экране после каждого перехода и каждого возврата из фона. Каждая фича сама даёт имена своим экранам, а экран без имени не отправляется:
 
 ```kotlin
-fun NavDestination.catalogAnalyticsScreen(): AnalyticsScreen? = when {
-    hasRoute<CatalogRoutes.ProductList>() -> AnalyticsScreen.CatalogList
-    hasRoute<CatalogRoutes.ProductDetails>() -> AnalyticsScreen.ProductDetails
+fun NavKey.catalogAnalyticsScreen(): AnalyticsScreen? = when (this) {
+    CatalogRoutes.ProductList -> AnalyticsScreen.CatalogList
+    is CatalogRoutes.ProductDetails -> AnalyticsScreen.ProductDetails
     else -> null
 }
 ```

@@ -3,7 +3,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 
-// A feature's impl module: Compose screens, ViewModels injected by Metro, kotlinx.serialization navigation routes.
+// A feature's impl module: Compose screens, ViewModels injected by Metro, kotlinx.serialization navigation keys.
 // Each feature declares its own project dependencies (:shared:domain, :core:designsystem…).
 class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -14,7 +14,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             apply<MetroConventionPlugin>()
 
             dependencies {
-                "implementation"(libs.androidx.navigation.compose)
+                "implementation"(libs.androidx.navigation3.runtime)
                 "implementation"(libs.androidx.lifecycle.runtime.compose)
                 "implementation"(libs.androidx.lifecycle.viewmodel.compose)
                 "implementation"(libs.kotlinx.serialization.core)

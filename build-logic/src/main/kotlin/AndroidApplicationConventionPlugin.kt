@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.HostTestBuilder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -42,6 +44,14 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
             alignCoreKtx()
             configureKotlinWarnings()
+            configureTestLogging()
+
+            // Unit tests run on debug only, as in libraries (AndroidLibraryConventionPlugin).
+            extensions.configure<ApplicationAndroidComponentsExtension> {
+                beforeVariants(selector().withBuildType("release")) { variant ->
+                    variant.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = false
+                }
+            }
         }
     }
 }

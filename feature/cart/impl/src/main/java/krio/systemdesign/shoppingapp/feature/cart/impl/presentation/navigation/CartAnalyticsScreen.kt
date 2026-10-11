@@ -1,8 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.navigation
 
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation3.runtime.NavKey
 import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
 
-fun NavDestination.cartAnalyticsScreen(): AnalyticsScreen? =
-    if (hasRoute<CartRoutes.Cart>()) AnalyticsScreen.Cart else null
+fun NavKey.cartAnalyticsScreen(): AnalyticsScreen? = if (this == CartRoutes.Cart) AnalyticsScreen.Cart else null

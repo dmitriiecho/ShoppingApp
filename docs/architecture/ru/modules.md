@@ -83,12 +83,13 @@ dependencies {
 
 ```kotlin
 object CatalogRoutes {
-    @Serializable data object Graph                          // приложение открывает фичу
-    @Serializable internal data object ProductList
-    @Serializable internal data class ProductDetails(/* ... */) : ProductDetailsRoute
+    @Serializable data object ProductList : NavKey                       // публичный: приложение открывает им фичу
+    @Serializable internal data class ProductDetails(/* ... */) : ProductDetailsRoute, NavKey
 }
 
-fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
+fun CatalogNavigationScope.entries(navigator: Navigator, onClose: () -> Unit) { /* ... */ }
+val catalogNavKeys: SerializersModule                                    // ключи, чтобы сохранять стек
+val catalogDeepLinks: List<UriDeepLinkMatcher<NavKey>>                   // ссылки, которые открывает фича
 ```
 
 &nbsp;

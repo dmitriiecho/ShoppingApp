@@ -14,6 +14,7 @@ android {
 dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    api(libs.androidx.navigation3.runtime)
 
     // viewModelTest: runTest with Dispatchers.Main, where viewModelScope runs, replaced by the test dispatcher.
     testFixturesApi(libs.kotlinx.coroutines.test)

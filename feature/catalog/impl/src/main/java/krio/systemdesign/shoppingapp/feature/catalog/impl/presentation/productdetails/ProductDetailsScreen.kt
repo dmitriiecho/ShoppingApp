@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.min
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
-import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.EmptyState
@@ -48,11 +47,11 @@ import krio.systemdesign.shoppingapp.shared.ui.product.ProductImage
 import krio.systemdesign.shoppingapp.shared.ui.product.ProductImageKey
 import krio.systemdesign.shoppingapp.shared.ui.product.ProductImagePlaceholder
 
+// No default ViewModel: it needs the screen's key, passed with injectedViewModel(arguments) in navigation.
 @Composable
-@PublishedApi
 internal fun ProductDetailsScreen(
     onBack: () -> Unit,
-    viewModel: ProductDetailsViewModel = injectedViewModel(),
+    viewModel: ProductDetailsViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
