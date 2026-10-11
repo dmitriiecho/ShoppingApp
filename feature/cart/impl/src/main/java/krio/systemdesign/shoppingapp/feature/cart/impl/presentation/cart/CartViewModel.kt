@@ -4,8 +4,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import dev.zacsweers.metro.ContributesIntoMap
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -18,6 +17,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.analytics.CartClearedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.cart.impl.analytics.CheckoutStartedAnalyticsEvent
@@ -41,8 +42,9 @@ import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
 import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 
-@HiltViewModel
-internal class CartViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(ViewModelScope::class)
+internal class CartViewModel(
     private val observeCart: ObserveCartUseCase,
     private val updateCartQuantity: UpdateCartQuantityUseCase,
     private val removeFromCart: RemoveFromCartUseCase,

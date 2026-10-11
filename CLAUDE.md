@@ -4,7 +4,7 @@ A demo shop for Android. How it is built and why: [`docs/architecture/en/`](docs
 
 | | |
 |---|---|
-| Stack | Kotlin, Jetpack Compose, Hilt (KSP), Room |
+| Stack | Kotlin, Jetpack Compose, Metro, Room |
 | Build | Gradle 9.8, AGP 9.4, JDK 21, compileSdk 37 |
 | Shop app | `:apps:shop`, applicationId `krio.systemdesign.shoppingapp`, launcher activity `.MainActivity` |
 | UI kit app | `:apps:uikit`, applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity` |
@@ -18,7 +18,7 @@ Folders are levels, bottom to top: `core/` → `shared/` → `feature/` → `app
 | Level | Module | Holds |
 |---|---|---|
 | `core/`: knows nothing about the shop | `:core:designsystem` | theme, icons, generic components (cards, buttons, fields, bars, notices, placeholders, dialogs, screen states); only generic strings ("Close", "Retry") |
-| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes |
+| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes, `injectedViewModel` |
 | | `:core:network`, `:core:config` | the HTTP client; the server and deep link addresses |
 | `shared/`: shop code used by two or more features | `:shared:domain` | models, repository interfaces, use cases; pure Kotlin |
 | | `:shared:data` | their implementations; only `:apps:shop` depends on it |
@@ -69,6 +69,15 @@ A package follows the module:
 - **Clients**: `:apps:shop` (`analytics/`) holds one client class per `AnalyticsSystem`.
 - **Screen views** are sent by `:apps:shop` (`navigation/ScreenViews.kt`). Each feature names its screens in `NavDestination.xxxAnalyticsScreen()`; a screen with no name isn't reported.
 
+### DI
+
+[Metro](https://zacsweers.github.io/metro/): the app's graph is `AppGraph` in `:apps:shop` (`AppScope`).
+
+- **A class to inject** gets `@Inject` on the class, not on the constructor. A class with `@ContributesBinding`, `@ContributesIntoSet` or `@ContributesIntoMap` needs no `@Inject`: the contribution implies it.
+- **An implementation of an interface** binds itself with `@ContributesBinding(AppScope::class)` and stays `internal`. Only a third-party type needs a `@Provides` in a `@BindingContainer @ContributesTo(AppScope::class)` object, and that object is public (Metro skips internal ones; the build fails on them).
+- **A ViewModel** is `@ViewModelKey @ContributesIntoMap(ViewModelScope::class)`, takes `SavedStateHandle` in its constructor if it needs one, and a screen gets it with `injectedViewModel()` (`:core:compose-utils`, `viewmodel/`).
+- **The graph sees only the contributions on `:apps:shop`'s compile classpath**: a module with contributions is its direct dependency, and the types in a module's bindings are `api` (as Room and DataStore in `:shared:data`).
+
 ### UI kit
 
 - Its first screen has three groups: design system, shared components, feature components.
@@ -83,13 +92,14 @@ A package follows the module:
 
 ### build-logic
 
-`build-logic/` is an included build with the convention plugins `shoppingapp.android.{library,application,compose,hilt,feature,screenshots}` and `shoppingapp.jvm.library`. compileSdk, minSdk, targetSdk and Java live in `build-logic/src/main/kotlin/AndroidConfig.kt`. Each module declares only its own dependencies.
+`build-logic/` is an included build with the convention plugins `shoppingapp.android.{library,application,compose,feature,screenshots}`, `shoppingapp.jvm.library` and `shoppingapp.metro`. compileSdk, minSdk, targetSdk and Java live in `build-logic/src/main/kotlin/AndroidConfig.kt`. Each module declares only its own dependencies.
 
 | Module | Applies |
 |---|---|
 | `:feature:<name>:impl` | `libs.plugins.shoppingapp.android.feature` |
 | `:feature:<name>:ui` | `library` + `compose` + `screenshots` |
 | pure Kotlin (`:shared:domain`, `:shared:analytics`, `:core:config`) | `jvm.library` |
+| any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
 
 A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit` has none of its own.
 

@@ -23,7 +23,8 @@ Shared models and their storage live in `shared/`; anything only one feature nee
 A use case performs one action through a repository:
 
 ```kotlin
-class AddToCartUseCase @Inject constructor(private val cartRepository: CartRepository) {
+@Inject
+class AddToCartUseCase(private val cartRepository: CartRepository) {
     suspend operator fun invoke(product: Product, quantity: Int = 1): Result<Unit> =
         cartRepository.addItem(product, quantity)
 }
@@ -52,7 +53,9 @@ A repository with a single source works with it directly: `ProductRepositoryImpl
 The cart has two sources, and each one is a separate class:
 
 ```kotlin
-internal class CartRepositoryImpl @Inject constructor(
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)  // the app's graph gets it as CartRepository
+internal class CartRepositoryImpl(
     private val localCart: LocalCartDataSource,      // Room: transactions, merging a product already in the cart
     private val validator: CartValidatorDataSource,  // the server check
 ) : CartRepository
@@ -121,12 +124,11 @@ The app hasn't been released yet, so schema changes don't need migrations for no
 
 ## Network
 
-The API classes and Coil's image loading share one Ktor `HttpClient`, with the same connections and timeouts. Other modules add to it through `HttpClientSetup`, which Hilt provides as a set, so `:shared:data` can add the request delay without `:core:network` knowing about it:
+The API classes and Coil's image loading share one Ktor `HttpClient`, with the same connections and timeouts. Other modules add to it through `HttpClientSetup`, which Metro collects into a set, so `:shared:data` can add the request delay without `:core:network` knowing about it:
 
 ```kotlin
-@Binds
-@IntoSet
-abstract fun bindNetworkDelayPlugin(impl: NetworkDelayPlugin): HttpClientSetup
+@ContributesIntoSet(AppScope::class)
+internal class NetworkDelayPlugin(private val appSettingsRepository: AppSettingsRepository) : HttpClientSetup
 ```
 
 - **The request delay** from the settings is applied before every server request, including images, to show how screens behave while they wait. It is a Ktor plugin that suspends the request, so leaving the screen cancels the wait at once.

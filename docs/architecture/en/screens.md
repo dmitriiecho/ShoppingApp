@@ -30,7 +30,7 @@ internal fun CartScreen(
     onBack: () -> Unit,
     onOpenCheckout: () -> Unit,
     // ...
-    viewModel: CartViewModel = hiltViewModel(),
+    viewModel: CartViewModel = injectedViewModel(),
 )
 
 @Composable
@@ -42,7 +42,19 @@ internal fun CartScreen(
 )
 ```
 
-The second one doesn't depend on Hilt, so it can be previewed in any state.
+The second one doesn't depend on DI, so it can be previewed in any state.
+
+`injectedViewModel()` takes the ViewModel of the screen's back stack entry and creates it, the first time, with the app's `InjectedViewModelFactory`. The factory builds a small Metro graph for each new ViewModel, `ViewModelGraph`, with the ViewModel's own `SavedStateHandle` (as Hilt's `ViewModelComponent` does), so a ViewModel takes the handle in its constructor like any other dependency. A ViewModel joins that graph with two annotations:
+
+```kotlin
+@ViewModelKey
+@ContributesIntoMap(ViewModelScope::class)
+internal class CartViewModel(
+    private val observeCart: ObserveCartUseCase,
+    // ...
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel()
+```
 
 `onEvent` stays within this file: the screen, `CartContent` and small private helpers. Sections in `components/` get specific callbacks instead, so they don't know about the screen's events and can be previewed on their own:
 

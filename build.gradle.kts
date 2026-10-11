@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.metro) apply false
     alias(libs.plugins.room) apply false
     alias(libs.plugins.module.graph.assertion) apply false
     alias(libs.plugins.roborazzi) apply false
@@ -32,14 +32,13 @@ dependencyAnalysis {
             onIncorrectConfiguration {
                 severity("ignore")
             }
-            // Convention plugins add these to every Compose or Hilt module on purpose; a few modules don't use them.
+            // Convention plugins add these to every Compose module on purpose; a few modules don't use them.
             // The screenshot tests Roborazzi generates import the preview scanner without using it in bytecode, so
             // it looks unused, but they don't compile without it.
             onUnusedDependencies {
                 exclude(
                     libs.androidx.compose.ui.graphics,
                     libs.androidx.compose.ui.tooling.preview,
-                    libs.hilt.android,
                     libs.composable.preview.scanner,
                 )
             }

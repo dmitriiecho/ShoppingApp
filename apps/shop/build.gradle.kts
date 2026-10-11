@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.shoppingapp.android.application)
     alias(libs.plugins.shoppingapp.android.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.shoppingapp.android.hilt)
+    alias(libs.plugins.shoppingapp.metro)
 }
 
 android {
@@ -31,9 +31,10 @@ dependencies {
     implementation(project(":shared:analytics"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:compose-utils"))
+    // Not used by the app's code: the app's graph (AppGraph) sees only the contributions of its direct dependencies.
+    implementation(project(":core:network"))
 
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)

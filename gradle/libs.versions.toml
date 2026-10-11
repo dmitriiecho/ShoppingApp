@@ -13,7 +13,6 @@ androidxCore = "1.19.1"
 activity = "1.13.0"
 lifecycle = "2.11.0"
 navigation = "2.10.2"
-androidxHilt = "1.4.0"
 room = "2.8.5"
 paging = "3.5.2"
 datastore = "1.2.1"
@@ -21,8 +20,7 @@ composeBom = "2026.09.00"
 composeLints = "1.6.1"
 
 # DI
-hilt = "2.60.1"
-javaxInject = "1"
+metro = "1.4.5"
 
 # Network and images
 ktor = "3.6.0"
@@ -54,14 +52,10 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-androidx-hilt-lifecycle-viewmodel-compose = { group = "androidx.hilt", name = "hilt-lifecycle-viewmodel-compose", version.ref = "androidxHilt" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
-
-# DI
-javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 
 # Network and images
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
@@ -113,12 +107,12 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 # Slack's lint rules for Compose: modifier parameters, private previews, remember and the like.
 compose-lint-checks = { group = "com.slack.lint.compose", name = "compose-lint-checks", version.ref = "composeLints" }
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
 # For build-logic: AGP and Kotlin types the convention plugins use to configure the android and kotlin blocks
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+# For build-logic: the types of Metro's settings (MetroConventionPlugin)
+metro-gradlePlugin = { group = "dev.zacsweers.metro", name = "gradle-plugin", version.ref = "metro" }
 # For build-logic: the types of the screenshot tests' settings
 roborazzi-gradlePlugin = { group = "io.github.takahirom.roborazzi", name = "roborazzi-gradle-plugin", version.ref = "roborazzi" }
 # For build-logic: the types for the module rules (ModuleGraphRules.kt)
@@ -131,7 +125,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 room = { id = "androidx.room", version.ref = "room" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 module-graph-assertion = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraphAssert" }
@@ -142,7 +136,7 @@ roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 shoppingapp-android-application = { id = "shoppingapp.android.application" }
 shoppingapp-android-library = { id = "shoppingapp.android.library" }
 shoppingapp-android-compose = { id = "shoppingapp.android.compose" }
-shoppingapp-android-hilt = { id = "shoppingapp.android.hilt" }
+shoppingapp-metro = { id = "shoppingapp.metro" }
 shoppingapp-android-feature = { id = "shoppingapp.android.feature" }
 shoppingapp-android-screenshots = { id = "shoppingapp.android.screenshots" }
 shoppingapp-jvm-library = { id = "shoppingapp.jvm.library" }

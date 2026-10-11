@@ -6,20 +6,14 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.network.ktor3.KtorNetworkFetcherFactory
-import dagger.Lazy
-import dagger.hilt.android.HiltAndroidApp
-import io.ktor.client.HttpClient
-import javax.inject.Inject
+import dev.zacsweers.metro.createGraphFactory
 
-@HiltAndroidApp
 class ShoppingApp :
     Application(),
     SingletonImageLoader.Factory {
 
-    // The app's client: images share its connections and timeouts, and wait for the request delay from
-    // the settings like any other server request. Lazy: built only when the first request needs it.
-    @Inject
-    lateinit var httpClient: Lazy<HttpClient>
+    // The app's dependency graph, created by the first screen or image that needs it.
+    val graph: AppGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
 
     override fun onCreate() {
         super.onCreate()
@@ -31,8 +25,9 @@ class ShoppingApp :
         }
     }
 
-    // Coil's loader for every image in the app, created at the first image.
+    // Coil's loader for every image in the app, created at the first image. Images use the app's client: they share
+    // its connections and timeouts, and wait for the request delay from the settings like any other server request.
     override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
-        .components { add(KtorNetworkFetcherFactory(httpClient = { httpClient.get() })) }
+        .components { add(KtorNetworkFetcherFactory(httpClient = { graph.httpClient })) }
         .build()
 }

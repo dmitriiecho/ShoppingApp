@@ -22,11 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.LoadingButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.inputs.AppOutlinedTextField
@@ -42,7 +42,7 @@ import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 internal fun PromoCodeScreen(
     onBack: () -> Unit,
     onCloseWithResult: (PromoCode) -> Unit,
-    viewModel: PromoCodeViewModel = hiltViewModel(),
+    viewModel: PromoCodeViewModel = injectedViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

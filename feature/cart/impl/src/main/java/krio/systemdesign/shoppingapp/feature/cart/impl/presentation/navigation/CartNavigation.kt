@@ -3,7 +3,6 @@ package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.navigation
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -12,6 +11,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.json.Json
 import krio.systemdesign.shoppingapp.core.composeutils.animation.LocalNavAnimatedVisibilityScope
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartEvent
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartScreen
@@ -38,7 +38,7 @@ fun CartNavigationScope.graph(
         composable<CartRoutes.Cart>(
             deepLinks = listOf(navDeepLink<CartRoutes.Cart>(basePath = CART_DEEP_LINK)),
         ) { entry ->
-            val viewModel: CartViewModel = hiltViewModel()
+            val viewModel: CartViewModel = injectedViewModel()
 
             val promoResult by entry.savedStateHandle
                 .getStateFlow<String?>(CartResults.PROMO_RESULT_KEY, null)

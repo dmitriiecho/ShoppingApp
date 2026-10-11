@@ -1,9 +1,10 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.shared.domain.repository.AppSettingsRepository
 
-internal class SetNetworkDelayUseCase @Inject constructor(private val appSettingsRepository: AppSettingsRepository) {
+@Inject
+internal class SetNetworkDelayUseCase(private val appSettingsRepository: AppSettingsRepository) {
     suspend operator fun invoke(delay: NetworkDelay): Result<Unit> = appSettingsRepository.setNetworkDelay(delay)
 }

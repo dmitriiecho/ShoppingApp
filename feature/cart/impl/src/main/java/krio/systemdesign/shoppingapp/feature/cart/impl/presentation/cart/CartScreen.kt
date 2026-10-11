@@ -22,12 +22,12 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.dialogs.ConfirmationDialog
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
@@ -46,7 +46,7 @@ internal fun CartScreen(
     onOpenCheckout: () -> Unit,
     onOpenPromo: () -> Unit,
     onOpenProduct: (productId: String, productName: String, imageUrl: String) -> Unit,
-    viewModel: CartViewModel = hiltViewModel(),
+    viewModel: CartViewModel = injectedViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }

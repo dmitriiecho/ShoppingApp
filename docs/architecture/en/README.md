@@ -47,7 +47,7 @@ The main libraries and tools:
 |---|---|
 | Language and UI | Kotlin 2.4, Jetpack Compose, Material 3 |
 | Structure | MVVM with a single UI state per screen and one-off effects |
-| DI | Hilt (KSP) |
+| DI | Metro (compile-time, a Kotlin compiler plugin) |
 | Navigation | Navigation Compose with type-safe routes |
 | Data | Room, DataStore, Paging 3 |
 | Network | Ktor Client (OkHttp engine), kotlinx.serialization, Coil for images |

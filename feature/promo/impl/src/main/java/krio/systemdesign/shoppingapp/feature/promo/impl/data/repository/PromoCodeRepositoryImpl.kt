@@ -1,8 +1,10 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.data.repository
 
 import co.touchlab.kermit.Logger
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import io.ktor.http.HttpStatusCode
-import javax.inject.Inject
 import krio.systemdesign.shoppingapp.core.network.NetworkResult
 import krio.systemdesign.shoppingapp.core.network.networkCall
 import krio.systemdesign.shoppingapp.feature.promo.impl.data.api.PromoApi
@@ -11,7 +13,9 @@ import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCh
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.repository.PromoCodeRepository
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-internal class PromoCodeRepositoryImpl @Inject constructor(private val api: PromoApi) : PromoCodeRepository {
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+internal class PromoCodeRepositoryImpl(private val api: PromoApi) : PromoCodeRepository {
     override suspend fun checkPromoCode(code: String): PromoCodeCheckResult {
         val result = networkCall { api.checkPromoCode(code) }
         return when (result) {

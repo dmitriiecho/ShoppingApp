@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.shoppingapp.android.library)
-    alias(libs.plugins.shoppingapp.android.hilt)
+    alias(libs.plugins.shoppingapp.metro)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -17,8 +18,9 @@ dependencies {
     implementation(project(":shared:domain"))
     implementation(project(":core:network"))
 
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.datastore.preferences)
+    // api: the app's graph is built in :apps:shop and sees the database and DataStore types of DataModule.
+    api(libs.androidx.room.runtime)
+    api(libs.androidx.datastore.preferences)
     implementation(libs.kermit)
 
     ksp(libs.androidx.room.compiler)

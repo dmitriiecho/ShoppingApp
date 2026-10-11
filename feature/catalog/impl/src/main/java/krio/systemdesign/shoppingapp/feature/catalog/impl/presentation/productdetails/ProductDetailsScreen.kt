@@ -28,10 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
+import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.EmptyState
@@ -52,7 +52,7 @@ import krio.systemdesign.shoppingapp.shared.ui.product.ProductImagePlaceholder
 @PublishedApi
 internal fun ProductDetailsScreen(
     onBack: () -> Unit,
-    viewModel: ProductDetailsViewModel = hiltViewModel(),
+    viewModel: ProductDetailsViewModel = injectedViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }

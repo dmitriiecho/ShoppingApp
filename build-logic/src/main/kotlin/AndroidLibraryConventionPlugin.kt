@@ -24,10 +24,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 // Robolectric reaches into JDK internals; on Java 17+ they have to be opened (robolectric.org).
                 testOptions.unitTests.all { test ->
                     test.jvmArgs(ROBOLECTRIC_JVM_ARGS)
-                    // With the resources, Hilt's bytecode transform puts the R class among the test classes, so in
-                    // a module with no tests Gradle sees classes without tests and fails. Only a module that has
-                    // tests can have tests that weren't found.
-                    test.failOnNoDiscoveredTests.set(file("src/test").exists())
                     // The JSON samples the app and the server agree on (apiSample and apiRequest in :core:network).
                     // Declared as an input, so an edited sample runs the tests again.
                     val apiSamples = rootDir.resolve("server/api-samples")

@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.shared.data.source
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import krio.systemdesign.shoppingapp.core.network.NetworkResult
 import krio.systemdesign.shoppingapp.core.network.networkCall
 import krio.systemdesign.shoppingapp.shared.data.api.CartApi
@@ -9,7 +9,8 @@ import krio.systemdesign.shoppingapp.shared.data.dto.toValidationRequest
 import krio.systemdesign.shoppingapp.shared.domain.model.Cart
 import krio.systemdesign.shoppingapp.shared.domain.model.CartValidationResult
 
-internal class CartValidatorDataSource @Inject constructor(private val api: CartApi) {
+@Inject
+internal class CartValidatorDataSource(private val api: CartApi) {
     suspend fun validate(cart: Cart): CartValidationResult {
         val result = networkCall { api.validate(cart.toValidationRequest()) }
         return when (result) {

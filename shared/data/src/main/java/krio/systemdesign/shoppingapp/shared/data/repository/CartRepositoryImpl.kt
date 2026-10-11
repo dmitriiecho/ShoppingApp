@@ -1,6 +1,8 @@
 package krio.systemdesign.shoppingapp.shared.data.repository
 
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import krio.systemdesign.shoppingapp.shared.data.source.CartValidatorDataSource
@@ -12,7 +14,9 @@ import krio.systemdesign.shoppingapp.shared.domain.model.Product
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.shared.domain.repository.CartRepository
 
-internal class CartRepositoryImpl @Inject constructor(
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+internal class CartRepositoryImpl(
     private val localCart: LocalCartDataSource,
     private val validator: CartValidatorDataSource,
 ) : CartRepository {
