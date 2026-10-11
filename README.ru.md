@@ -15,11 +15,13 @@ ShoppingApp — пример Android-приложения на современ�
 
 Одно и то же приложение собрано на трёх немного разных стеках, каждый вариант — в своей ветке:
 
-| Ветка | Стек | Скачать |
-|---|---|---|
-| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android: Hilt, Retrofit + OkHttp, Room, Navigation Compose | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
-| `kmp-ready` | Android, библиотеки заменены на те, что работают в Kotlin Multiplatform | скоро |
-| `kmp` | Kotlin Multiplatform | скоро |
+| Ветка | Платформы | DI | Сеть | Логирование | Скачать |
+|---|---|---|---|---|---|
+| **`main`** | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
+| [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp-ready) | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
+| `kmp` | Android, iOS | Metro | Ktor | Kermit | скоро |
+
+Во всех вариантах общие Compose, Navigation Compose, Room и DataStore.
 
 Для каждой ветки собираются два APK: магазин и UI kit.
 
