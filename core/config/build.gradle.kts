@@ -1,3 +1,3 @@
 plugins {
-    alias(libs.plugins.shoppingapp.jvm.library)
+    alias(libs.plugins.shoppingapp.kmp.library)
 }

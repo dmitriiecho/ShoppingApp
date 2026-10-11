@@ -15,10 +15,11 @@
 | `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | настройку Android, targetSdk, подпись, R8 в release, языки приложения для системных настроек, [проверку графа модулей](modules.md#проверка), анализ зависимостей, предупреждения как ошибки в CI |
 | `shoppingapp.android.library` | каждая Android-библиотека | compileSdk, minSdk, Java, анализ зависимостей, предупреждения как ошибки в CI, настройку тестов: unit-тесты только на debug, [Robolectric](testing.md#база-данных), [образцы API](testing.md#контракт-с-сервером), текст ошибки упавшего теста в логе |
 | `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
-| `shoppingapp.metro` | модули с DI, Android и чистый Kotlin | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
+| `shoppingapp.metro` | модули с DI, Android и KMP | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Metro + serialization, библиотеки навигации и lifecycle |
 | `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
-| `shoppingapp.jvm.library` | `:crossfeature:domain`, `:crossfeature:analytics`, `:core:config` | Kotlin JVM без Android, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
+| `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:config`, `:core:network`, `:crossfeature:domain`, `:crossfeature:analytics` и их модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
+| `shoppingapp.kmp.compose` | KMP-модули с Compose (пока `:apps:shop:app` для iOS-приложения) | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
 
 Поэтому build-файл модуля получается коротким:
 
@@ -82,11 +83,12 @@ internal object AndroidConfig {
 
 ## CI
 
-[`ci.yml`](../../../.github/workflows/ci.yml) запускается на каждый pull request и каждый push в `main` и ветки вариантов (`kmp-ready`, `kmp`), если только изменения не касаются одной лишь документации, README и картинок к ним. Две задачи выполняются параллельно:
+[`ci.yml`](../../../.github/workflows/ci.yml) запускается на каждый pull request и каждый push в `main` и ветки вариантов (`kmp-ready`, `kmp`), если только изменения не касаются одной лишь документации, README и картинок к ним. Три задачи выполняются параллельно:
 
 | Задача | Шаги |
 |---|---|
 | Android | стиль кода (ktlint) → зависимости между модулями (`assertModuleGraph`) → неиспользуемые зависимости (`buildHealth`) → ошибки в коде и ресурсах (Android lint с правилами Compose от Slack) → [unit- и скриншот-тесты](testing.md) → сборка обоих приложений |
+| iOS | общие тесты каждого KMP-модуля на iOS-симуляторе → сборка [iOS-приложения](#ios-приложение) (`xcodebuild`); на macOS, бесплатно для публичного репозитория |
 | Server | стиль кода (ktlint) → API и файлы данных (тесты, включая проверку `data/*.json` и [образцов API](testing.md#контракт-с-сервером)) |
 
 - **Каждая проверка запускается, даже если предыдущая упала**, поэтому один прогон показывает сразу все проблемы.
@@ -95,7 +97,7 @@ internal object AndroidConfig {
 - **Исключения lint** лежат в корневом [`lint.xml`](../../../lint.xml): это CompositionLocal, которые проект создаёт намеренно, и предупреждение «вышла новая версия», пониженное до подсказки, чтобы выход новой версии какой-нибудь библиотеки не ронял CI.
 - **Упавшие тесты видны там, куда и так смотришь**: каждый, с сообщением и номером строки, — вверху страницы прогона и рядом со строкой теста на вкладке Files changed в PR, если файл теста входит в изменения; ниже — сводка с полным стектрейсом ([action-junit-report](https://github.com/mikepenz/action-junit-report), единственное действие в CI не от GitHub и не от Gradle).
 - **Android, который нужен Robolectric, кэшируется** между прогонами: Robolectric скачивает его в `~/.m2`, а эту папку кэш Gradle не покрывает.
-- **Задача останавливается через 30 минут** (серверная — через 15), а не висит 6 часов, как это по умолчанию бывает в GitHub.
+- **Задача останавливается через 30 минут** (iOS — через 45, серверная — через 15), а не висит 6 часов, как это по умолчанию бывает в GitHub.
 
 Новый push в pull request отменяет его прогон, если тот ещё не закончился, а прогоны на ветках всегда доходят до конца:
 
@@ -122,6 +124,16 @@ Debug-ключ хранится в репозитории ([`build-logic/debug.k
 
 &nbsp;
 
+## iOS-приложение
+
+iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../../../apps/shop/ios/). Оно показывает экраны `:apps:shop:app`, который собирает их во фреймворк `ShopApp`: Run Script проекта вызывает Gradle (`embedAndSignAppleFrameworkForXcode`) до того, как Xcode компилирует код на Swift. Пока приложение показывает заглушку: экраны переезжают в общий код постепенно, по шагам ветки `kmp`.
+
+- **Собирается на Mac** с Xcode и JDK 21: откройте `apps/shop/ios/iosApp.xcodeproj` и запустите на симуляторе, или используйте конфигурацию запуска iOS в Android Studio с плагином Kotlin Multiplatform.
+- **На Linux общий код тоже компилируется под iOS** (`./gradlew compileKotlinIosSimulatorArm64`), и большинство iOS-ошибок видно ещё до CI; линковка фреймворка, iOS-тесты и сборка Xcode требуют Mac, поэтому CI выполняет их на macOS.
+- **iOS 18.5 и новее**, iPhone, только портретная ориентация. К серверу приложение ходит по обычному HTTP и по IP-адресу, а iOS разрешает это только с `NSAllowsArbitraryLoads` в `Info.plist`.
+
+&nbsp;
+
 ## Команды
 
 Основные команды из корня проекта:
@@ -131,8 +143,10 @@ Debug-ключ хранится в репозитории ([`build-logic/debug.k
 ./gradlew :apps:uikit:installDebug     # установить UI kit
 ./gradlew assertModuleGraph            # проверить зависимости между модулями
 ./gradlew buildHealth                  # найти неиспользуемые зависимости
-./gradlew lintDebug                    # запустить Android lint во всех модулях
-./gradlew test                         # запустить тесты приложения, включая скриншоты
+./gradlew lintDebug lintAndroidMain    # запустить Android lint в Android- и KMP-модулях
+./gradlew test testAndroidHostTest     # запустить тесты приложения на JVM, включая скриншоты
+./gradlew compileKotlinIosSimulatorArm64  # скомпилировать общий код под iOS (и на Linux)
+./gradlew iosSimulatorArm64Test        # запустить общие тесты на iOS-симуляторе (на Mac)
 ./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # записать новые скриншоты после изменения UI
 cd server && ./gradlew test            # запустить тесты сервера
 ```
@@ -140,6 +154,6 @@ cd server && ./gradlew test            # запустить тесты серв�
 Те же проверки, что и в CI, где предупреждения считаются ошибками:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug test :apps:shop:assembleDebug :apps:uikit:assembleDebug
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain test testAndroidHostTest :apps:shop:assembleDebug :apps:uikit:assembleDebug
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

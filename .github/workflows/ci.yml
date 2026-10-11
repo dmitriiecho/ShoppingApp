@@ -1,9 +1,10 @@
 # CI: checks every pull request and every push to main and the variant branches (kmp-ready, kmp).
 #
 #   Android job: code style → module rules → unused dependencies → lint → unit tests → both apps build
+#   iOS job:     shared code tests on the iOS simulator → the iOS app builds
 #   Server job:  code style → tests
 #
-# The two jobs run in parallel, each on its own fresh virtual machine (a "runner").
+# The jobs run in parallel, each on its own fresh virtual machine (a "runner").
 # The server is a separate Gradle build (server/), so it gets a job of its own.
 # Latest build (latest-build.yml) starts after this workflow passes on a push.
 # Screenshot comment (screenshot-comment.yml) starts after it on a pull request.
@@ -101,18 +102,20 @@ jobs:
         run: ./gradlew buildHealth
 
       # Android's own rules plus Slack's Compose rules; exceptions are in the root lint.xml.
+      # lintDebug: the Android modules; lintAndroidMain: the KMP modules, their common code included.
       - name: Problems in code and resources (Android lint)
         if: ${{ !cancelled() }}
-        run: ./gradlew lintDebug
+        run: ./gradlew lintDebug lintAndroidMain
 
       # Every module's tests, on debug: logic, ViewModels, the database (Robolectric), the API samples, and the
       # screenshots of every @Preview compared with the saved images.
+      # test: the Android modules; testAndroidHostTest: the KMP modules, which have no test task, on the JVM.
       # --continue: a failed module doesn't stop the others, so the report shows every failing test.
       # The rules for tests are in docs/architecture/en/testing.md.
       - name: Behaviour (unit tests)
         id: tests
         if: ${{ !cancelled() }}
-        run: ./gradlew test --continue
+        run: ./gradlew test testAndroidHostTest --continue
 
       # Shows each failed test, with its message and line, at the top of the run's page and, when the test file
       # is among the PR's changes, next to the test's line in Files changed; below, a summary with each failure's
@@ -143,6 +146,61 @@ jobs:
       - name: Both apps compile (assembleDebug)
         if: ${{ !cancelled() }}
         run: ./gradlew :apps:shop:assembleDebug :apps:uikit:assembleDebug
+
+  # ==========================================================================
+  # iOS: the shared code on the iOS simulator and the iOS app (apps/shop/ios)
+  # ==========================================================================
+
+  # iOS builds only on macOS. The repository is public, so GitHub's macOS runners are free.
+  ios:
+    name: iOS
+    runs-on: macos-latest
+    # Kotlin/Native and the Xcode build take 10 to 20 minutes on an empty cache.
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      # The Kotlin/Native compiler and its dependencies (~1 GB), downloaded once per Kotlin version.
+      - name: Cache Kotlin/Native
+        uses: actions/cache@v6
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+
+      # The common tests of every KMP module (src/commonTest), compiled for iOS and run on the simulator.
+      - name: Shared code on iOS (simulator tests)
+        id: tests
+        run: ./gradlew iosSimulatorArm64Test --continue
+
+      - name: Failed tests
+        if: ${{ failure() && steps.tests.outcome == 'failure' }}
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: '**/build/test-results/**/*.xml'
+          check_name: iOS tests
+          annotate_only: true
+          detailed_summary: true
+          failed_summary_logs: true
+
+      # The Xcode project builds the Kotlin framework itself (its Run Script calls Gradle) and links it.
+      # No signing: the simulator doesn't need it.
+      - name: The iOS app builds (xcodebuild)
+        if: ${{ !cancelled() }}
+        working-directory: apps/shop/ios
+        run: >-
+          xcodebuild -project iosApp.xcodeproj -scheme iosApp -configuration Debug
+          -sdk iphonesimulator -arch arm64 CODE_SIGNING_ALLOWED=NO build
 
   # ==========================================================================
   # Server: the Ktor backend in server/

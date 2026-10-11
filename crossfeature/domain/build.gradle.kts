@@ -1,15 +1,19 @@
 plugins {
-    alias(libs.plugins.shoppingapp.jvm.library)
+    alias(libs.plugins.shoppingapp.kmp.library)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.shoppingapp.metro)
-    // Test data builders and test doubles that the features' tests use too.
-    `java-test-fixtures`
 }
 
-dependencies {
-    api(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.serialization.core)
-
-    testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.assertk)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            api(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.core)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.assertk)
+            implementation(project(":crossfeature:domain:testing"))
+        }
+    }
 }

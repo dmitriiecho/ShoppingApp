@@ -1,32 +1,38 @@
 plugins {
-    alias(libs.plugins.shoppingapp.android.library)
+    alias(libs.plugins.shoppingapp.kmp.library)
     alias(libs.plugins.shoppingapp.metro)
 }
 
-android {
-    namespace = "krio.systemdesign.shoppingapp.core.network"
-    testFixtures {
-        enable = true
+// ServerConfig.BASE_URL is a const, inlined at compile time, so the analysis sees no use of :core:config;
+// the code still doesn't compile without it.
+dependencyAnalysis {
+    issues {
+        onUnusedDependencies {
+            exclude(":core:config")
+        }
     }
 }
 
-dependencies {
-    implementation(project(":core:config"))
-
-    api(libs.ktor.client.core)
-    api(libs.kotlinx.serialization.json)
-
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.kermit)
-
-    debugImplementation(libs.ktor.client.logging)
-
-    // networkTest: a client with the app's settings over TestServer; apiSample and apiRequest read server/api-samples.
-    testFixturesApi(libs.ktor.client.mock)
-    testFixturesApi(libs.kotlinx.coroutines.test)
-
-    testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.assertk)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core:config"))
+            api(libs.ktor.client.core)
+            api(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.kermit)
+        }
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.assertk)
+            implementation(project(":core:network:testing"))
+        }
+    }
 }

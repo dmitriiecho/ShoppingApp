@@ -79,7 +79,7 @@ sealed interface ProductLoadResult {
 
 `PromoCodeCheckResult` and `CartValidationResult` are built the same way.
 
-Two wrappers convert exceptions into these results. [`networkCall`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkResult.kt) returns a `NetworkResult`, and the repository converts it into the result of its own operation:
+Two wrappers convert exceptions into these results. [`networkCall`](../../../core/network/src/commonMain/kotlin/krio/systemdesign/shoppingapp/core/network/NetworkResult.kt) returns a `NetworkResult`, and the repository converts it into the result of its own operation:
 
 ```kotlin
 when (val result = networkCall { api.getProduct(productId) }) {
@@ -140,7 +140,7 @@ internal class NetworkDelayPlugin(private val appSettingsRepository: AppSettings
 
 ## Prices
 
-Every price is in US dollars, stored as a `Long` number of cents: `14999` is $149.99. The server's JSON, the DTOs, Room and the domain models all use the same numbers. Prices are displayed only through [`formatPrice`](../../../shared/ui/src/main/java/krio/systemdesign/shoppingapp/shared/ui/text/PriceFormat.kt), always in US format, whatever the phone's language:
+Every price is in US dollars, stored as a `Long` number of cents: `14999` is $149.99. The server's JSON, the DTOs, Room and the domain models all use the same numbers. Prices are displayed only through [`formatPrice`](../../../crossfeature/ui/src/main/java/krio/systemdesign/shoppingapp/crossfeature/ui/text/PriceFormat.kt), always in US format, whatever the phone's language:
 
 ```kotlin
 fun formatPrice(amountCents: Long): String =

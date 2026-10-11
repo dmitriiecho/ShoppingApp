@@ -11,12 +11,15 @@
 Каждая сборка запускает свои тесты, а CI запускает оба набора на каждом pull request:
 
 ```sh
-./gradlew test                # приложение: все модули, по одному разу, включая скриншоты
-cd server && ./gradlew test   # сервер
+./gradlew test testAndroidHostTest   # приложение на JVM: все модули, по одному разу, включая скриншоты
+./gradlew iosSimulatorArm64Test      # общие тесты на iOS-симуляторе (на Mac; CI запускает их на macOS)
+cd server && ./gradlew test          # сервер
 ./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # записывает новые скриншоты после изменения интерфейса
 ```
 
-Android-модули запускают unit-тесты только в debug-варианте (`shoppingapp.android.library` отключает release-тесты, которые просто повторяли бы их), поэтому одна задача `test` охватывает и Android-модули, и модули на чистом Kotlin.
+- **Android-модули** запускают unit-тесты задачей `test` и только в debug-варианте: `shoppingapp.android.library` отключает release-тесты, которые просто повторяли бы их.
+- **У модулей на Kotlin Multiplatform задачи `test` нет.** Их тесты в `src/commonTest` идут на обеих платформах: на JVM задачей `testAndroidHostTest`, на iOS-симуляторе задачей `iosSimulatorArm64Test`. Тесты, которым нужны классы Android (Robolectric), лежат в `src/androidHostTest` и идут только на JVM.
+- **Имена тестов в `src/commonTest`** не могут содержать запятые, точки, двоеточия и точки с запятой: Kotlin/Native не принимает их в имени функции.
 
 &nbsp;
 
@@ -60,21 +63,21 @@ fun `discount is the promo code percent of the subtotal`() {
 
 Из первой строки есть одно исключение: проверка файлов `data/` сервера называется `DataFilesTest`, потому что эти файлы — данные, а не код.
 
-Помощник, который нужен тестам **двух модулей и больше**, лежит в **test fixtures** модуля, которому принадлежит то, что он подменяет; помощник, нужный одному модулю, лежит в его `src/test`. Это то же правило, что и для [кода и компонентов](modules.md#куда-класть-новый-код):
+Помощник, который нужен тестам **двух модулей и больше**, лежит рядом с модулем, которому принадлежит то, что он подменяет: в его модуле `testing` (у модулей на Kotlin Multiplatform нет test fixtures) или в его **test fixtures** (у Android-модулей). Помощник, нужный одному модулю, лежит в его тестах. Это то же правило, что и для [кода и компонентов](modules.md#куда-класть-новый-код):
 
 | Помощник | Модуль | Source set |
 |---|---|---|
-| `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain` | `src/testFixtures` |
-| `TestCartRepository` | `:crossfeature:domain` | `src/testFixtures` |
-| `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics` | `src/testFixtures` |
+| `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain:testing` | `src/commonMain` |
+| `TestCartRepository` | `:crossfeature:domain:testing` | `src/commonMain` |
+| `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics:testing` | `src/commonMain` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
-| `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
+| `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
 | `databaseTest {}` | `:crossfeature:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
-Модуль подключает чужие fixtures через `testImplementation(testFixtures(project(":crossfeature:domain")))`. Fixtures видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только на `api` и `implementation`, так что тестовые зависимости соблюдают уровни по договорённости, а не под контролем проверки.
+Модуль подключает чужих помощников через `testImplementation(project(":crossfeature:domain:testing"))` (в KMP-модуле — `commonTest.dependencies { implementation(…) }`) или через `testImplementation(testFixtures(project(…)))` для test fixtures Android-модуля. Помощники видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только на `api` и `implementation`, так что тестовые зависимости соблюдают уровни по договорённости, а не под контролем проверки.
 
 &nbsp;
 
@@ -92,7 +95,7 @@ fun `discount is the promo code percent of the subtotal`() {
 | [Robolectric](https://robolectric.org) | классы Android на JVM, только для кода, который без них не работает (Room, скриншоты) |
 | [Roborazzi](https://github.com/takahirom/roborazzi) | скриншот-тесты, созданные из функций `@Preview` |
 
-Раннер скрыт за `kotlin.test`, поэтому тесты выглядят одинаково, хотя раннеры разные: JUnit4 в приложении (Robolectric работает только с ним) и JUnit5 на сервере.
+Раннер скрыт за `kotlin.test`, поэтому тесты выглядят одинаково, хотя раннеры разные: JUnit4 в приложении на JVM (Robolectric работает только с ним), собственный раннер Kotlin/Native на iOS и JUnit5 на сервере.
 
 &nbsp;
 
@@ -151,7 +154,7 @@ Robolectric работает на `targetSdk` приложения: `shoppingapp
 
 ### Сеть
 
-`networkTest {}` даёт тесту `TestServer` и API-класс на клиенте с настройками приложения ([`serverApi`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt)), поэтому JSON читается тем же `networkJson`. `TestServer` отвечает ответами из очереди и записывает запросы; он работает на `MockEngine` из Ktor, без настоящего HTTP-сервера:
+`networkTest {}` даёт тесту `TestServer` и API-класс на клиенте с настройками приложения ([`serverApi`](../../../core/network/src/commonMain/kotlin/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt)), поэтому JSON читается тем же `networkJson`. `TestServer` отвечает ответами из очереди и записывает запросы; он работает на `MockEngine` из Ktor, без настоящего HTTP-сервера:
 
 ```kotlin
 @Test
@@ -173,7 +176,7 @@ fun `client error returns HttpError with its code`() = networkTest(::TestApi) { 
 | Сервер | принимает образцы запросов по их адресам и отвечает в точности так, как в образцах ответов |
 | Приложение | отправляет запросы в точности как в образцах, по их адресам, и разбирает образцы ответов в ожидаемые модели |
 
-Если на одной стороне поменять формат или адрес, тесты этой стороны будут падать, пока не обновят образец, а затем и другую сторону. Сборка объявляет папку входными данными каждой тестовой задачи, поэтому после правки образца тесты запускаются заново.
+Если на одной стороне поменять формат или адрес, тесты этой стороны будут падать, пока не обновят образец, а затем и другую сторону. Сборка объявляет папку входными данными каждой тестовой задачи, поэтому после правки образца тесты запускаются заново. У iOS-тестов нет системных свойств, поэтому `:core:network:testing` получает путь к папке константой, которую создаёт сборка, а образцы на обеих платформах читаются через kotlinx-io.
 
 ### Скриншоты
 

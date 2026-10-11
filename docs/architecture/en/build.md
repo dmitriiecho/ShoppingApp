@@ -15,10 +15,11 @@ Each kind of module has its own plugin:
 | `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | the Android setup, targetSdk, signing, R8 in release, the app's languages for the system settings, the [module graph check](modules.md#the-check), dependency analysis, warnings as errors in CI |
 | `shoppingapp.android.library` | every Android library | compileSdk, minSdk, Java, dependency analysis, warnings as errors in CI, the test setup: unit tests on debug only, [Robolectric](testing.md#database), the [API samples](testing.md#contract-with-the-server), the message of a failed test in the log |
 | `shoppingapp.android.compose` | modules with Compose | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
-| `shoppingapp.metro` | modules with DI, Android or pure Kotlin | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
+| `shoppingapp.metro` | modules with DI, Android or KMP | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
 | `shoppingapp.android.feature` | every `:feature:<name>:impl` | library + Compose + Metro + serialization, navigation and lifecycle libraries |
 | `shoppingapp.android.screenshots` | every library module with previews | [screenshot tests](testing.md#screenshots) generated from the previews |
-| `shoppingapp.jvm.library` | `:crossfeature:domain`, `:crossfeature:analytics`, `:core:config` | Kotlin JVM without Android, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
+| `shoppingapp.kmp.library` | every Kotlin Multiplatform library: `:core:config`, `:core:network`, `:crossfeature:domain`, `:crossfeature:analytics` and their `testing` modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
+| `shoppingapp.kmp.compose` | KMP modules with Compose (for now the iOS app's `:apps:shop:app`) | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
 
 As a result, a module's build file is short:
 
@@ -82,11 +83,12 @@ Comments are in English and short, and they explain what the code itself can't: 
 
 ## CI
 
-[`ci.yml`](../../../.github/workflows/ci.yml) runs on every pull request and every push to `main` and the variant branches (`kmp-ready`, `kmp`), unless only the docs, READMEs or their images changed. Two jobs run in parallel:
+[`ci.yml`](../../../.github/workflows/ci.yml) runs on every pull request and every push to `main` and the variant branches (`kmp-ready`, `kmp`), unless only the docs, READMEs or their images changed. Three jobs run in parallel:
 
 | Job | Steps |
 |---|---|
 | Android | code style (ktlint) → dependencies between modules (`assertModuleGraph`) → unused dependencies (`buildHealth`) → problems in code and resources (Android lint with Slack's Compose rules) → [unit and screenshot tests](testing.md) → both apps compile |
+| iOS | the common tests of every KMP module on the iOS simulator → the [iOS app](#ios-app) builds (`xcodebuild`); on macOS, free for a public repository |
 | Server | code style (ktlint) → API and data files (tests, including checks of `data/*.json` and the [API samples](testing.md#contract-with-the-server)) |
 
 - **Every check runs even if an earlier one failed**, so a single run shows all the problems.
@@ -95,7 +97,7 @@ Comments are in English and short, and they explain what the code itself can't: 
 - **Lint exceptions** are in the root [`lint.xml`](../../../lint.xml): the CompositionLocals the project creates on purpose, and "a newer version is available", which is downgraded to a hint so that a new library release doesn't fail CI.
 - **Failed tests show up where you'd look anyway**: each one, with its message and line, at the top of the run's page; next to the test's line in the PR's Files changed tab, if the test file is part of the PR; and in a summary below, with the full stack trace ([action-junit-report](https://github.com/mikepenz/action-junit-report), the only action in CI not made by GitHub or Gradle).
 - **The Android runtime that Robolectric uses is cached** between runs: Robolectric downloads it into `~/.m2`, which Gradle's cache doesn't cover.
-- **A job is stopped after 30 minutes** (the server job after 15) instead of hanging for GitHub's default 6 hours.
+- **A job is stopped after 30 minutes** (the iOS job after 45, the server job after 15) instead of hanging for GitHub's default 6 hours.
 
 A new push to a pull request cancels that pull request's run if it is still in progress, while runs on branches always finish:
 
@@ -122,6 +124,16 @@ The debug key is stored in the repo ([`build-logic/debug.keystore`](../../../bui
 
 &nbsp;
 
+## iOS app
+
+The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). It shows the screens of `:apps:shop:app`, which builds them into the `ShopApp` framework: the project's Run Script calls Gradle (`embedAndSignAppleFrameworkForXcode`) before Xcode compiles the Swift code. For now the app shows a placeholder; the screens move to the shared code step by step on the `kmp` branch.
+
+- **It builds on a Mac** with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator, or use the iOS run configuration of Android Studio with the Kotlin Multiplatform plugin.
+- **On Linux the shared code compiles for iOS too** (`./gradlew compileKotlinIosSimulatorArm64`), which catches most iOS errors before CI; linking the framework, the iOS tests and the Xcode build need a Mac, so CI runs them on macOS.
+- **iOS 18.5 or later**, iPhone, portrait only. The server is reached over plain HTTP by its IP address, which iOS allows only with `NSAllowsArbitraryLoads` in `Info.plist`.
+
+&nbsp;
+
 ## Commands
 
 The main commands, from the project root:
@@ -131,8 +143,10 @@ The main commands, from the project root:
 ./gradlew :apps:uikit:installDebug     # install the UI kit
 ./gradlew assertModuleGraph            # check dependencies between modules
 ./gradlew buildHealth                  # find unused dependencies
-./gradlew lintDebug                    # run Android lint on every module
-./gradlew test                         # run the app tests, including screenshots
+./gradlew lintDebug lintAndroidMain    # run Android lint on the Android and the KMP modules
+./gradlew test testAndroidHostTest     # run the app tests on the JVM, including screenshots
+./gradlew compileKotlinIosSimulatorArm64  # compile the shared code for iOS (on Linux too)
+./gradlew iosSimulatorArm64Test        # run the common tests on the iOS simulator (on a Mac)
 ./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # record new screenshots after a UI change
 cd server && ./gradlew test            # run the server tests
 ```
@@ -140,6 +154,6 @@ cd server && ./gradlew test            # run the server tests
 The same checks as CI, with warnings treated as errors:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug test :apps:shop:assembleDebug :apps:uikit:assembleDebug
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain test testAndroidHostTest :apps:shop:assembleDebug :apps:uikit:assembleDebug
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

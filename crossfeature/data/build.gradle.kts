@@ -25,8 +25,8 @@ dependencies {
 
     ksp(libs.androidx.room.compiler)
 
-    testImplementation(testFixtures(project(":crossfeature:domain")))
-    testImplementation(testFixtures(project(":core:network")))
+    testImplementation(project(":crossfeature:domain:testing"))
+    testImplementation(project(":core:network:testing"))
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.assertk)
     testImplementation(libs.robolectric)

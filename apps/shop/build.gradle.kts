@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
     implementation(libs.kermit)
+    // Request logging, in debug only (HttpLogging in src/debug).
+    debugImplementation(libs.ktor.client.logging)
 
     // Lets Coil load product images over the network (ProductImage in :crossfeature:ui), with the app's HttpClient:
     // ShoppingApp creates Coil's image loader. asProvider(): coil is also a prefix of coil-network-ktor3.

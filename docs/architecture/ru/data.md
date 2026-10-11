@@ -79,7 +79,7 @@ sealed interface ProductLoadResult {
 
 Так же устроены `PromoCodeCheckResult` и `CartValidationResult`.
 
-Превращать исключения в такие результаты помогают две обёртки. [`networkCall`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkResult.kt) возвращает `NetworkResult`, а репозиторий превращает его в результат своей операции:
+Превращать исключения в такие результаты помогают две обёртки. [`networkCall`](../../../core/network/src/commonMain/kotlin/krio/systemdesign/shoppingapp/core/network/NetworkResult.kt) возвращает `NetworkResult`, а репозиторий превращает его в результат своей операции:
 
 ```kotlin
 when (val result = networkCall { api.getProduct(productId) }) {
@@ -140,7 +140,7 @@ internal class NetworkDelayPlugin(private val appSettingsRepository: AppSettings
 
 ## Цены
 
-Все цены указаны в долларах США и хранятся как число центов типа `Long`: `14999` — это $149.99. Те же числа используются в JSON сервера, DTO, Room и доменных моделях. Показываются цены только через [`formatPrice`](../../../shared/ui/src/main/java/krio/systemdesign/shoppingapp/shared/ui/text/PriceFormat.kt) и всегда в американском формате, на каком бы языке ни работал телефон:
+Все цены указаны в долларах США и хранятся как число центов типа `Long`: `14999` — это $149.99. Те же числа используются в JSON сервера, DTO, Room и доменных моделях. Показываются цены только через [`formatPrice`](../../../crossfeature/ui/src/main/java/krio/systemdesign/shoppingapp/crossfeature/ui/text/PriceFormat.kt) и всегда в американском формате, на каком бы языке ни работал телефон:
 
 ```kotlin
 fun formatPrice(amountCents: Long): String =

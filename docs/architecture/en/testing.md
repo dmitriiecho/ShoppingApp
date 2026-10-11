@@ -11,12 +11,15 @@ Tests run on the JVM, without an emulator. They cover the app's logic, ViewModel
 Each build runs its own tests, and CI runs both sets on every pull request:
 
 ```sh
-./gradlew test                # the app: every module, once, including screenshots
-cd server && ./gradlew test   # the server
+./gradlew test testAndroidHostTest   # the app on the JVM: every module, once, including screenshots
+./gradlew iosSimulatorArm64Test      # the common tests on the iOS simulator (on a Mac; CI runs them on macOS)
+cd server && ./gradlew test          # the server
 ./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # records new screenshots after a UI change
 ```
 
-Android modules run their unit tests in the debug variant only (`shoppingapp.android.library` turns off the release ones, which would just repeat them), so a single `test` covers Android and pure Kotlin modules alike.
+- **Android modules** run their unit tests with `test`, in the debug variant only: `shoppingapp.android.library` turns off the release ones, which would just repeat them.
+- **Kotlin Multiplatform modules** have no `test` task. Their tests in `src/commonTest` run on both platforms: on the JVM with `testAndroidHostTest`, on the iOS simulator with `iosSimulatorArm64Test`. Tests that need Android classes (Robolectric) live in `src/androidHostTest` and run only on the JVM.
+- **Test names in `src/commonTest`** can't contain commas, dots, colons or semicolons: Kotlin/Native doesn't accept them in a function name.
 
 &nbsp;
 
@@ -60,21 +63,21 @@ Everything made for tests starts with `Test` or `test`, as in Now in Android. Th
 
 The only exception to the first row is the server's check of its `data/` files, `DataFilesTest`, since those files are data, not code.
 
-A helper used by the tests of **two or more modules** lives in the **test fixtures** of the module that owns what it replaces; a helper used by a single module stays in that module's `src/test`. It's the same rule as for [code and components](modules.md#where-new-code-goes):
+A helper used by the tests of **two or more modules** lives next to the module that owns what it replaces: in its `testing` module (Kotlin Multiplatform modules, which have no test fixtures) or in its **test fixtures** (Android modules). A helper used by a single module stays in that module's tests. It's the same rule as for [code and components](modules.md#where-new-code-goes):
 
 | Helper | Module | Source set |
 |---|---|---|
-| `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain` | `src/testFixtures` |
-| `TestCartRepository` | `:crossfeature:domain` | `src/testFixtures` |
-| `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics` | `src/testFixtures` |
+| `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain:testing` | `src/commonMain` |
+| `TestCartRepository` | `:crossfeature:domain:testing` | `src/commonMain` |
+| `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics:testing` | `src/commonMain` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
-| `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
+| `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
 | `databaseTest {}` | `:crossfeature:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
-A module uses another module's fixtures through `testImplementation(testFixtures(project(":crossfeature:domain")))`. Fixtures see only the public API of their module. The [module graph check](modules.md#the-check) looks only at `api` and `implementation`, so test dependencies follow the levels by convention rather than being enforced.
+A module uses another module's helpers through `testImplementation(project(":crossfeature:domain:testing"))` (in a KMP module, `commonTest.dependencies { implementation(…) }`), or `testImplementation(testFixtures(project(…)))` for an Android module's fixtures. Helpers see only the public API of their module. The [module graph check](modules.md#the-check) looks only at `api` and `implementation`, so test dependencies follow the levels by convention rather than being enforced.
 
 &nbsp;
 
@@ -92,7 +95,7 @@ The libraries all work in Kotlin Multiplatform, except the ones for Android-only
 | [Robolectric](https://robolectric.org) | Android classes on the JVM, only for code that can't run without them (Room, screenshots) |
 | [Roborazzi](https://github.com/takahirom/roborazzi) | screenshot tests generated from the `@Preview` functions |
 
-The test runner is hidden behind `kotlin.test`, so tests look the same even though the runners differ: JUnit4 in the app (Robolectric works only with it) and JUnit5 on the server.
+The test runner is hidden behind `kotlin.test`, so tests look the same even though the runners differ: JUnit4 in the app on the JVM (Robolectric works only with it), Kotlin/Native's own on iOS, and JUnit5 on the server.
 
 &nbsp;
 
@@ -151,7 +154,7 @@ Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` gives t
 
 ### Network
 
-`networkTest {}` gives the test a `TestServer` and an API class built on a client with the app's settings ([`serverApi`](../../../core/network/src/main/java/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt)), so it reads JSON with the same `networkJson`. `TestServer` answers with the queued responses and records the requests; it runs on Ktor's `MockEngine`, without a real HTTP server:
+`networkTest {}` gives the test a `TestServer` and an API class built on a client with the app's settings ([`serverApi`](../../../core/network/src/commonMain/kotlin/krio/systemdesign/shoppingapp/core/network/NetworkJson.kt)), so it reads JSON with the same `networkJson`. `TestServer` answers with the queued responses and records the requests; it runs on Ktor's `MockEngine`, without a real HTTP server:
 
 ```kotlin
 @Test
@@ -173,7 +176,7 @@ The app and the server each describe the API's JSON in their own DTOs. What keep
 | Server | it accepts the request samples at their addresses and responds exactly like the response samples |
 | App | it sends requests exactly like the request samples, to their addresses, and parses the response samples into the expected models |
 
-Changing a format or an address on one side fails that side's tests until the sample, and then the other side, are updated too. The build declares the folder as an input of every test task, so editing a sample makes the tests run again.
+Changing a format or an address on one side fails that side's tests until the sample, and then the other side, are updated too. The build declares the folder as an input of every test task, so editing a sample makes the tests run again. iOS tests have no system properties, so `:core:network:testing` gets the folder's path as a constant generated by the build, and the samples are read with kotlinx-io on both platforms.
 
 ### Screenshots
 

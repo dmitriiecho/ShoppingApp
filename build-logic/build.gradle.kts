@@ -15,6 +15,8 @@ dependencies {
     compileOnly(libs.metro.gradlePlugin)
     // And the screenshot tests' settings (AndroidScreenshotsConventionPlugin).
     compileOnly(libs.roborazzi.gradlePlugin)
+    // And the Compose Multiplatform settings (KmpComposeConventionPlugin).
+    compileOnly(libs.compose.multiplatform.gradlePlugin)
     // Lets convention plugins use the type-safe libs accessors (gradle/gradle#15383).
     implementation(files(LibrariesForLibs::class.java.protectionDomain.codeSource.location))
 }
@@ -45,9 +47,13 @@ gradlePlugin {
             id = libs.plugins.shoppingapp.android.screenshots.get().pluginId
             implementationClass = "AndroidScreenshotsConventionPlugin"
         }
-        register("jvmLibrary") {
-            id = libs.plugins.shoppingapp.jvm.library.get().pluginId
-            implementationClass = "JvmLibraryConventionPlugin"
+        register("kmpLibrary") {
+            id = libs.plugins.shoppingapp.kmp.library.get().pluginId
+            implementationClass = "KmpLibraryConventionPlugin"
+        }
+        register("kmpCompose") {
+            id = libs.plugins.shoppingapp.kmp.compose.get().pluginId
+            implementationClass = "KmpComposeConventionPlugin"
         }
     }
 }

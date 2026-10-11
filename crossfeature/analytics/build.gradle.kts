@@ -1,11 +1,13 @@
-// Pure Kotlin, so it can move to KMP commonMain as is.
 plugins {
-    alias(libs.plugins.shoppingapp.jvm.library)
-    // TestAnalytics and TestAnalyticsClient, which the features' tests use too.
-    `java-test-fixtures`
+    alias(libs.plugins.shoppingapp.kmp.library)
 }
 
-dependencies {
-    testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.assertk)
+kotlin {
+    sourceSets {
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.assertk)
+            implementation(project(":crossfeature:analytics:testing"))
+        }
+    }
 }
