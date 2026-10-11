@@ -54,8 +54,6 @@ class MainActivity : ComponentActivity() {
         if (savedInstanceState == null && !launchedFromRecents) {
             intent.data?.let(viewModel::openDeepLink)
         }
-        // Cleared so NavHost doesn't also open it on its own, with a different back stack.
-        intent.data = null
     }
 
     @Composable

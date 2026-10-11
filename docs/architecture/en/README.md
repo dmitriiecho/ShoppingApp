@@ -48,7 +48,7 @@ The main libraries and tools:
 | Language and UI | Kotlin 2.4, Jetpack Compose, Material 3 |
 | Structure | MVVM with a single UI state per screen and one-off effects |
 | DI | Metro (compile-time, a Kotlin compiler plugin) |
-| Navigation | Navigation Compose with type-safe routes |
+| Navigation | Navigation 3: back stacks of `@Serializable` keys that the app owns |
 | Data | Room, DataStore, Paging 3 |
 | Network | Ktor Client (OkHttp engine), kotlinx.serialization, Coil for images |
 | Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; minSdk 26, targetSdk 37, compileSdk 37 |

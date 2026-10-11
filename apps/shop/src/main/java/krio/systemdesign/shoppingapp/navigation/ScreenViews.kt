@@ -4,12 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation3.runtime.NavKey
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.navigation.cartAnalyticsScreen
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.navigation.catalogAnalyticsScreen
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.navigation.checkoutAnalyticsScreen
@@ -18,26 +17,26 @@ import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.navigati
 import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
 
 // Reports the screen the user sees: after each navigation and each time the app comes back to the foreground,
-// since the current back stack entry is replayed when collection restarts. Screens without a name aren't reported.
+// since snapshotFlow starts with the current screen when collection restarts. Screens without a name aren't reported.
 @Composable
 internal fun ObserveScreenViews(
-    navController: NavController,
+    state: NavigationState,
     onScreenView: (AnalyticsScreen) -> Unit,
 ) {
     val currentOnScreenView by rememberUpdatedState(onScreenView)
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(navController, lifecycleOwner) {
+    LaunchedEffect(state, lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            navController.currentBackStackEntryFlow.collect { entry ->
-                entry.destination.analyticsScreen()?.let(currentOnScreenView)
+            snapshotFlow { state.currentKey }.collect { key ->
+                key.analyticsScreen()?.let(currentOnScreenView)
             }
         }
     }
 }
 
-private fun NavDestination.analyticsScreen(): AnalyticsScreen? = catalogAnalyticsScreen()
+private fun NavKey.analyticsScreen(): AnalyticsScreen? = catalogAnalyticsScreen()
     ?: cartAnalyticsScreen()
     ?: promoAnalyticsScreen()
     ?: checkoutAnalyticsScreen()
     ?: settingsAnalyticsScreen()
-    ?: AnalyticsScreen.ProductDetails.takeIf { hasRoute<CartProductRoute>() }
+    ?: AnalyticsScreen.ProductDetails.takeIf { this is CartProductRoute }

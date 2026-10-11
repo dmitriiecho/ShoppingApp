@@ -1,8 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.navigation
 
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation3.runtime.NavKey
 import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
 
-fun NavDestination.promoAnalyticsScreen(): AnalyticsScreen? =
-    if (hasRoute<PromoRoutes.PromoCode>()) AnalyticsScreen.PromoCode else null
+fun NavKey.promoAnalyticsScreen(): AnalyticsScreen? =
+    if (this is PromoRoutes.PromoCode) AnalyticsScreen.PromoCode else null

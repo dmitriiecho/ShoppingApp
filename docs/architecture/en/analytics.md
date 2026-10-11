@@ -75,9 +75,9 @@ launchCartAction(
 Screen views are reported by the app, not by the screens ([`ScreenViews.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/ScreenViews.kt)). It watches the back stack and reports the screen on top after every navigation and every return to the foreground. Each feature names its own screens, and a screen without a name isn't reported:
 
 ```kotlin
-fun NavDestination.catalogAnalyticsScreen(): AnalyticsScreen? = when {
-    hasRoute<CatalogRoutes.ProductList>() -> AnalyticsScreen.CatalogList
-    hasRoute<CatalogRoutes.ProductDetails>() -> AnalyticsScreen.ProductDetails
+fun NavKey.catalogAnalyticsScreen(): AnalyticsScreen? = when (this) {
+    CatalogRoutes.ProductList -> AnalyticsScreen.CatalogList
+    is CatalogRoutes.ProductDetails -> AnalyticsScreen.ProductDetails
     else -> null
 }
 ```

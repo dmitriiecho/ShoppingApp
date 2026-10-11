@@ -18,7 +18,7 @@ Folders are levels, bottom to top: `core/` → `shared/` → `feature/` → `app
 | Level | Module | Holds |
 |---|---|---|
 | `core/`: knows nothing about the shop | `:core:designsystem` | theme, icons, generic components (cards, buttons, fields, bars, notices, placeholders, dialogs, screen states); only generic strings ("Close", "Retry") |
-| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes, `injectedViewModel` |
+| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes and `sharedElementScreen()`, `injectedViewModel`, `Navigator` |
 | | `:core:network`, `:core:config` | the HTTP client; the server and deep link addresses |
 | `shared/`: shop code used by two or more features | `:shared:domain` | models, repository interfaces, use cases; pure Kotlin |
 | | `:shared:data` | their implementations; only `:apps:shop` depends on it |
@@ -30,7 +30,7 @@ Folders are levels, bottom to top: `core/` → `shared/` → `feature/` → `app
 | | `:apps:uikit` | a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data |
 
 - **The rules are checked** by `./gradlew assertModuleGraph` (a CI step too) against `build-logic/src/main/kotlin/ModuleGraphRules.kt`. A new kind of dependency between modules needs a rule there.
-- **An `impl` module shows only what `:apps:shop` wires**, all in `presentation/navigation`: the routes graph, `graph()`, analytics screen names. Everything else is `internal`.
+- **An `impl` module shows only what `:apps:shop` wires**, all in `presentation/navigation`: the start key (`CartRoutes.Cart`), `entries()`, `xxxNavKeys` (to save the back stack), deep link matchers, analytics screen names. Everything else is `internal`.
 
 More: [`modules.md`](docs/architecture/en/modules.md).
 
@@ -67,7 +67,7 @@ A package follows the module:
 - **`:shared:analytics`**: in the root `Analytics` (what features call), `AnalyticsEvent`, `analyticsParams`; in `system/` `AnalyticsSystem` (the systems the app uses) and `AnalyticsSystemClient` (code that sends to one system); in `event/<topic>/` events sent by two or more features.
 - **An event** is a class `XxxAnalyticsEvent` that lists its `systems`. It lives in the feature that sends it (`impl/.../analytics/`), or in `:shared:analytics` when two or more features send it.
 - **Clients**: `:apps:shop` (`analytics/`) holds one client class per `AnalyticsSystem`.
-- **Screen views** are sent by `:apps:shop` (`navigation/ScreenViews.kt`). Each feature names its screens in `NavDestination.xxxAnalyticsScreen()`; a screen with no name isn't reported.
+- **Screen views** are sent by `:apps:shop` (`navigation/ScreenViews.kt`). Each feature names its screens in `NavKey.xxxAnalyticsScreen()`; a screen with no name isn't reported.
 
 ### DI
 

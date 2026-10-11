@@ -6,9 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import krio.systemdesign.shoppingapp.R
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.bars.AppNavigationBarItem
@@ -19,33 +16,30 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ShoppingCar
 
 @Composable
 fun AppBottomBar(
-    navController: NavHostController,
+    currentTab: BottomTab,
+    onTabClick: (BottomTab) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AppBottomBarViewModel = injectedViewModel(),
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    // No bottom bar outside tabs (checkout).
-    val currentTab = navBackStackEntry?.destination?.bottomTab() ?: return
-
     val cartItemCount by viewModel.cartItemCount.collectAsStateWithLifecycle()
 
     NavigationBar(modifier = modifier) {
         AppNavigationBarItem(
-            selected = currentTab.hasRoute<BottomNavRoutes.CatalogTab>(),
-            onClick = { navController.navigateToBottomTab(BottomNavRoutes.CatalogTab) },
+            selected = currentTab == BottomTab.Catalog,
+            onClick = { onTabClick(BottomTab.Catalog) },
             icon = AppIcons.HomeFilled,
             label = stringResource(R.string.app_bottom_bar_catalog),
         )
         AppNavigationBarItem(
-            selected = currentTab.hasRoute<BottomNavRoutes.CartTab>(),
-            onClick = { navController.navigateToBottomTab(BottomNavRoutes.CartTab) },
+            selected = currentTab == BottomTab.Cart,
+            onClick = { onTabClick(BottomTab.Cart) },
             icon = AppIcons.ShoppingCartFilled,
             label = stringResource(R.string.app_bottom_bar_cart),
             badgeCount = cartItemCount,
         )
         AppNavigationBarItem(
-            selected = currentTab.hasRoute<BottomNavRoutes.SettingsTab>(),
-            onClick = { navController.navigateToBottomTab(BottomNavRoutes.SettingsTab) },
+            selected = currentTab == BottomTab.Settings,
+            onClick = { onTabClick(BottomTab.Settings) },
             icon = AppIcons.SettingsFilled,
             label = stringResource(R.string.app_bottom_bar_settings),
         )

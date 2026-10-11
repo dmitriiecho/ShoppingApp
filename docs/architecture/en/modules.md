@@ -75,12 +75,13 @@ In an `impl` module, only what the app wires up is public, and all of it lives i
 
 ```kotlin
 object CatalogRoutes {
-    @Serializable data object Graph                          // the app opens the feature
-    @Serializable internal data object ProductList
-    @Serializable internal data class ProductDetails(/* ... */) : ProductDetailsRoute
+    @Serializable data object ProductList : NavKey                       // public: the app opens the feature with it
+    @Serializable internal data class ProductDetails(/* ... */) : ProductDetailsRoute, NavKey
 }
 
-fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Unit) { /* ... */ }
+fun CatalogNavigationScope.entries(navigator: Navigator, onClose: () -> Unit) { /* ... */ }
+val catalogNavKeys: SerializersModule                                    // the keys, to save the back stack
+val catalogDeepLinks: List<UriDeepLinkMatcher<NavKey>>                   // the links the feature opens
 ```
 
 &nbsp;

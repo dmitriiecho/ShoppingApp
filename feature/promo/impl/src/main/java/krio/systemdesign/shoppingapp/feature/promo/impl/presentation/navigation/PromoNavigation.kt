@@ -1,42 +1,27 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.navigation
 
-import androidx.compose.runtime.remember
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import krio.systemdesign.shoppingapp.core.composeutils.navigation.Navigator
 import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.PromoCodeScreen
 import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
-class PromoNavigationScope internal constructor(internal val builder: NavGraphBuilder)
+class PromoNavigationScope internal constructor(internal val scope: EntryProviderScope<NavKey>)
 
-val NavGraphBuilder.promo: PromoNavigationScope
+val EntryProviderScope<NavKey>.promo: PromoNavigationScope
     get() = PromoNavigationScope(this)
 
-// resultKey works like a request code: the caller passes it and gets the applied code back under it,
-// so one promo graph can serve several callers. onClose leaves without a result.
-fun PromoNavigationScope.graph(
-    navController: NavController,
+// onClose leaves without a result; onCloseWithResult returns the applied code under the caller's resultKey,
+// so one promo feature can serve several callers.
+fun PromoNavigationScope.entries(
+    navigator: Navigator,
     onClose: () -> Unit,
     onCloseWithResult: (resultKey: String, promoCode: PromoCode) -> Unit,
 ) {
-    builder.navigation<PromoRoutes.Graph>(
-        startDestination = PromoRoutes.PromoCode,
-    ) {
-        composable<PromoRoutes.PromoCode> { entry ->
-            // resultKey is an argument of the graph route, not of this screen's route.
-            val parentEntry = remember(entry) {
-                navController.getBackStackEntry<PromoRoutes.Graph>()
-            }
-            val resultKey = parentEntry.toRoute<PromoRoutes.Graph>().resultKey
-
-            PromoCodeScreen(
-                onBack = onClose,
-                onCloseWithResult = { promoCode ->
-                    onCloseWithResult(resultKey, promoCode)
-                },
-            )
-        }
+    scope.entry<PromoRoutes.PromoCode> { key ->
+        PromoCodeScreen(
+            onBack = onClose,
+            onCloseWithResult = { promoCode -> onCloseWithResult(key.resultKey, promoCode) },
+        )
     }
 }

@@ -34,10 +34,11 @@ dependencies {
     // Not used by the app's code: the app's graph (AppGraph) sees only the contributions of its direct dependencies.
     implementation(project(":core:network"))
 
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
     implementation(libs.kermit)
@@ -46,4 +47,7 @@ dependencies {
     // ShoppingApp creates Coil's image loader. asProvider(): coil is also a prefix of coil-network-ktor3.
     implementation(libs.coil.asProvider())
     implementation(libs.coil.network.ktor3)
+
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertk)
 }

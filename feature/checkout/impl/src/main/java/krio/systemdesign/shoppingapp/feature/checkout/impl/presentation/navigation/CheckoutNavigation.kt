@@ -1,25 +1,20 @@
 package krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import krio.systemdesign.shoppingapp.core.composeutils.navigation.Navigator
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.CheckoutScreen
 
-class CheckoutNavigationScope internal constructor(internal val builder: NavGraphBuilder)
+class CheckoutNavigationScope internal constructor(internal val scope: EntryProviderScope<NavKey>)
 
-val NavGraphBuilder.checkout: CheckoutNavigationScope
+val EntryProviderScope<NavKey>.checkout: CheckoutNavigationScope
     get() = CheckoutNavigationScope(this)
 
-fun CheckoutNavigationScope.graph(
-    navController: NavController,
+fun CheckoutNavigationScope.entries(
+    navigator: Navigator,
     onClose: () -> Unit,
 ) {
-    builder.navigation<CheckoutRoutes.Graph>(
-        startDestination = CheckoutRoutes.Checkout,
-    ) {
-        composable<CheckoutRoutes.Checkout> {
-            CheckoutScreen(onClose = onClose)
-        }
+    scope.entry<CheckoutRoutes.Checkout> {
+        CheckoutScreen(onClose = onClose)
     }
 }
