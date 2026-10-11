@@ -5,13 +5,13 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import krio.systemdesign.shoppingapp.contract.CartItemDTO
+import krio.systemdesign.shoppingapp.contract.CartValidationRequestDTO
+import krio.systemdesign.shoppingapp.contract.CartValidationResponseDTO
+import krio.systemdesign.shoppingapp.contract.ItemIssueDTO
+import krio.systemdesign.shoppingapp.contract.PromoCodeDTO
 import krio.systemdesign.shoppingapp.server.data.Product
 import krio.systemdesign.shoppingapp.server.data.findPromoCode
-import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
-import krio.systemdesign.shoppingapp.server.dto.CartValidationRequestDTO
-import krio.systemdesign.shoppingapp.server.dto.CartValidationResponseDTO
-import krio.systemdesign.shoppingapp.server.dto.ItemIssueDTO
-import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
 fun Route.cartRoutes(
     products: List<Product>,

@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.shoppingapp.metro)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -17,6 +16,7 @@ room {
 dependencies {
     implementation(project(":crossfeature:domain"))
     implementation(project(":core:network"))
+    implementation(libs.shoppingapp.contract)
 
     // api: the app's graph is built in :apps:shop and sees the database and DataStore types of DataModule.
     api(libs.androidx.room.runtime)

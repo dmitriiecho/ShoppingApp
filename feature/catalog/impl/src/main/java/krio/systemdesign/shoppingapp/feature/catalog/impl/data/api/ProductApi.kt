@@ -6,8 +6,8 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.appendPathSegments
-import krio.systemdesign.shoppingapp.feature.catalog.impl.data.dto.ProductDTO
-import krio.systemdesign.shoppingapp.feature.catalog.impl.data.dto.ProductsPageDTO
+import krio.systemdesign.shoppingapp.contract.ProductDTO
+import krio.systemdesign.shoppingapp.contract.ProductsPageDTO
 
 @Inject
 internal class ProductApi(private val client: HttpClient) {

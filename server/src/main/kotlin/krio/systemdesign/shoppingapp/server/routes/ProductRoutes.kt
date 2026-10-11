@@ -4,9 +4,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import krio.systemdesign.shoppingapp.contract.ProductDTO
+import krio.systemdesign.shoppingapp.contract.ProductsPageDTO
 import krio.systemdesign.shoppingapp.server.data.Product
-import krio.systemdesign.shoppingapp.server.dto.ProductDTO
-import krio.systemdesign.shoppingapp.server.dto.ProductsPageDTO
 
 // Pages by number, as agreed with ProductApi in :feature:catalog:impl: products are never removed,
 // and new ones are appended to products.json. Products come in file order.

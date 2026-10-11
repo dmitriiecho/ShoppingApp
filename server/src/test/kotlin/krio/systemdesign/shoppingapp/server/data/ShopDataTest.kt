@@ -4,7 +4,7 @@ import assertk.assertFailure
 import assertk.assertions.isInstanceOf
 import assertk.tableOf
 import kotlin.test.Test
-import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
+import krio.systemdesign.shoppingapp.contract.PromoCodeDTO
 import krio.systemdesign.shoppingapp.server.testProduct
 import krio.systemdesign.shoppingapp.server.testShopData
 

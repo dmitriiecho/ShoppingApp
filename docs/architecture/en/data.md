@@ -46,7 +46,7 @@ In the same way, `CartValidation` knows what the last cart check found and what 
 
 ## Repositories
 
-A repository interface uses only domain models. Room entities and server DTOs stay inside `data` and are converted with `toDomain()` / `toEntity()`.
+A repository interface uses only domain models. Room entities and server DTOs stay inside `data` and are converted with `toDomain()` / `toEntity()`; the DTOs themselves come from the [contract](#the-contract-with-the-server).
 
 A repository with a single source works with it directly: `ProductRepositoryImpl` calls `ProductApi`, `AppSettingsRepositoryImpl` calls DataStore.
 
@@ -155,7 +155,7 @@ There is no `Money` value class. It could only live in the domain: `:crossfeatur
 
 The server's API and data rules are described in [`server/README.md`](../../../server/README.md). Here is what the app relies on:
 
-- **The DTOs are copies of the server's**, each with a comment pointing to its counterpart. The JSON samples in [`server/api-samples/`](../../../server/api-samples/) keep the two sides in sync, and [tests on both sides](testing.md#contract-with-the-server) check against them.
+- **The app and the server use the same DTOs**, from [`contract/`](../../../contract/): a Kotlin Multiplatform build (JVM and iOS) that both include, so a field changed on one side doesn't compile on the other until it is changed there too. The mappers to domain models stay in the app's `data` packages. The JSON samples in [`server/api-samples/`](../../../server/api-samples/) still check what the types can't: the addresses of the requests and each side's `Json` settings ([tests on both sides](testing.md#contract-with-the-server)).
 - **Paging by page number is safe**: the server never removes products and always adds new ones at the end. A renamed product can still move around in search results, so `ProductPagingSource` drops duplicate ids.
 - **The server decides whether checkout can open.** The cart shows what its last check found, but "Checkout" opens only after a fresh `Success` from the server.
 - **A promo code's discount percentage never changes**, so the server only checks that the code still exists.

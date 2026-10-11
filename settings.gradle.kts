@@ -33,6 +33,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "ShoppingApp"
 
+// The API formats shared with the server (contract/), a separate build so the server can include it too.
+includeBuild("contract")
+
 include(":apps:shop")
 include(":apps:shop:app")
 include(":apps:uikit")

@@ -4,8 +4,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import krio.systemdesign.shoppingapp.contract.PromoCodeDTO
 import krio.systemdesign.shoppingapp.server.data.findPromoCode
-import krio.systemdesign.shoppingapp.server.dto.PromoCodeDTO
 
 fun Route.promoCodeRoutes(promoCodes: List<PromoCodeDTO>) {
     // In promo-codes.json order. The app is a test stand and shows them as a hint on the promo code screen.

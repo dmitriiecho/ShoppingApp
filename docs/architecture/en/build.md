@@ -60,6 +60,7 @@ All versions are in [`gradle/libs.versions.toml`](../../../gradle/libs.versions.
 - **Repositories are declared only in `settings.gradle.kts`**: a module that declares its own breaks the build. Google Maven is used only for Google and AndroidX artifacts.
 - **The configuration cache, build cache and parallel builds are enabled.** The build cache stores task outputs, and CI reuses them from earlier runs as well.
 - **The server is a separate build** with its own wrapper and version catalog; the app's settings don't include it.
+- **The contract (`contract/`) is a separate build too**, included by both the app and the server (`includeBuild`): the API's DTOs, in Kotlin Multiplatform for the server's JVM and the app's Android and iOS. It reads the app's version catalog, so both sides build it with the same Kotlin.
 
 &nbsp;
 

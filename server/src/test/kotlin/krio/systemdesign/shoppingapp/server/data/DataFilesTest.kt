@@ -11,9 +11,9 @@ import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.reflect.KClass
 import kotlin.test.Test
-import krio.systemdesign.shoppingapp.server.dto.CartItemDTO
-import krio.systemdesign.shoppingapp.server.dto.CartValidationResponseDTO
-import krio.systemdesign.shoppingapp.server.dto.ItemIssueDTO
+import krio.systemdesign.shoppingapp.contract.CartItemDTO
+import krio.systemdesign.shoppingapp.contract.CartValidationResponseDTO
+import krio.systemdesign.shoppingapp.contract.ItemIssueDTO
 import krio.systemdesign.shoppingapp.server.serverTest
 import krio.systemdesign.shoppingapp.server.validateCart
 

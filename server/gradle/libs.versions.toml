@@ -1,7 +1,7 @@
 # A separate build, so the app's catalog (gradle/libs.versions.toml in the root) doesn't apply here.
 [versions]
-# Ktor 3.6.0 is built with Kotlin 2.3.21 and kotlinx.serialization 1.11.0.
-kotlin = "2.3.21"
+# Same Kotlin as the app (gradle/libs.versions.toml in the root): the contract (../contract) is built with it.
+kotlin = "2.4.21"
 ktor = "3.6.0"
 kotlinxSerialization = "1.11.0"
 logback = "1.6.5"
@@ -11,6 +11,8 @@ ktlint = "1.8.0"
 assertk = "0.28.1"
 
 [libraries]
+# The included build ../contract, so no version.
+shoppingapp-contract = { group = "krio.systemdesign.shoppingapp", name = "contract" }
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
 ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
