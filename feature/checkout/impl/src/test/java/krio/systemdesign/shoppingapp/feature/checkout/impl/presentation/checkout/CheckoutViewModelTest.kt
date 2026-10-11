@@ -15,16 +15,16 @@ import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.typeText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
+import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
+import krio.systemdesign.shoppingapp.crossfeature.analytics.sent
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testCart
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testCartItem
+import krio.systemdesign.shoppingapp.crossfeature.domain.repository.TestCartRepository
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.feature.checkout.impl.R
 import krio.systemdesign.shoppingapp.feature.checkout.impl.analytics.OrderPlacedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.checkout.impl.domain.usecase.PlaceOrderUseCase
-import krio.systemdesign.shoppingapp.shared.analytics.TestAnalytics
-import krio.systemdesign.shoppingapp.shared.analytics.sent
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.shared.domain.model.testCart
-import krio.systemdesign.shoppingapp.shared.domain.model.testCartItem
-import krio.systemdesign.shoppingapp.shared.domain.repository.TestCartRepository
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 
 class CheckoutViewModelTest {
 

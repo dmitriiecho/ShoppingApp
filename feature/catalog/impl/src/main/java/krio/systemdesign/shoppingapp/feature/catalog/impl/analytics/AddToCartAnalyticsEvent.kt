@@ -1,9 +1,9 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.analytics
 
-import krio.systemdesign.shoppingapp.shared.analytics.AnalyticsEvent
-import krio.systemdesign.shoppingapp.shared.analytics.analyticsParams
-import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
-import krio.systemdesign.shoppingapp.shared.analytics.system.AnalyticsSystem
+import krio.systemdesign.shoppingapp.crossfeature.analytics.AnalyticsEvent
+import krio.systemdesign.shoppingapp.crossfeature.analytics.analyticsParams
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.AnalyticsScreen
+import krio.systemdesign.shoppingapp.crossfeature.analytics.system.AnalyticsSystem
 
 internal class AddToCartAnalyticsEvent(
     productId: String,

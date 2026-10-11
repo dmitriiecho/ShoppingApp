@@ -15,11 +15,11 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Inventory2
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ProductionQuantityLimits
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Sell
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.crossfeature.ui.order.TotalBottomBar
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartUiState
 import krio.systemdesign.shoppingapp.feature.cart.ui.CartChangeNotice
-import krio.systemdesign.shoppingapp.shared.ui.order.TotalBottomBar
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 
 @Composable
 internal fun CartBottomBar(

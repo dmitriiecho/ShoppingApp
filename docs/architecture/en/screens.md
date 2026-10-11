@@ -187,7 +187,7 @@ val uiState = combine(
 ) { cartOrder, payment, latestSubmission -> CheckoutUiState(/* ... */) }
 ```
 
-Models from `:shared:domain` are unstable for Compose: that module doesn't use the Compose compiler, and Compose annotations don't belong there. This matters for lists whose items change one at a time, like the cart: there the screen gets its own UI model with plain values, `CartUiState.Item`. A screen that shows the data as is, like checkout, keeps the domain models.
+Models from `:crossfeature:domain` are unstable for Compose: that module doesn't use the Compose compiler, and Compose annotations don't belong there. This matters for lists whose items change one at a time, like the cart: there the screen gets its own UI model with plain values, `CartUiState.Item`. A screen that shows the data as is, like checkout, keeps the domain models.
 
 List callbacks take the item's id instead of capturing the item. That way every card gets the same lambdas, and tapping "+" redraws only that card:
 
@@ -215,6 +215,6 @@ Phones show the app in portrait only, by design. Android 16 and later rotates it
 
 ## Components and previews
 
-A screen is assembled from ready-made components: every styled element comes from `:core:designsystem`, `:shared:ui` or the feature's `ui` module (see [Modules](modules.md#where-new-code-goes)). The screen doesn't style Material components itself.
+A screen is assembled from ready-made components: every styled element comes from `:core:designsystem`, `:crossfeature:ui` or the feature's `ui` module (see [Modules](modules.md#where-new-code-goes)). The screen doesn't style Material components itself.
 
 Previews live next to the code they show, are private, and come in light and dark themes. A screen file previews the states that look different at the whole-screen level; a section's states are previewed in the section's file. Every preview is also a [screenshot test](testing.md#screenshots), so any state with a preview is protected from unintended changes.

@@ -17,12 +17,12 @@ import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
+import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Cart
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveCartUseCase
 import krio.systemdesign.shoppingapp.feature.checkout.impl.R
 import krio.systemdesign.shoppingapp.feature.checkout.impl.analytics.OrderPlacedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.checkout.impl.domain.usecase.PlaceOrderUseCase
-import krio.systemdesign.shoppingapp.shared.analytics.Analytics
-import krio.systemdesign.shoppingapp.shared.domain.model.Cart
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)

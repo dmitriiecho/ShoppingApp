@@ -20,8 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.LocalViewModelFactory
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.SystemBarsAppearance
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.navigation.AppNavHost
-import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 
 class MainActivity : ComponentActivity() {
 

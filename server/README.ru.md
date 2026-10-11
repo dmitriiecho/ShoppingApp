@@ -6,7 +6,7 @@
 
 - **Адрес:** `http://2.56.204.151:8080/` (домена нет, поэтому нет и HTTPS).
 - **Сборка:** отдельная Gradle-сборка, которая не подключена в `settings.gradle.kts` приложения.
-- **Форматы** совпадают с DTO приложения: `ProductDTO` в `feature/catalog`, `PromoCodeDTO` в `feature/promo`, `CartValidationDTO.kt` в `:shared:data`.
+- **Форматы** совпадают с DTO приложения: `ProductDTO` в `feature/catalog`, `PromoCodeDTO` в `feature/promo`, `CartValidationDTO.kt` в `:crossfeature:data`.
 
 ## API
 

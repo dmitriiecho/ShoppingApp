@@ -13,19 +13,19 @@ Machine-specific setup (SDK paths, emulator access) lives in `CLAUDE.local.md`, 
 
 ## Modules
 
-Folders are levels, bottom to top: `core/` → `shared/` → `feature/` → `apps/`. A module never depends on a level above its own.
+Folders are levels, bottom to top: `core/` → `crossfeature/` → `feature/` → `apps/`. A module never depends on a level above its own.
 
 | Level | Module | Holds |
 |---|---|---|
 | `core/`: knows nothing about the shop | `:core:designsystem` | theme, icons, generic components (cards, buttons, fields, bars, notices, placeholders, dialogs, screen states); only generic strings ("Close", "Retry") |
 | | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes, `injectedViewModel` |
 | | `:core:network`, `:core:config` | the HTTP client; the server and deep link addresses |
-| `shared/`: shop code used by two or more features | `:shared:domain` | models, repository interfaces, use cases; pure Kotlin |
-| | `:shared:data` | their implementations; only `:apps:shop` depends on it |
-| | `:shared:ui` | shop components (`ProductCard`, `CartQuantityControl`, `OrderTotals`, `formatPrice`, ...) built from `:core:designsystem`; take plain values, never `:shared:domain` models |
-| | `:shared:analytics` | analytics, pure Kotlin (see [Analytics](#analytics)) |
+| `crossfeature/`: shop code used by two or more features | `:crossfeature:domain` | models, repository interfaces, use cases; pure Kotlin |
+| | `:crossfeature:data` | their implementations; only `:apps:shop` depends on it |
+| | `:crossfeature:ui` | shop components (`ProductCard`, `CartQuantityControl`, `OrderTotals`, `formatPrice`, ...) built from `:core:designsystem`; take plain values, never `:crossfeature:domain` models |
+| | `:crossfeature:analytics` | analytics, pure Kotlin (see [Analytics](#analytics)) |
 | `feature/<name>/`: catalog, cart, promo, checkout, settings | `:feature:<name>:impl` | screens, ViewModels, the feature's own use cases and navigation |
-| | `:feature:<name>:ui` | shop components only this feature uses, on plain values; depends only on `:core:designsystem` and `:shared:ui`; exists only when the feature has such components (not in settings) |
+| | `:feature:<name>:ui` | shop components only this feature uses, on plain values; depends only on `:core:designsystem` and `:crossfeature:ui`; exists only when the feature has such components (not in settings) |
 | `apps/`: nothing depends on them | `:apps:shop` | the shop: entry point, navigation host |
 | | `:apps:uikit` | a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data |
 
@@ -36,14 +36,14 @@ More: [`modules.md`](docs/architecture/en/modules.md).
 
 ## Where code goes
 
-Code used by one feature stays in that feature; it moves to `shared/` when a second feature needs it. `:core:compose-utils` takes only generic glue: anything visual goes to `:core:designsystem`, anything that knows the shop to `shared/`.
+Code used by one feature stays in that feature; it moves to `crossfeature/` when a second feature needs it. `:core:compose-utils` takes only generic glue: anything visual goes to `:core:designsystem`, anything that knows the shop to `crossfeature/`.
 
 A styled component goes by the same rule:
 
 | The component | Module |
 |---|---|
 | would fit any other app unchanged | `:core:designsystem` |
-| knows shop words (product, cart, promo, price, stock), two or more features use it | `:shared:ui` |
+| knows shop words (product, cart, promo, price, stock), two or more features use it | `:crossfeature:ui` |
 | knows shop words, one feature uses it | `:feature:<name>:ui` |
 
 Features don't style Material components themselves.
@@ -64,8 +64,8 @@ A package follows the module:
 
 ### Analytics
 
-- **`:shared:analytics`**: in the root `Analytics` (what features call), `AnalyticsEvent`, `analyticsParams`; in `system/` `AnalyticsSystem` (the systems the app uses) and `AnalyticsSystemClient` (code that sends to one system); in `event/<topic>/` events sent by two or more features.
-- **An event** is a class `XxxAnalyticsEvent` that lists its `systems`. It lives in the feature that sends it (`impl/.../analytics/`), or in `:shared:analytics` when two or more features send it.
+- **`:crossfeature:analytics`**: in the root `Analytics` (what features call), `AnalyticsEvent`, `analyticsParams`; in `system/` `AnalyticsSystem` (the systems the app uses) and `AnalyticsSystemClient` (code that sends to one system); in `event/<topic>/` events sent by two or more features.
+- **An event** is a class `XxxAnalyticsEvent` that lists its `systems`. It lives in the feature that sends it (`impl/.../analytics/`), or in `:crossfeature:analytics` when two or more features send it.
 - **Clients**: `:apps:shop` (`analytics/`) holds one client class per `AnalyticsSystem`.
 - **Screen views** are sent by `:apps:shop` (`navigation/ScreenViews.kt`). Each feature names its screens in `NavDestination.xxxAnalyticsScreen()`; a screen with no name isn't reported.
 
@@ -76,18 +76,18 @@ A package follows the module:
 - **A class to inject** gets `@Inject` on the class, not on the constructor. A class with `@ContributesBinding`, `@ContributesIntoSet` or `@ContributesIntoMap` needs no `@Inject`: the contribution implies it.
 - **An implementation of an interface** binds itself with `@ContributesBinding(AppScope::class)` and stays `internal`. Only a third-party type needs a `@Provides` in a `@BindingContainer @ContributesTo(AppScope::class)` object, and that object is public (Metro skips internal ones; the build fails on them).
 - **A ViewModel** is `@ViewModelKey @ContributesIntoMap(ViewModelScope::class)`, takes `SavedStateHandle` in its constructor if it needs one, and a screen gets it with `injectedViewModel()` (`:core:compose-utils`, `viewmodel/`).
-- **The graph sees only the contributions on `:apps:shop`'s compile classpath**: a module with contributions is its direct dependency, and the types in a module's bindings are `api` (as Room and DataStore in `:shared:data`).
+- **The graph sees only the contributions on `:apps:shop`'s compile classpath**: a module with contributions is its direct dependency, and the types in a module's bindings are `api` (as Room and DataStore in `:crossfeature:data`).
 
 ### UI kit
 
 - Its first screen has three groups: design system, shared components, feature components.
-- Sections live in `apps/uikit/.../sections/{designsystem,shared,feature}/` and mirror the packages one to one: `core/designsystem/.../components/buttons` ↔ `ButtonsSection`, `shared/ui/.../product` ↔ `ProductSection`, `:feature:cart:ui` ↔ `CartFeatureSection`.
+- Sections live in `apps/uikit/.../sections/{designsystem,crossfeature,feature}/` and mirror the packages one to one: `core/designsystem/.../components/buttons` ↔ `ButtonsSection`, `crossfeature/ui/.../product` ↔ `ProductSection`, `:feature:cart:ui` ↔ `CartFeatureSection`.
 - A new component gets a sample in the section of its package. Design system samples use neutral texts, not the shop's.
 
 ### Tests
 
 - Tests follow [`testing.md`](docs/architecture/en/testing.md).
-- A test helper (`TestXxx` stand-in, `testXxx()` builder, `xxxTest {}` entry function) used by tests of two or more modules lives in the test fixtures of the module that owns what it replaces (`:shared:analytics` → `TestAnalyticsClient`). One used by a single module stays in its `src/test`.
+- A test helper (`TestXxx` stand-in, `testXxx()` builder, `xxxTest {}` entry function) used by tests of two or more modules lives in the test fixtures of the module that owns what it replaces (`:crossfeature:analytics` → `TestAnalyticsClient`). One used by a single module stays in its `src/test`.
 - The prefix `Fake` is taken by real code: the analytics stand-ins in `:apps:shop`.
 
 ### build-logic
@@ -98,7 +98,7 @@ A package follows the module:
 |---|---|
 | `:feature:<name>:impl` | `libs.plugins.shoppingapp.android.feature` |
 | `:feature:<name>:ui` | `library` + `compose` + `screenshots` |
-| pure Kotlin (`:shared:domain`, `:shared:analytics`, `:core:config`) | `jvm.library` |
+| pure Kotlin (`:crossfeature:domain`, `:crossfeature:analytics`, `:core:config`) | `jvm.library` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
 
 A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit` has none of its own.

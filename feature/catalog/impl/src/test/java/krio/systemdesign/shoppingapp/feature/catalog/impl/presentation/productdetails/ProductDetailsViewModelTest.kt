@@ -17,20 +17,20 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
+import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
+import krio.systemdesign.shoppingapp.crossfeature.analytics.sent
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testProduct
+import krio.systemdesign.shoppingapp.crossfeature.domain.repository.TestCartRepository
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.AddToCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.RemoveFromCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.UpdateCartQuantityUseCase
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.PRODUCT_IMAGE_TRANSITION_MILLIS
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.ProductViewedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductLoadResult
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.TestProductRepository
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.usecase.GetProductUseCase
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.navigation.ProductDetailsRoute
-import krio.systemdesign.shoppingapp.shared.analytics.TestAnalytics
-import krio.systemdesign.shoppingapp.shared.analytics.sent
-import krio.systemdesign.shoppingapp.shared.domain.model.testProduct
-import krio.systemdesign.shoppingapp.shared.domain.repository.TestCartRepository
-import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
-import krio.systemdesign.shoppingapp.shared.ui.product.PRODUCT_IMAGE_TRANSITION_MILLIS
 
 // advanceTimeBy and runCurrent are still marked experimental.
 @OptIn(ExperimentalCoroutinesApi::class)

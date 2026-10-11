@@ -21,12 +21,12 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ProductionQ
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Sell
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.ui.cart.CartQuantityControl
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductCard
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductImageKey
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartUiState
-import krio.systemdesign.shoppingapp.shared.ui.cart.CartQuantityControl
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductCard
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductImageKey
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 
 // The callbacks take the item or its id instead of capturing it in the list: then the list passes the same
 // lambdas to every card on each change, and a card whose item didn't change is skipped.

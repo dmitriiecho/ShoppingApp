@@ -58,10 +58,10 @@ ShoppingApp — пример Android-приложения на современ�
 Модули разложены по четырём уровням, и сборка следит, чтобы ни один модуль не зависел от уровня выше своего:
 
 ```text
-apps/     shop, uikit                                    приложения
-feature/  catalog, cart, promo, checkout, settings       каждая фича — это ui + impl
-shared/   domain, data, ui, analytics                    код магазина, нужный двум фичам и больше
-core/     designsystem, compose-utils, network, config   ничего не знает о магазине
+apps/         shop, uikit                                    приложения
+feature/      catalog, cart, promo, checkout, settings       каждая фича — это ui + impl
+crossfeature/ domain, data, ui, analytics                    код магазина, нужный двум фичам и больше
+core/         designsystem, compose-utils, network, config   ничего не знает о магазине
 ```
 
 Как устроены модули, навигация, экраны, данные, аналитика и сборка, рассказывает [документация по архитектуре](docs/architecture/ru/README.md).

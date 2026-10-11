@@ -64,17 +64,17 @@ fun `discount is the promo code percent of the subtotal`() {
 
 | Помощник | Модуль | Source set |
 |---|---|---|
-| `testProduct()`, `testCartItem()`, `testCart()` | `:shared:domain` | `src/testFixtures` |
-| `TestCartRepository` | `:shared:domain` | `src/testFixtures` |
-| `TestAnalyticsClient`, `TestAnalytics` | `:shared:analytics` | `src/testFixtures` |
+| `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain` | `src/testFixtures` |
+| `TestCartRepository` | `:crossfeature:domain` | `src/testFixtures` |
+| `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics` | `src/testFixtures` |
 | `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network` | `src/testFixtures` |
-| `databaseTest {}` | `:shared:data` | `src/test` |
+| `databaseTest {}` | `:crossfeature:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
-Модуль подключает чужие fixtures через `testImplementation(testFixtures(project(":shared:domain")))`. Fixtures видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только на `api` и `implementation`, так что тестовые зависимости соблюдают уровни по договорённости, а не под контролем проверки.
+Модуль подключает чужие fixtures через `testImplementation(testFixtures(project(":crossfeature:domain")))`. Fixtures видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только на `api` и `implementation`, так что тестовые зависимости соблюдают уровни по договорённости, а не под контролем проверки.
 
 &nbsp;
 

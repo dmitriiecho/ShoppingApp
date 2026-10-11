@@ -1,7 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.checkout.impl.domain.usecase
 
 import dev.zacsweers.metro.Inject
-import krio.systemdesign.shoppingapp.shared.domain.repository.CartRepository
+import krio.systemdesign.shoppingapp.crossfeature.domain.repository.CartRepository
 
 @Inject
 internal class PlaceOrderUseCase(private val cartRepository: CartRepository) {

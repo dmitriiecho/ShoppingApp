@@ -6,7 +6,7 @@ import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
-import krio.systemdesign.shoppingapp.shared.analytics.Analytics
+import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
 
 // Public: Metro rejects an internal binding container (nonPublicContributionSeverity in MetroConventionPlugin).
 @BindingContainer

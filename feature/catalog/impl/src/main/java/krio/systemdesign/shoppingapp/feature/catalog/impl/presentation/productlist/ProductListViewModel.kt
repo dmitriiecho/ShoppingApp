@@ -30,19 +30,19 @@ import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
+import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.AnalyticsScreen
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.cart.CartQuantityChangedAnalyticsEvent
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.cart.RemoveFromCartAnalyticsEvent
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.AddToCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.RemoveFromCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.AddToCartAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.catalog.impl.analytics.ProductsSearchedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.usecase.GetProductsUseCase
-import krio.systemdesign.shoppingapp.shared.analytics.Analytics
-import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
-import krio.systemdesign.shoppingapp.shared.analytics.event.cart.CartQuantityChangedAnalyticsEvent
-import krio.systemdesign.shoppingapp.shared.analytics.event.cart.RemoveFromCartAnalyticsEvent
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
-import krio.systemdesign.shoppingapp.shared.domain.usecase.AddToCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)

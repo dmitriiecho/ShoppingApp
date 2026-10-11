@@ -26,11 +26,11 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Confirmatio
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Error
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.PromoCodeUiState
 import krio.systemdesign.shoppingapp.feature.promo.ui.PromoCodeCoupon
 import krio.systemdesign.shoppingapp.feature.promo.ui.PromoCodeCouponPlaceholder
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 @Composable
 internal fun AvailablePromoCodesHint(

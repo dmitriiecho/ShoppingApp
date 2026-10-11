@@ -34,14 +34,14 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.CartItem
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.checkout.impl.R
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.components.CheckoutBottomBar
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.components.DeliveryAddressSection
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.components.OrderItemsSection
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.components.OrderTotalSection
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.checkout.components.PaymentSection
-import krio.systemdesign.shoppingapp.shared.domain.model.CartItem
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 @Composable
 internal fun CheckoutScreen(

@@ -15,10 +15,10 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Receipt
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.ui.order.OrderTotals
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartUiState
-import krio.systemdesign.shoppingapp.shared.ui.order.OrderTotals
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 
 // The same card as the order total at checkout: the promo notice, a divider, then the totals.
 @Composable

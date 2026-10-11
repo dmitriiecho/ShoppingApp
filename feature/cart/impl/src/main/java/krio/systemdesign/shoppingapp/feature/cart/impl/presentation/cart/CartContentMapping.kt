@@ -1,10 +1,10 @@
 package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart
 
 import kotlinx.collections.immutable.toImmutableList
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Cart
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.canAddOneMore
 import krio.systemdesign.shoppingapp.feature.cart.impl.domain.model.CartValidation
-import krio.systemdesign.shoppingapp.shared.domain.model.Cart
-import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
-import krio.systemdesign.shoppingapp.shared.domain.model.canAddOneMore
 
 // Lays the cart and its last validation out for the screen. The rules (what's still unfixed, which stock
 // limits "+", whether the promo code gives a discount) are CartValidation's; this only maps its answers.

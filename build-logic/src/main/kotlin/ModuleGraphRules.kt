@@ -13,17 +13,17 @@ internal fun Project.configureModuleGraphRules() {
         allowed = arrayOf(
             // core knows nothing about the shop.
             """:core:.* -> :core:.*""",
-            // shared builds on core; within shared only data uses the domain (ui takes plain values).
-            """:shared:(domain|ui|analytics) -> :core:.*""",
-            """:shared:data -> :(core:.*|shared:domain)""",
+            // crossfeature builds on core; within crossfeature only data uses the domain (ui takes plain values).
+            """:crossfeature:(domain|ui|analytics) -> :core:.*""",
+            """:crossfeature:data -> :(core:.*|crossfeature:domain)""",
             // A feature's ui uses only the design system and the shared components.
-            """:feature:\w+:ui -> :(core:designsystem|shared:ui)""",
-            // A feature's impl: core, shared without data, and its own ui, never another feature.
-            """:feature:\w+:impl -> :(core:.*|shared:(domain|ui|analytics))""",
+            """:feature:\w+:ui -> :(core:designsystem|crossfeature:ui)""",
+            // A feature's impl: core, crossfeature without data, and its own ui, never another feature.
+            """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
             """:feature:(\w+):impl -> :feature:\1:ui""",
             // The UI kit shows the UI modules only.
-            """:apps:uikit -> :(core:designsystem|shared:ui|feature:\w+:ui)""",
-            """:apps:shop -> :(core|shared|feature):.*""",
+            """:apps:uikit -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
+            """:apps:shop -> :(core|crossfeature|feature):.*""",
         )
     }
 }

@@ -8,11 +8,11 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import assertk.assertions.prop
 import kotlin.test.Test
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testCart
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testCartItem
 import krio.systemdesign.shoppingapp.feature.cart.impl.domain.model.CartValidation
-import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.shared.domain.model.testCart
-import krio.systemdesign.shoppingapp.shared.domain.model.testCartItem
 
 class CartContentMappingTest {
 

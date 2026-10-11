@@ -9,11 +9,11 @@ import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import java.io.IOException
 import kotlin.test.Test
-import krio.systemdesign.shoppingapp.shared.domain.model.CartValidationResult
-import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.shared.domain.model.testCart
-import krio.systemdesign.shoppingapp.shared.domain.model.testCartItem
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.CartValidationResult
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testCart
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testCartItem
 
 class CartValidationTest {
 

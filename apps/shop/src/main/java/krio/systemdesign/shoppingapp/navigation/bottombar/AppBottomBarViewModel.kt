@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveCartUseCase
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)

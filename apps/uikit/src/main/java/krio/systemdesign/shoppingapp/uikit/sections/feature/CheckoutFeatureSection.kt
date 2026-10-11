@@ -3,8 +3,8 @@ package krio.systemdesign.shoppingapp.uikit.sections.feature
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.checkout.ui.OrderItemRow
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.uikit.R
 import krio.systemdesign.shoppingapp.uikit.samples.SampleData
 import krio.systemdesign.shoppingapp.uikit.samples.SampleList

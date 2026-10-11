@@ -121,7 +121,7 @@ internal enum class UiKitSection(
     ),
     ;
 
-    // Where the section's components live: :core:designsystem, :shared:ui or a feature's ui module.
+    // Where the section's components live: :core:designsystem, :crossfeature:ui or a feature's ui module.
     // @Keep for the same reason: it travels in a navigation route too.
     @Keep
     enum class Group(

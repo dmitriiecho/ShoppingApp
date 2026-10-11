@@ -13,10 +13,10 @@ import kotlinx.serialization.json.Json
 import krio.systemdesign.shoppingapp.core.composeutils.animation.LocalNavAnimatedVisibilityScope
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartEvent
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartScreen
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart.CartViewModel
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 class CartNavigationScope internal constructor(internal val builder: NavGraphBuilder)
 

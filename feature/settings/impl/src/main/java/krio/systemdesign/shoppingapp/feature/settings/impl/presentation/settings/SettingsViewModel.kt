@@ -15,6 +15,9 @@ import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.NetworkDelay
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveThemeModeUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.R
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.AddNotEnoughStockProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.AddPriceChangedNotEnoughStockProductToCartUseCase
@@ -23,9 +26,6 @@ import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.AddUna
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.ObserveNetworkDelayUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.SetNetworkDelayUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.SetThemeModeUseCase
-import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
-import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveThemeModeUseCase
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)

@@ -1,9 +1,9 @@
 package krio.systemdesign.shoppingapp.feature.cart.impl.domain.model
 
-import krio.systemdesign.shoppingapp.shared.domain.model.Cart
-import krio.systemdesign.shoppingapp.shared.domain.model.CartItem
-import krio.systemdesign.shoppingapp.shared.domain.model.CartValidationResult
-import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Cart
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.CartItem
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.CartValidationResult
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ItemIssue
 
 // What the cart's last validation found, kept until the next one. Unlike CartValidationResult, the server's
 // answer to one request, this is what the app remembers from it. The server reports the changes; whether

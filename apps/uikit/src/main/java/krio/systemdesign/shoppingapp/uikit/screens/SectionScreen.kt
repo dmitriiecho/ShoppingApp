@@ -11,6 +11,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.uikit.sections.crossfeature.CartSection
+import krio.systemdesign.shoppingapp.uikit.sections.crossfeature.OrderSection
+import krio.systemdesign.shoppingapp.uikit.sections.crossfeature.ProductSection
+import krio.systemdesign.shoppingapp.uikit.sections.crossfeature.PromoSection
 import krio.systemdesign.shoppingapp.uikit.sections.designsystem.BarsSection
 import krio.systemdesign.shoppingapp.uikit.sections.designsystem.ButtonsSection
 import krio.systemdesign.shoppingapp.uikit.sections.designsystem.CardsSection
@@ -25,10 +29,6 @@ import krio.systemdesign.shoppingapp.uikit.sections.feature.CartFeatureSection
 import krio.systemdesign.shoppingapp.uikit.sections.feature.CatalogFeatureSection
 import krio.systemdesign.shoppingapp.uikit.sections.feature.CheckoutFeatureSection
 import krio.systemdesign.shoppingapp.uikit.sections.feature.PromoFeatureSection
-import krio.systemdesign.shoppingapp.uikit.sections.shared.CartSection
-import krio.systemdesign.shoppingapp.uikit.sections.shared.OrderSection
-import krio.systemdesign.shoppingapp.uikit.sections.shared.ProductSection
-import krio.systemdesign.shoppingapp.uikit.sections.shared.PromoSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

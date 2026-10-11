@@ -29,12 +29,12 @@ import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewMod
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.NetworkDelay
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.feature.settings.impl.R
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.NetworkDelayItem
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.TestActions
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.ThemeModeItem
-import krio.systemdesign.shoppingapp.shared.domain.model.NetworkDelay
-import krio.systemdesign.shoppingapp.shared.domain.model.ThemeMode
 
 @Composable
 internal fun SettingsScreen(

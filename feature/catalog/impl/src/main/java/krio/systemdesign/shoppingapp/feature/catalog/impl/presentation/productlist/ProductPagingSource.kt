@@ -3,8 +3,8 @@ package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productl
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import java.util.concurrent.ConcurrentHashMap
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.usecase.GetProductsUseCase
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
 
 internal class ProductPagingSource(
     private val getProducts: GetProductsUseCase,

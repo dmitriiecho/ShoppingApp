@@ -38,15 +38,15 @@ import krio.systemdesign.shoppingapp.core.designsystem.components.notices.ErrorB
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.canAddOneMore
+import krio.systemdesign.shoppingapp.crossfeature.ui.cart.CartQuantityControl
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductCard
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductCardPlaceholder
+import krio.systemdesign.shoppingapp.crossfeature.ui.product.ProductImageKey
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.ui.OutOfStockButton
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
-import krio.systemdesign.shoppingapp.shared.domain.model.canAddOneMore
-import krio.systemdesign.shoppingapp.shared.ui.cart.CartQuantityControl
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductCard
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductCardPlaceholder
-import krio.systemdesign.shoppingapp.shared.ui.product.ProductImageKey
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 
 // The product cards, with an error banner on top when the page above failed and "Back to top" at the bottom.
 @Composable

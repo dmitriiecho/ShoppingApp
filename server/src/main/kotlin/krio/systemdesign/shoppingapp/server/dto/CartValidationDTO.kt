@@ -3,7 +3,7 @@ package krio.systemdesign.shoppingapp.server.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// Same format as CartValidationDTO.kt in :shared:data.
+// Same format as CartValidationDTO.kt in :crossfeature:data.
 @Serializable
 data class CartValidationRequestDTO(
     val items: List<CartItemDTO>,
@@ -18,7 +18,7 @@ data class CartItemDTO(
     val quantity: Int,
 )
 
-// Mirrors CartValidationResult and ItemIssue in :shared:domain.
+// Mirrors CartValidationResult and ItemIssue in :crossfeature:domain.
 @Serializable
 data class CartValidationResponseDTO(
     val issues: List<ItemIssueDTO>,

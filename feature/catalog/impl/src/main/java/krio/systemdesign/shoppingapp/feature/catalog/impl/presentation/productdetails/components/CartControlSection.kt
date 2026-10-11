@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.ui.cart.CartQuantityControl
+import krio.systemdesign.shoppingapp.crossfeature.ui.cart.CartQuantityControlPlaceholder
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails.ProductDetailsUiState
 import krio.systemdesign.shoppingapp.feature.catalog.ui.OutOfStockButton
-import krio.systemdesign.shoppingapp.shared.ui.cart.CartQuantityControl
-import krio.systemdesign.shoppingapp.shared.ui.cart.CartQuantityControlPlaceholder
 
 // The buttons at the bottom of the screen; a placeholder while the product loads.
 @Composable

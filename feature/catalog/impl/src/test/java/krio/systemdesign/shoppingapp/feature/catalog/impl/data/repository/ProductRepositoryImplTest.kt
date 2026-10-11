@@ -7,10 +7,10 @@ import kotlin.test.Test
 import krio.systemdesign.shoppingapp.core.network.apiRequest
 import krio.systemdesign.shoppingapp.core.network.apiSample
 import krio.systemdesign.shoppingapp.core.network.networkTest
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
 import krio.systemdesign.shoppingapp.feature.catalog.impl.data.api.ProductApi
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductLoadResult
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
 
 class ProductRepositoryImplTest {
 

@@ -10,5 +10,5 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
-    implementation(project(":shared:ui"))
+    implementation(project(":crossfeature:ui"))
 }

@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.components.loading.ShimmerPlaceholder
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.catalog.impl.R
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productdetails.ProductDetailsUiState
 import krio.systemdesign.shoppingapp.feature.catalog.ui.ProductInfoPlaceholder
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 
 // The name, price and description under the image; placeholders while the product loads.
 @Composable

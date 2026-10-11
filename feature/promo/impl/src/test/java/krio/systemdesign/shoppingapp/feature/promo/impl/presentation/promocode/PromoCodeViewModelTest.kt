@@ -15,15 +15,15 @@ import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.typeText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
+import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
+import krio.systemdesign.shoppingapp.crossfeature.analytics.sent
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.analytics.PromoCodeRejectedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.repository.TestPromoCodeRepository
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.CheckPromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.GetPromoCodesUseCase
-import krio.systemdesign.shoppingapp.shared.analytics.TestAnalytics
-import krio.systemdesign.shoppingapp.shared.analytics.sent
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
 
 class PromoCodeViewModelTest {
 

@@ -18,7 +18,7 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
-    implementation(project(":shared:ui"))
+    implementation(project(":crossfeature:ui"))
     implementation(project(":feature:catalog:ui"))
     implementation(project(":feature:cart:ui"))
     implementation(project(":feature:promo:ui"))

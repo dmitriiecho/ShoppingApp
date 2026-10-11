@@ -12,10 +12,10 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
 import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.ShoppingBag
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.CartItem
+import krio.systemdesign.shoppingapp.crossfeature.ui.text.formatPrice
 import krio.systemdesign.shoppingapp.feature.checkout.impl.R
 import krio.systemdesign.shoppingapp.feature.checkout.ui.OrderItemRow
-import krio.systemdesign.shoppingapp.shared.domain.model.CartItem
-import krio.systemdesign.shoppingapp.shared.ui.text.formatPrice
 
 @Composable
 internal fun OrderItemsSection(

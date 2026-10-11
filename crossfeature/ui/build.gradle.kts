@@ -1,0 +1,19 @@
+plugins {
+    alias(libs.plugins.shoppingapp.android.library)
+    alias(libs.plugins.shoppingapp.android.compose)
+    alias(libs.plugins.shoppingapp.android.screenshots)
+}
+
+android {
+    namespace = "krio.systemdesign.shoppingapp.crossfeature.ui"
+}
+
+dependencies {
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:compose-utils"))
+
+    implementation(libs.coil.compose)
+
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertk)
+}

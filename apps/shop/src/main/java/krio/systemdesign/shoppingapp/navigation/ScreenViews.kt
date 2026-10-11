@@ -10,12 +10,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.AnalyticsScreen
 import krio.systemdesign.shoppingapp.feature.cart.impl.presentation.navigation.cartAnalyticsScreen
 import krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.navigation.catalogAnalyticsScreen
 import krio.systemdesign.shoppingapp.feature.checkout.impl.presentation.navigation.checkoutAnalyticsScreen
 import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.navigation.promoAnalyticsScreen
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.navigation.settingsAnalyticsScreen
-import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
 
 // Reports the screen the user sees: after each navigation and each time the app comes back to the foreground,
 // since the current back stack entry is replayed when collection restarts. Screens without a name aren't reported.

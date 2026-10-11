@@ -19,6 +19,17 @@ import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
+import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.AnalyticsScreen
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.cart.CartQuantityChangedAnalyticsEvent
+import krio.systemdesign.shoppingapp.crossfeature.analytics.event.cart.RemoveFromCartAnalyticsEvent
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Cart
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.CartValidationResult
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.ItemIssue
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.RemoveFromCartUseCase
+import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.UpdateCartQuantityUseCase
 import krio.systemdesign.shoppingapp.feature.cart.impl.R
 import krio.systemdesign.shoppingapp.feature.cart.impl.analytics.CartClearedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.cart.impl.analytics.CheckoutStartedAnalyticsEvent
@@ -30,17 +41,6 @@ import krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase.ApplyPromo
 import krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase.ClearCartItemsUseCase
 import krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase.RemovePromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.cart.impl.domain.usecase.ValidateCartUseCase
-import krio.systemdesign.shoppingapp.shared.analytics.Analytics
-import krio.systemdesign.shoppingapp.shared.analytics.event.AnalyticsScreen
-import krio.systemdesign.shoppingapp.shared.analytics.event.cart.CartQuantityChangedAnalyticsEvent
-import krio.systemdesign.shoppingapp.shared.analytics.event.cart.RemoveFromCartAnalyticsEvent
-import krio.systemdesign.shoppingapp.shared.domain.model.Cart
-import krio.systemdesign.shoppingapp.shared.domain.model.CartValidationResult
-import krio.systemdesign.shoppingapp.shared.domain.model.ItemIssue
-import krio.systemdesign.shoppingapp.shared.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.shared.domain.usecase.ObserveCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.RemoveFromCartUseCase
-import krio.systemdesign.shoppingapp.shared.domain.usecase.UpdateCartQuantityUseCase
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)

@@ -13,11 +13,11 @@ import assertk.assertions.prop
 import java.io.IOException
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.Product
+import krio.systemdesign.shoppingapp.crossfeature.domain.model.testProduct
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.model.ProductsPage
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.repository.TestProductRepository
 import krio.systemdesign.shoppingapp.feature.catalog.impl.domain.usecase.GetProductsUseCase
-import krio.systemdesign.shoppingapp.shared.domain.model.Product
-import krio.systemdesign.shoppingapp.shared.domain.model.testProduct
 
 class ProductPagingSourceTest {
 

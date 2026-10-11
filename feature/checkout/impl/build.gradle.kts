@@ -9,14 +9,14 @@ android {
 
 dependencies {
     implementation(project(":feature:checkout:ui"))
-    implementation(project(":shared:domain"))
-    implementation(project(":shared:ui"))
-    implementation(project(":shared:analytics"))
+    implementation(project(":crossfeature:domain"))
+    implementation(project(":crossfeature:ui"))
+    implementation(project(":crossfeature:analytics"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:compose-utils"))
 
-    testImplementation(testFixtures(project(":shared:domain")))
-    testImplementation(testFixtures(project(":shared:analytics")))
+    testImplementation(testFixtures(project(":crossfeature:domain")))
+    testImplementation(testFixtures(project(":crossfeature:analytics")))
     testImplementation(testFixtures(project(":core:compose-utils")))
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.assertk)

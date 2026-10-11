@@ -25,10 +25,10 @@ dependencies {
     implementation(project(":feature:promo:impl"))
     implementation(project(":feature:checkout:impl"))
     implementation(project(":feature:settings:impl"))
-    implementation(project(":shared:data"))
-    implementation(project(":shared:domain"))
-    implementation(project(":shared:ui"))
-    implementation(project(":shared:analytics"))
+    implementation(project(":crossfeature:data"))
+    implementation(project(":crossfeature:domain"))
+    implementation(project(":crossfeature:ui"))
+    implementation(project(":crossfeature:analytics"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:compose-utils"))
     // Not used by the app's code: the app's graph (AppGraph) sees only the contributions of its direct dependencies.
@@ -42,7 +42,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.kermit)
 
-    // Lets Coil load product images over the network (ProductImage in :shared:ui), with the app's HttpClient:
+    // Lets Coil load product images over the network (ProductImage in :crossfeature:ui), with the app's HttpClient:
     // ShoppingApp creates Coil's image loader. asProvider(): coil is also a prefix of coil-network-ktor3.
     implementation(libs.coil.asProvider())
     implementation(libs.coil.network.ktor3)

@@ -8,14 +8,14 @@ The app sends events to two analytics systems. Both are fakes that just write to
 
 ## How it is put together
 
-The core of analytics lives in `:shared:analytics`, and the clients for the actual systems live in the app:
+The core of analytics lives in `:crossfeature:analytics`, and the clients for the actual systems live in the app:
 
 | Part | Where | What it does |
 |---|---|---|
-| `AnalyticsEvent` | `:shared:analytics` | a name, typed parameters and the systems the event is sent to |
-| `Analytics` | `:shared:analytics` | passes an event to the clients of the event's systems |
-| `AnalyticsSystem` | `:shared:analytics` | the app's systems: `Insights` (product analytics), `AdTracker` (ads) |
-| `AnalyticsSystemClient` | `:shared:analytics` | code that sends events to one system |
+| `AnalyticsEvent` | `:crossfeature:analytics` | a name, typed parameters and the systems the event is sent to |
+| `Analytics` | `:crossfeature:analytics` | passes an event to the clients of the event's systems |
+| `AnalyticsSystem` | `:crossfeature:analytics` | the app's systems: `Insights` (product analytics), `AdTracker` (ads) |
+| `AnalyticsSystemClient` | `:crossfeature:analytics` | code that sends events to one system |
 | `FakeInsightsClient`, `FakeAdTrackerClient` | `:apps:shop` | one client per system, standing in for SDKs such as Firebase Analytics and AppsFlyer |
 
 A ViewModel calls `analytics.log(event)`, and `Analytics` passes the event only to the clients of the systems that the event lists:
@@ -57,7 +57,7 @@ internal class AddToCartAnalyticsEvent(
 - **The event decides where it goes.** In practice, events are added often while systems rarely change, and the tracking plan specifies where each event goes. A routing table in the app was tried and dropped.
 - **Parameters are typed**: text, number or boolean flag, the only types every system accepts. There is no `Map<String, Any>`.
 - **Names are explicit strings**, so renaming something in the code doesn't change what the systems receive.
-- **An event lives in the feature that sends it** (`impl/…/analytics/`), or in `:shared:analytics` (`event/<topic>/`) when two or more features send it.
+- **An event lives in the feature that sends it** (`impl/…/analytics/`), or in `:crossfeature:analytics` (`event/<topic>/`) when two or more features send it.
 
 &nbsp;
 
@@ -116,6 +116,6 @@ Rejected promo codes are the exception: the code is sent exactly as typed, becau
 
 A few things that might seem obvious were deliberately left out:
 
-- **No `:core:analytics` module.** The list of systems belongs to this app, so events and `Analytics` live in `:shared:analytics`; what would be left for `core` is too small to justify a module.
+- **No `:core:analytics` module.** The list of systems belongs to this app, so events and `Analytics` live in `:crossfeature:analytics`; what would be left for `core` is too small to justify a module.
 - **No `Analytics` interface.** There is only one implementation; tests give it `TestAnalyticsClient` instances, which record what is sent.
 - **No event roles or labels** (product, marketing, ads): an event lists its systems directly.
