@@ -2,26 +2,34 @@ package krio.systemdesign.shoppingapp.uikit.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberDecoratedNavEntries
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import krio.systemdesign.shoppingapp.uikit.screens.GroupListScreen
 import krio.systemdesign.shoppingapp.uikit.screens.SectionListScreen
 import krio.systemdesign.shoppingapp.uikit.screens.SectionScreen
 import krio.systemdesign.shoppingapp.uikit.screens.UiKitSection
 
 @Serializable
-private data object GroupListRoute
+private data object GroupListKey : NavKey
 
 @Serializable
-private data class SectionListRoute(val group: UiKitSection.Group)
+private data class SectionListKey(val group: UiKitSection.Group) : NavKey
 
 @Serializable
-private data class SectionRoute(val section: UiKitSection)
+private data class SectionKey(val section: UiKitSection) : NavKey
 
 @Composable
 internal fun UiKitNavHost(
@@ -29,39 +37,65 @@ internal fun UiKitNavHost(
     onToggleTheme: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = GroupListRoute,
+    val backStack = rememberNavBackStack(navKeysConfiguration, GroupListKey)
+    NavDisplay(
+        entries = entries(backStack, darkTheme, onToggleTheme),
         modifier = modifier,
-        // No transition animation: NavHost's default fade made switching feel slow.
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-    ) {
-        composable<GroupListRoute> {
+        onBack = { backStack.goBack() },
+        // No transition animation: the default fade made switching feel slow.
+        transitionSpec = { EnterTransition.None togetherWith ExitTransition.None },
+        popTransitionSpec = { EnterTransition.None togetherWith ExitTransition.None },
+        predictivePopTransitionSpec = { EnterTransition.None togetherWith ExitTransition.None },
+    )
+}
+
+@Composable
+private fun entries(
+    backStack: NavBackStack<NavKey>,
+    darkTheme: Boolean,
+    onToggleTheme: () -> Unit,
+) = rememberDecoratedNavEntries(
+    backStack = backStack,
+    entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator()),
+    entryProvider = entryProvider {
+        entry<GroupListKey> {
             GroupListScreen(
                 darkTheme = darkTheme,
                 onToggleTheme = onToggleTheme,
-                onOpenGroup = { navController.navigate(SectionListRoute(it)) },
+                onOpenGroup = { backStack.add(SectionListKey(it)) },
             )
         }
-        composable<SectionListRoute> { entry ->
+        entry<SectionListKey> { key ->
             SectionListScreen(
-                group = entry.toRoute<SectionListRoute>().group,
+                group = key.group,
                 darkTheme = darkTheme,
                 onToggleTheme = onToggleTheme,
-                onOpenSection = { navController.navigate(SectionRoute(it)) },
-                onBack = { navController.navigateUp() },
+                onOpenSection = { backStack.add(SectionKey(it)) },
+                onBack = { backStack.goBack() },
             )
         }
-        composable<SectionRoute> { entry ->
+        entry<SectionKey> { key ->
             SectionScreen(
-                section = entry.toRoute<SectionRoute>().section,
+                section = key.section,
                 darkTheme = darkTheme,
                 onToggleTheme = onToggleTheme,
-                // navigateUp, not popBackStack: a double Back tap won't pop the section list and leave a blank screen.
-                onBack = { navController.navigateUp() },
+                onBack = { backStack.goBack() },
             )
+        }
+    },
+)
+
+// Never removes the first screen: a double Back tap won't leave a blank screen.
+private fun NavBackStack<NavKey>.goBack() {
+    if (size > 1) removeAt(lastIndex)
+}
+
+private val navKeysConfiguration = SavedStateConfiguration {
+    serializersModule = SerializersModule {
+        polymorphic(NavKey::class) {
+            subclass(GroupListKey::class)
+            subclass(SectionListKey::class)
+            subclass(SectionKey::class)
         }
     }
 }

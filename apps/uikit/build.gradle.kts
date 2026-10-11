@@ -24,7 +24,8 @@ dependencies {
     implementation(project(":feature:promo:ui"))
     implementation(project(":feature:checkout:ui"))
 
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
