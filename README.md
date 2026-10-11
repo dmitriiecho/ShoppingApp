@@ -15,11 +15,13 @@ ShoppingApp is an example Android app built on a modern stack. The repo contains
 
 The same app is built on three slightly different stacks, each in its own branch:
 
-| Branch | Stack | Download |
-|---|---|---|
-| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android: Hilt, Retrofit + OkHttp, Room, Navigation Compose | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
-| [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp-ready) | Android: Metro, Ktor, Room, Navigation Compose, Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
-| `kmp` | Kotlin Multiplatform | coming |
+| Branch | Platforms | DI | Network | Logging | Download |
+|---|---|---|---|---|---|
+| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
+| **`kmp-ready`** | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
+| `kmp` | Android, iOS | Metro | Ktor | Kermit | coming |
+
+All variants share Compose, Navigation Compose, Room and DataStore.
 
 Each branch comes with two APKs: the shop and the UI kit.
 
