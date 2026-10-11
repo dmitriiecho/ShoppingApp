@@ -36,6 +36,8 @@ class MainActivity : ComponentActivity() {
         WindowCompat.enableEdgeToEdge(window)
         takeLaunchDeepLink(savedInstanceState)
         setContent {
+            // Screens get their ViewModels with injectedViewModel(), which creates them with this factory from
+            // the app's graph: each ViewModel gets its dependencies and its own SavedStateHandle.
             CompositionLocalProvider(LocalViewModelFactory provides viewModelFactory) { ShoppingAppContent() }
         }
     }
