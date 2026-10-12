@@ -24,11 +24,27 @@ class AndroidScreenshotsConventionPlugin : Plugin<Project> {
                 // A KMP module: the previews are in commonMain, the tests run with the Android host tests.
                 configureRoborazzi(packageToScan = provider { defaultNamespace() })
                 tasks.withType<Test>().configureEach { drawLikeDevice() }
+                // Roborazzi checks its dependencies by reading every configuration in afterEvaluate, and after that the
+                // Android plugin no longer adds the dependencies of commonMain and androidMain to the host tests'
+                // compile classpath: tests that use those libraries don't compile. Add them back here.
+                configurations.named("androidHostTestCompileClasspath") {
+                    listOf("commonMain", "androidMain").forEach { sourceSet ->
+                        listOf("Api", "Implementation", "CompileOnly").forEach { kind ->
+                            extendsFrom(configurations.getByName(sourceSet + kind))
+                        }
+                    }
+                }
                 extensions.configure<KotlinMultiplatformExtension> {
+                    // The generated tests create the tester at run time, by its name. It is used only on Android, but is
+                    // declared in commonTest, where the module's own tests declare it too (viewModelTest): the
+                    // dependency analysis takes a commonTest declaration for unused when androidHostTest declares the
+                    // same module.
+                    sourceSets.getByName("commonTest").dependencies {
+                        runtimeOnly(project(":core:compose-utils:testing"))
+                    }
                     sourceSets.getByName("androidHostTest").dependencies {
                         implementation(libs.roborazzi.compose.preview.scanner.support)
                         implementation(libs.composable.preview.scanner)
-                        runtimeOnly(project(":core:compose-utils:testing"))
                         implementation(libs.robolectric)
                         implementation(libs.junit)
                         implementation(project.dependencies.platform(libs.androidx.compose.bom))

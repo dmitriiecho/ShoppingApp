@@ -99,7 +99,7 @@ A package follows the module:
 
 | Module | Applies |
 |---|---|
-| `:feature:<name>:impl` | `kmp.feature` (settings); `android.feature` while a feature is still an Android module (promo, checkout, cart, catalog) |
+| `:feature:<name>:impl` | `kmp.feature` (settings, promo); `android.feature` while a feature is still an Android module (checkout, cart, catalog) |
 | `:feature:<name>:ui` | `kmp.library` + `kmp.compose` + `screenshots` |
 | Kotlin Multiplatform (`:core:*`, `:crossfeature:*`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`) + `kmp.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |

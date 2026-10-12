@@ -1,6 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.snapshotFlow
@@ -18,15 +17,18 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
-import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
-import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.analytics.PromoCodeRejectedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.CheckPromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.GetPromoCodesUseCase
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.Res
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_check_error
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_not_found
+import org.jetbrains.compose.resources.StringResource
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)
@@ -101,15 +103,15 @@ internal class PromoCodeViewModel(
                 is PromoCodeCheckResult.Valid -> send(PromoCodeEffect.CloseWithResult(result.promoCode))
                 PromoCodeCheckResult.NotFound -> {
                     analytics.log(PromoCodeRejectedAnalyticsEvent(code))
-                    showCheckError(R.string.promo_not_found)
+                    showCheckError(Res.string.promo_not_found)
                 }
-                is PromoCodeCheckResult.Error -> showCheckError(R.string.promo_check_error)
+                is PromoCodeCheckResult.Error -> showCheckError(Res.string.promo_check_error)
             }
         }
     }
 
-    private fun showCheckError(@StringRes message: Int) {
-        check.value = PromoCodeUiState.Check.Failed(AndroidUiText.Resource(message))
+    private fun showCheckError(message: StringResource) {
+        check.value = PromoCodeUiState.Check.Failed(UiText.Resource(message))
     }
 
     // Any edit of the code, typed or picked from the hint, clears the previous check's error.
