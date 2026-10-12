@@ -69,7 +69,7 @@ jobs:
       # --- Build and publish ------------------------------------------------
 
       # Where the apps are in the branch being built: the kmp branch splits each one into apps/<app>/android and the
-      # shared apps/<app>/app, the other branches keep it in apps/<app>. GitHub runs this file from main for every branch.
+      # shared apps/<app>/shared, the other branches keep it in apps/<app>. GitHub runs this file from main for every branch.
       - name: Find the apps
         id: apps
         run: |
