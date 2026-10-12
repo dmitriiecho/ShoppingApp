@@ -6,7 +6,7 @@
 
 ShoppingApp is an example app for Android and iOS built on a modern stack. The repo contains two apps:
 
-- **Shop**: a demo store with a searchable catalog, a cart that lives on the device and is checked against the server, promo codes and checkout. It works on Android phones and tablets and on the iPhone, from the same Kotlin Multiplatform code.
+- **Shop**: a demo store with a searchable catalog, a cart that lives on the device and is checked against the server, promo codes and checkout. It works on Android and iOS phones and tablets, from the same Kotlin Multiplatform code.
 - **UI kit**: a showcase of every styled component in the shop, grouped into sections, with a light and dark theme switch, on Android and iOS. It lets you browse and check the design without going through the shop itself.
 
 &nbsp;
@@ -24,6 +24,14 @@ The same app is built on three slightly different stacks, each in its own branch
 All variants share Compose, Navigation Compose, Room and DataStore. In `kmp` they are the multiplatform versions (Compose Multiplatform), and the shop's screens, logic and data are shared code that runs on both platforms.
 
 Each branch comes with two APKs: the shop and the UI kit. The iOS apps are built from the code (see [Running](#running)).
+
+&nbsp;
+
+## The `kmp` variant: Android and iOS
+
+- **Four apps from one branch**: the shop and the UI kit, each for Android and for iOS.
+- **Phones and tablets** on both platforms.
+- **The whole UI is shared**: every screen is written once in Compose Multiplatform, in common modules, and the same code draws it on Android and iOS.
 
 &nbsp;
 
