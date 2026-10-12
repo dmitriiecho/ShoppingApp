@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShoppingApp deep links: iOS</title>
+  <!--
+    Page for checking the iOS app's deep links by hand (the kmp branch), opened by the "Deep links" item in its settings.
+    The same page in two languages, kept in sync with each other and with the Android pages in ../android/.
+    The links use the app's own scheme (DeepLinkConfig.APP_SCHEME, CFBundleURLTypes in apps/shop/ios/iosApp/Info.plist):
+    iOS opens https links in an app only through Universal Links, which need a paid developer team.
+    GitHub Pages publishes docs/ from main only, so the apps of every branch open main's copy: change it there.
+  -->
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #15181d;
+      --muted: #5b6370;
+      --accent: #2f5fd0;
+      --border: #dde1e7;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1014;
+        --card: #191c22;
+        --text: #e7e9ee;
+        --muted: #9aa2b1;
+        --accent: #8fb0ff;
+        --border: #2b3039;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px 16px 40px;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main { max-width: 560px; margin: 0 auto; }
+    h1 { font-size: 24px; margin: 0 0 8px; }
+    h2 { font-size: 15px; margin: 28px 0 10px; color: var(--muted); font-weight: 600; }
+    p { margin: 0; color: var(--muted); }
+    a.link {
+      display: block;
+      margin-bottom: 10px;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: inherit;
+      text-decoration: none;
+    }
+    a.link:active { border-color: var(--accent); }
+    .title { font-weight: 600; }
+    .path { color: var(--accent); font-family: ui-monospace, "Roboto Mono", monospace; font-size: 14px; }
+    .expected { margin-top: 4px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>ShoppingApp deep links</h1>
+  <p>
+    Tap a link: Safari asks whether to open the app, and the app should open on the right screen.
+    The links use the app's own scheme, shoppingapp://.
+  </p>
+
+  <h2>Open the app</h2>
+  <a class="link" href="shoppingapp://catalog">
+    <div class="title">Catalog <span class="path">shoppingapp://catalog</span></div>
+    <div class="expected">The Catalog tab, the product list.</div>
+  </a>
+  <a class="link" href="shoppingapp://cart">
+    <div class="title">Cart <span class="path">shoppingapp://cart</span></div>
+    <div class="expected">The Cart tab.</div>
+  </a>
+  <a class="link" href="shoppingapp://product/1">
+    <div class="title">Product 1 <span class="path">shoppingapp://product/1</span></div>
+    <div class="expected">Product details in the Catalog tab. Back returns to the product list.</div>
+  </a>
+
+  <h2>Trailing slash</h2>
+  <a class="link" href="shoppingapp://catalog/">
+    <div class="title">Catalog <span class="path">shoppingapp://catalog/</span></div>
+    <div class="expected">Same as shoppingapp://catalog.</div>
+  </a>
+  <a class="link" href="shoppingapp://cart/">
+    <div class="title">Cart <span class="path">shoppingapp://cart/</span></div>
+    <div class="expected">Same as shoppingapp://cart.</div>
+  </a>
+  <a class="link" href="shoppingapp://product/1/">
+    <div class="title">Product 1 <span class="path">shoppingapp://product/1/</span></div>
+    <div class="expected">Same as shoppingapp://product/1.</div>
+  </a>
+
+  <h2>Edge cases</h2>
+  <a class="link" href="shoppingapp://product/999">
+    <div class="title">Missing product <span class="path">shoppingapp://product/999</span></div>
+    <div class="expected">Product details with the message “Product not found”.</div>
+  </a>
+  <a class="link" href="shoppingapp://catalog/shoes">
+    <div class="title">Unknown address <span class="path">shoppingapp://catalog/shoes</span></div>
+    <div class="expected">The app opens on the screen it was on.</div>
+  </a>
+
+</main>
+</body>
+</html>

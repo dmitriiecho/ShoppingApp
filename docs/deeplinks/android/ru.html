@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Диплинки ShoppingApp</title>
+  <title>Диплинки ShoppingApp: Android</title>
   <!--
-    Page for checking deep links by hand, opened by the "Deep links" item in the app's settings.
+    Page for checking the Android app's deep links by hand, opened by the "Deep links" item in its settings.
     The same page in two languages: en.html (English) and ru.html (Russian). The app opens
     the one for its language (settings_deep_links_page_url in the settings strings). Keep them in sync.
     GitHub Pages publishes them on the deep links' domain (DeepLinkConfig.BASE_URL), so the links have no domain.
-    A new path in the intent-filter in apps/shop/android/src/main/AndroidManifest.xml goes to both pages,
-    in the https sections and, with the iOS app's scheme (DeepLinkConfig.APP_SCHEME), in the iPhone section.
+    A new path in the intent-filter in apps/shop/android/src/main/AndroidManifest.xml goes to both pages, and to the iOS pages
+    in ../ios/ with the iOS app's scheme.
     GitHub Pages publishes docs/ from main only, so the apps of every branch open main's copy: change it there.
   -->
   <style>
@@ -44,7 +44,6 @@
     h1 { font-size: 24px; margin: 0 0 8px; }
     h2 { font-size: 15px; margin: 28px 0 10px; color: var(--muted); font-weight: 600; }
     p { margin: 0; color: var(--muted); }
-    h2 + p { margin-bottom: 10px; }
     a.link {
       display: block;
       margin-bottom: 10px;
@@ -107,35 +106,6 @@
     <div class="expected">Приложение не открывается, а браузер показывает страницу 404.</div>
   </a>
 
-  <h2>iPhone</h2>
-  <p>
-    На iOS приложение открывает ссылки со своей схемой, shoppingapp://. Safari спросит, открыть ли приложение.
-    Ссылки выше там открывают сайт.
-  </p>
-  <a class="link" href="shoppingapp://catalog">
-    <div class="title">Каталог <span class="path">shoppingapp://catalog</span></div>
-    <div class="expected">Вкладка «Каталог», список товаров.</div>
-  </a>
-  <a class="link" href="shoppingapp://cart">
-    <div class="title">Корзина <span class="path">shoppingapp://cart</span></div>
-    <div class="expected">Вкладка «Корзина».</div>
-  </a>
-  <a class="link" href="shoppingapp://product/1">
-    <div class="title">Товар 1 <span class="path">shoppingapp://product/1</span></div>
-    <div class="expected">Карточка товара во вкладке «Каталог». «Назад» возвращает к списку товаров.</div>
-  </a>
-  <a class="link" href="shoppingapp://product/1/">
-    <div class="title">Товар 1 <span class="path">shoppingapp://product/1/</span></div>
-    <div class="expected">То же, что shoppingapp://product/1.</div>
-  </a>
-  <a class="link" href="shoppingapp://product/999">
-    <div class="title">Несуществующий товар <span class="path">shoppingapp://product/999</span></div>
-    <div class="expected">Карточка товара с сообщением «Товар не найден».</div>
-  </a>
-  <a class="link" href="shoppingapp://catalog/shoes">
-    <div class="title">Неизвестный адрес <span class="path">shoppingapp://catalog/shoes</span></div>
-    <div class="expected">Приложение открывается на том экране, где было.</div>
-  </a>
 </main>
 </body>
 </html>
