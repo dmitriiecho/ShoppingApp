@@ -1,7 +1,7 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode
 
 import androidx.compose.foundation.text.input.TextFieldState
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
 
 internal data class PromoCodeUiState(
@@ -14,7 +14,7 @@ internal data class PromoCodeUiState(
     val isChecking: Boolean
         get() = check == Check.Checking
 
-    val checkError: UiText?
+    val checkError: AndroidUiText?
         get() = (check as? Check.Failed)?.error
 
     val canApply: Boolean
@@ -24,7 +24,7 @@ internal data class PromoCodeUiState(
     sealed interface Check {
         data object Idle : Check
         data object Checking : Check
-        data class Failed(val error: UiText) : Check
+        data class Failed(val error: AndroidUiText) : Check
     }
 
     // The server's codes, shown under the field: the app is a test stand, so nobody has to remember

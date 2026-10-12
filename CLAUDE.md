@@ -19,7 +19,7 @@ Folders are levels, bottom to top: `core/` → `crossfeature/` → `feature/` �
 | Level | Module | Holds |
 |---|---|---|
 | `core/`: knows nothing about the shop | `:core:designsystem` | theme, icons, generic components (cards, buttons, fields, bars, notices, placeholders, dialogs, screen states); only generic strings ("Close", "Retry") |
-| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes, `injectedViewModel` |
+| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText` (`AndroidUiText` for the features still on Android, until they move), shared element scopes, `injectedViewModel` |
 | | `:core:network`, `:core:config` | the HTTP client; the server and deep link addresses |
 | `crossfeature/`: shop code used by two or more features | `:crossfeature:domain` | models, repository interfaces, use cases; pure Kotlin |
 | | `:crossfeature:data` | their implementations; only `:apps:shop` depends on it |
@@ -95,11 +95,11 @@ A package follows the module:
 
 ### build-logic
 
-`build-logic/` is an included build with the convention plugins `shoppingapp.android.{library,application,compose,feature,screenshots}`, `shoppingapp.kmp.{library,compose}` and `shoppingapp.metro`. compileSdk, minSdk, targetSdk and Java live in `build-logic/src/main/kotlin/AndroidConfig.kt`. Each module declares only its own dependencies.
+`build-logic/` is an included build with the convention plugins `shoppingapp.android.{library,application,compose,feature,screenshots}`, `shoppingapp.kmp.{library,compose,feature}` and `shoppingapp.metro`. compileSdk, minSdk, targetSdk and Java live in `build-logic/src/main/kotlin/AndroidConfig.kt`. Each module declares only its own dependencies.
 
 | Module | Applies |
 |---|---|
-| `:feature:<name>:impl` | `libs.plugins.shoppingapp.android.feature` |
+| `:feature:<name>:impl` | `kmp.feature` (settings); `android.feature` while a feature is still an Android module (promo, checkout, cart, catalog) |
 | `:feature:<name>:ui` | `kmp.library` + `kmp.compose` + `screenshots` |
 | Kotlin Multiplatform (`:core:*`, `:crossfeature:*`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`) + `kmp.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |

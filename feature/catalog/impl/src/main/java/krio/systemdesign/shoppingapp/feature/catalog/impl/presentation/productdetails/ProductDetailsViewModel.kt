@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
@@ -139,7 +139,7 @@ internal class ProductDetailsViewModel(
             action()
                 .onSuccess { onSuccess() }
                 .onFailure {
-                    send(ProductDetailsEffect.ShowSnackBar(UiText.Resource(R.string.catalog_cart_update_error)))
+                    send(ProductDetailsEffect.ShowSnackBar(AndroidUiText.Resource(R.string.catalog_cart_update_error)))
                 }
         }
     }

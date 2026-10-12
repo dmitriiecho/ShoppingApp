@@ -4,7 +4,8 @@ import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 
 internal sealed interface SettingsEffect {
 
-    data class OpenUrl(val url: UiText) : SettingsEffect
+    // The page in the screen's language: its address is a string resource the screen reads.
+    data object OpenDeepLinksPage : SettingsEffect
 
     data class ShowSnackBar(val message: UiText) : SettingsEffect
 

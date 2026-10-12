@@ -1,6 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,24 +16,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.AndroidUiModes
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
-import krio.systemdesign.shoppingapp.core.composeutils.text.asString
+import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
+import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
-import krio.systemdesign.shoppingapp.feature.settings.impl.R
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.NetworkDelayItem
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.TestActions
 import krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components.ThemeModeItem
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.Res
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_deep_links_page_url
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_no_browser
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SettingsScreen(
@@ -44,17 +47,17 @@ internal fun SettingsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val resources = LocalResources.current
+    val deepLinksPageUrl = stringResource(Res.string.settings_deep_links_page_url, DeepLinkConfig.TEST_PAGES_URL)
 
     ObserveEffects(viewModel.effects) { effect ->
         when (effect) {
-            is SettingsEffect.OpenUrl -> try {
-                uriHandler.openUri(effect.url.asString(resources))
+            SettingsEffect.OpenDeepLinksPage -> try {
+                uriHandler.openUri(deepLinksPageUrl)
             } catch (_: IllegalArgumentException) {
                 // No browser to open the URL in.
-                showSnackbar(snackbarHostState, resources.getString(R.string.settings_no_browser))
+                showSnackbar(snackbarHostState, UiText.Resource(Res.string.settings_no_browser))
             }
-            is SettingsEffect.ShowSnackBar -> showSnackbar(snackbarHostState, effect.message.asString(resources))
+            is SettingsEffect.ShowSnackBar -> showSnackbar(snackbarHostState, effect.message)
             SettingsEffect.NavigateBack -> navigate { onBack() }
         }
     }
@@ -78,7 +81,7 @@ internal fun SettingsScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.settings_title)) },
+                title = { Text(stringResource(Res.string.settings_title)) },
                 modifier = Modifier.contentBarWidth(),
             )
         },
@@ -139,7 +142,7 @@ private fun SectionDivider() {
 }
 
 @Preview(name = "Light")
-@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Dark", uiMode = AndroidUiModes.UI_MODE_NIGHT_YES)
 @Composable
 private fun SettingsScreenPreview() {
     ShoppingAppTheme {

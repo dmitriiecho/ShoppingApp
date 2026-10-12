@@ -110,14 +110,14 @@ private fun submitOrder() {
 
 ## Эффекты
 
-Навигация и снекбары должны сработать один раз, поэтому это эффекты, которые передаются через `Channel`, а не часть состояния: в состоянии для них понадобилось бы ещё одно событие «обработано». Экран обрабатывает их через [`ObserveEffects`](../../../core/compose-utils/src/main/java/krio/systemdesign/shoppingapp/core/composeutils/effects/ObserveEffects.kt):
+Навигация и снекбары должны сработать один раз, поэтому это эффекты, которые передаются через `Channel`, а не часть состояния: в состоянии для них понадобилось бы ещё одно событие «обработано». Экран обрабатывает их через [`ObserveEffects`](../../../core/compose-utils/src/commonMain/kotlin/krio/systemdesign/shoppingapp/core/composeutils/effects/ObserveEffects.kt):
 
 ```kotlin
 ObserveEffects(viewModel.effects) { effect ->
     when (effect) {
-        CartEffect.NavigateToCheckout -> navigate { onOpenCheckout() }
-        is CartEffect.ShowSnackBar -> showSnackbar(snackbarHostState, effect.message.asString(resources))
-        // ...
+        SettingsEffect.OpenDeepLinksPage -> uriHandler.openUri(deepLinksPageUrl)
+        is SettingsEffect.ShowSnackBar -> showSnackbar(snackbarHostState, effect.message)
+        SettingsEffect.NavigateBack -> navigate { onBack() }
     }
 }
 ```
@@ -136,7 +136,12 @@ lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
 - **`Main.immediate`** нужен, чтобы экран обрабатывал эффект прямо внутри `send` во ViewModel: если бы между ними была пауза, экран, остановившийся в этот момент, мог бы забрать эффект и потерять его.
 - **`navigate { }` выполняется, только пока экран сверху**, а **`showSnackbar` работает в отдельной корутине**: снекбар ждёт, пока его закроют, и иначе задержал бы следующий эффект.
 
-У экрана один эффект для снекбара, `ShowSnackBar(UiText)`: так ViewModel может собрать текст из строкового ресурса, не имея доступа к ресурсам.
+У экрана один эффект для снекбара, `ShowSnackBar(UiText)`: так ViewModel может собрать текст из строкового ресурса, не имея доступа к ресурсам:
+
+- **`UiText`** — это готовая строка (`Dynamic`) или строковый ресурс Compose Multiplatform с аргументами (`Resource`). В Compose его читает `asString()`.
+- **`showSnackbar(hostState, UiText)` сам читает текст** в той корутине, которая показывает снекбар: вне Compose строковый ресурс можно прочитать только suspend-функцией `getString`. Порядок эффектов не меняется.
+- **Строку, которая нужна прямо в обработчике**, экран заранее читает в Compose через `stringResource`. Так настройки открывают страницу диплинков: её адрес — строковый ресурс, свой для каждого языка.
+- **`AndroidUiText`** — тот же тип с идентификаторами `R.string` для фич, которые ещё остаются Android-модулями. Он уйдёт вместе с последней из них.
 
 &nbsp;
 

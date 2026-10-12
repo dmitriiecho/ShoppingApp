@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
@@ -109,7 +109,7 @@ internal class PromoCodeViewModel(
     }
 
     private fun showCheckError(@StringRes message: Int) {
-        check.value = PromoCodeUiState.Check.Failed(UiText.Resource(message))
+        check.value = PromoCodeUiState.Check.Failed(AndroidUiText.Resource(message))
     }
 
     // Any edit of the code, typed or picked from the hint, clears the previous check's error.

@@ -3,7 +3,8 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 
-// A feature's impl module: Compose screens, ViewModels injected by Metro, kotlinx.serialization navigation routes.
+// A feature's impl module while it is an Android module: Compose screens, ViewModels injected by Metro,
+// kotlinx.serialization navigation routes. Goes away once every feature is on KMP (shoppingapp.kmp.feature).
 // Each feature declares its own project dependencies (:crossfeature:domain, :core:designsystem…).
 class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {

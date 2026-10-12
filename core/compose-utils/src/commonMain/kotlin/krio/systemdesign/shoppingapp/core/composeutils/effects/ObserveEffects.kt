@@ -14,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.getString
 
 // Handles a ViewModel's one-off effects (navigation, snackbars) while the screen is visible.
 // An effect sent while the app is in the background waits in the ViewModel's channel
@@ -53,6 +55,15 @@ class ObserveEffectsScope internal constructor(
 
     // SnackbarHostState.showSnackbar suspends until the snackbar is dismissed: run right here, it would hold
     // the next effect (e.g. navigation) for seconds. So it gets its own coroutine.
+    fun showSnackbar(
+        hostState: SnackbarHostState,
+        message: UiText,
+    ) {
+        // The text is read in the same coroutine, so the effects keep their order.
+        scope.launch { hostState.showSnackbar(message.getString()) }
+    }
+
+    // For the features that are still Android modules (AndroidUiText).
     fun showSnackbar(
         hostState: SnackbarHostState,
         message: String,

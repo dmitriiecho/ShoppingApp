@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.TestScope
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.typeText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
 import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
@@ -92,7 +92,7 @@ class CheckoutViewModelTest {
             viewModel.onEvent(CheckoutEvent.OnPlaceOrderClick)
 
             assertThat(awaitItem())
-                .isEqualTo(CheckoutEffect.ShowSnackBar(UiText.Resource(R.string.checkout_place_order_error)))
+                .isEqualTo(CheckoutEffect.ShowSnackBar(AndroidUiText.Resource(R.string.checkout_place_order_error)))
         }
     }
 

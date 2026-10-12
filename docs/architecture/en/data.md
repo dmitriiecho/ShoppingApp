@@ -90,7 +90,7 @@ when (val result = networkCall { api.getProduct(productId) }) {
 }
 ```
 
-[`databaseCall`](../../../crossfeature/data/src/main/java/krio/systemdesign/shoppingapp/crossfeature/data/database/DatabaseCall.kt) catches only SQLite errors. A failed `require` is a bug, so the app crashes instead of disguising it as a database error:
+[`databaseCall`](../../../crossfeature/data/src/commonMain/kotlin/krio/systemdesign/shoppingapp/crossfeature/data/database/DatabaseCall.kt) catches only SQLite errors. A failed `require` is a bug, so the app crashes instead of disguising it as a database error:
 
 ```kotlin
 internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
@@ -147,12 +147,19 @@ internal class NetworkDelayPlugin(private val appSettingsRepository: AppSettings
 
 ## Prices
 
-Every price is in US dollars, stored as a `Long` number of cents: `14999` is $149.99. The server's JSON, the DTOs, Room and the domain models all use the same numbers. Prices are displayed only through [`formatPrice`](../../../crossfeature/ui/src/main/java/krio/systemdesign/shoppingapp/crossfeature/ui/text/PriceFormat.kt), always in US format, whatever the phone's language:
+Every price is in US dollars, stored as a `Long` number of cents: `14999` is $149.99. The server's JSON, the DTOs, Room and the domain models all use the same numbers. Prices are displayed only through [`formatPrice`](../../../crossfeature/ui/src/commonMain/kotlin/krio/systemdesign/shoppingapp/crossfeature/ui/text/PriceFormat.kt), always in US format, whatever the phone's language:
 
 ```kotlin
-fun formatPrice(amountCents: Long): String =
-    NumberFormat.getCurrencyInstance(Locale.US).format(BigDecimal.valueOf(amountCents, 2))
+fun formatPrice(amountCents: Long): String {
+    val sign = if (amountCents < 0) "-" else ""
+    val cents = amountCents.absoluteValue
+    val dollars = (cents / 100).toString().reversed().chunked(3).joinToString(",").reversed()
+    val remainder = (cents % 100).toString().padStart(2, '0')
+    return "$sign$$dollars.$remainder"
+}
 ```
+The formatter is written by hand: the platforms' number formats aren't available in common code, and this one format is all the app needs.
+
 
 There is no `Money` value class. It could only live in the domain: `:crossfeature:ui` takes plain values, and a domain type in UI state would be unstable for Compose. Since most of the code that deals with prices is UI code, such a type wouldn't protect much. It is worth adding once a second currency or taxes appear.
 

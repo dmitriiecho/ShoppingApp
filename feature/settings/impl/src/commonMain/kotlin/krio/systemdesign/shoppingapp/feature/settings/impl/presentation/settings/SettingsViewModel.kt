@@ -1,6 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.zacsweers.metro.ContributesIntoMap
@@ -14,11 +13,9 @@ import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
-import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
 import krio.systemdesign.shoppingapp.crossfeature.domain.usecase.ObserveThemeModeUseCase
-import krio.systemdesign.shoppingapp.feature.settings.impl.R
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.AddNotEnoughStockProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.AddPriceChangedNotEnoughStockProductToCartUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.AddPriceChangedProductToCartUseCase
@@ -26,6 +23,15 @@ import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.AddUna
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.ObserveNetworkDelayUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.SetNetworkDelayUseCase
 import krio.systemdesign.shoppingapp.feature.settings.impl.domain.usecase.SetThemeModeUseCase
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.Res
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_add_to_cart_error
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_network_delay_save_error
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_not_enough_stock_product_added
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_price_changed_not_enough_stock_product_added
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_price_changed_product_added
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_theme_save_error
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_unavailable_product_added
+import org.jetbrains.compose.resources.StringResource
 
 @ViewModelKey
 @ContributesIntoMap(ViewModelScope::class)
@@ -59,26 +65,22 @@ internal class SettingsViewModel(
             // No need to notify anyone: MainViewModel observes the saved theme and applies it.
             is SettingsEvent.OnThemeModeChange -> changeThemeMode(event.mode)
             is SettingsEvent.OnNetworkDelayChange -> changeNetworkDelay(event.delay)
-            SettingsEvent.OnDeepLinksPageClick -> send(
-                SettingsEffect.OpenUrl(
-                    UiText.Resource(R.string.settings_deep_links_page_url, listOf(DeepLinkConfig.TEST_PAGES_URL)),
-                ),
-            )
+            SettingsEvent.OnDeepLinksPageClick -> send(SettingsEffect.OpenDeepLinksPage)
             SettingsEvent.OnAddUnavailableProductClick -> addTestProduct(
                 add = { addUnavailableProductToCart() },
-                addedMessage = R.string.settings_unavailable_product_added,
+                addedMessage = Res.string.settings_unavailable_product_added,
             )
             SettingsEvent.OnAddNotEnoughStockProductClick -> addTestProduct(
                 add = { addNotEnoughStockProductToCart() },
-                addedMessage = R.string.settings_not_enough_stock_product_added,
+                addedMessage = Res.string.settings_not_enough_stock_product_added,
             )
             SettingsEvent.OnAddPriceChangedProductClick -> addTestProduct(
                 add = { addPriceChangedProductToCart() },
-                addedMessage = R.string.settings_price_changed_product_added,
+                addedMessage = Res.string.settings_price_changed_product_added,
             )
             SettingsEvent.OnAddPriceChangedNotEnoughStockProductClick -> addTestProduct(
                 add = { addPriceChangedNotEnoughStockProductToCart() },
-                addedMessage = R.string.settings_price_changed_not_enough_stock_product_added,
+                addedMessage = Res.string.settings_price_changed_not_enough_stock_product_added,
             )
             SettingsEvent.OnBackClick -> send(SettingsEffect.NavigateBack)
         }
@@ -86,28 +88,28 @@ internal class SettingsViewModel(
 
     private fun changeThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
-            setThemeMode(mode).onFailure { showSnackBar(R.string.settings_theme_save_error) }
+            setThemeMode(mode).onFailure { showSnackBar(Res.string.settings_theme_save_error) }
         }
     }
 
     private fun changeNetworkDelay(delay: NetworkDelay) {
         viewModelScope.launch {
-            setNetworkDelay(delay).onFailure { showSnackBar(R.string.settings_network_delay_save_error) }
+            setNetworkDelay(delay).onFailure { showSnackBar(Res.string.settings_network_delay_save_error) }
         }
     }
 
     private fun addTestProduct(
         add: suspend () -> Result<Unit>,
-        @StringRes addedMessage: Int,
+        addedMessage: StringResource,
     ) {
         viewModelScope.launch {
             add()
                 .onSuccess { showSnackBar(addedMessage) }
-                .onFailure { showSnackBar(R.string.settings_add_to_cart_error) }
+                .onFailure { showSnackBar(Res.string.settings_add_to_cart_error) }
         }
     }
 
-    private fun showSnackBar(@StringRes message: Int) {
+    private fun showSnackBar(message: StringResource) {
         send(SettingsEffect.ShowSnackBar(UiText.Resource(message)))
     }
 

@@ -55,5 +55,9 @@ gradlePlugin {
             id = libs.plugins.shoppingapp.kmp.compose.get().pluginId
             implementationClass = "KmpComposeConventionPlugin"
         }
+        register("kmpFeature") {
+            id = libs.plugins.shoppingapp.kmp.feature.get().pluginId
+            implementationClass = "KmpFeatureConventionPlugin"
+        }
     }
 }

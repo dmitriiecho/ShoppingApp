@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.catalog.impl.presentation.productlist
 
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 
 internal sealed interface ProductListEffect {
 
@@ -12,5 +12,5 @@ internal sealed interface ProductListEffect {
 
     data object NavigateBack : ProductListEffect
 
-    data class ShowSnackBar(val message: UiText) : ProductListEffect
+    data class ShowSnackBar(val message: AndroidUiText) : ProductListEffect
 }

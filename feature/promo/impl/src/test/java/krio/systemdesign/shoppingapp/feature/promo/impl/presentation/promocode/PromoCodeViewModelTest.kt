@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.TestScope
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.typeText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
 import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
@@ -74,7 +74,7 @@ class PromoCodeViewModelTest {
 
         viewModel.onEvent(PromoCodeEvent.OnApplyClick)
 
-        assertThat(viewModel.uiState.value.checkError).isEqualTo(UiText.Resource(R.string.promo_not_found))
+        assertThat(viewModel.uiState.value.checkError).isEqualTo(AndroidUiText.Resource(R.string.promo_not_found))
     }
 
     @Test
@@ -95,7 +95,7 @@ class PromoCodeViewModelTest {
 
         viewModel.onEvent(PromoCodeEvent.OnApplyClick)
 
-        assertThat(viewModel.uiState.value.checkError).isEqualTo(UiText.Resource(R.string.promo_check_error))
+        assertThat(viewModel.uiState.value.checkError).isEqualTo(AndroidUiText.Resource(R.string.promo_check_error))
     }
 
     @Test
