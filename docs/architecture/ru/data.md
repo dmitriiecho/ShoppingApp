@@ -1,3 +1,5 @@
+[English version](../en/data.md) · [Все разделы](README.md)
+
 # Данные
 
 > **Вариант `main`**: Android, Hilt, Retrofit
@@ -5,8 +7,6 @@
 > Эта страница в других вариантах:
 > - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/data.md): Android, Metro, Ktor
 > - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/data.md): Android и iOS, Metro, Ktor
-
-[English version](../en/data.md) · [Все разделы](README.md)
 
 ViewModel обращается к use case'ам, use case — к репозиторию, а репозиторий — к Room, DataStore или серверу. Что из этого общее, а что принадлежит одной фиче, определяет правило из раздела [Модули](modules.md#куда-класть-новый-код).
 
