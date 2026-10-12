@@ -19,6 +19,7 @@ cd server && ./gradlew test          # the server
 
 - **Android modules** run their unit tests with `test`, in the debug variant only: `shoppingapp.android.library` turns off the release ones, which would just repeat them.
 - **Kotlin Multiplatform modules** have no `test` task. Their tests in `src/commonTest` run on both platforms: on the JVM with `testAndroidHostTest`, on the iOS simulator with `iosSimulatorArm64Test`. Tests that need Android classes (Robolectric) live in `src/androidHostTest` and run only on the JVM.
+- **iOS tests don't see Compose resources.** Compose Multiplatform would copy them next to the iOS test executable, but that copy keeps Gradle from caching the executable, so the build turns it off ([`KmpComposeConventionPlugin.kt`](../../../build-logic/src/main/kotlin/KmpComposeConventionPlugin.kt)). Common tests compare `StringResource`s rather than read them, and the screenshots, which show the texts, run on Android. A module whose iOS tests do read resources turns the `copyTestComposeResourcesFor*` tasks back on.
 - **Test names in `src/commonTest`** can't contain commas, dots, colons or semicolons: Kotlin/Native doesn't accept them in a function name.
 
 &nbsp;
