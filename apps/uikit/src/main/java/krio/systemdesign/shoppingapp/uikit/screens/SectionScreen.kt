@@ -7,10 +7,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.uikit.sections.designsystem.BarsSection
 import krio.systemdesign.shoppingapp.uikit.sections.designsystem.ButtonsSection
 import krio.systemdesign.shoppingapp.uikit.sections.designsystem.CardsSection
@@ -42,6 +44,7 @@ internal fun SectionScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(section.titleRes)) },
+                modifier = Modifier.contentBarWidth(),
                 navigationIcon = {
                     NavigateBackIconButton(onClick = onBack)
                 },

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="false"
@@ -10,10 +11,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoppingAppUiKit">
 
+        <!--
+            portrait: phones are upright, as in the shop. Android 16+ ignores it on screens 600 dp and wider; there the
+            UI kit rotates and keeps its content in a centered column.
+        -->
         <activity
             android:name=".UiKitActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

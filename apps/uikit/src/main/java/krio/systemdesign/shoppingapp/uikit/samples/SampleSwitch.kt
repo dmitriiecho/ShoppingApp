@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.uikit.R
 
 @Composable
@@ -49,7 +50,9 @@ internal fun LazyListScope.sampleAnimationSwitch(
             label = stringResource(R.string.uikit_animation),
             checked = isAnimating,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.padding(horizontal = Spacing.ScreenPadding, vertical = 8.dp),
+            modifier = Modifier
+                .padding(horizontal = Spacing.ScreenPadding, vertical = 8.dp)
+                .contentWidth(),
         )
     }
 }
