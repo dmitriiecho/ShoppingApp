@@ -7,7 +7,7 @@
 ShoppingApp is an example app for Android and iOS built on a modern stack. The repo contains two apps:
 
 - **Shop**: a demo store with a searchable catalog, a cart that lives on the device and is checked against the server, promo codes and checkout. It works on Android phones and tablets and on the iPhone, from the same Kotlin Multiplatform code.
-- **UI kit**: a showcase of every styled component in the shop, grouped into sections, with a light and dark theme switch, for Android. It lets you browse and check the design without going through the shop itself.
+- **UI kit**: a showcase of every styled component in the shop, grouped into sections, with a light and dark theme switch, on Android and iOS. It lets you browse and check the design without going through the shop itself.
 
 &nbsp;
 
@@ -23,7 +23,7 @@ The same app is built on three slightly different stacks, each in its own branch
 
 All variants share Compose, Navigation Compose, Room and DataStore. In `kmp` they are the multiplatform versions (Compose Multiplatform), and the shop's screens, logic and data are shared code that runs on both platforms.
 
-Each branch comes with two APKs: the shop and the UI kit. The iOS app is built from the code (see [Running](#running)).
+Each branch comes with two APKs: the shop and the UI kit. The iOS apps are built from the code (see [Running](#running)).
 
 &nbsp;
 
@@ -58,7 +58,7 @@ The app is small, but every screen has something worth a look:
 The modules are arranged in four levels, and the build checks that no module depends on a level above its own:
 
 ```text
-apps/         shop (app, android, ios), uikit                the applications: shared code and each platform's entry
+apps/         shop, uikit (each: app, android, ios)          the applications: shared code and each platform's entry
 feature/      catalog, cart, promo, checkout, settings       each one is ui + impl
 crossfeature/ domain, data, ui, analytics                    shop code used by two or more features
 core/         designsystem, compose-utils, network, config   knows nothing about the shop
@@ -71,7 +71,7 @@ How modules, navigation, screens, data, analytics and the build work is explaine
 ## Tests and CI
 
 - **Tests** run on the JVM and cover the logic, the ViewModels, the data layer, the contract with the server, and a screenshot of every preview. The tests of the shared code also run on the iOS simulator.
-- **CI** runs on every pull request: code style, module rules, unused dependencies, lint, tests and a build of both Android apps, and on macOS the iOS tests and a build of the iOS app. It posts changed screenshots in a comment on the pull request, and rebuilds the APKs after every change to `main`.
+- **CI** runs on every pull request: code style, module rules, unused dependencies, lint, tests and a build of both Android apps, and on macOS the iOS tests and a build of both iOS apps. It posts changed screenshots in a comment on the pull request, and rebuilds the APKs after every change to `main`.
 
 &nbsp;
 
@@ -86,7 +86,7 @@ To build the apps yourself, you need JDK 21 and the Android SDK:
 ./gradlew :apps:uikit:android:installDebug  # installs the UI kit
 ```
 
-The iOS app builds on a Mac with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator ([more](docs/architecture/en/build.md#ios-app)).
+The iOS apps build on a Mac with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` (the shop) or `apps/uikit/ios/iosApp.xcodeproj` (the UI kit) and run it on a simulator ([more](docs/architecture/en/build.md#ios-app)).
 
 &nbsp;
 

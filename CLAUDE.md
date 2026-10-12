@@ -8,7 +8,7 @@ A demo shop for Android and iOS: one Kotlin Multiplatform code base, the same Co
 | Build | Gradle 9.8, AGP 9.4, JDK 21, compileSdk 37 |
 | Shop app | `:apps:shop:android` (starts the shared `:apps:shop:app`), applicationId `krio.systemdesign.shoppingapp`, launcher activity `.MainActivity` |
 | UI kit app | `:apps:uikit:android` (starts the shared `:apps:uikit:app`), applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity` |
-| iOS app | Xcode project `apps/shop/ios`, bundle id `krio.systemdesign.shoppingapp`; links the `ShopApp` framework of `:apps:shop:app`; builds only on a Mac |
+| iOS apps | Xcode projects, build only on a Mac: the shop `apps/shop/ios` (bundle id `krio.systemdesign.shoppingapp`, links the `ShopApp` framework of `:apps:shop:app`), the UI kit `apps/uikit/ios` (`krio.systemdesign.shoppingapp.uikit`, the `UiKitApp` framework of `:apps:uikit:app`) |
 
 Machine-specific setup (SDK paths, emulator access) lives in `CLAUDE.local.md`, if present.
 
@@ -29,7 +29,7 @@ Folders are levels, bottom to top: `core/` → `crossfeature/` → `feature/` �
 | | `:feature:<name>:ui` | shop components only this feature uses, on plain values; depends only on `:core:designsystem` and `:crossfeature:ui`; exists only when the feature has such components (not in settings) |
 | `apps/`: nothing depends on them | `:apps:shop:app` | the shop's code for both platforms: `App()`, the navigation host, the bottom bar, analytics, the base of the app's graph; in `iosMain` the iOS entry point and graph (`IosAppGraph`); builds the `ShopApp` framework |
 | | `:apps:shop:android` | the Android app: `MainActivity`, `ShoppingApp`, the graph for Android, manifest and resources |
-| | `:apps:uikit:app` | the UI kit's code for both platforms: a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data |
+| | `:apps:uikit:app` | the UI kit's code for both platforms: a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data; the iOS entry point and the `UiKitApp` framework |
 | | `:apps:uikit:android` | the UI kit's Android app: `UiKitActivity`, manifest and resources |
 
 - **The rules are checked** by `./gradlew assertModuleGraph` (a CI step too) against `build-logic/src/main/kotlin/ModuleGraphRules.kt`. A new kind of dependency between modules needs a rule there.

@@ -94,7 +94,7 @@ Comments are in English and short, and they explain what the code itself can't: 
 | Job | Steps |
 |---|---|
 | Android | code style (ktlint) → dependencies between modules (`assertModuleGraph`) → unused dependencies (`buildHealth`) → problems in code and resources (Android lint with Slack's Compose rules) → [unit and screenshot tests](testing.md) → both apps compile |
-| iOS | the common tests of every KMP module on the iOS simulator → the [iOS app](#ios-app) builds (`xcodebuild`); on macOS, free for a public repository |
+| iOS | the common tests of every KMP module on the iOS simulator → both [iOS apps](#ios-app) build (`xcodebuild`); on macOS, free for a public repository |
 | Server | code style (ktlint) → API and data files (tests, including checks of `data/*.json` and the [API samples](testing.md#contract-with-the-server)) |
 
 - **Every check runs even if an earlier one failed**, so a single run shows all the problems.
@@ -138,7 +138,8 @@ The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). 
 
 - **It builds on a Mac** with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator, or use the iOS run configuration of Android Studio with the Kotlin Multiplatform plugin.
 - **On Linux the shared code compiles for iOS too** (`./gradlew compileKotlinIosSimulatorArm64`), which catches most iOS errors before CI; linking the framework, the iOS tests and the Xcode build need a Mac, so CI runs them on macOS.
-- **iOS 18.5 or later**, iPhone, portrait only. The server is reached over plain HTTP by its IP address, which iOS allows only with `NSAllowsArbitraryLoads` in `Info.plist`.
+- **iOS 18.5 or later**, iPhone; the shop is portrait only. The server is reached over plain HTTP by its IP address, which iOS allows only with `NSAllowsArbitraryLoads` in `Info.plist`.
+- **The UI kit has its own Xcode project**, [`apps/uikit/ios`](../../../apps/uikit/ios/), made the same way: it links the `UiKitApp` framework of `:apps:uikit:app` (not `UiKit`: on a Mac's case-insensitive disk it would clash with Apple's `UIKit`). It works offline, so it doesn't need `NSAllowsArbitraryLoads`, and turns to landscape, as on Android.
 - **A missing function fails the link**: by default Kotlin/Native links a call to a function the libraries lack (e.g. one written under another signature) into a call that throws at run time; `shoppingapp.kmp.library` passes `-Xpartial-linkage-loglevel=ERROR`, so such a framework doesn't build. A compiler bug once made the app crash at start this way.
 - **Logs, as on Android**: a debug build writes HTTP requests and analytics events to the Xcode console, a release build writes nothing. A KMP module has no build variants, so the check is `Platform.isDebugBinary` at run time; Xcode's Release configuration builds the release framework.
 
