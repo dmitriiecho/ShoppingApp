@@ -132,7 +132,7 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 
 ### Database
 
-`databaseTest {}` provides an empty in-memory `ShoppingDatabase`. Room needs an Android `Context`, so these test classes run on Robolectric; this is the only place where a test imports `org.junit`:
+`databaseTest {}` provides an empty in-memory `ShoppingDatabase`. Room needs an Android `Context` on Android, so these test classes live in `src/androidHostTest` and run on Robolectric; this is the only place where a test imports `org.junit`. They use Android's SQLite: the app's bundled one is a native library for devices and doesn't load on the JVM.
 
 ```kotlin
 @RunWith(RobolectricTestRunner::class)
@@ -150,7 +150,7 @@ class LocalCartDataSourceTest {
 }
 ```
 
-Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` gives the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`. DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
+Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` and `shoppingapp.kmp.library` give the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`. DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
 
 ### Network
 

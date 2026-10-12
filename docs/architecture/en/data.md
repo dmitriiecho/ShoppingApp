@@ -115,6 +115,13 @@ The cart and the settings are stored on the device:
 | Room (`shopping.db`) | cart items and the applied promo code; the schema is exported to `crossfeature/data/schemas/` |
 | DataStore Preferences | the theme and the request delay from the settings |
 
+Both are Kotlin Multiplatform, and the code that uses them is shared; only the location of the files differs:
+
+- **Android** keeps the files where it always did (`AndroidDataModule`): the database among the app's databases, the settings in `files/datastore/`. An update of the app keeps the cart and the settings.
+- **iOS** keeps them in the app's Documents folder (`IosDataModule`).
+- **The SQLite is the app's own** (`BundledSQLiteDriver`), the same version on both platforms instead of each system's. It adds about 1.2 MB per processor type to the APK; the app keeps these libraries compressed, so the universal APK grows by about 2.5 MB.
+- **Transactions** go through `writeTransaction`, the multiplatform counterpart of Room's Android-only `withTransaction`.
+
 The app hasn't been released yet, so schema changes don't need migrations for now:
 
 - **Every schema change bumps `version`** in `ShoppingDatabase`. Room recreates the database only when the version changes: with the old version and a new schema, it fails with an error.

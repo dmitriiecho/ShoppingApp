@@ -14,6 +14,13 @@ android {
         versionName = "1.0"
     }
 
+    // Room's own SQLite (BundledSQLiteDriver) is a native library, one copy per processor type. Compressed in the APK:
+    // the universal APK from the README is downloaded whole, 4.8 MB instead of 7.3 MB. Android unpacks the copy for
+    // its processor on install.
+    packaging {
+        jniLibs.useLegacyPackaging = true
+    }
+
     buildFeatures {
         buildConfig = true
     }
