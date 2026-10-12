@@ -1,8 +1,12 @@
 # Architecture
 
-[Русская версия](../ru/README.md)
+> **Variant `kmp-ready`**: Android, Metro, Ktor
+>
+> This page in the other variants:
+> - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/README.md): Android, Hilt, Retrofit
+> - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/en/README.md): Android and iOS, Metro, Ktor
 
-Variant: **`kmp-ready`** (Android, Metro, Ktor) · this page in [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/README.md) (Android, Hilt, Retrofit) · [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/en/README.md) (Android and iOS, Metro, Ktor)
+[Русская версия](../ru/README.md)
 
 ShoppingApp is a demo store for Android: a searchable catalog, product details, a cart that lives on the device and is checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) provides the catalog and checks the cart.
 
