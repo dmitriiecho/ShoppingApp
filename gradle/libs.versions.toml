@@ -16,6 +16,8 @@ navigation = "2.10.2"
 room = "2.8.5"
 paging = "3.5.2"
 datastore = "1.2.1"
+# The SQLite library Room uses (androidx.sqlite); the bundled driver must be the same version.
+sqlite = "2.6.2"
 composeBom = "2026.09.00"
 composeLints = "1.6.1"
 
@@ -60,7 +62,9 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
-androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastore" }
+# Room's driver with its own SQLite, the same on Android and iOS (DataModule in :crossfeature:data).
+androidx-sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqlite" }
 
 # Network and images
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
