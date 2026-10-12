@@ -24,7 +24,7 @@ The middle level is named `crossfeature`, not `shared`: in Kotlin Multiplatform 
 Two kinds of modules sit inside the levels:
 
 - **`testing` modules** hold test helpers that the tests of other modules use too, next to the module they belong to: `:core:network:testing`, `:crossfeature:domain:testing`. Kotlin Multiplatform modules have no test fixtures, so the helpers get a module of their own; only tests depend on it ([Testing](testing.md#names-and-places)).
-- **`:apps:shop:app`** is the part of the shop app both platforms share. For now it holds the iOS entry point and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)).
+- **The shop app is split by platform**, as JetBrains recommends: `:apps:shop:app` holds what both platforms share (`App()`, navigation, the bottom bar, analytics, the base of the app's graph) and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)); `:apps:shop:android` is the Android entry point (`MainActivity`, `ShoppingApp`, the Android graph, manifest, resources).
 
 Outside the levels is [`contract/`](../../../contract/): the API's DTOs, shared with the server. It's a separate build that both the app and the server include, so the server, also a separate build, can use it without the app. `:crossfeature:data` and the features' `impl` modules that call the server depend on it ([Data](data.md#the-contract-with-the-server)).
 
@@ -77,8 +77,8 @@ kotlin {
 
 - **`ui` is a separate module so the UI kit can show it** without seeing screens, ViewModels or data. A feature without such components has no `ui` module (for example, `settings`).
 - **There is no `api` module.** Features never depend on each other, so only the app needs a feature's API, and it connects the features through callbacks (see [Navigation](navigation.md)).
-- **Only `:apps:shop` depends on `:crossfeature:data`.** Features see repository interfaces from `:crossfeature:domain`; the app's dependency graph (Metro) provides the implementations.
-- **`:apps:shop` depends directly on every module with DI contributions** (`@ContributesTo`, `@ContributesBinding` and the like), `:core:network` included, though the app's code doesn't use it. Metro builds the graph when it compiles `:apps:shop` and sees only the contributions on its compile classpath; for the same reason a module's types used in its bindings are `api` (Room and DataStore in `:crossfeature:data`).
+- **Only the apps' graphs use `:crossfeature:data`**: `:apps:shop:android` and the iOS part of `:apps:shop:app`. Features see repository interfaces from `:crossfeature:domain`; the app's dependency graph (Metro) provides the implementations.
+- **The module of a platform's graph depends directly on every module with DI contributions** (`@ContributesTo`, `@ContributesBinding` and the like) or with `@Inject` classes the graph creates, though its own code doesn't use them: `:apps:shop:android` lists the features, `:crossfeature:data`, `:core:network` and others. Metro builds the graph when it compiles that module and sees only what is on its compile classpath; for the same reason a module's types used in its bindings are `api` (Room and DataStore in `:crossfeature:data`).
 
 &nbsp;
 
@@ -107,8 +107,8 @@ A library's package mirrors its module path, and an app's package is its applica
 | `:crossfeature:ui` | `krio.systemdesign.shoppingapp.crossfeature.ui` |
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (the hyphen is dropped) |
-| `:apps:shop` | `krio.systemdesign.shoppingapp` |
-| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: part of the app, so it has the app's package |
+| `:apps:shop:android` | `krio.systemdesign.shoppingapp` |
+| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: part of the app, so it has the app's package; its Android namespace still follows its path, since a library can't share the app's |
 
 Because an app's package is tied to its applicationId, it doesn't change when the app moves to another folder.
 
@@ -127,7 +127,8 @@ allowed = arrayOf(
     """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
     """:feature:(\w+):impl -> :feature:\1:ui""",   // only its own ui
     """:apps:uikit -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
-    """:apps:shop -> :(core|crossfeature|feature):.*""",
+    """:apps:shop:android -> :apps:shop:app""",
+    """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
 )
 ```
 

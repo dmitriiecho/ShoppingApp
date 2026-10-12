@@ -82,8 +82,8 @@ core/         designsystem, compose-utils, network, config   ничего не �
 Чтобы собрать приложения самостоятельно, понадобятся JDK 21 и Android SDK:
 
 ```sh
-./gradlew :apps:shop:installDebug      # установить магазин на подключённое устройство
-./gradlew :apps:uikit:installDebug     # установить UI kit
+./gradlew :apps:shop:android:installDebug  # установить магазин на подключённое устройство
+./gradlew :apps:uikit:installDebug         # установить UI kit
 ```
 
 &nbsp;

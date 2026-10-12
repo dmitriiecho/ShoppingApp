@@ -24,7 +24,7 @@
 Внутри уровней есть модули ещё двух видов:
 
 - **Модули `testing`** держат тестовых помощников, которые нужны и тестам других модулей, рядом с модулем, к которому они относятся: `:core:network:testing`, `:crossfeature:domain:testing`. У модулей на Kotlin Multiplatform нет test fixtures, поэтому помощники получают свой модуль; зависят от него только тесты ([Тестирование](testing.md#имена-и-расположение)).
-- **`:apps:shop:app`** — общая для обеих платформ часть приложения магазина. Пока в нём точка входа iOS, и он собирает фреймворк, который подключает Xcode-проект в `apps/shop/ios` ([Сборка](build.md#ios-приложение)).
+- **Приложение магазина разделено по платформам**, как советует JetBrains: в `:apps:shop:app` всё общее для обеих платформ (`App()`, навигация, нижняя панель, аналитика, основа графа приложения), и он собирает фреймворк, который подключает Xcode-проект в `apps/shop/ios` ([Сборка](build.md#ios-приложение)); `:apps:shop:android` — точка входа Android (`MainActivity`, `ShoppingApp`, граф для Android, манифест, ресурсы).
 
 Вне уровней лежит [`contract/`](../../../contract/): DTO API, общие с сервером. Это отдельная сборка, которую подключают и приложение, и сервер, поэтому сервер, тоже отдельная сборка, может пользоваться ею без приложения. От неё зависят `:crossfeature:data` и `impl`-модули фич, которые обращаются к серверу ([Данные](data.md#договорённости-с-сервером)).
 
@@ -77,8 +77,8 @@ kotlin {
 
 - **`ui` вынесен в отдельный модуль, чтобы UI kit мог его показать**, не видя экранов, ViewModel и данных. Если таких компонентов у фичи нет, то нет и модуля `ui` (например, у `settings`).
 - **Модуля `api` нет.** Фичи никогда не зависят друг от друга, так что API фичи нужно только приложению, а оно связывает фичи через колбэки (см. [Навигацию](navigation.md)).
-- **От `:crossfeature:data` зависит только `:apps:shop`.** Фичи видят интерфейсы репозиториев из `:crossfeature:domain`, а реализации подставляет граф зависимостей приложения (Metro).
-- **`:apps:shop` напрямую зависит от каждого модуля с вкладами в DI** (`@ContributesTo`, `@ContributesBinding` и подобными), в том числе от `:core:network`, хотя код приложения его не использует. Metro строит граф при компиляции `:apps:shop` и видит только вклады из её compile classpath; по той же причине типы модуля, которые встречаются в его привязках, подключены как `api` (Room и DataStore в `:crossfeature:data`).
+- **`:crossfeature:data` используют только графы приложений**: `:apps:shop:android` и iOS-часть `:apps:shop:app`. Фичи видят интерфейсы репозиториев из `:crossfeature:domain`, а реализации подставляет граф зависимостей приложения (Metro).
+- **Модуль с графом платформы напрямую зависит от каждого модуля с вкладами в DI** (`@ContributesTo`, `@ContributesBinding` и подобными) или с `@Inject`-классами, которые создаёт граф, хотя его собственный код их не использует: `:apps:shop:android` перечисляет фичи, `:crossfeature:data`, `:core:network` и другие. Metro строит граф при компиляции этого модуля и видит только то, что есть в его compile classpath; по той же причине типы модуля, которые встречаются в его привязках, подключены как `api` (Room и DataStore в `:crossfeature:data`).
 
 &nbsp;
 
@@ -107,8 +107,8 @@ fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Un
 | `:crossfeature:ui` | `krio.systemdesign.shoppingapp.crossfeature.ui` |
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (дефис убирается) |
-| `:apps:shop` | `krio.systemdesign.shoppingapp` |
-| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: это часть приложения, поэтому у неё пакет приложения |
+| `:apps:shop:android` | `krio.systemdesign.shoppingapp` |
+| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: это часть приложения, поэтому у неё пакет приложения; Android-namespace у неё по-прежнему по пути, потому что у библиотеки он не может совпадать с приложением |
 
 Пакет приложения привязан к applicationId, поэтому он не меняется, если приложение переедет в другую папку.
 
@@ -127,7 +127,8 @@ allowed = arrayOf(
     """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
     """:feature:(\w+):impl -> :feature:\1:ui""",   // только свой ui
     """:apps:uikit -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
-    """:apps:shop -> :(core|crossfeature|feature):.*""",
+    """:apps:shop:android -> :apps:shop:app""",
+    """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
 )
 ```
 

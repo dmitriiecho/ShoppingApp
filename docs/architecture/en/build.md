@@ -12,12 +12,12 @@ Each kind of module has its own plugin:
 
 | Plugin | For | Adds |
 |---|---|---|
-| `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | the Android setup, targetSdk, signing, R8 in release, the app's languages for the system settings, the [module graph check](modules.md#the-check), dependency analysis, warnings as errors in CI |
-| `shoppingapp.android.compose` | `:apps:shop`, `:apps:uikit` | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
+| `shoppingapp.android.application` | `:apps:shop:android`, `:apps:uikit` | the Android setup, targetSdk, signing, R8 in release, the app's languages for the system settings (the list is generated from the resources; the shop's strings are Compose resources, so it lists its languages itself, in `res/xml/locale_config.xml`), the [module graph check](modules.md#the-check), dependency analysis, warnings as errors in CI |
+| `shoppingapp.android.compose` | `:apps:shop:android`, `:apps:uikit` | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.metro` | modules with DI, Android or KMP | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
 | `shoppingapp.android.screenshots` | every library with previews | [screenshot tests](testing.md#screenshots) generated from the previews |
 | `shoppingapp.kmp.library` | every Kotlin Multiplatform library: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` and the `testing` modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
-| `shoppingapp.kmp.compose` | KMP modules with Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, the iOS app's `:apps:shop:app` | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
+| `shoppingapp.kmp.compose` | KMP modules with Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, the shop's shared `:apps:shop:app` | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
 | `shoppingapp.kmp.feature` | every `:feature:<name>:impl` | `kmp.library` + `kmp.compose` + Metro + serialization, JetBrains' navigation and lifecycle libraries for KMP |
 
 As a result, a module's build file is short:
@@ -68,8 +68,8 @@ All versions are in [`gradle/libs.versions.toml`](../../../gradle/libs.versions.
 [ktlint](https://github.com/pinterest/ktlint) 1.8 checks the style through Spotless, using the rules in the root [`.editorconfig`](../../../.editorconfig):
 
 ```sh
-./gradlew spotlessCheck   # check
-./gradlew spotlessApply   # fix
+./gradlew spotlessCheck  # check
+./gradlew spotlessApply  # fix
 ```
 
 - **The `android_studio` style**, which matches Android Studio's formatter, so Ctrl+Alt+L and ktlint agree.
@@ -141,21 +141,21 @@ The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). 
 The main commands, from the project root:
 
 ```sh
-./gradlew :apps:shop:installDebug      # install the shop on a connected device
-./gradlew :apps:uikit:installDebug     # install the UI kit
-./gradlew assertModuleGraph            # check dependencies between modules
-./gradlew buildHealth                  # find unused dependencies
-./gradlew lintDebug lintAndroidMain    # run Android lint on the Android and the KMP modules
-./gradlew testAndroidHostTest     # run the app tests on the JVM, including screenshots
-./gradlew compileKotlinIosSimulatorArm64  # compile the shared code for iOS (on Linux too)
-./gradlew iosSimulatorArm64Test        # run the common tests on the iOS simulator (on a Mac)
+./gradlew :apps:shop:android:installDebug  # install the shop on a connected device
+./gradlew :apps:uikit:installDebug         # install the UI kit
+./gradlew assertModuleGraph                # check dependencies between modules
+./gradlew buildHealth                      # find unused dependencies
+./gradlew lintDebug lintAndroidMain        # run Android lint on the Android and the KMP modules
+./gradlew testAndroidHostTest              # run the app tests on the JVM, including screenshots
+./gradlew compileKotlinIosSimulatorArm64   # compile the shared code for iOS (on Linux too)
+./gradlew iosSimulatorArm64Test            # run the common tests on the iOS simulator (on a Mac)
 ./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # record new screenshots after a UI change
-cd server && ./gradlew test            # run the server tests
+cd server && ./gradlew test                # run the server tests
 ```
 
 The same checks as CI, with warnings treated as errors:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:assembleDebug :apps:uikit:assembleDebug
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:assembleDebug
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

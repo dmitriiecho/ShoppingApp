@@ -16,7 +16,7 @@ The core of analytics lives in `:crossfeature:analytics`, and the clients for th
 | `Analytics` | `:crossfeature:analytics` | passes an event to the clients of the event's systems |
 | `AnalyticsSystem` | `:crossfeature:analytics` | the app's systems: `Insights` (product analytics), `AdTracker` (ads) |
 | `AnalyticsSystemClient` | `:crossfeature:analytics` | code that sends events to one system |
-| `FakeInsightsClient`, `FakeAdTrackerClient` | `:apps:shop` | one client per system, standing in for SDKs such as Firebase Analytics and AppsFlyer |
+| `FakeInsightsClient`, `FakeAdTrackerClient` | `:apps:shop:app` | one client per system, standing in for SDKs such as Firebase Analytics and AppsFlyer |
 
 A ViewModel calls `analytics.log(event)`, and `Analytics` passes the event only to the clients of the systems that the event lists:
 
@@ -72,7 +72,7 @@ launchCartAction(
 )
 ```
 
-Screen views are reported by the app, not by the screens ([`ScreenViews.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/ScreenViews.kt)). It watches the back stack and reports the screen on top after every navigation and every return to the foreground. Each feature names its own screens, and a screen without a name isn't reported:
+Screen views are reported by the app, not by the screens ([`ScreenViews.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/ScreenViews.kt)). It watches the back stack and reports the screen on top after every navigation and every return to the foreground. Each feature names its own screens, and a screen without a name isn't reported:
 
 ```kotlin
 fun NavDestination.catalogAnalyticsScreen(): AnalyticsScreen? = when {

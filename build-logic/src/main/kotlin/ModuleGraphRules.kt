@@ -32,7 +32,9 @@ internal fun Project.configureModuleGraphRules() {
             """:feature:(\w+):impl -> :feature:\1:ui""",
             // The UI kit shows the UI modules only.
             """:apps:uikit -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
-            """:apps:shop -> :(core|crossfeature|feature):.*""",
+            // The shop: the Android app starts the shared app; both see every level below.
+            """:apps:shop:android -> :apps:shop:app""",
+            """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
         )
     }
 }

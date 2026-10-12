@@ -8,7 +8,7 @@
 
 ## Как связаны фичи
 
-Приложение собирает три вкладки и экран оформления заказа поверх них. Любой переход из одной фичи в другую — это колбэк, который [`AppNavGraph.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) передаёт в графы фич:
+Приложение собирает три вкладки и экран оформления заказа поверх них. Любой переход из одной фичи в другую — это колбэк, который [`AppNavGraph.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) передаёт в графы фич:
 
 | Откуда | Куда | Колбэк |
 |---|---|---|
@@ -61,7 +61,7 @@ fun CartNavigationScope.graph(
 
 ## Вкладки
 
-У каждой вкладки свой стек. При переходе на вкладку со стека снимается всё, в том числе каталог, а стек вкладки, с которой ушли, сохраняется ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
+У каждой вкладки свой стек. При переходе на вкладку со стека снимается всё, в том числе каталог, а стек вкладки, с которой ушли, сохраняется ([`BottomTabs.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
 
 ```kotlin
 navigate(route) {
@@ -162,7 +162,7 @@ fun navigate(block: () -> Unit) {
 <details>
 <summary>Вторая защита: уходящий экран не реагирует на нажатия</summary>
 
-Пока идёт анимация перехода, старый экран ещё виден, и раньше он ловил второе нажатие: двойное нажатие на «Назад» закрывало два экрана. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) игнорирует нажатия, пока верхний экран не перейдёт в `RESUMED`.
+Пока идёт анимация перехода, старый экран ещё виден, и раньше он ловил второе нажатие: двойное нажатие на «Назад» закрывало два экрана. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) игнорирует нажатия, пока верхний экран не перейдёт в `RESUMED`.
 
 </details>
 
@@ -178,22 +178,23 @@ fun navigate(block: () -> Unit) {
 | `https://dmitriiecho.github.io/ShoppingApp/cart` | вкладку корзины |
 | `https://dmitriiecho.github.io/ShoppingApp/product/{id}` | товар поверх каталога |
 
-Ссылка открывает экран так же, как до него дошёл бы пользователь ([`DeepLinks.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
+Ссылка открывает экран так же, как до него дошёл бы пользователь ([`DeepLinks.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
 
 ```kotlin
 // Вкладка, которая обрабатывает ссылку; если такой нет, ссылка игнорируется
-val tab = BottomNavRoutes.all.firstOrNull { tabGraph(it).hasDeepLink(link) } ?: return
+val tab = BottomNavRoutes.all.firstOrNull { tabGraph(it).hasDeepLink(request) } ?: return
 val tabRoot = tabGraph(tab).findStartDestination()
 
-navigateToBottomTab(tab)                       // как нажатие на вкладку
-popBackStack(tabRoot.id, inclusive = false)    // к корню вкладки
-if (!tabRoot.hasDeepLink(link)) navigate(link) // экран поверх корня
+navigateToBottomTab(tab)                                // как нажатие на вкладку
+popBackStack(checkNotNull(tabRoot.route), inclusive = false) // к корню вкладки
+if (!tabRoot.hasDeepLink(request)) navigate(request)    // экран поверх корня
 ```
 
 Поэтому «Назад» с товара, открытого по ссылке, ведёт в каталог.
 
 - **App Links подтверждены**: debug-ключ хранится в репозитории, а его отпечаток указан в `assetlinks.json` на домене, поэтому ссылки открывает сборка с любого компьютера.
 - **Домен и пути записаны в двух местах**: в intent-filter манифеста и в `DeepLinkConfig`; комментарий в каждом месте указывает на другое.
+- **Код общий**: платформа передаёт ссылку строкой ([`IncomingDeepLinks`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/IncomingDeepLinks.kt) — канал в графе приложения, который держит ссылку, пока навигация не готова), а API навигации здесь общий: к корню вкладки возвращаемся по его маршруту, а нижняя панель снимает стек до маршрута корневого графа `AppRoute`, потому что в общем API нет снятия стека по id экрана.
 - **Тестовые страницы** со всеми ссылками, включая варианты с завершающим слешем и краевые случаи (несуществующий товар, неизвестный путь), лежат в [`docs/deeplinks/`](../../deeplinks/) и опубликованы на GitHub Pages; открыть их можно с экрана настроек.
 
 <details>
@@ -204,7 +205,7 @@ if (!tabRoot.hasDeepLink(link)) navigate(link) // экран поверх кор
 ```kotlin
 val launchedFromRecents = (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0
 if (savedInstanceState == null && !launchedFromRecents) {
-    intent.data?.let(viewModel::openDeepLink)
+    intent.data?.let { graph.incomingDeepLinks.open(it.toString()) }
 }
 intent.data = null
 ```
