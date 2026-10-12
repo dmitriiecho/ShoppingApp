@@ -68,18 +68,20 @@ jobs:
 
       # --- Build and publish ------------------------------------------------
 
-      # Where the shop app is in the branch being built: the kmp branch splits it into apps/shop/android and the
-      # shared apps/shop/app, the other branches keep it in apps/shop. GitHub runs this file from main for every branch.
-      - name: Find the shop app
-        id: shop
+      # Where the apps are in the branch being built: the kmp branch splits each one into apps/<app>/android and the
+      # shared apps/<app>/app, the other branches keep it in apps/<app>. GitHub runs this file from main for every branch.
+      - name: Find the apps
+        id: apps
         run: |
-          if [ -d apps/shop/android ]; then DIR=apps/shop/android; else DIR=apps/shop; fi
-          echo "dir=$DIR" >> "$GITHUB_OUTPUT"
-          echo "module=:${DIR//\//:}" >> "$GITHUB_OUTPUT"
+          for APP in shop uikit; do
+            if [ -d apps/$APP/android ]; then DIR=apps/$APP/android; else DIR=apps/$APP; fi
+            echo "${APP}_dir=$DIR" >> "$GITHUB_OUTPUT"
+            echo "${APP}_module=:${DIR//\//:}" >> "$GITHUB_OUTPUT"
+          done
 
       # Release builds: R8 shrinks the code, the APKs are signed with the debug key from the repo.
       - name: Build release APKs
-        run: ./gradlew ${{ steps.shop.outputs.module }}:assembleRelease :apps:uikit:assembleRelease
+        run: ./gradlew ${{ steps.apps.outputs.shop_module }}:assembleRelease ${{ steps.apps.outputs.uikit_module }}:assembleRelease
 
       # gh is GitHub's command-line tool, preinstalled on the runner; it acts with this job's token.
       - name: Publish the release
@@ -88,8 +90,8 @@ jobs:
         run: |
           # Fixed file names keep the download links in the README the same from build to build.
           mkdir dist
-          cp ${{ steps.shop.outputs.dir }}/build/outputs/apk/release/shop-release.apk dist/ShoppingApp.apk
-          cp apps/uikit/build/outputs/apk/release/uikit-release.apk dist/ShoppingApp-UiKit.apk
+          cp ${{ steps.apps.outputs.shop_dir }}/build/outputs/apk/release/shop-release.apk dist/ShoppingApp.apk
+          cp ${{ steps.apps.outputs.uikit_dir }}/build/outputs/apk/release/uikit-release.apk dist/ShoppingApp-UiKit.apk
           TAG="$BRANCH-latest"
 
           # The main build is the repo's Latest release, shown on its front page; the other branches are pre-releases.
