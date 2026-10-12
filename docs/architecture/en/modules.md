@@ -30,7 +30,7 @@ The middle level is named `crossfeature`, not `shared`: in Kotlin Multiplatform 
 Two kinds of modules sit inside the levels:
 
 - **`testing` modules** hold test helpers that the tests of other modules use too, next to the module they belong to: `:core:network:testing`, `:crossfeature:domain:testing`. Kotlin Multiplatform modules have no test fixtures, so the helpers get a module of their own; only tests depend on it ([Testing](testing.md#names-and-places)).
-- **The shop app is split by platform**, as JetBrains recommends: `:apps:shop:app` holds what both platforms share (`App()`, navigation, the bottom bar, analytics, the base of the app's graph), the iOS entry point and graph in `iosMain`, and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)); `:apps:shop:android` is the Android entry point (`MainActivity`, `ShoppingApp`, the Android graph, manifest, resources). The UI kit is split the same way: `:apps:uikit:app` holds its screens and samples and builds the framework of `apps/uikit/ios`, `:apps:uikit:android` holds its `UiKitActivity`.
+- **The shop app is split by platform**, as in JetBrains' [recommended project structure](https://kotlinlang.org/docs/multiplatform/multiplatform-project-recommended-structure.html), with its module names: `:apps:shop:shared` holds what both platforms share (`App()`, navigation, the bottom bar, analytics, the base of the app's graph), the iOS entry point and graph in `iosMain`, and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)); `:apps:shop:android` is the Android entry point (`MainActivity`, `ShoppingApp`, the Android graph, manifest, resources). The UI kit is split the same way: `:apps:uikit:shared` holds its screens and samples and builds the framework of `apps/uikit/ios`, `:apps:uikit:android` holds its `UiKitActivity`.
 
 Outside the levels is [`contract/`](../../../contract/): the API's DTOs, shared with the server. It's a separate build that both the app and the server include, so the server, also a separate build, can use it without the app. `:crossfeature:data` and the features' `impl` modules that call the server depend on it ([Data](data.md#the-contract-with-the-server)).
 
@@ -52,7 +52,7 @@ Styled components follow the same rule:
 | refers to shop concepts (product, cart, promo, price, stock) and is used by two or more features | `:crossfeature:ui` |
 | refers to shop concepts and is used by only one feature | `:feature:<name>:ui` |
 
-Features don't style Material components themselves, and every styled component has a sample in the UI kit app (`:apps:uikit:app`).
+Features don't style Material components themselves, and every styled component has a sample in the UI kit app (`:apps:uikit:shared`).
 
 &nbsp;
 
@@ -83,7 +83,7 @@ kotlin {
 
 - **`ui` is a separate module so the UI kit can show it** without seeing screens, ViewModels or data. A feature without such components has no `ui` module (for example, `settings`).
 - **There is no `api` module.** Features never depend on each other, so only the app needs a feature's API, and it connects the features through callbacks (see [Navigation](navigation.md)).
-- **Only the apps' graphs use `:crossfeature:data`**: `:apps:shop:android` and the iOS part of `:apps:shop:app`. Features see repository interfaces from `:crossfeature:domain`; the app's dependency graph (Metro) provides the implementations.
+- **Only the apps' graphs use `:crossfeature:data`**: `:apps:shop:android` and the iOS part of `:apps:shop:shared`. Features see repository interfaces from `:crossfeature:domain`; the app's dependency graph (Metro) provides the implementations.
 - **The module of a platform's graph depends directly on every module with DI contributions** (`@ContributesTo`, `@ContributesBinding` and the like) or with `@Inject` classes the graph creates, though its own code doesn't use them: `:apps:shop:android` lists the features, `:crossfeature:data`, `:core:network` and others. Metro builds the graph when it compiles that module and sees only what is on its compile classpath; for the same reason a module's types used in its bindings are `api` (Room and DataStore in `:crossfeature:data`).
 
 &nbsp;
@@ -114,8 +114,8 @@ A library's package mirrors its module path, and an app's package is its applica
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (the hyphen is dropped) |
 | `:apps:shop:android` | `krio.systemdesign.shoppingapp` |
-| `:apps:uikit:android`, `:apps:uikit:app` | `krio.systemdesign.shoppingapp.uikit` |
-| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: part of the app, so it has the app's package; its Android namespace still follows its path, since a library can't share the app's |
+| `:apps:uikit:android`, `:apps:uikit:shared` | `krio.systemdesign.shoppingapp.uikit` |
+| `:apps:shop:shared` | `krio.systemdesign.shoppingapp`: part of the app, so it has the app's package; its Android namespace still follows its path, since a library can't share the app's |
 
 Because an app's package is tied to its applicationId, it doesn't change when the app moves to another folder.
 
@@ -133,10 +133,10 @@ allowed = arrayOf(
     """:feature:\w+:ui -> :(core:designsystem|crossfeature:ui)""",
     """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
     """:feature:(\w+):impl -> :feature:\1:ui""",   // only its own ui
-    """:apps:uikit:android -> :apps:uikit:app""",
-    """:apps:uikit:(android|app) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
-    """:apps:shop:android -> :apps:shop:app""",
-    """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
+    """:apps:uikit:android -> :apps:uikit:shared""",
+    """:apps:uikit:(android|shared) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
+    """:apps:shop:android -> :apps:shop:shared""",
+    """:apps:shop:(android|shared) -> :(core|crossfeature|feature):.*""",
 )
 ```
 

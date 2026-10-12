@@ -1,5 +1,5 @@
 // The UI kit's Android app: the entry point (UiKitActivity) and what only an Android app has (manifest, themes, icons).
-// The screens and samples are in :apps:uikit:app.
+// The screens and samples are in :apps:uikit:shared.
 plugins {
     alias(libs.plugins.shoppingapp.android.application)
     alias(libs.plugins.shoppingapp.android.compose)
@@ -27,7 +27,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":apps:uikit:app"))
+    implementation(project(":apps:uikit:shared"))
     // The window background in the app's theme is the design system's color.
     implementation(project(":core:designsystem"))
 

@@ -23,7 +23,7 @@
 | `shoppingapp.metro` | модули с DI, Android и KMP | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
 | `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
 | `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` и модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
-| `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, общие `:apps:shop:app` магазина и `:apps:uikit:app` UI kit | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
+| `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, общие `:apps:shop:shared` магазина и `:apps:uikit:shared` UI kit | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
 | `shoppingapp.kmp.feature` | каждый `:feature:<name>:impl` | `kmp.library` + `kmp.compose` + Metro + serialization, библиотеки навигации и lifecycle от JetBrains для KMP |
 
 Поэтому build-файл модуля получается коротким:
@@ -134,12 +134,12 @@ Debug-ключ хранится в репозитории ([`build-logic/debug.k
 
 ## iOS-приложение
 
-iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../../../apps/shop/ios/). Оно показывает экраны `:apps:shop:app`, который собирает их во фреймворк `ShopApp`: Run Script проекта вызывает Gradle (`embedAndSignAppleFrameworkForXcode`) до того, как Xcode компилирует код на Swift. Это весь магазин: `MainViewController()` в `iosMain` создаёт граф приложения (`IosAppGraph`) и показывает `App()`, как `MainActivity` на Android.
+iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../../../apps/shop/ios/). Оно показывает экраны `:apps:shop:shared`, который собирает их во фреймворк `ShopApp`: Run Script проекта вызывает Gradle (`embedAndSignAppleFrameworkForXcode`) до того, как Xcode компилирует код на Swift. Это весь магазин: `MainViewController()` в `iosMain` создаёт граф приложения (`IosAppGraph`) и показывает `App()`, как `MainActivity` на Android.
 
 - **Собирается на Mac** с Xcode и JDK 21: откройте `apps/shop/ios/iosApp.xcodeproj` и запустите на симуляторе, или используйте конфигурацию запуска iOS в Android Studio с плагином Kotlin Multiplatform.
 - **На Linux общий код тоже компилируется под iOS** (`./gradlew compileKotlinIosSimulatorArm64`), и большинство iOS-ошибок видно ещё до CI; линковка фреймворка, iOS-тесты и сборка Xcode требуют Mac, поэтому CI выполняет их на macOS.
 - **iOS 18.5 и новее**, iPhone в портретной ориентации, iPad в любой. К серверу приложение ходит по обычному HTTP и по IP-адресу, а iOS разрешает это только с `NSAllowsArbitraryLoads` в `Info.plist`.
-- **У UI kit свой Xcode-проект**, [`apps/uikit/ios`](../../../apps/uikit/ios/), устроенный так же: он подключает фреймворк `UiKitApp` из `:apps:uikit:app` (не `UiKit`: на нечувствительном к регистру диске Mac это имя совпало бы с `UIKit` от Apple). Он работает без сети, поэтому `NSAllowsArbitraryLoads` ему не нужен.
+- **У UI kit свой Xcode-проект**, [`apps/uikit/ios`](../../../apps/uikit/ios/), устроенный так же: он подключает фреймворк `UiKitApp` из `:apps:uikit:shared` (не `UiKit`: на нечувствительном к регистру диске Mac это имя совпало бы с `UIKit` от Apple). Он работает без сети, поэтому `NSAllowsArbitraryLoads` ему не нужен.
 - **Ненайденная функция ломает линковку**: по умолчанию Kotlin/Native превращает вызов функции, которой нет в библиотеках (например, записанной под другой сигнатурой), в вызов, который бросает исключение во время работы; `shoppingapp.kmp.library` передаёт `-Xpartial-linkage-loglevel=ERROR`, и такой фреймворк не собирается. Однажды из-за ошибки компилятора приложение так падало при запуске.
 - **Логи как на Android**: debug-сборка пишет HTTP-запросы и события аналитики в консоль Xcode, release-сборка не пишет ничего. У KMP-модуля нет вариантов сборки, поэтому проверка — `Platform.isDebugBinary` во время выполнения; конфигурация Release в Xcode собирает release-фреймворк.
 

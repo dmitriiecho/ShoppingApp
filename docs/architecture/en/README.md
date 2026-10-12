@@ -19,7 +19,7 @@ These pages explain how the app is built and why. Each one covers the rules, the
 The app is organised in four levels, from the bottom up:
 
 ```text
-apps/         shop, uikit (each: app, android, ios)          the applications: shared code and each platform's entry
+apps/         shop, uikit (each: shared, android, ios)       the applications: shared code and each platform's entry
 feature/      catalog, cart, promo, checkout, settings       each one is ui + impl
 crossfeature/ domain, data, ui, analytics                    shop code used by two or more features
 core/         designsystem, compose-utils, network, config   knows nothing about the shop

@@ -30,12 +30,12 @@ internal fun Project.configureModuleGraphRules() {
             // A feature's impl: core, crossfeature without data, and its own ui, never another feature.
             """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
             """:feature:(\w+):impl -> :feature:\1:ui""",
-            // The UI kit: the Android app starts the shared app; both see the UI modules only.
-            """:apps:uikit:android -> :apps:uikit:app""",
-            """:apps:uikit:(android|app) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
-            // The shop: the Android app starts the shared app; both see every level below.
-            """:apps:shop:android -> :apps:shop:app""",
-            """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
+            // The UI kit: the Android app starts the shared module; both see the UI modules only.
+            """:apps:uikit:android -> :apps:uikit:shared""",
+            """:apps:uikit:(android|shared) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
+            // The shop: the Android app starts the shared module; both see every level below.
+            """:apps:shop:android -> :apps:shop:shared""",
+            """:apps:shop:(android|shared) -> :(core|crossfeature|feature):.*""",
         )
     }
 }
