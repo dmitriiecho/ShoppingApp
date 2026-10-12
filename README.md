@@ -27,6 +27,14 @@ Each branch comes with two APKs: the shop and the UI kit.
 
 &nbsp;
 
+## The [`kmp`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp) variant: Android and iOS
+
+- **Four apps from one branch**: the shop and the UI kit, each for Android and for iOS.
+- **Phones and tablets** on both platforms.
+- **The whole UI is shared**: every screen is written once in Compose Multiplatform, in common modules, and the same code draws it on Android and iOS.
+
+&nbsp;
+
 ## How it looks
 
 The three main flows, from left to right: the catalog, the cart with a promo code, and changes from the server followed by checkout.
