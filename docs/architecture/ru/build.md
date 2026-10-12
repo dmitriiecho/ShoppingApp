@@ -1,8 +1,12 @@
 # Сборка
 
-[English version](../en/build.md) · [Все разделы](README.md)
+> **Вариант `main`**: Android, Hilt, Retrofit
+>
+> Эта страница в других вариантах:
+> - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/build.md): Android, Metro, Ktor
+> - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/build.md): Android и iOS, Metro, Ktor
 
-Вариант: **`main`** (Android, Hilt, Retrofit) · эта страница в [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/build.md) (Android, Metro, Ktor) · [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/build.md) (Android и iOS, Metro, Ktor)
+[English version](../en/build.md) · [Все разделы](README.md)
 
 Общая настройка модулей вынесена в [`build-logic/`](../../../build-logic/) — подключаемую сборку (included build) с convention-плагинами. Каждый модуль применяет несколько таких плагинов и объявляет только собственные зависимости.
 
