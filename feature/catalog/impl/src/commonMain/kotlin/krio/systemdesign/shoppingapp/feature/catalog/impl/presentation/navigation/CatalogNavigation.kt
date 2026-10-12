@@ -36,9 +36,9 @@ fun CatalogNavigationScope.graph(
 }
 
 // Product details screen inside another feature (for example, the cart).
-inline fun <reified T> CatalogNavigationScope.productDetailsScreen(
-    noinline onBack: () -> Unit,
-) where T : Any, T : ProductDetailsRoute {
+// No extra `T : Any` bound: the interface already makes T non-null, and with it Kotlin/Native writes the function to
+// the klib and looks it up from other modules under different signatures, so the iOS app fails at run time.
+inline fun <reified T : ProductDetailsRoute> CatalogNavigationScope.productDetailsScreen(noinline onBack: () -> Unit) {
     builder.composable<T> {
         CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
             ProductDetailsScreen(
