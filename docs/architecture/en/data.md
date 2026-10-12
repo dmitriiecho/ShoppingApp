@@ -1,8 +1,12 @@
 # Data
 
-[Русская версия](../ru/data.md) · [All pages](README.md)
+> **Variant `kmp`**: Android and iOS, Metro, Ktor
+>
+> This page in the other variants:
+> - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/data.md): Android, Hilt, Retrofit
+> - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/en/data.md): Android, Metro, Ktor
 
-Variant: **`kmp`** (Android and iOS, Metro, Ktor) · this page in [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/data.md) (Android, Hilt, Retrofit) · [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/en/data.md) (Android, Metro, Ktor)
+[Русская версия](../ru/data.md) · [All pages](README.md)
 
 A ViewModel calls use cases, a use case calls a repository, and a repository talks to Room, DataStore or the server. Which of these are shared and which belong to a single feature follows the rule from [Modules](modules.md#where-new-code-goes).
 

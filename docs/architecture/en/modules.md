@@ -1,8 +1,12 @@
 # Modules
 
-[Русская версия](../ru/modules.md) · [All pages](README.md)
+> **Variant `kmp`**: Android and iOS, Metro, Ktor
+>
+> This page in the other variants:
+> - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/modules.md): Android, Hilt, Retrofit
+> - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/en/modules.md): Android, Metro, Ktor
 
-Variant: **`kmp`** (Android and iOS, Metro, Ktor) · this page in [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/modules.md) (Android, Hilt, Retrofit) · [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/en/modules.md) (Android, Metro, Ktor)
+[Русская версия](../ru/modules.md) · [All pages](README.md)
 
 The folders are levels, from the bottom up: `core/` → `crossfeature/` → `feature/` → `apps/`. A module never depends on a level above its own, and features never depend on each other.
 

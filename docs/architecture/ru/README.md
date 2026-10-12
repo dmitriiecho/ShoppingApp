@@ -1,8 +1,12 @@
 # Архитектура
 
-[English version](../en/README.md)
+> **Вариант `kmp`**: Android и iOS, Metro, Ktor
+>
+> Эта страница в других вариантах:
+> - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/ru/README.md): Android, Hilt, Retrofit
+> - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/README.md): Android, Metro, Ktor
 
-Вариант: **`kmp`** (Android и iOS, Metro, Ktor) · эта страница в [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/ru/README.md) (Android, Hilt, Retrofit) · [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/README.md) (Android, Metro, Ktor)
+[English version](../en/README.md)
 
 ShoppingApp — демонстрационный интернет-магазин для Android и iOS: каталог с поиском, карточка товара, корзина, которая хранится на устройстве и сверяется с сервером, промокоды и форма заказа. Небольшой сервер на Ktor из папки [`server/`](../../../server/README.ru.md) отдаёт каталог и проверяет корзину. Обе платформы работают на одном коде Kotlin Multiplatform: экраны, логика и данные общие, своё у платформ — только точки входа и немного платформенных деталей.
 
