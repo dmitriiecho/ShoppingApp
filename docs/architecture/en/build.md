@@ -133,6 +133,7 @@ The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). 
 - **It builds on a Mac** with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator, or use the iOS run configuration of Android Studio with the Kotlin Multiplatform plugin.
 - **On Linux the shared code compiles for iOS too** (`./gradlew compileKotlinIosSimulatorArm64`), which catches most iOS errors before CI; linking the framework, the iOS tests and the Xcode build need a Mac, so CI runs them on macOS.
 - **iOS 18.5 or later**, iPhone, portrait only. The server is reached over plain HTTP by its IP address, which iOS allows only with `NSAllowsArbitraryLoads` in `Info.plist`.
+- **A missing function fails the link**: by default Kotlin/Native links a call to a function the libraries lack (e.g. one written under another signature) into a call that throws at run time; `shoppingapp.kmp.library` passes `-Xpartial-linkage-loglevel=ERROR`, so such a framework doesn't build. A compiler bug once made the app crash at start this way.
 - **Logs, as on Android**: a debug build writes HTTP requests and analytics events to the Xcode console, a release build writes nothing. A KMP module has no build variants, so the check is `Platform.isDebugBinary` at run time; Xcode's Release configuration builds the release framework.
 
 &nbsp;

@@ -6,6 +6,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 // A Kotlin Multiplatform library for Android and iOS. The code lives in src/commonMain, platform code in
 // src/androidMain and src/iosMain. Tests: src/commonTest runs on both platforms (testAndroidHostTest on the JVM,
@@ -27,6 +28,12 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
                 iosArm64()
                 iosSimulatorArm64()
+                // When a binary (the app's framework) calls a function its klibs lack, e.g. under another signature,
+                // Kotlin/Native links it anyway, into a call that throws at run time. This fails the link instead:
+                // a compiler bug once made the iOS app crash at start this way, with nothing in the build log.
+                targets.withType(KotlinNativeTarget::class.java).configureEach {
+                    binaries.all { freeCompilerArgs += "-Xpartial-linkage-loglevel=ERROR" }
+                }
                 targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach {
                     namespace = defaultNamespace()
                     compileSdk = AndroidConfig.COMPILE_SDK
