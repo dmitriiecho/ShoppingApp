@@ -19,7 +19,7 @@ The same app is built on three slightly different stacks, each in its own branch
 |---|---|---|---|---|---|
 | [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
 | **`kmp-ready`** | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
-| `kmp` | Android, iOS | Metro | Ktor | Kermit | coming |
+| [`kmp`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp) | Android, iOS | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp-UiKit.apk) |
 
 All variants share Compose, Navigation Compose, Room and DataStore.
 
