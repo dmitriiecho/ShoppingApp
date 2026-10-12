@@ -200,7 +200,7 @@ So Back from a product opened by a link goes to the catalog.
 
 - **App Links are verified**: the debug key is kept in the repo and its fingerprint is listed in `assetlinks.json` on the domain, so a build from any computer can open the links.
 - **The domain and paths are declared twice**, in the manifest's intent filter and in `DeepLinkConfig`; a comment in each one points to the other.
-- **Test pages** with every link, including variants with a trailing slash and edge cases (an unknown product, an unknown path), are in [`docs/deeplinks/`](../../deeplinks/) and published on GitHub Pages; the Settings screen opens them.
+- **Test pages** with every link, including variants with a trailing slash and edge cases (an unknown product, an unknown path), are in [`docs/deeplinks/android/`](../../deeplinks/android/), published on GitHub Pages; the Settings screen opens them. The iOS app of the `kmp` branch has its own pages next to them, in `docs/deeplinks/ios/`.
 
 <details>
 <summary>Why the launch link is opened only once</summary>

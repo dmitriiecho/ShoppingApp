@@ -39,7 +39,9 @@ fun `discount is the promo code percent of the subtotal`() {
 }
 ```
 
-- **One behaviour per test.** Several unrelated checks in one test hide each other, because the first failure stops the rest. Cases of the same kind go into a single table with AssertK's `tableOf`, which checks every row and reports all the failing ones. A table can't call suspend functions, so cases that are sent to a server are all requested first and then checked together: `assertThat(statuses.filterValues { it != BadRequest }).isEmpty()` lists every wrong answer.
+- **One behaviour per test.** Several unrelated checks in one test hide each other, because the first failure stops the rest. Cases of the same kind go into a single table with AssertK's `tableOf`, which checks every row and reports all the failing ones.
+
+  A table can't call suspend functions, so cases that are sent to a server are all requested first and then checked together: `assertThat(statuses.filterValues { it != BadRequest }).isEmpty()` lists every wrong answer.
 - **The name states the condition and the expected result**, in backticks: `` `cart with a changed price reports the new price` ``, not `` `price changed` ``.
 - **Arrange, act, assert**, separated by blank lines.
 - **A test's data lives in the test.** Builders with defaults (`testCartItem(price = 2000)`) let a test set only the values that matter to it. There is no data set shared by all tests, because changing it would break unrelated tests.
@@ -153,7 +155,9 @@ class LocalCartDataSourceTest {
 }
 ```
 
-Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` gives the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`. DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
+Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` gives the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`.
+
+DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
 
 ### Network
 
@@ -172,7 +176,9 @@ fun `client error returns HttpError with its code`() = networkTest<TestApi> { se
 
 ### Contract with the server
 
-The app and the server each describe the API's JSON in their own DTOs. What keeps them in sync is [`server/api-samples/`](../../../server/api-samples/): one JSON file for each request or response the app relies on. `apiSample("product.json")` reads a sample on either side, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter, but a renamed, extra or missing field does. Where each request goes is listed in `requests.json`, as a method and an address: `"product": "GET /products/1"` is the request whose response is `product.json`.
+The app and the server each describe the API's JSON in their own DTOs. What keeps them in sync is [`server/api-samples/`](../../../server/api-samples/): one JSON file for each request or response the app relies on.
+
+`apiSample("product.json")` reads a sample on either side, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter, but a renamed, extra or missing field does. Where each request goes is listed in `requests.json`, as a method and an address: `"product": "GET /products/1"` is the request whose response is `product.json`.
 
 | Side | Checks |
 |---|---|
@@ -216,4 +222,6 @@ Google's Compose Preview Screenshot Testing does the same thing with Android Stu
 
 ### Server
 
-`serverTest {}` starts the server in memory with Ktor's `testApplication`, using the data and product images the test passes in (`testShopData(products = …)`, `images = mapOf("1.png" to …)`), and provides a client that reads JSON with the server's own `serverJson`. The images live in a temporary folder that is deleted after the test. A request from the samples is sent with `sendApiRequest("product")`, which fails on any status other than success. More on the server's API is in [`server/README.md`](../../../server/README.md).
+`serverTest {}` starts the server in memory with Ktor's `testApplication`, using the data and product images the test passes in (`testShopData(products = …)`, `images = mapOf("1.png" to …)`), and provides a client that reads JSON with the server's own `serverJson`.
+
+The images live in a temporary folder that is deleted after the test. A request from the samples is sent with `sendApiRequest("product")`, which fails on any status other than success. More on the server's API is in [`server/README.md`](../../../server/README.md).
