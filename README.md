@@ -4,10 +4,10 @@
 
 [Русская версия](README.ru.md)
 
-ShoppingApp is an example Android app built on a modern stack. The repo contains two apps:
+ShoppingApp is an example app for Android and iOS built on a modern stack. The repo contains two apps:
 
-- **Shop**: a demo store with a searchable catalog, a cart that lives on the device and is checked against the server, promo codes and checkout. It works on phones and tablets.
-- **UI kit**: a showcase of every styled component in the shop, grouped into sections, with a light and dark theme switch. It lets you browse and check the design without going through the shop itself.
+- **Shop**: a demo store with a searchable catalog, a cart that lives on the device and is checked against the server, promo codes and checkout. It works on Android phones and tablets and on the iPhone, from the same Kotlin Multiplatform code.
+- **UI kit**: a showcase of every styled component in the shop, grouped into sections, with a light and dark theme switch, for Android. It lets you browse and check the design without going through the shop itself.
 
 &nbsp;
 
@@ -18,12 +18,12 @@ The same app is built on three slightly different stacks, each in its own branch
 | Branch | Platforms | DI | Network | Logging | Download |
 |---|---|---|---|---|---|
 | [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
-| **`kmp-ready`** | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
-| `kmp` | Android, iOS | Metro | Ktor | Kermit | coming |
+| [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp-ready) | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
+| **`kmp`** | Android, iOS | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp-UiKit.apk) |
 
-All variants share Compose, Navigation Compose, Room and DataStore.
+All variants share Compose, Navigation Compose, Room and DataStore. In `kmp` they are the multiplatform versions (Compose Multiplatform), and the shop's screens, logic and data are shared code that runs on both platforms.
 
-Each branch comes with two APKs: the shop and the UI kit.
+Each branch comes with two APKs: the shop and the UI kit. The iOS app is built from the code (see [Running](#running)).
 
 &nbsp;
 
@@ -47,7 +47,7 @@ The app is small, but every screen has something worth a look:
 - **Cart**: stored only on the device (Room). The server keeps no carts; it checks this one each time the cart is opened and before checkout, and reports removed items, new prices and low stock.
 - **Promo codes**: checked by the server, with the discount shown right in the totals.
 - **Checkout**: the form survives process death, and a double tap won't place the order twice.
-- **Deep links** to the catalog, the cart and a product, with verified App Links.
+- **Deep links** to the catalog, the cart and a product: verified App Links on Android, the app's own `shoppingapp://` links on iOS.
 - **Settings**: the theme, a request delay, and test items that put every kind of change into the cart.
 - **Tablets and wide screens**: the content stays in a centred column, and in landscape the product screen puts the image and the details side by side ([more](docs/architecture/en/screens.md#wide-screens)).
 
@@ -58,7 +58,7 @@ The app is small, but every screen has something worth a look:
 The modules are arranged in four levels, and the build checks that no module depends on a level above its own:
 
 ```text
-apps/         shop, uikit                                    the applications
+apps/         shop (app, android, ios), uikit                the applications: shared code and each platform's entry
 feature/      catalog, cart, promo, checkout, settings       each one is ui + impl
 crossfeature/ domain, data, ui, analytics                    shop code used by two or more features
 core/         designsystem, compose-utils, network, config   knows nothing about the shop
@@ -70,8 +70,8 @@ How modules, navigation, screens, data, analytics and the build work is explaine
 
 ## Tests and CI
 
-- **Tests** run on the JVM and cover the logic, the ViewModels, the data layer, the contract with the server, and a screenshot of every preview.
-- **CI** runs on every pull request: code style, module rules, unused dependencies, lint, tests and a build of both apps. It posts changed screenshots in a comment on the pull request, and rebuilds the APKs after every change to `main`.
+- **Tests** run on the JVM and cover the logic, the ViewModels, the data layer, the contract with the server, and a screenshot of every preview. The tests of the shared code also run on the iOS simulator.
+- **CI** runs on every pull request: code style, module rules, unused dependencies, lint, tests and a build of both Android apps, and on macOS the iOS tests and a build of the iOS app. It posts changed screenshots in a comment on the pull request, and rebuilds the APKs after every change to `main`.
 
 &nbsp;
 
@@ -85,6 +85,8 @@ To build the apps yourself, you need JDK 21 and the Android SDK:
 ./gradlew :apps:shop:android:installDebug  # installs the shop on a connected device
 ./gradlew :apps:uikit:installDebug         # installs the UI kit
 ```
+
+The iOS app builds on a Mac with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator ([more](docs/architecture/en/build.md#ios-app)).
 
 &nbsp;
 
@@ -100,4 +102,4 @@ The app is built with the AI agents Claude Code, Cursor and Grok Build, running 
 
 - **The rules are written down for the agents**: [CLAUDE.md](CLAUDE.md) describes the module layout, the code style and the conventions for screens.
 - **Changes are made in small steps**, and each one is discussed and checked before it is committed.
-- **Behaviour is checked by tests and CI** (see [above](#tests-and-ci)), and every change is also tried out on an emulator.
+- **Behaviour is checked by tests and CI** (see [above](#tests-and-ci)), and every change is also tried out on an Android emulator and, for iOS, on a simulator.

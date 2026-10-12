@@ -1,6 +1,6 @@
 # ShoppingApp
 
-A demo shop for Android and iOS (Kotlin Multiplatform, moving there step by step on this branch). How it is built and why: [`docs/architecture/en/`](docs/architecture/en/README.md).
+A demo shop for Android and iOS: one Kotlin Multiplatform code base, the same Compose screens on both. How it is built and why: [`docs/architecture/en/`](docs/architecture/en/README.md).
 
 | | |
 |---|---|
@@ -58,6 +58,13 @@ A package follows the module:
 | app, and every module of one app | its applicationId, so it stays when the app moves to another folder: `:apps:shop:android`, `:apps:shop:app` → `krio.systemdesign.shoppingapp` (a library's Android namespace still follows its path) |
 
 ## Conventions
+
+### Kotlin Multiplatform
+
+- **Code goes to `src/commonMain`.** `androidMain`/`iosMain` hold only what needs a platform API, behind an `expect` declaration (`PlatformThemeEffect`) or a platform binding container (`AndroidDataModule`, `IosDataModule`). Common code uses no `java.*` or `android.*`: `kotlinx.io.IOException` (`okio.IOException` for DataStore, which throws it), `kotlinx.coroutines.IO` (imported explicitly).
+- **Strings** live in `src/commonMain/composeResources/values{,-ru}/strings.xml` and are read through `Res.string`. Compose Multiplatform substitutes only numbered arguments (`%1$d`, `%1$s`; a bare `%d` stays on screen) and doesn't unescape `\'` or `%%`: write `'` and `%`.
+- **iOS links only on a Mac.** `./gradlew compileKotlinIosSimulatorArm64` compiles the iOS code on Linux, the Metro graph included, but the framework is linked on macOS (CI, Xcode). A call to a function the klibs lack fails that link (`-Xpartial-linkage-loglevel=ERROR` in `shoppingapp.kmp.library`).
+- **No redundant `T : Any` next to another bound** in a public inline function (`where T : Any, T : Route`): Kotlin/Native then writes and looks up the function under different signatures. Write `T : Route`.
 
 ### Icons
 

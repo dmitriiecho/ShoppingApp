@@ -155,9 +155,9 @@ iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../.
 cd server && ./gradlew test                # запустить тесты сервера
 ```
 
-Те же проверки, что и в CI, где предупреждения считаются ошибками:
+Те же проверки, что и в CI, где предупреждения считаются ошибками; на Linux вместо iOS-задачи — компиляция iOS-кода:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:assembleDebug
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:assembleDebug compileKotlinIosSimulatorArm64
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

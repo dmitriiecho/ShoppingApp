@@ -2,7 +2,7 @@
 
 [Русская версия](../ru/README.md)
 
-ShoppingApp is a demo store for Android: a searchable catalog, product details, a cart that lives on the device and is checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) provides the catalog and checks the cart.
+ShoppingApp is a demo store for Android and iOS: a searchable catalog, product details, a cart that lives on the device and is checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) provides the catalog and checks the cart. Both platforms run the same Kotlin Multiplatform code: screens, logic and data; only the entry points and a few platform details are their own.
 
 These pages explain how the app is built and why. Each one covers the rules, the reasons behind them and short excerpts from the project's code.
 
@@ -13,7 +13,7 @@ These pages explain how the app is built and why. Each one covers the rules, the
 The app is organised in four levels, from the bottom up:
 
 ```text
-apps/         shop, uikit                                    the applications
+apps/         shop (app, android, ios), uikit                the applications: shared code and each platform's entry
 feature/      catalog, cart, promo, checkout, settings       each one is ui + impl
 crossfeature/ domain, data, ui, analytics                    shop code used by two or more features
 core/         designsystem, compose-utils, network, config   knows nothing about the shop
@@ -34,7 +34,7 @@ Each page can be read on its own:
 | [Screens](screens.md) | how a screen is split into files, UI state, events and effects, text fields, Compose stability, wide screens |
 | [Data](data.md) | use cases, repositories, error types, local storage, network, prices, the contract with the server |
 | [Analytics](analytics.md) | events, analytics systems, screen views, what is allowed to be sent |
-| [Build](build.md) | convention plugins, the version catalog, code style, CI, signing |
+| [Build](build.md) | convention plugins, the version catalog, code style, CI, signing, the iOS app |
 | [Testing](testing.md) | how tests are written, where test helpers live and how they are named, tools, kinds of tests |
 
 &nbsp;
@@ -45,12 +45,14 @@ The main libraries and tools:
 
 | Area | Choice |
 |---|---|
-| Language and UI | Kotlin 2.4, Jetpack Compose, Material 3 |
+| Platforms | Android (minSdk 26), iOS 18.5+ (iPhone); shared code in Kotlin Multiplatform |
+| Language and UI | Kotlin 2.4, Compose Multiplatform 1.12 (Jetpack Compose on Android), Material 3 |
 | Structure | MVVM with a single UI state per screen and one-off effects |
 | DI | Metro (compile-time, a Kotlin compiler plugin) |
-| Navigation | Navigation Compose with type-safe routes |
+| Navigation | Navigation Compose (JetBrains' multiplatform build) with type-safe routes |
 | Data | Room, DataStore, Paging 3 |
-| Network | Ktor Client (OkHttp engine), kotlinx.serialization, Coil for images |
-| Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; minSdk 26, targetSdk 37, compileSdk 37 |
+| Network | Ktor Client (OkHttp engine on Android, Darwin on iOS), kotlinx.serialization, Coil for images |
+| Logging | Kermit (logcat, the Xcode console) |
+| Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; targetSdk 37, compileSdk 37; Xcode for the iOS app |
 | Server | Ktor 3.6, data in JSON files |
 | Tests | kotlin.test, AssertK, kotlinx-coroutines-test, Turbine, Ktor MockEngine, Robolectric, Roborazzi with ComposablePreviewScanner |

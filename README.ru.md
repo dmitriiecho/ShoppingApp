@@ -4,10 +4,10 @@
 
 [English version](README.md)
 
-ShoppingApp — пример Android-приложения на современном стеке. В репозитории два приложения:
+ShoppingApp — пример приложения для Android и iOS на современном стеке. В репозитории два приложения:
 
-- **Магазин** — демонстрационный интернет-магазин: каталог с поиском, корзина, которая хранится на устройстве и сверяется с сервером, промокоды и оформление заказа. Работает на телефонах и планшетах.
-- **UI kit** — витрина дизайна: все стилизованные компоненты магазина, разложенные по разделам, с переключением светлой и тёмной темы. В нём удобно смотреть и проверять дизайн, не проходя сценарии магазина.
+- **Магазин** — демонстрационный интернет-магазин: каталог с поиском, корзина, которая хранится на устройстве и сверяется с сервером, промокоды и оформление заказа. Работает на Android-телефонах и планшетах и на iPhone, из одного кода на Kotlin Multiplatform.
+- **UI kit** — витрина дизайна: все стилизованные компоненты магазина, разложенные по разделам, с переключением светлой и тёмной темы, для Android. В нём удобно смотреть и проверять дизайн, не проходя сценарии магазина.
 
 &nbsp;
 
@@ -18,12 +18,12 @@ ShoppingApp — пример Android-приложения на современ�
 | Ветка | Платформы | DI | Сеть | Логирование | Скачать |
 |---|---|---|---|---|---|
 | [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
-| **`kmp-ready`** | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
-| `kmp` | Android, iOS | Metro | Ktor | Kermit | скоро |
+| [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp-ready) | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
+| **`kmp`** | Android, iOS | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp-UiKit.apk) |
 
-Во всех вариантах общие Compose, Navigation Compose, Room и DataStore.
+Во всех вариантах общие Compose, Navigation Compose, Room и DataStore. В `kmp` это их мультиплатформенные версии (Compose Multiplatform), а экраны, логика и данные магазина — общий код, который работает на обеих платформах.
 
-Для каждой ветки собираются два APK: магазин и UI kit.
+Для каждой ветки собираются два APK: магазин и UI kit. iOS-приложение собирается из кода (см. [Запуск](#запуск)).
 
 &nbsp;
 
@@ -47,7 +47,7 @@ ShoppingApp — пример Android-приложения на современ�
 - **Корзина** хранится только на устройстве (Room). На сервере корзин нет: он лишь проверяет её при каждом открытии и перед оформлением и сообщает о пропавших товарах, новых ценах и нехватке на складе.
 - **Промокоды** проверяет сервер, а скидка сразу видна в итогах.
 - **Оформление заказа**: форма переживает смерть процесса, а двойное нажатие не отправит заказ дважды.
-- **Deep links** на каталог, корзину и товар, с подтверждёнными App Links.
+- **Deep links** на каталог, корзину и товар: на Android — подтверждённые App Links, на iOS — ссылки со своей схемой `shoppingapp://`.
 - **Настройки**: тема, задержка запросов и тестовые товары, с которыми в корзине можно увидеть любое из возможных изменений.
 - **Планшеты и широкие экраны**: содержимое занимает колонку посередине экрана, а в горизонтальном положении карточка товара показывает картинку и описание рядом ([подробнее](docs/architecture/ru/screens.md#широкие-экраны)).
 
@@ -58,7 +58,7 @@ ShoppingApp — пример Android-приложения на современ�
 Модули разложены по четырём уровням, и сборка следит, чтобы ни один модуль не зависел от уровня выше своего:
 
 ```text
-apps/         shop, uikit                                    приложения
+apps/         shop (app, android, ios), uikit                приложения: общий код и вход для каждой платформы
 feature/      catalog, cart, promo, checkout, settings       каждая фича — это ui + impl
 crossfeature/ domain, data, ui, analytics                    код магазина, нужный двум фичам и больше
 core/         designsystem, compose-utils, network, config   ничего не знает о магазине
@@ -70,8 +70,8 @@ core/         designsystem, compose-utils, network, config   ничего не �
 
 ## Тесты и CI
 
-- **Тесты** выполняются на JVM и проверяют логику, ViewModel, слой данных, контракт с сервером, а также скриншот каждого превью.
-- **CI** запускается на каждый pull request: проверяет стиль кода, правила модулей, неиспользуемые зависимости, lint, тесты и сборку обоих приложений. Изменившиеся скриншоты он выкладывает в комментарии к pull request, а после каждого изменения в `main` пересобирает APK.
+- **Тесты** выполняются на JVM и проверяют логику, ViewModel, слой данных, контракт с сервером, а также скриншот каждого превью. Тесты общего кода выполняются ещё и на симуляторе iOS.
+- **CI** запускается на каждый pull request: проверяет стиль кода, правила модулей, неиспользуемые зависимости, lint, тесты и сборку обоих Android-приложений, а на macOS — iOS-тесты и сборку iOS-приложения. Изменившиеся скриншоты он выкладывает в комментарии к pull request, а после каждого изменения в `main` пересобирает APK.
 
 &nbsp;
 
@@ -85,6 +85,8 @@ core/         designsystem, compose-utils, network, config   ничего не �
 ./gradlew :apps:shop:android:installDebug  # установить магазин на подключённое устройство
 ./gradlew :apps:uikit:installDebug         # установить UI kit
 ```
+
+iOS-приложение собирается на Mac с Xcode и JDK 21: откройте `apps/shop/ios/iosApp.xcodeproj` и запустите на симуляторе ([подробнее](docs/architecture/ru/build.md#ios-приложение)).
 
 &nbsp;
 
@@ -100,4 +102,4 @@ core/         designsystem, compose-utils, network, config   ничего не �
 
 - **Правила записаны для агентов**: [CLAUDE.md](CLAUDE.md) описывает устройство модулей, стиль кода и договорённости по экранам.
 - **Изменения вносятся небольшими шагами**, и каждый шаг обсуждается и проверяется до коммита.
-- **Поведение проверяют тесты и CI** (см. [выше](#тесты-и-ci)), а каждое изменение ещё и проверяется на эмуляторе.
+- **Поведение проверяют тесты и CI** (см. [выше](#тесты-и-ci)), а каждое изменение ещё и проверяется на Android-эмуляторе и, для iOS, на симуляторе.

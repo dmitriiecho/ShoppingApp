@@ -2,7 +2,7 @@
 
 [Русская версия](../ru/analytics.md) · [All pages](README.md)
 
-The app sends events to two analytics systems. Both are fakes that just write to logcat, but the code is structured the way it would be with real SDKs.
+The app sends events to two analytics systems. Both are fakes that just write to the log (logcat, the Xcode console), but the code is structured the way it would be with real SDKs.
 
 &nbsp;
 

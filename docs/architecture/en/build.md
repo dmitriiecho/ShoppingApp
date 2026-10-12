@@ -155,9 +155,9 @@ The main commands, from the project root:
 cd server && ./gradlew test                # run the server tests
 ```
 
-The same checks as CI, with warnings treated as errors:
+The same checks as CI, with warnings treated as errors; on Linux, compiling the iOS code stands in for the iOS job:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:assembleDebug
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:assembleDebug compileKotlinIosSimulatorArm64
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```
