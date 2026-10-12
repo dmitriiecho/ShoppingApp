@@ -115,7 +115,9 @@ concurrency:
 
 [`dependency-graph.yml`](../../../.github/workflows/dependency-graph.yml) sends GitHub the list of libraries the app and the server ship with, after every push to `main`. GitHub checks them for known vulnerabilities and shows a Dependabot alert in the Security tab if it finds any. It is a separate workflow because sending the list needs write access, and CI stays read-only.
 
-[`screenshot-comment.yml`](../../../.github/workflows/screenshot-comment.yml) posts a pull request's changed screenshots in a comment on it when CI fails because of them. A comment can only show an image that has a URL, so the images are pushed to a `screenshots/pr-<N>` branch, which is deleted once the screenshots match again or the pull request is closed. Each pull request has a single comment that is updated on every run. This workflow also needs write access, so it never runs the pull request's code: it only copies the images CI produced.
+[`screenshot-comment.yml`](../../../.github/workflows/screenshot-comment.yml) posts a pull request's changed screenshots in a comment on it when CI fails because of them. Each pull request has a single comment that is updated on every run.
+
+A comment can only show an image that has a URL, so the images are pushed to a `screenshots/pr-<N>` branch, which is deleted once the screenshots match again or the pull request is closed. This workflow also needs write access, so it never runs the pull request's code: it only copies the images CI produced.
 
 &nbsp;
 

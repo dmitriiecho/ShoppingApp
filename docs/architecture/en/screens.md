@@ -50,7 +50,9 @@ internal fun CartScreen(
 
 The second one doesn't depend on DI, so it can be previewed in any state.
 
-`injectedViewModel()` takes the ViewModel of the screen's back stack entry and creates it, the first time, with the app's `InjectedViewModelFactory`. The factory builds a small Metro graph for each new ViewModel, `ViewModelGraph`, with the ViewModel's own `SavedStateHandle` (as Hilt's `ViewModelComponent` does), so a ViewModel takes the handle in its constructor like any other dependency. A ViewModel joins that graph with two annotations:
+`injectedViewModel()` takes the ViewModel of the screen's back stack entry and creates it, the first time, with the app's `InjectedViewModelFactory`.
+
+The factory builds a small Metro graph for each new ViewModel, `ViewModelGraph`, with the ViewModel's own `SavedStateHandle` (as Hilt's `ViewModelComponent` does), so a ViewModel takes the handle in its constructor like any other dependency. A ViewModel joins that graph with two annotations:
 
 ```kotlin
 @ViewModelKey
@@ -205,7 +207,9 @@ onQuantityChange: (productId: String, quantity: Int) -> Unit
 
 ## Wide screens
 
-Phones show the app in portrait only, by design. Android 16 and later rotates it anyway on screens 600 dp and wider: tablets, unfolded foldables and desktop windows. So screens adapt their layout to the width:
+Phones show the app in portrait only, by design. Android 16 and later rotates it anyway on screens 600 dp and wider: tablets, unfolded foldables and desktop windows. The UI kit does the same.
+
+So screens adapt their layout to the width:
 
 - **Content stays in a column** of `ContentMaxWidth` (600 dp) in the middle of the screen, using `Modifier.contentWidth()` from `:core:designsystem`. The modifier goes inside the scrolling container, so the screen can also be scrolled from the empty space beside the column.
 - **The top bar lines up with the column** using `Modifier.contentBarWidth()`: it is as wide as the column plus the screen padding on each side, so the title and buttons sit above the edges of the content, just as on a phone.
