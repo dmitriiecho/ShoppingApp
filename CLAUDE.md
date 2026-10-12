@@ -101,7 +101,7 @@ A package follows the module:
 |---|---|
 | `:feature:<name>:impl` | `libs.plugins.shoppingapp.android.feature` |
 | `:feature:<name>:ui` | `library` + `compose` + `screenshots` |
-| Kotlin Multiplatform (`:core:config`, `:core:network`, `:crossfeature:domain`, `:crossfeature:analytics`, the `testing` modules) | `kmp.library` |
+| Kotlin Multiplatform (`:core:*`, `:crossfeature:domain`, `:crossfeature:analytics`, `:crossfeature:data`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`) + `kmp.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
 
 A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit` has none of its own.
@@ -138,10 +138,10 @@ cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ### Screenshots after a UI change
 
 1. Check that only the screens meant to change did, either way:
-   - before recording: `./gradlew test` fails only those previews and leaves `build/outputs/roborazzi/*_compare.png`;
+   - before recording: `./gradlew test testAndroidHostTest` fails only those previews and leaves `build/outputs/roborazzi/*_compare.png`;
    - after recording: `git status` shows only their images.
-2. Record: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` saves the new screenshots and deletes those of removed previews; in Android Studio, the Record screenshots run configuration.
+2. Record: `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` saves the new screenshots and deletes those of removed previews; in Android Studio, the Record screenshots run configuration.
 3. Commit the images with the change.
 
 - **Don't record when a change wasn't meant to alter the UI**: a failed screenshot test is then a real problem.
-- **Never put the cleanup flag in `gradle.properties`**: a filtered test run would then delete the module's other screenshots.
+- **Never put the cleanup flag in `gradle.properties`**: a filtered test run would then delete the module's other screenshots. Pass it only with the record tasks: Roborazzi also hooks the iOS test tasks of KMP modules, which would delete every saved image.

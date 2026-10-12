@@ -25,6 +25,8 @@ composeLints = "1.6.1"
 composeMultiplatform = "1.12.1"
 # The latest stable one: on Android it is Jetpack Material3 1.4.0, as in the BOM.
 composeMultiplatformMaterial3 = "1.9.0"
+# JetBrains' builds of AndroidX Lifecycle for KMP; on Android they are Jetpack Lifecycle of the same version.
+jetbrainsLifecycle = "2.11.0"
 
 # DI
 metro = "1.4.5"
@@ -97,6 +99,8 @@ jetbrains-compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", nam
 jetbrains-compose-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "composeMultiplatform" }
 jetbrains-compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMultiplatformMaterial3" }
 jetbrains-compose-components-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "composeMultiplatform" }
+jetbrains-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "jetbrainsLifecycle" }
+jetbrains-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrainsLifecycle" }
 
 # Testing
 # kotlin.test for common tests (commonTest): Kotlin adds the test runner of each platform.

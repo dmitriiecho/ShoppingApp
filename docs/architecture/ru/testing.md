@@ -14,7 +14,7 @@
 ./gradlew test testAndroidHostTest   # приложение на JVM: все модули, по одному разу, включая скриншоты
 ./gradlew iosSimulatorArm64Test      # общие тесты на iOS-симуляторе (на Mac; CI запускает их на macOS)
 cd server && ./gradlew test          # сервер
-./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # записывает новые скриншоты после изменения интерфейса
+./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # записывает новые скриншоты после изменения интерфейса
 ```
 
 - **Android-модули** запускают unit-тесты задачей `test` и только в debug-варианте: `shoppingapp.android.library` отключает release-тесты, которые просто повторяли бы их.
@@ -70,7 +70,8 @@ fun `discount is the promo code percent of the subtotal`() {
 | `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain:testing` | `src/commonMain` |
 | `TestCartRepository` | `:crossfeature:domain:testing` | `src/commonMain` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics:testing` | `src/commonMain` |
-| `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
+| `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils:testing` | `src/commonMain` |
+| `PausedClockPreviewTester` | `:core:compose-utils:testing` | `src/androidMain` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
 | `databaseTest {}` | `:crossfeature:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
@@ -180,28 +181,29 @@ fun `client error returns HttpError with its code`() = networkTest(::TestApi) { 
 
 ### Скриншоты
 
-Каждый `@Preview` — это скриншот-тест, так что писать такие тесты вручную не нужно. Плагин `shoppingapp.android.screenshots`, который подключает каждая библиотека с превью, поручает [Roborazzi](https://github.com/takahirom/roborazzi) отрисовать каждое превью на Robolectric и сравнить результат с картинкой, сохранённой в папке модуля `screenshots/`:
+Каждый `@Preview` — это скриншот-тест, так что писать такие тесты вручную не нужно. Плагин `shoppingapp.android.screenshots`, который подключает каждая библиотека с превью (Android или KMP), поручает [Roborazzi](https://github.com/takahirom/roborazzi) отрисовать каждое превью на Robolectric и сравнить результат с картинкой, сохранённой в папке модуля `screenshots/`:
 
 | Команда | Что делает |
 |---|---|
-| `./gradlew test` | сравнивает каждое превью с сохранённой картинкой и падает, если они различаются |
-| `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` | отрисовывает превью и сохраняет их как новые картинки; удаляет картинки превью, которых больше нет |
+| `./gradlew test testAndroidHostTest` | сравнивает каждое превью с сохранённой картинкой и падает, если они различаются (`test` в Android-модулях, `testAndroidHostTest` в KMP-модулях) |
+| `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` | отрисовывает превью и сохраняет их как новые картинки; удаляет картинки превью, которых больше нет |
 
 Эти тесты не говорят, правильно ли выглядит экран, — они ловят изменения, которых никто не заказывал. Поэтому картинки записывает только человек, сознательно и только после изменения интерфейса:
 
 1. Изменить интерфейс.
 2. Убедиться, что изменилось только то, что задумано, одним из двух способов:
-   - **сначала тесты**: запустить `./gradlew test`. Должны упасть только те превью, которые и должны были измениться, а на `build/outputs/roborazzi/…_compare.png` каждого из них красным должно быть отмечено только задуманное. Там виден даже сдвиг на пиксель-два, который на двух картинках рядом не заметить;
+   - **сначала тесты**: запустить `./gradlew test testAndroidHostTest`. Должны упасть только те превью, которые и должны были измениться, а на `build/outputs/roborazzi/…_compare.png` каждого из них красным должно быть отмечено только задуманное. Там виден даже сдвиг на пиксель-два, который на двух картинках рядом не заметить;
    - **сначала запись**: записать картинки (шаг 3), а потом посмотреть, какие из них изменились (`git status` или сами картинки в IDE). Так быстрее — один прогон вместо двух, — но старая картинка уже перезаписана, и картинки сравнения не будет.
 
    В обоих случаях тридцать изменившихся картинок после правки одной кнопки — повод разобраться, что пошло не так.
-3. Записать картинки, если это ещё не сделано: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` или через конфигурацию запуска Record screenshots в Android Studio.
+3. Записать картинки, если это ещё не сделано: `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` или через конфигурацию запуска Record screenshots в Android Studio.
 4. Закоммитить картинки вместе с кодом; в pull request старая и новая версия каждой картинки будут показаны рядом.
 
 > [!IMPORTANT]
 > Если вид приложения не должен был меняться, записывать картинки не нужно. В этом случае упавший скриншот-тест нашёл настоящую проблему: отступ, съехавший при рефакторинге, обновление библиотеки, которое поменяло кнопки, общий компонент, задевший другой экран. CI картинки никогда не записывает.
 
 - **Изменившийся экран — это упавший тест**, пока его новые картинки не записаны и не закоммичены.
+- **Флаг очистки — только с задачами записи.** Roborazzi подключается и к iOS-задачам тестов KMP-модулей, а они скриншотов не снимают: с этим флагом они удалили бы все сохранённые картинки модуля.
 - **Упавший тест оставляет картинку сравнения** в папке сборки: в `build/outputs/roborazzi/*_compare.png` — сохранённая картинка, разница, выделенная красным, и новая картинка. В CI такие картинки прикладываются к прогону как `changed-screenshots` и показываются в комментарии к pull request.
 - **Часы остановлены**: `PausedClockPreviewTester` отрисовывает каждое превью на первом кадре, поэтому бесконечная анимация (шиммер, индикатор загрузки) не подвешивает тест, а каждый прогон даёт одну и ту же картинку.
 - **Старые картинки удаляются только при записи** — за это отвечает тот самый флаг: Roborazzi удаляет все картинки, которые прогон не отрисовал, поэтому, если бы флаг был включён всегда, запуск одного теста из Android Studio удалил бы остальные картинки модуля.
