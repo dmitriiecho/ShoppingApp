@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ShoppingApp deep links</title>
+  <title>ShoppingApp deep links: Android</title>
   <!--
-    Page for checking deep links by hand, opened by the "Deep links" item in the app's settings.
+    Page for checking the Android app's deep links by hand, opened by the "Deep links" item in its settings.
     The same page in two languages: en.html (English) and ru.html (Russian). The app opens
     the one for its language (settings_deep_links_page_url in the settings strings). Keep them in sync.
     GitHub Pages publishes them on the deep links' domain (DeepLinkConfig.BASE_URL), so the links have no domain.
-    A new path in the intent-filter in apps/shop/src/main/AndroidManifest.xml goes to both pages.
+    A new path in the intent-filter in apps/shop/src/main/AndroidManifest.xml goes to both pages, and to the iOS pages
+    in ../ios/ with the iOS app's scheme.
+    GitHub Pages publishes docs/ from main only, so the apps of every branch open main's copy: change it there.
   -->
   <style>
     :root {
@@ -103,6 +105,7 @@
     <div class="title">Unknown address <span class="path">/ShoppingApp/catalog/shoes</span></div>
     <div class="expected">The app doesn't open, and the browser shows a 404 page.</div>
   </a>
+
 </main>
 </body>
 </html>

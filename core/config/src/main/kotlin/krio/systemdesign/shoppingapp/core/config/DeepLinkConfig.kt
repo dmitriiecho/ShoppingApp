@@ -6,6 +6,6 @@ object DeepLinkConfig {
     // it is also where GitHub Pages publishes docs/.
     const val BASE_URL = "https://dmitriiecho.github.io/ShoppingApp"
 
-    // Pages with links for manual testing, one per language: docs/deeplinks/.
-    const val TEST_PAGES_URL = "$BASE_URL/deeplinks"
+    // Pages with links for manual testing, one per language: docs/deeplinks/android/.
+    const val TEST_PAGES_URL = "$BASE_URL/deeplinks/android"
 }
