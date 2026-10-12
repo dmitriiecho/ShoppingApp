@@ -19,7 +19,7 @@ ShoppingApp — демонстрационный интернет-магазин
 Приложение разделено на четыре уровня, снизу вверх:
 
 ```text
-apps/         shop (app, android, ios), uikit                приложения: общий код и вход для каждой платформы
+apps/         shop, uikit (each: app, android, ios)          приложения: общий код и вход для каждой платформы
 feature/      catalog, cart, promo, checkout, settings       каждая фича — это ui + impl
 crossfeature/ domain, data, ui, analytics                    код магазина, нужный двум фичам и больше
 core/         designsystem, compose-utils, network, config   ничего не знает о магазине
@@ -40,7 +40,7 @@ core/         designsystem, compose-utils, network, config   ничего не �
 | [Экраны](screens.md) | из каких файлов состоит экран, UI state, события и эффекты, поля ввода, стабильность Compose, широкие экраны |
 | [Данные](data.md) | use case'ы, репозитории, типы ошибок, локальное хранение, сеть, цены, договорённости с сервером |
 | [Аналитика](analytics.md) | события, системы аналитики, просмотры экранов, что можно отправлять |
-| [Сборка](build.md) | convention-плагины, каталог версий, стиль кода, CI, подпись, iOS-приложение |
+| [Сборка](build.md) | convention-плагины, каталог версий, стиль кода, CI, подпись, iOS-приложения |
 | [Тесты](testing.md) | как пишутся тесты, где лежат тестовые помощники и как они называются, инструменты, виды тестов |
 
 &nbsp;
@@ -59,6 +59,6 @@ core/         designsystem, compose-utils, network, config   ничего не �
 | Данные | Room, DataStore, Paging 3 |
 | Сеть | Ktor Client (движок OkHttp на Android, Darwin на iOS), kotlinx.serialization, Coil для картинок |
 | Логирование | Kermit (logcat, консоль Xcode) |
-| Сборка | Gradle 9.8, AGP 9.4, JDK 21, convention-плагины; targetSdk 37, compileSdk 37; Xcode для iOS-приложения |
+| Сборка | Gradle 9.8, AGP 9.4, JDK 21, convention-плагины; targetSdk 37, compileSdk 37; Xcode для iOS-приложений |
 | Сервер | Ktor 3.6, данные в JSON-файлах |
 | Тесты | kotlin.test, AssertK, kotlinx-coroutines-test, Turbine, Ktor MockEngine, Robolectric, Roborazzi с ComposablePreviewScanner |

@@ -12,7 +12,7 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.uikit.navigation.UiKitNavHost
 
 // The UI kit: every styled component of the app. It starts in the system theme, and the top bar button switches it,
-// so any component can be checked in both themes. The platform's entry point (UiKitActivity) shows it.
+// so any component can be checked in both themes. The platform's entry point (UiKitActivity, MainViewController) shows it.
 @Composable
 fun App(modifier: Modifier = Modifier) {
     val isSystemDarkTheme = isSystemInDarkTheme()

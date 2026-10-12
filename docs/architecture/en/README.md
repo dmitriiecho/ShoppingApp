@@ -19,7 +19,7 @@ These pages explain how the app is built and why. Each one covers the rules, the
 The app is organised in four levels, from the bottom up:
 
 ```text
-apps/         shop (app, android, ios), uikit                the applications: shared code and each platform's entry
+apps/         shop, uikit (each: app, android, ios)          the applications: shared code and each platform's entry
 feature/      catalog, cart, promo, checkout, settings       each one is ui + impl
 crossfeature/ domain, data, ui, analytics                    shop code used by two or more features
 core/         designsystem, compose-utils, network, config   knows nothing about the shop
@@ -40,7 +40,7 @@ Each page can be read on its own:
 | [Screens](screens.md) | how a screen is split into files, UI state, events and effects, text fields, Compose stability, wide screens |
 | [Data](data.md) | use cases, repositories, error types, local storage, network, prices, the contract with the server |
 | [Analytics](analytics.md) | events, analytics systems, screen views, what is allowed to be sent |
-| [Build](build.md) | convention plugins, the version catalog, code style, CI, signing, the iOS app |
+| [Build](build.md) | convention plugins, the version catalog, code style, CI, signing, the iOS apps |
 | [Testing](testing.md) | how tests are written, where test helpers live and how they are named, tools, kinds of tests |
 
 &nbsp;
@@ -59,6 +59,6 @@ The main libraries and tools:
 | Data | Room, DataStore, Paging 3 |
 | Network | Ktor Client (OkHttp engine on Android, Darwin on iOS), kotlinx.serialization, Coil for images |
 | Logging | Kermit (logcat, the Xcode console) |
-| Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; targetSdk 37, compileSdk 37; Xcode for the iOS app |
+| Build | Gradle 9.8, AGP 9.4, JDK 21, convention plugins; targetSdk 37, compileSdk 37; Xcode for the iOS apps |
 | Server | Ktor 3.6, data in JSON files |
 | Tests | kotlin.test, AssertK, kotlinx-coroutines-test, Turbine, Ktor MockEngine, Robolectric, Roborazzi with ComposablePreviewScanner |

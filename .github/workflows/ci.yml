@@ -173,14 +173,14 @@ jobs:
         run: ./gradlew :apps:shop:android:assembleDebug :apps:uikit:android:assembleDebug
 
   # ==========================================================================
-  # iOS: the shared code on the iOS simulator and the iOS app (apps/shop/ios)
+  # iOS: the shared code on the iOS simulator and the iOS apps (apps/shop/ios, apps/uikit/ios)
   # ==========================================================================
 
   # iOS builds only on macOS. The repository is public, so GitHub's macOS runners are free.
   ios:
     name: iOS
     runs-on: macos-latest
-    # Kotlin/Native and the Xcode build take about 15 minutes on an empty cache.
+    # Kotlin/Native and the Xcode builds take about 15 minutes on an empty cache.
     timeout-minutes: 45
 
     steps:
@@ -235,14 +235,21 @@ jobs:
 
       # The Xcode project builds the Kotlin framework itself (its Run Script calls Gradle) and links it.
       # No signing: the simulator doesn't need it.
-      - name: The iOS app builds (xcodebuild)
+      - name: The shop's iOS app builds (xcodebuild)
         if: ${{ !cancelled() }}
         working-directory: apps/shop/ios
         run: >-
           xcodebuild -project iosApp.xcodeproj -scheme iosApp -configuration Debug
           -sdk iphonesimulator -arch arm64 CODE_SIGNING_ALLOWED=NO build
 
-      # Last: the Xcode build links the framework and adds the caches of its libraries to ~/.konan.
+      - name: The UI kit's iOS app builds (xcodebuild)
+        if: ${{ !cancelled() }}
+        working-directory: apps/uikit/ios
+        run: >-
+          xcodebuild -project iosApp.xcodeproj -scheme iosApp -configuration Debug
+          -sdk iphonesimulator -arch arm64 CODE_SIGNING_ALLOWED=NO build
+
+      # Last: the Xcode builds link the frameworks and add the caches of their libraries to ~/.konan.
       - name: Save Kotlin/Native
         if: ${{ !cancelled() && env.CACHE_READ_ONLY == 'false' && steps.konan.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v6
