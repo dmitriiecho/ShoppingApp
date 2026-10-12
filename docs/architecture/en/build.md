@@ -1,12 +1,12 @@
 [Русская версия](../ru/build.md) · [All pages](README.md)
 
-# Build
-
 > **Variant `kmp`**: Android and iOS, Metro, Ktor
 >
 > This page in the other variants:
 > - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/build.md): Android, Hilt, Retrofit
 > - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/en/build.md): Android, Metro, Ktor
+
+# Build
 
 The shared module setup lives in [`build-logic/`](../../../build-logic/), an included build with convention plugins. Each module applies a few of them and declares only its own dependencies.
 

@@ -1,12 +1,12 @@
 [Русская версия](../ru/navigation.md) · [All pages](README.md)
 
-# Navigation
-
 > **Variant `kmp`**: Android and iOS, Metro, Ktor
 >
 > This page in the other variants:
 > - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/navigation.md): Android, Hilt, Retrofit
 > - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/en/navigation.md): Android, Metro, Ktor
+
+# Navigation
 
 Navigation is built on Navigation Compose with type-safe routes (`@Serializable` objects and classes). Features don't know about each other: each one gives the app a graph, and the app connects the graphs.
 

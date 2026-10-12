@@ -1,12 +1,12 @@
 [English version](../en/build.md) · [Все разделы](README.md)
 
-# Сборка
-
 > **Вариант `kmp`**: Android и iOS, Metro, Ktor
 >
 > Эта страница в других вариантах:
 > - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/ru/build.md): Android, Hilt, Retrofit
 > - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/build.md): Android, Metro, Ktor
+
+# Сборка
 
 Общая настройка модулей вынесена в [`build-logic/`](../../../build-logic/) — подключаемую сборку (included build) с convention-плагинами. Каждый модуль применяет несколько таких плагинов и объявляет только собственные зависимости.
 
