@@ -27,7 +27,7 @@ Folders are levels, bottom to top: `core/` → `crossfeature/` → `feature/` �
 | | `:crossfeature:analytics` | analytics, pure Kotlin (see [Analytics](#analytics)) |
 | `feature/<name>/`: catalog, cart, promo, checkout, settings | `:feature:<name>:impl` | screens, ViewModels, the feature's own use cases and navigation |
 | | `:feature:<name>:ui` | shop components only this feature uses, on plain values; depends only on `:core:designsystem` and `:crossfeature:ui`; exists only when the feature has such components (not in settings) |
-| `apps/`: nothing depends on them | `:apps:shop:app` | the shop's code for both platforms: `App()`, the navigation host, the bottom bar, analytics, the base of the app's graph; the iOS entry point (for now a placeholder screen) and the `ShopApp` framework |
+| `apps/`: nothing depends on them | `:apps:shop:app` | the shop's code for both platforms: `App()`, the navigation host, the bottom bar, analytics, the base of the app's graph; in `iosMain` the iOS entry point and graph (`IosAppGraph`); builds the `ShopApp` framework |
 | | `:apps:shop:android` | the Android app: `MainActivity`, `ShoppingApp`, the graph for Android, manifest and resources |
 | | `:apps:uikit` | a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data |
 
@@ -73,7 +73,7 @@ A package follows the module:
 
 ### DI
 
-[Metro](https://zacsweers.github.io/metro/): the app's graph (`AppScope`) has a base `AppGraph` in `:apps:shop:app` and a graph per platform on top of it, `AndroidAppGraph` in `:apps:shop:android`: Metro builds a graph only in platform code.
+[Metro](https://zacsweers.github.io/metro/): the app's graph (`AppScope`) has a base `AppGraph` in `:apps:shop:app` and a graph per platform on top of it, `AndroidAppGraph` in `:apps:shop:android` and `IosAppGraph` in the `iosMain` of `:apps:shop:app`: Metro builds a graph only in platform code.
 
 - **A class to inject** gets `@Inject` on the class, not on the constructor. A class with `@ContributesBinding`, `@ContributesIntoSet` or `@ContributesIntoMap` needs no `@Inject`: the contribution implies it.
 - **An implementation of an interface** binds itself with `@ContributesBinding(AppScope::class)` and stays `internal`. Only a third-party type needs a `@Provides` in a `@BindingContainer @ContributesTo(AppScope::class)` object, and that object is public (Metro skips internal ones; the build fails on them).

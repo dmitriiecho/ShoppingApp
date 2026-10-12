@@ -9,7 +9,8 @@
     The same page in two languages: en.html (English) and ru.html (Russian). The app opens
     the one for its language (settings_deep_links_page_url in the settings strings). Keep them in sync.
     GitHub Pages publishes them on the deep links' domain (DeepLinkConfig.BASE_URL), so the links have no domain.
-    A new path in the intent-filter in apps/shop/android/src/main/AndroidManifest.xml goes to both pages.
+    A new path in the intent-filter in apps/shop/android/src/main/AndroidManifest.xml goes to both pages,
+    in the https sections and, with the iOS app's scheme (DeepLinkConfig.APP_SCHEME), in the iPhone section.
   -->
   <style>
     :root {
@@ -42,6 +43,7 @@
     h1 { font-size: 24px; margin: 0 0 8px; }
     h2 { font-size: 15px; margin: 28px 0 10px; color: var(--muted); font-weight: 600; }
     p { margin: 0; color: var(--muted); }
+    h2 + p { margin-bottom: 10px; }
     a.link {
       display: block;
       margin-bottom: 10px;
@@ -102,6 +104,36 @@
   <a class="link" href="/ShoppingApp/catalog/shoes">
     <div class="title">Unknown address <span class="path">/ShoppingApp/catalog/shoes</span></div>
     <div class="expected">The app doesn't open, and the browser shows a 404 page.</div>
+  </a>
+
+  <h2>iPhone</h2>
+  <p>
+    On iOS the app opens links with its own scheme, shoppingapp://. Safari asks whether to open the app.
+    The links above open the website there.
+  </p>
+  <a class="link" href="shoppingapp://catalog">
+    <div class="title">Catalog <span class="path">shoppingapp://catalog</span></div>
+    <div class="expected">The Catalog tab, the product list.</div>
+  </a>
+  <a class="link" href="shoppingapp://cart">
+    <div class="title">Cart <span class="path">shoppingapp://cart</span></div>
+    <div class="expected">The Cart tab.</div>
+  </a>
+  <a class="link" href="shoppingapp://product/1">
+    <div class="title">Product 1 <span class="path">shoppingapp://product/1</span></div>
+    <div class="expected">Product details in the Catalog tab. Back returns to the product list.</div>
+  </a>
+  <a class="link" href="shoppingapp://product/1/">
+    <div class="title">Product 1 <span class="path">shoppingapp://product/1/</span></div>
+    <div class="expected">Same as shoppingapp://product/1.</div>
+  </a>
+  <a class="link" href="shoppingapp://product/999">
+    <div class="title">Missing product <span class="path">shoppingapp://product/999</span></div>
+    <div class="expected">Product details with the message “Product not found”.</div>
+  </a>
+  <a class="link" href="shoppingapp://catalog/shoes">
+    <div class="title">Unknown address <span class="path">shoppingapp://catalog/shoes</span></div>
+    <div class="expected">The app opens on the screen it was on.</div>
   </a>
 </main>
 </body>

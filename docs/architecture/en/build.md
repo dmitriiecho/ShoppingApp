@@ -128,11 +128,12 @@ The debug key is stored in the repo ([`build-logic/debug.keystore`](../../../bui
 
 ## iOS app
 
-The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). It shows the screens of `:apps:shop:app`, which builds them into the `ShopApp` framework: the project's Run Script calls Gradle (`embedAndSignAppleFrameworkForXcode`) before Xcode compiles the Swift code. For now the app shows a placeholder; the screens move to the shared code step by step on the `kmp` branch.
+The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). It shows the screens of `:apps:shop:app`, which builds them into the `ShopApp` framework: the project's Run Script calls Gradle (`embedAndSignAppleFrameworkForXcode`) before Xcode compiles the Swift code. The app is the whole shop: `MainViewController()` in `iosMain` creates the app's graph (`IosAppGraph`) and shows `App()`, as `MainActivity` does on Android.
 
 - **It builds on a Mac** with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator, or use the iOS run configuration of Android Studio with the Kotlin Multiplatform plugin.
 - **On Linux the shared code compiles for iOS too** (`./gradlew compileKotlinIosSimulatorArm64`), which catches most iOS errors before CI; linking the framework, the iOS tests and the Xcode build need a Mac, so CI runs them on macOS.
 - **iOS 18.5 or later**, iPhone, portrait only. The server is reached over plain HTTP by its IP address, which iOS allows only with `NSAllowsArbitraryLoads` in `Info.plist`.
+- **Logs, as on Android**: a debug build writes HTTP requests and analytics events to the Xcode console, a release build writes nothing. A KMP module has no build variants, so the check is `Platform.isDebugBinary` at run time; Xcode's Release configuration builds the release framework.
 
 &nbsp;
 

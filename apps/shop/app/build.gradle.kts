@@ -13,12 +13,12 @@ compose.resources {
     packageOfResClass = "krio.systemdesign.shoppingapp.resources"
 }
 
-// PRODUCT_IMAGE_TRANSITION_MILLIS is a const, inlined at compile time, so the analysis sees no use of
-// :crossfeature:ui; the code still doesn't compile without it.
+// PRODUCT_IMAGE_TRANSITION_MILLIS and DeepLinkConfig are consts, inlined at compile time, so the analysis sees no
+// use of :crossfeature:ui and :core:config; the code still doesn't compile without them.
 dependencyAnalysis {
     issues {
         onUnusedDependencies {
-            exclude(":crossfeature:ui")
+            exclude(":crossfeature:ui", ":core:config")
         }
     }
 }
@@ -44,6 +44,7 @@ kotlin {
             implementation(project(":crossfeature:analytics"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:compose-utils"))
+            implementation(project(":core:config"))
 
             implementation(libs.jetbrains.navigation.compose)
             implementation(libs.jetbrains.lifecycle.runtime.compose)
@@ -58,6 +59,13 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+        }
+        // The iOS graph (IosAppGraph) sees only the modules on this module's compile classpath: the ones with
+        // contributions that only it uses are here. On Android, :apps:shop:android holds the graph.
+        iosMain.dependencies {
+            implementation(project(":crossfeature:data"))
+            implementation(project(":core:network"))
+            implementation(libs.ktor.client.logging)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

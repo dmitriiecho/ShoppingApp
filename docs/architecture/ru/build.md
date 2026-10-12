@@ -128,11 +128,12 @@ Debug-ключ хранится в репозитории ([`build-logic/debug.k
 
 ## iOS-приложение
 
-iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../../../apps/shop/ios/). Оно показывает экраны `:apps:shop:app`, который собирает их во фреймворк `ShopApp`: Run Script проекта вызывает Gradle (`embedAndSignAppleFrameworkForXcode`) до того, как Xcode компилирует код на Swift. Пока приложение показывает заглушку: экраны переезжают в общий код постепенно, по шагам ветки `kmp`.
+iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../../../apps/shop/ios/). Оно показывает экраны `:apps:shop:app`, который собирает их во фреймворк `ShopApp`: Run Script проекта вызывает Gradle (`embedAndSignAppleFrameworkForXcode`) до того, как Xcode компилирует код на Swift. Это весь магазин: `MainViewController()` в `iosMain` создаёт граф приложения (`IosAppGraph`) и показывает `App()`, как `MainActivity` на Android.
 
 - **Собирается на Mac** с Xcode и JDK 21: откройте `apps/shop/ios/iosApp.xcodeproj` и запустите на симуляторе, или используйте конфигурацию запуска iOS в Android Studio с плагином Kotlin Multiplatform.
 - **На Linux общий код тоже компилируется под iOS** (`./gradlew compileKotlinIosSimulatorArm64`), и большинство iOS-ошибок видно ещё до CI; линковка фреймворка, iOS-тесты и сборка Xcode требуют Mac, поэтому CI выполняет их на macOS.
 - **iOS 18.5 и новее**, iPhone, только портретная ориентация. К серверу приложение ходит по обычному HTTP и по IP-адресу, а iOS разрешает это только с `NSAllowsArbitraryLoads` в `Info.plist`.
+- **Логи как на Android**: debug-сборка пишет HTTP-запросы и события аналитики в консоль Xcode, release-сборка не пишет ничего. У KMP-модуля нет вариантов сборки, поэтому проверка — `Platform.isDebugBinary` во время выполнения; конфигурация Release в Xcode собирает release-фреймворк.
 
 &nbsp;
 
