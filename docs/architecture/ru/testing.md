@@ -19,6 +19,7 @@ cd server && ./gradlew test          # сервер
 
 - **Android-модули** запускают unit-тесты задачей `test` и только в debug-варианте: `shoppingapp.android.library` отключает release-тесты, которые просто повторяли бы их.
 - **У модулей на Kotlin Multiplatform задачи `test` нет.** Их тесты в `src/commonTest` идут на обеих платформах: на JVM задачей `testAndroidHostTest`, на iOS-симуляторе задачей `iosSimulatorArm64Test`. Тесты, которым нужны классы Android (Robolectric), лежат в `src/androidHostTest` и идут только на JVM.
+- **iOS-тесты не видят ресурсов Compose.** Compose Multiplatform копировал бы их рядом с тестовой программой для iOS, но из-за этой копии Gradle не может кешировать саму программу, поэтому сборка копирование отключает ([`KmpComposeConventionPlugin.kt`](../../../build-logic/src/main/kotlin/KmpComposeConventionPlugin.kt)). Общие тесты сравнивают `StringResource`, а не читают их, а скриншоты, на которых видны тексты, идут на Android. Модуль, чьи iOS-тесты всё же читают ресурсы, включает задачи `copyTestComposeResourcesFor*` обратно.
 - **Имена тестов в `src/commonTest`** не могут содержать запятые, точки, двоеточия и точки с запятой: Kotlin/Native не принимает их в имени функции.
 
 &nbsp;

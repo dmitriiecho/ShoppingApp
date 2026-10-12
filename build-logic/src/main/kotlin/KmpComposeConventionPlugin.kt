@@ -25,6 +25,12 @@ class KmpComposeConventionPlugin : Plugin<Project> {
                     implementation(libs.jetbrains.compose.ui.tooling.preview)
                 }
             }
+            // The plugin copies the module's resources next to the iOS test executable, so that tests could read
+            // them. No common test reads them (ViewModel tests compare StringResource, the screenshots run on
+            // Android), and the copy shares the link task's output folder, which stops Gradle from caching that
+            // link: minutes on every CI run. A module whose iOS tests read resources enables these tasks again.
+            tasks.named { it.startsWith("copyTestComposeResourcesFor") }.configureEach { enabled = false }
+
             // Res, the strings and images of the module, in the module's own package.
             extensions.getByType(ComposeExtension::class.java).extensions.configure<ResourcesExtension> {
                 packageOfResClass = defaultNamespace() + ".resources"

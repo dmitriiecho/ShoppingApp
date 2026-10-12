@@ -90,7 +90,7 @@ A package follows the module:
 
 - Tests follow [`testing.md`](docs/architecture/en/testing.md).
 - A test helper (`TestXxx` stand-in, `testXxx()` builder, `xxxTest {}` entry function) used by tests of two or more modules lives next to the module that owns what it replaces: in its `testing` module for a KMP module (`:crossfeature:analytics:testing` → `TestAnalyticsClient`; KMP has no test fixtures), in its test fixtures for an Android module. One used by a single module stays in its own tests.
-- KMP modules: tests in `src/commonTest` run on the JVM (`testAndroidHostTest`) and on iOS (`iosSimulatorArm64Test`); Robolectric ones go to `src/androidHostTest`. No commas, dots or colons in test names there: Kotlin/Native rejects them.
+- KMP modules: tests in `src/commonTest` run on the JVM (`testAndroidHostTest`) and on iOS (`iosSimulatorArm64Test`); Robolectric ones go to `src/androidHostTest`. No commas, dots or colons in test names there: Kotlin/Native rejects them. On iOS they can't read Compose resources: `shoppingapp.kmp.compose` turns off their copy so that the test executables stay cacheable.
 - The prefix `Fake` is taken by real code: the analytics stand-ins in `:apps:shop`.
 
 ### build-logic
