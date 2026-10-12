@@ -41,6 +41,12 @@ concurrency:
 permissions:
   contents: read
 
+# The caches are saved only on pushes to the branches where work goes on: main and kmp. Pull requests and the
+# other branches only read them (a pull request reads its base branch's). GitHub keeps 10 GB of caches per repo
+# and drops the oldest beyond that; a pull request's own copy would serve only that pull request.
+env:
+  CACHE_READ_ONLY: ${{ github.event_name != 'push' || (github.ref != 'refs/heads/main' && github.ref != 'refs/heads/kmp') }}
+
 
 jobs:
 
@@ -72,17 +78,28 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # Caches Gradle and the downloaded libraries between runs, and checks that gradle-wrapper.jar is genuine.
+      # Caches Gradle, the downloaded libraries and the build outputs between runs, and checks that
+      # gradle-wrapper.jar is genuine.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: ${{ env.CACHE_READ_ONLY }}
 
       # Robolectric downloads the Android it runs tests on (about 200 MB) into ~/.m2, outside Gradle's cache.
-      # Which Android it is depends on the Robolectric version and the targetSdk, so the key follows those files.
-      - name: Cache Robolectric's Android
-        uses: actions/cache@v6
+      # Which Android it is depends on the Robolectric version and the targetSdk, so the key is made of those two:
+      # a hash of whole files would make a new 350 MB copy on every change of an unrelated library.
+      - name: Robolectric version and targetSdk
+        id: robolectric-key
+        run: >-
+          echo "key=robolectric-$(sed -n 's/^robolectric = "\(.*\)"$/\1/p' gradle/libs.versions.toml)-sdk$(sed -n 's/.*TARGET_SDK = \([0-9]*\).*/\1/p' build-logic/src/main/kotlin/AndroidConfig.kt)"
+          >> "$GITHUB_OUTPUT"
+
+      - name: Restore Robolectric's Android
+        id: robolectric
+        uses: actions/cache/restore@v6
         with:
           path: ~/.m2/repository/org/robolectric
-          key: robolectric-${{ hashFiles('gradle/libs.versions.toml', 'build-logic/src/main/kotlin/AndroidConfig.kt') }}
+          key: ${{ steps.robolectric-key.outputs.key }}
 
       # --- Checks -----------------------------------------------------------
       # By default a failed step skips all the steps after it. `if: !cancelled()` runs a check anyway
@@ -116,6 +133,14 @@ jobs:
         id: tests
         if: ${{ !cancelled() }}
         run: ./gradlew test testAndroidHostTest --continue
+
+      # After the tests, which download it on a miss; also when one failed, the download is the same.
+      - name: Save Robolectric's Android
+        if: ${{ !cancelled() && env.CACHE_READ_ONLY == 'false' && steps.robolectric.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: ${{ steps.robolectric-key.outputs.key }}
 
       # Shows each failed test, with its message and line, at the top of the run's page and, when the test file
       # is among the PR's changes, next to the test's line in Files changed; below, a summary with each failure's
@@ -155,7 +180,7 @@ jobs:
   ios:
     name: iOS
     runs-on: macos-latest
-    # Kotlin/Native and the Xcode build take 10 to 20 minutes on an empty cache.
+    # Kotlin/Native and the Xcode build take about 15 minutes on an empty cache.
     timeout-minutes: 45
 
     steps:
@@ -168,20 +193,37 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      # The same caching as in the Android job; on Linux and macOS the caches are separate.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: ${{ env.CACHE_READ_ONLY }}
 
-      # The Kotlin/Native compiler and its dependencies (~1 GB), downloaded once per Kotlin version.
-      - name: Cache Kotlin/Native
-        uses: actions/cache@v6
+      # The Kotlin/Native compiler and its dependencies (~1 GB), downloaded once per Kotlin version: the key is that
+      # version, read from the catalog.
+      - name: Kotlin version
+        id: konan-key
+        run: echo "key=konan-${{ runner.os }}-$(sed -n 's/^kotlin = "\(.*\)"$/\1/p' gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Kotlin/Native
+        id: konan
+        uses: actions/cache/restore@v6
         with:
           path: ~/.konan
-          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          key: ${{ steps.konan-key.outputs.key }}
 
       # The common tests of every KMP module (src/commonTest), compiled for iOS and run on the simulator.
       - name: Shared code on iOS (simulator tests)
         id: tests
         run: ./gradlew iosSimulatorArm64Test --continue
+
+      # Gradle downloads Kotlin/Native in the step above on a miss.
+      - name: Save Kotlin/Native
+        if: ${{ !cancelled() && env.CACHE_READ_ONLY == 'false' && steps.konan.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.konan
+          key: ${{ steps.konan-key.outputs.key }}
 
       - name: Failed tests
         if: ${{ failure() && steps.tests.outcome == 'failure' }}
@@ -235,6 +277,8 @@ jobs:
       # The same caching as in the Android job.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: ${{ env.CACHE_READ_ONLY }}
 
       # --- Checks: each runs even if the one before failed ------------------
 
