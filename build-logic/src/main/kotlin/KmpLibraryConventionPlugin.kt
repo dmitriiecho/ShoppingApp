@@ -32,8 +32,9 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                     compileSdk = AndroidConfig.COMPILE_SDK
                     minSdk = AndroidConfig.MIN_SDK
                     compilerOptions.jvmTarget.set(JvmTarget.fromTarget(AndroidConfig.JAVA_VERSION.toString()))
-                    // Host tests are off by default in this plugin. Robolectric runs them on the targetSdk and needs
-                    // the module's resources (see AndroidLibraryConventionPlugin).
+                    // Host tests are off by default in this plugin. Robolectric runs them on the targetSdk of the
+                    // module's merged manifest, which a library doesn't have, so it gets the app's; without the
+                    // resources Robolectric sees no manifest and takes its oldest SDK, older than the app's minSdk.
                     withHostTest {
                         isIncludeAndroidResources = true
                         targetSdk { version = release(AndroidConfig.TARGET_SDK) }

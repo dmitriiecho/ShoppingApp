@@ -141,7 +141,6 @@ A screen has a single snackbar effect, `ShowSnackBar(UiText)`, so the ViewModel 
 - **`UiText`** is either a ready string (`Dynamic`) or a Compose Multiplatform string resource with its arguments (`Resource`). A composable reads it with `asString()`.
 - **`showSnackbar(hostState, UiText)` reads the text itself**, in the coroutine that shows the snackbar: outside Compose a string resource can only be read by a suspending `getString`. The effects keep their order.
 - **A string the screen needs right in the handler** is read in the composable beforehand with `stringResource`. Settings opens its deep links page this way: the page address is a string resource, a different one for each language.
-- **`AndroidUiText`** is the same type with `R.string` ids, for the features that are still Android modules. It goes away with the last of them.
 
 &nbsp;
 

@@ -154,7 +154,6 @@ module-graph-assertion-gradlePlugin = { group = "com.jraska.module.graph.asserti
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
@@ -170,10 +169,8 @@ roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 
 # Project convention plugins from build-logic
 shoppingapp-android-application = { id = "shoppingapp.android.application" }
-shoppingapp-android-library = { id = "shoppingapp.android.library" }
 shoppingapp-android-compose = { id = "shoppingapp.android.compose" }
 shoppingapp-metro = { id = "shoppingapp.metro" }
-shoppingapp-android-feature = { id = "shoppingapp.android.feature" }
 shoppingapp-android-screenshots = { id = "shoppingapp.android.screenshots" }
 shoppingapp-kmp-library = { id = "shoppingapp.kmp.library" }
 shoppingapp-kmp-compose = { id = "shoppingapp.kmp.compose" }

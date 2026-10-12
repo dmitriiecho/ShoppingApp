@@ -19,7 +19,7 @@ Folders are levels, bottom to top: `core/` → `crossfeature/` → `feature/` �
 | Level | Module | Holds |
 |---|---|---|
 | `core/`: knows nothing about the shop | `:core:designsystem` | theme, icons, generic components (cards, buttons, fields, bars, notices, placeholders, dialogs, screen states); only generic strings ("Close", "Retry") |
-| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText` (`AndroidUiText` for the features still on Android, until they move), shared element scopes, `injectedViewModel` |
+| | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes, `injectedViewModel` |
 | | `:core:network`, `:core:config` | the HTTP client; the server and deep link addresses |
 | `crossfeature/`: shop code used by two or more features | `:crossfeature:domain` | models, repository interfaces, use cases; pure Kotlin |
 | | `:crossfeature:data` | their implementations; only `:apps:shop` depends on it |
@@ -89,17 +89,17 @@ A package follows the module:
 ### Tests
 
 - Tests follow [`testing.md`](docs/architecture/en/testing.md).
-- A test helper (`TestXxx` stand-in, `testXxx()` builder, `xxxTest {}` entry function) used by tests of two or more modules lives next to the module that owns what it replaces: in its `testing` module for a KMP module (`:crossfeature:analytics:testing` → `TestAnalyticsClient`; KMP has no test fixtures), in its test fixtures for an Android module. One used by a single module stays in its own tests.
+- A test helper (`TestXxx` stand-in, `testXxx()` builder, `xxxTest {}` entry function) used by tests of two or more modules lives next to the module that owns what it replaces: in its `testing` module (`:crossfeature:analytics:testing` → `TestAnalyticsClient`; KMP has no test fixtures). One used by a single module stays in its own tests.
 - KMP modules: tests in `src/commonTest` run on the JVM (`testAndroidHostTest`) and on iOS (`iosSimulatorArm64Test`); Robolectric ones go to `src/androidHostTest`. No commas, dots or colons in test names there: Kotlin/Native rejects them. On iOS they can't read Compose resources: `shoppingapp.kmp.compose` turns off their copy so that the test executables stay cacheable.
 - The prefix `Fake` is taken by real code: the analytics stand-ins in `:apps:shop`.
 
 ### build-logic
 
-`build-logic/` is an included build with the convention plugins `shoppingapp.android.{library,application,compose,feature,screenshots}`, `shoppingapp.kmp.{library,compose,feature}` and `shoppingapp.metro`. compileSdk, minSdk, targetSdk and Java live in `build-logic/src/main/kotlin/AndroidConfig.kt`. Each module declares only its own dependencies.
+`build-logic/` is an included build with the convention plugins `shoppingapp.android.{application,compose,screenshots}`, `shoppingapp.kmp.{library,compose,feature}` and `shoppingapp.metro`. compileSdk, minSdk, targetSdk and Java live in `build-logic/src/main/kotlin/AndroidConfig.kt`. Each module declares only its own dependencies.
 
 | Module | Applies |
 |---|---|
-| `:feature:<name>:impl` | `kmp.feature` (settings, promo, checkout, cart); `android.feature` while a feature is still an Android module (catalog) |
+| `:feature:<name>:impl` | `libs.plugins.shoppingapp.kmp.feature` |
 | `:feature:<name>:ui` | `kmp.library` + `kmp.compose` + `screenshots` |
 | Kotlin Multiplatform (`:core:*`, `:crossfeature:*`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`) + `kmp.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
@@ -119,7 +119,7 @@ The main commands, from the project root:
 | `./gradlew :apps:shop:assembleDebug` | builds the debug APK: `apps/shop/build/outputs/apk/debug/shop-debug.apk` |
 | `./gradlew :apps:shop:installDebug` | builds and installs it on the connected device |
 | `./gradlew :apps:uikit:installDebug` | builds and installs the UI kit; in Android Studio, the run configuration of the `uikit` module |
-| `./gradlew test testAndroidHostTest` | every app test on the JVM, once (`test` for Android modules, release unit tests off; `testAndroidHostTest` for KMP modules, which have no `test`); screenshots compared with `<module>/screenshots/` |
+| `./gradlew testAndroidHostTest` | every app test on the JVM (the libraries are KMP modules, which have no `test`); screenshots compared with `<module>/screenshots/` |
 | `./gradlew compileKotlinIosSimulatorArm64` | compiles the shared code for iOS; works on Linux, catches iOS errors before CI |
 | `./gradlew iosSimulatorArm64Test` | the common tests on the iOS simulator (Mac only; CI runs them on macOS) |
 | `cd server && ./gradlew test` | server tests |
@@ -128,7 +128,7 @@ The main commands, from the project root:
 The CI checks locally (CI treats Kotlin and lint warnings as errors):
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain test testAndroidHostTest :apps:shop:assembleDebug :apps:uikit:assembleDebug compileKotlinIosSimulatorArm64
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:assembleDebug :apps:uikit:assembleDebug compileKotlinIosSimulatorArm64
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```
 
@@ -138,9 +138,9 @@ cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ### Screenshots after a UI change
 
 1. Check that only the screens meant to change did, either way:
-   - before recording: `./gradlew test testAndroidHostTest` fails only those previews and leaves `build/outputs/roborazzi/*_compare.png`;
+   - before recording: `./gradlew testAndroidHostTest` fails only those previews and leaves `build/outputs/roborazzi/*_compare.png`;
    - after recording: `git status` shows only their images.
-2. Record: `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` saves the new screenshots and deletes those of removed previews; in Android Studio, the Record screenshots run configuration.
+2. Record: `./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` saves the new screenshots and deletes those of removed previews; in Android Studio, the Record screenshots run configuration.
 3. Commit the images with the change.
 
 - **Don't record when a change wasn't meant to alter the UI**: a failed screenshot test is then a real problem.

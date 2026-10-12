@@ -27,10 +27,6 @@ gradlePlugin {
             id = libs.plugins.shoppingapp.android.application.get().pluginId
             implementationClass = "AndroidApplicationConventionPlugin"
         }
-        register("androidLibrary") {
-            id = libs.plugins.shoppingapp.android.library.get().pluginId
-            implementationClass = "AndroidLibraryConventionPlugin"
-        }
         register("androidCompose") {
             id = libs.plugins.shoppingapp.android.compose.get().pluginId
             implementationClass = "AndroidComposeConventionPlugin"
@@ -38,10 +34,6 @@ gradlePlugin {
         register("metro") {
             id = libs.plugins.shoppingapp.metro.get().pluginId
             implementationClass = "MetroConventionPlugin"
-        }
-        register("androidFeature") {
-            id = libs.plugins.shoppingapp.android.feature.get().pluginId
-            implementationClass = "AndroidFeatureConventionPlugin"
         }
         register("androidScreenshots") {
             id = libs.plugins.shoppingapp.android.screenshots.get().pluginId
