@@ -8,7 +8,9 @@
 
 # Architecture
 
-ShoppingApp is a demo store for Android and iOS: a searchable catalog, product details, a cart that lives on the device and is checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) provides the catalog and checks the cart. Both platforms run the same Kotlin Multiplatform code: screens, logic and data; only the entry points and a few platform details are their own.
+ShoppingApp is a demo store for Android and iOS: a searchable catalog, product details, a cart that lives on the device and is checked against the server, promo codes and a checkout form. A small Ktor server in [`server/`](../../../server/README.md) provides the catalog and checks the cart.
+
+Both platforms run the same Kotlin Multiplatform code: screens, logic and data; only the entry points and a few platform details are their own.
 
 These pages explain how the app is built and why. Each one covers the rules, the reasons behind them and short excerpts from the project's code.
 

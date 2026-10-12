@@ -22,7 +22,7 @@ Each kind of module has its own plugin:
 | `shoppingapp.android.compose` | `:apps:shop:android`, `:apps:uikit:android` | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.metro` | modules with DI, Android or KMP | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
 | `shoppingapp.android.screenshots` | every library with previews | [screenshot tests](testing.md#screenshots) generated from the previews |
-| `shoppingapp.kmp.library` | every Kotlin Multiplatform library: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` and the `testing` modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
+| `shoppingapp.kmp.library` | every Kotlin Multiplatform module: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui`, the `testing` modules, the apps' shared modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
 | `shoppingapp.kmp.compose` | KMP modules with Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, the apps' shared `:apps:shop:shared` and `:apps:uikit:shared` | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
 | `shoppingapp.kmp.feature` | every `:feature:<name>:impl` | `kmp.library` + `kmp.compose` + Metro + serialization, JetBrains' navigation and lifecycle libraries for KMP |
 
@@ -102,7 +102,8 @@ Comments are in English and short, and they explain what the code itself can't: 
 - **Unused dependencies** are found by the [Dependency Analysis](https://github.com/autonomousapps/dependency-analysis-gradle-plugin) plugin; its rules, including which advice is ignored and why, are in the root [`build.gradle.kts`](../../../build.gradle.kts).
 - **Lint exceptions** are in the root [`lint.xml`](../../../lint.xml): the CompositionLocals the project creates on purpose, and "a newer version is available", which is downgraded to a hint so that a new library release doesn't fail CI.
 - **Failed tests show up where you'd look anyway**: each one, with its message and line, at the top of the run's page; next to the test's line in the PR's Files changed tab, if the test file is part of the PR; and in a summary below, with the full stack trace ([action-junit-report](https://github.com/mikepenz/action-junit-report), the only action in CI not made by GitHub or Gradle).
-- **The Android runtime that Robolectric uses is cached** between runs: Robolectric downloads it into `~/.m2`, which Gradle's cache doesn't cover. Its key is what it depends on, the Robolectric version and the targetSdk, so an unrelated new library doesn't make a new copy. The iOS job caches the Kotlin/Native compiler together with the caches of the libraries it builds while linking, a few minutes of work: that cache is saved after the Xcode build, keyed by the Kotlin version and the version catalog, and a new catalog starts from the latest copy of the same Kotlin version.
+- **The Android runtime that Robolectric uses is cached** between runs: Robolectric downloads it into `~/.m2`, which Gradle's cache doesn't cover. Its key is what it depends on, the Robolectric version and the targetSdk, so an unrelated new library doesn't make a new copy.
+- **The iOS job caches the Kotlin/Native compiler** together with the caches of the libraries it builds while linking, a few minutes of work. That cache is saved after the Xcode builds and keyed by the Kotlin version and the version catalog; a new catalog starts from the latest copy of the same Kotlin version.
 - **The caches are saved only on pushes to `main` and `kmp`**, where work goes on; pull requests and the other branches only read them, a pull request its base branch's. GitHub keeps 10 GB of caches per repository and drops the oldest beyond that, and a pull request's own copy would serve no other run.
 - **The iOS job saves Gradle's cache without cleaning it up.** The cleanup of `setup-gradle` drops the cached test executables of iOS even when the run took them from the cache, and they would be linked again on every run; Gradle itself removes the entries unused for 7 days.
 - **A job is stopped after 30 minutes** (the iOS job after 45, the server job after 15) instead of hanging for GitHub's default 6 hours.
@@ -119,7 +120,9 @@ concurrency:
 
 [`dependency-graph.yml`](../../../.github/workflows/dependency-graph.yml) sends GitHub the list of libraries the app and the server ship with, after every push to `main`. GitHub checks them for known vulnerabilities and shows a Dependabot alert in the Security tab if it finds any. It is a separate workflow because sending the list needs write access, and CI stays read-only.
 
-[`screenshot-comment.yml`](../../../.github/workflows/screenshot-comment.yml) posts a pull request's changed screenshots in a comment on it when CI fails because of them. A comment can only show an image that has a URL, so the images are pushed to a `screenshots/pr-<N>` branch, which is deleted once the screenshots match again or the pull request is closed. Each pull request has a single comment that is updated on every run. This workflow also needs write access, so it never runs the pull request's code: it only copies the images CI produced.
+[`screenshot-comment.yml`](../../../.github/workflows/screenshot-comment.yml) posts a pull request's changed screenshots in a comment on it when CI fails because of them. Each pull request has a single comment that is updated on every run.
+
+A comment can only show an image that has a URL, so the images are pushed to a `screenshots/pr-<N>` branch, which is deleted once the screenshots match again or the pull request is closed. This workflow also needs write access, so it never runs the pull request's code: it only copies the images CI produced.
 
 &nbsp;
 
@@ -134,7 +137,9 @@ The debug key is stored in the repo ([`build-logic/debug.keystore`](../../../bui
 
 ## iOS app
 
-The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). It shows the screens of `:apps:shop:shared`, which builds them into the `ShopApp` framework: the project's Run Script calls Gradle (`embedAndSignAppleFrameworkForXcode`) before Xcode compiles the Swift code. The app is the whole shop: `MainViewController()` in `iosMain` creates the app's graph (`IosAppGraph`) and shows `App()`, as `MainActivity` does on Android.
+The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). It shows the screens of `:apps:shop:shared`, which builds them into the `ShopApp` framework: the project's Run Script calls Gradle (`embedAndSignAppleFrameworkForXcode`) before Xcode compiles the Swift code.
+
+The app is the whole shop: `MainViewController()` in `iosMain` creates the app's graph (`IosAppGraph`) and shows `App()`, as `MainActivity` does on Android.
 
 - **It builds on a Mac** with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator, or use the iOS run configuration of Android Studio with the Kotlin Multiplatform plugin.
 - **On Linux the shared code compiles for iOS too** (`./gradlew compileKotlinIosSimulatorArm64`), which catches most iOS errors before CI; linking the framework, the iOS tests and the Xcode build need a Mac, so CI runs them on macOS.

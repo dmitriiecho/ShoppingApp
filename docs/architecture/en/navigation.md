@@ -8,7 +8,7 @@
 
 # Navigation
 
-Navigation is built on Navigation Compose with type-safe routes (`@Serializable` objects and classes). Features don't know about each other: each one gives the app a graph, and the app connects the graphs.
+Navigation is built on Navigation Compose, in JetBrains' multiplatform build, with type-safe routes (`@Serializable` objects and classes). Features don't know about each other: each one gives the app a graph, and the app connects the graphs.
 
 &nbsp;
 
@@ -71,7 +71,7 @@ Each tab keeps its own back stack. Switching to a tab pops everything, including
 
 ```kotlin
 navigate(route) {
-    popUpTo(graph.id) { saveState = true }  // pop everything, but remember the tab's stack
+    popUpTo<AppRoute> { saveState = true }  // pop everything, but remember the tab's stack
     launchSingleTop = true
     restoreState = true                     // bring back the stack of the tab we go to
 }
@@ -200,8 +200,12 @@ So Back from a product opened by a link goes to the catalog.
 
 - **App Links are verified**: the debug key is kept in the repo and its fingerprint is listed in `assetlinks.json` on the domain, so a build from any computer can open the links.
 - **The domain and paths are declared twice**, in the manifest's intent filter and in `DeepLinkConfig`; a comment in each one points to the other.
-- **On iOS the links use the app's own scheme**, `shoppingapp://cart`, `shoppingapp://product/1`: an https link opens an app on iOS only through Universal Links, which need a paid developer team and a file on the domain. The scheme is registered in `CFBundleURLTypes` of `Info.plist`, SwiftUI's `onOpenURL` hands a link to `openDeepLink()`, and `normalizeDeepLink()` turns it into the https form, so the screens declare their links once.
-- **The code is shared**: the platform hands a link over as a string ([`IncomingDeepLinks`](../../../apps/shop/shared/src/commonMain/kotlin/krio/systemdesign/shoppingapp/IncomingDeepLinks.kt), a channel in the app's graph that keeps a link until the navigation is ready), and the navigation API used here is common: a tab root is popped to by its route, and the bottom bar pops to the root graph's route `AppRoute`, as the common API has no popping by destination id.
+- **On iOS the links use the app's own scheme**, `shoppingapp://cart`, `shoppingapp://product/1`: an https link opens an app on iOS only through Universal Links, which need a paid developer team and a file on the domain.
+
+  The scheme is registered in `CFBundleURLTypes` of `Info.plist`, SwiftUI's `onOpenURL` hands a link to `openDeepLink()`, and `normalizeDeepLink()` turns it into the https form, so the screens declare their links once.
+- **The code is shared**: the platform hands a link over as a string to [`IncomingDeepLinks`](../../../apps/shop/shared/src/commonMain/kotlin/krio/systemdesign/shoppingapp/IncomingDeepLinks.kt), a channel in the app's graph that keeps a link until the navigation is ready.
+
+  The navigation API used here is common too: a tab root is popped to by its route, and the bottom bar pops to the root graph's route `AppRoute`, as the common API has no popping by destination id.
 - **Test pages** with every link, including variants with a trailing slash and edge cases (an unknown product, an unknown path), are in [`docs/deeplinks/`](../../deeplinks/), a page per platform (`android/`, `ios/`) and language, published on GitHub Pages; the Settings screen opens its platform's page (`DeepLinkConfig.TEST_PAGES_URL`).
 
 <details>

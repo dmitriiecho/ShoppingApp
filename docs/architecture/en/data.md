@@ -147,7 +147,7 @@ internal class NetworkDelayPlugin(private val appSettingsRepository: AppSettings
 - **The request delay** from the settings is applied before every server request, including images, to show how screens behave while they wait. It is a Ktor plugin that suspends the request, so leaving the screen cancels the wait at once.
 - **4xx and 5xx answers** throw Ktor's `ResponseException`, which `networkCall` turns into `NetworkResult.HttpError`.
 - **The HTTP log** is added only in debug.
-- **Plain HTTP is allowed only for the server's address** (`network_security_config.xml`): the server has no domain, so it can't use HTTPS.
+- **Plain HTTP is allowed only for the server's address** on Android (`network_security_config.xml`): the server has no domain, so it can't use HTTPS. iOS can't allow it for an IP address alone, so the iOS app turns on `NSAllowsArbitraryLoads` in `Info.plist`.
 
 &nbsp;
 
@@ -164,8 +164,8 @@ fun formatPrice(amountCents: Long): String {
     return "$sign$$dollars.$remainder"
 }
 ```
-The formatter is written by hand: the platforms' number formats aren't available in common code, and this one format is all the app needs.
 
+The formatter is written by hand: the platforms' number formats aren't available in common code, and this one format is all the app needs.
 
 There is no `Money` value class. It could only live in the domain: `:crossfeature:ui` takes plain values, and a domain type in UI state would be unstable for Compose. Since most of the code that deals with prices is UI code, such a type wouldn't protect much. It is worth adding once a second currency or taxes appear.
 
@@ -175,7 +175,9 @@ There is no `Money` value class. It could only live in the domain: `:crossfeatur
 
 The server's API and data rules are described in [`server/README.md`](../../../server/README.md). Here is what the app relies on:
 
-- **The app and the server use the same DTOs**, from [`contract/`](../../../contract/): a Kotlin Multiplatform build (JVM and iOS) that both include, so a field changed on one side doesn't compile on the other until it is changed there too. The mappers to domain models stay in the app's `data` packages. The JSON samples in [`server/api-samples/`](../../../server/api-samples/) still check what the types can't: the addresses of the requests and each side's `Json` settings ([tests on both sides](testing.md#contract-with-the-server)).
+- **The app and the server use the same DTOs**, from [`contract/`](../../../contract/): a Kotlin Multiplatform build (JVM and iOS) that both include, so a field changed on one side doesn't compile on the other until it is changed there too. The mappers to domain models stay in the app's `data` packages.
+
+  The JSON samples in [`server/api-samples/`](../../../server/api-samples/) still check what the types can't: the addresses of the requests and each side's `Json` settings ([tests on both sides](testing.md#contract-with-the-server)).
 - **Paging by page number is safe**: the server never removes products and always adds new ones at the end. A renamed product can still move around in search results, so `ProductPagingSource` drops duplicate ids.
 - **The server decides whether checkout can open.** The cart shows what its last check found, but "Checkout" opens only after a fresh `Success` from the server.
 - **A promo code's discount percentage never changes**, so the server only checks that the code still exists.

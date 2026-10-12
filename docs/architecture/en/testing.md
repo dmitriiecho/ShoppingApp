@@ -8,7 +8,7 @@
 
 # Testing
 
-Tests run on the JVM, without an emulator. They cover the app's logic, ViewModels, data layer and screens (a screenshot of every preview), its contract with the server, and the server itself. The app and the server follow the same rules, so tests read the same way on both sides.
+Tests run without an emulator: on the JVM, and the common ones on the iOS simulator too. They cover the app's logic, ViewModels, data layer and screens (a screenshot of every preview), its contract with the server, and the server itself. The app and the server follow the same rules, so tests read the same way on both sides.
 
 &nbsp;
 
@@ -17,14 +17,16 @@ Tests run on the JVM, without an emulator. They cover the app's logic, ViewModel
 Each build runs its own tests, and CI runs both sets on every pull request:
 
 ```sh
-./gradlew testAndroidHostTest   # the app on the JVM: every module, once, including screenshots
+./gradlew testAndroidHostTest        # the app on the JVM: every module, once, including screenshots
 ./gradlew iosSimulatorArm64Test      # the common tests on the iOS simulator (on a Mac; CI runs them on macOS)
 cd server && ./gradlew test          # the server
 ./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # records new screenshots after a UI change
 ```
 
 - **Every library is a Kotlin Multiplatform module**, so there is no `test` task. The tests in `src/commonTest` run on both platforms: on the JVM with `testAndroidHostTest`, on the iOS simulator with `iosSimulatorArm64Test`. Tests that need Android classes (Robolectric) live in `src/androidHostTest` and run only on the JVM.
-- **iOS tests don't see Compose resources.** Compose Multiplatform would copy them next to the iOS test executable, but that copy keeps Gradle from caching the executable, so the build turns it off ([`KmpComposeConventionPlugin.kt`](../../../build-logic/src/main/kotlin/KmpComposeConventionPlugin.kt)). Common tests compare `StringResource`s rather than read them, and the screenshots, which show the texts, run on Android. A module whose iOS tests do read resources turns the `copyTestComposeResourcesFor*` tasks back on.
+- **iOS tests don't see Compose resources.** Compose Multiplatform would copy them next to the iOS test executable, but that copy keeps Gradle from caching the executable, so the build turns it off ([`KmpComposeConventionPlugin.kt`](../../../build-logic/src/main/kotlin/KmpComposeConventionPlugin.kt)).
+
+  Common tests compare `StringResource`s rather than read them, and the screenshots, which show the texts, run on Android. A module whose iOS tests do read resources turns the `copyTestComposeResourcesFor*` tasks back on.
 - **Test names in `src/commonTest`** can't contain commas, dots, colons or semicolons: Kotlin/Native doesn't accept them in a function name.
 
 &nbsp;
@@ -42,7 +44,9 @@ fun `discount is the promo code percent of the subtotal`() {
 }
 ```
 
-- **One behaviour per test.** Several unrelated checks in one test hide each other, because the first failure stops the rest. Cases of the same kind go into a single table with AssertK's `tableOf`, which checks every row and reports all the failing ones. A table can't call suspend functions, so cases that are sent to a server are all requested first and then checked together: `assertThat(statuses.filterValues { it != BadRequest }).isEmpty()` lists every wrong answer.
+- **One behaviour per test.** Several unrelated checks in one test hide each other, because the first failure stops the rest. Cases of the same kind go into a single table with AssertK's `tableOf`, which checks every row and reports all the failing ones.
+
+  A table can't call suspend functions, so cases that are sent to a server are all requested first and then checked together: `assertThat(statuses.filterValues { it != BadRequest }).isEmpty()` lists every wrong answer.
 - **The name states the condition and the expected result**, in backticks: `` `cart with a changed price reports the new price` ``, not `` `price changed` ``.
 - **Arrange, act, assert**, separated by blank lines.
 - **A test's data lives in the test.** Builders with defaults (`testCartItem(price = 2000)`) let a test set only the values that matter to it. There is no data set shared by all tests, because changing it would break unrelated tests.
@@ -123,7 +127,7 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
     viewModel.effects.test {
         viewModel.onEvent(CartEvent.OnCheckoutClick)
 
-        assertThat(awaitItem()).isEqualTo(snackBar(R.string.cart_changed))
+        assertThat(awaitItem()).isEqualTo(snackBar(Res.string.cart_changed))
     }
 }
 ```
@@ -133,7 +137,7 @@ fun `checkout of a cart the server changed asks to review the changes`() = viewM
 - **A Paging list is presented the whole time, just as the screen's list does it**: Paging loads pages only while something presents them, so the catalog's test keeps a `PagingDataPresenter` collecting `viewModel.products` and checks which pages the repository was asked for. `asSnapshot()` doesn't work with a debounce, because it advances the virtual clock until everything is done.
 - **Typing goes through `typeText()`**: on a device, Compose applies a change to a field on the next frame, and a test has no frames.
 - **Time is virtual**: `advanceTimeBy()` moves it past a debounce or an animation without actually waiting.
-- **State saved for process death** is checked only when it is a plain value in `SavedStateHandle` (a dialog, the payment method): the same handle is passed to a new ViewModel. Text fields are saved through an Android `Bundle`, which isn't available in a JVM test.
+- **State saved for process death** is checked only when it is a plain value in `SavedStateHandle` (a dialog, the payment method): the same handle is passed to a new ViewModel. Text fields are saved with `SavedStateHandle.saveable`, which writes the text only when the system saves the screen's state, and a ViewModel test doesn't do that.
 - **A request in progress** is modelled as a `CompletableDeferred` that the answer waits for: the test changes the cart in the meantime and then completes it.
 - **Analytics events don't implement `equals`**, so `TestAnalytics.sentEvents` stores their names and parameters: `assertThat(analytics.sentEvents).containsExactly(CheckoutStartedAnalyticsEvent(itemCount = 3, totalCents = 5000).sent())`.
 
@@ -157,7 +161,9 @@ class LocalCartDataSourceTest {
 }
 ```
 
-Robolectric runs on the app's `targetSdk`: `shoppingapp.kmp.library` gives the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`. DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
+Robolectric runs on the app's `targetSdk`: `shoppingapp.kmp.library` gives the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`.
+
+DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
 
 ### Network
 
@@ -176,18 +182,22 @@ fun `client error returns HttpError with its code`() = networkTest(::TestApi) { 
 
 ### Contract with the server
 
-The app and the server share the API's DTOs ([`contract/`](../../../contract/)), so the types can't drift apart. What the types don't cover, the addresses of the requests and each side's `Json` settings, is checked against [`server/api-samples/`](../../../server/api-samples/): one JSON file for each request or response the app relies on. `apiSample("product.json")` reads a sample on either side, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter, but a renamed, extra or missing field does. Where each request goes is listed in `requests.json`, as a method and an address: `"product": "GET /products/1"` is the request whose response is `product.json`.
+The app and the server share the API's DTOs ([`contract/`](../../../contract/)), so the types can't drift apart. What the types don't cover, the addresses of the requests and each side's `Json` settings, is checked against [`server/api-samples/`](../../../server/api-samples/): one JSON file for each request or response the app relies on.
+
+`apiSample("product.json")` reads a sample on either side, parsed with that side's own `Json`, and the check compares JSON trees, so field order doesn't matter, but a renamed, extra or missing field does. Where each request goes is listed in `requests.json`, as a method and an address: `"product": "GET /products/1"` is the request whose response is `product.json`.
 
 | Side | Checks |
 |---|---|
 | Server | it accepts the request samples at their addresses and responds exactly like the response samples |
 | App | it sends requests exactly like the request samples, to their addresses, and parses the response samples into the expected models |
 
-Changing a format or an address on one side fails that side's tests until the sample, and then the other side, are updated too. The build declares the folder as an input of every test task, so editing a sample makes the tests run again. iOS tests have no system properties, so `:core:network:testing` gets the folder's path as a constant generated by the build, and the samples are read with kotlinx-io on both platforms.
+Changing a format or an address on one side fails that side's tests until the sample, and then the other side, are updated too. The build declares the folder as an input of every test task, so editing a sample makes the tests run again.
+
+iOS tests have no system properties, so `:core:network:testing` gets the folder's path as a constant generated by the build, and the samples are read with kotlinx-io on both platforms.
 
 ### Screenshots
 
-Every `@Preview` is a screenshot test, so nobody has to write them by hand. `shoppingapp.android.screenshots`, which every library module with previews applies (Android or KMP), has [Roborazzi](https://github.com/takahirom/roborazzi) render each preview on Robolectric and compare it with the image saved in the module's `screenshots/` folder:
+Every `@Preview` is a screenshot test, so nobody has to write them by hand. `shoppingapp.android.screenshots`, which every module with previews applies, has [Roborazzi](https://github.com/takahirom/roborazzi) render each preview on Robolectric and compare it with the image saved in the module's `screenshots/` folder:
 
 | Command | Does |
 |---|---|
@@ -221,4 +231,6 @@ Google's Compose Preview Screenshot Testing does the same thing with Android Stu
 
 ### Server
 
-`serverTest {}` starts the server in memory with Ktor's `testApplication`, using the data and product images the test passes in (`testShopData(products = …)`, `images = mapOf("1.png" to …)`), and provides a client that reads JSON with the server's own `serverJson`. The images live in a temporary folder that is deleted after the test. A request from the samples is sent with `sendApiRequest("product")`, which fails on any status other than success. More on the server's API is in [`server/README.md`](../../../server/README.md).
+`serverTest {}` starts the server in memory with Ktor's `testApplication`, using the data and product images the test passes in (`testShopData(products = …)`, `images = mapOf("1.png" to …)`), and provides a client that reads JSON with the server's own `serverJson`.
+
+The images live in a temporary folder that is deleted after the test. A request from the samples is sent with `sendApiRequest("product")`, which fails on any status other than success. More on the server's API is in [`server/README.md`](../../../server/README.md).

@@ -22,7 +22,7 @@
 | `shoppingapp.android.compose` | `:apps:shop:android`, `:apps:uikit:android` | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.metro` | модули с DI, Android и KMP | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
 | `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
-| `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` и модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
+| `shoppingapp.kmp.library` | каждый модуль на Kotlin Multiplatform: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui`, модули `testing`, общие модули приложений | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
 | `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, общие `:apps:shop:shared` магазина и `:apps:uikit:shared` UI kit | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
 | `shoppingapp.kmp.feature` | каждый `:feature:<name>:impl` | `kmp.library` + `kmp.compose` + Metro + serialization, библиотеки навигации и lifecycle от JetBrains для KMP |
 
@@ -102,7 +102,8 @@ internal object AndroidConfig {
 - **Неиспользуемые зависимости** находит плагин [Dependency Analysis](https://github.com/autonomousapps/dependency-analysis-gradle-plugin); его правила — какие советы он игнорирует и почему — в корневом [`build.gradle.kts`](../../../build.gradle.kts).
 - **Исключения lint** лежат в корневом [`lint.xml`](../../../lint.xml): это CompositionLocal, которые проект создаёт намеренно, и предупреждение «вышла новая версия», пониженное до подсказки, чтобы выход новой версии какой-нибудь библиотеки не ронял CI.
 - **Упавшие тесты видны там, куда и так смотришь**: каждый, с сообщением и номером строки, — вверху страницы прогона и рядом со строкой теста на вкладке Files changed в PR, если файл теста входит в изменения; ниже — сводка с полным стектрейсом ([action-junit-report](https://github.com/mikepenz/action-junit-report), единственное действие в CI не от GitHub и не от Gradle).
-- **Android, который нужен Robolectric, кэшируется** между прогонами: Robolectric скачивает его в `~/.m2`, а эту папку кэш Gradle не покрывает. Ключ этого кэша — то, от чего он зависит: версия Robolectric и targetSdk, поэтому новая библиотека, не связанная с ним, не создаёт новую копию. Задача iOS кэширует компилятор Kotlin/Native вместе с кэшами библиотек, которые он строит при линковке (это несколько минут работы): этот кэш сохраняется после сборки Xcode, ключ — версия Kotlin и каталог версий, а новый каталог начинает с последней копии той же версии Kotlin.
+- **Android, который нужен Robolectric, кэшируется** между прогонами: Robolectric скачивает его в `~/.m2`, а эту папку кэш Gradle не покрывает. Ключ этого кэша — то, от чего он зависит: версия Robolectric и targetSdk, поэтому новая библиотека, не связанная с ним, не создаёт новую копию.
+- **Задача iOS кэширует компилятор Kotlin/Native** вместе с кэшами библиотек, которые он строит при линковке (это несколько минут работы). Этот кэш сохраняется после сборок Xcode, его ключ — версия Kotlin и каталог версий; новый каталог начинает с последней копии той же версии Kotlin.
 - **Кэши сохраняются только при push в `main` и `kmp`**, где идёт работа; pull request'ы и остальные ветки их только читают, pull request — кэш своей базовой ветки. GitHub хранит не больше 10 ГБ кэшей на репозиторий и удаляет самые старые сверх этого, а собственная копия pull request'а не пригодилась бы ни одному другому прогону.
 - **Задача iOS сохраняет кэш Gradle без очистки.** Очистка `setup-gradle` выбрасывает закэшированные тестовые программы для iOS, даже если прогон взял их из кэша, и тогда они линковались бы заново в каждом прогоне; записи, которыми не пользовались 7 дней, Gradle удаляет сам.
 - **Задача останавливается через 30 минут** (iOS — через 45, серверная — через 15), а не висит 6 часов, как это по умолчанию бывает в GitHub.
@@ -119,7 +120,9 @@ concurrency:
 
 [`dependency-graph.yml`](../../../.github/workflows/dependency-graph.yml) после каждого push в `main` отправляет в GitHub список библиотек, с которыми выходят приложение и сервер. GitHub сверяет их с базой известных уязвимостей и, если что-то найдёт, показывает Dependabot alert на вкладке Security. Это отдельный workflow, потому что для отправки нужно право на запись, а CI работает только на чтение.
 
-[`screenshot-comment.yml`](../../../.github/workflows/screenshot-comment.yml) выкладывает изменившиеся скриншоты в комментарий к pull request, если CI упал из-за них. Комментарий может показать картинку, только если у неё есть ссылка, поэтому картинки кладутся в ветку `screenshots/pr-<N>`; она удаляется, когда скриншоты снова совпадут или pull request закроют. Комментарий у pull request всегда один и обновляется при каждом прогоне. Этому workflow тоже нужно право на запись, поэтому код pull request он никогда не запускает, а только копирует картинки, которые сделал CI.
+[`screenshot-comment.yml`](../../../.github/workflows/screenshot-comment.yml) выкладывает изменившиеся скриншоты в комментарий к pull request, если CI упал из-за них. Комментарий у pull request всегда один и обновляется при каждом прогоне.
+
+Комментарий может показать картинку, только если у неё есть ссылка, поэтому картинки кладутся в ветку `screenshots/pr-<N>`; она удаляется, когда скриншоты снова совпадут или pull request закроют. Этому workflow тоже нужно право на запись, поэтому код pull request он никогда не запускает, а только копирует картинки, которые сделал CI.
 
 &nbsp;
 
@@ -134,7 +137,9 @@ Debug-ключ хранится в репозитории ([`build-logic/debug.k
 
 ## iOS-приложение
 
-iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../../../apps/shop/ios/). Оно показывает экраны `:apps:shop:shared`, который собирает их во фреймворк `ShopApp`: Run Script проекта вызывает Gradle (`embedAndSignAppleFrameworkForXcode`) до того, как Xcode компилирует код на Swift. Это весь магазин: `MainViewController()` в `iosMain` создаёт граф приложения (`IosAppGraph`) и показывает `App()`, как `MainActivity` на Android.
+iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../../../apps/shop/ios/). Оно показывает экраны `:apps:shop:shared`, который собирает их во фреймворк `ShopApp`: Run Script проекта вызывает Gradle (`embedAndSignAppleFrameworkForXcode`) до того, как Xcode компилирует код на Swift.
+
+Это весь магазин: `MainViewController()` в `iosMain` создаёт граф приложения (`IosAppGraph`) и показывает `App()`, как `MainActivity` на Android.
 
 - **Собирается на Mac** с Xcode и JDK 21: откройте `apps/shop/ios/iosApp.xcodeproj` и запустите на симуляторе, или используйте конфигурацию запуска iOS в Android Studio с плагином Kotlin Multiplatform.
 - **На Linux общий код тоже компилируется под iOS** (`./gradlew compileKotlinIosSimulatorArm64`), и большинство iOS-ошибок видно ещё до CI; линковка фреймворка, iOS-тесты и сборка Xcode требуют Mac, поэтому CI выполняет их на macOS.

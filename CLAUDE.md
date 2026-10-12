@@ -8,7 +8,7 @@ A demo shop for Android and iOS: one Kotlin Multiplatform code base, the same Co
 | Build | Gradle 9.8, AGP 9.4, JDK 21, compileSdk 37 |
 | Shop app | `:apps:shop:android` (starts the shared `:apps:shop:shared`), applicationId `krio.systemdesign.shoppingapp`, launcher activity `.MainActivity` |
 | UI kit app | `:apps:uikit:android` (starts the shared `:apps:uikit:shared`), applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity` |
-| iOS apps | Xcode projects, build only on a Mac: the shop `apps/shop/ios` (bundle id `krio.systemdesign.shoppingapp`, links the `ShopApp` framework of `:apps:shop:shared`), the UI kit `apps/uikit/ios` (`krio.systemdesign.shoppingapp.uikit`, the `UiKitApp` framework of `:apps:uikit:shared`) |
+| iOS apps | Xcode projects, build only on a Mac: the shop `apps/shop/ios` (bundle id `krio.systemdesign.shoppingapp`, links the `ShopApp` framework of `:apps:shop:shared`), the UI kit `apps/uikit/ios` (`krio.systemdesign.shoppingapp.uikit`, the `UiKitApp` framework of `:apps:uikit:shared`). Android Studio runs only the shop on iOS; the UI kit runs from Xcode |
 
 Machine-specific setup (SDK paths, emulator access) lives in `CLAUDE.local.md`, if present.
 
@@ -110,6 +110,8 @@ A package follows the module:
 | `:feature:<name>:impl` | `libs.plugins.shoppingapp.kmp.feature` |
 | `:feature:<name>:ui` | `kmp.library` + `kmp.compose` + `screenshots` |
 | Kotlin Multiplatform (`:core:*`, `:crossfeature:*`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`) + `kmp.compose` |
+| `:apps:<app>:shared` | `kmp.library` + `kmp.compose` |
+| `:apps:<app>:android` | `android.application` + `android.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
 
 A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit:shared` has none of its own.
