@@ -44,6 +44,7 @@ dependencyAnalysis {
             onUnusedDependencies {
                 exclude(
                     libs.androidx.compose.ui.graphics,
+                    libs.androidx.compose.material3,
                     libs.androidx.compose.ui.tooling.preview,
                     libs.composable.preview.scanner,
                     libs.shoppingapp.contract,

@@ -16,7 +16,7 @@
 | `Analytics` | `:crossfeature:analytics` | передаёт событие клиентам нужных систем |
 | `AnalyticsSystem` | `:crossfeature:analytics` | системы приложения: `Insights` (продуктовая аналитика), `AdTracker` (реклама) |
 | `AnalyticsSystemClient` | `:crossfeature:analytics` | код, который отправляет события в одну систему |
-| `FakeInsightsClient`, `FakeAdTrackerClient` | `:apps:shop` | по одному клиенту на систему; они заменяют SDK вроде Firebase Analytics и AppsFlyer |
+| `FakeInsightsClient`, `FakeAdTrackerClient` | `:apps:shop:app` | по одному клиенту на систему; они заменяют SDK вроде Firebase Analytics и AppsFlyer |
 
 ViewModel вызывает `analytics.log(event)`, а `Analytics` передаёт событие клиентам только тех систем, которые в нём указаны:
 
@@ -72,7 +72,7 @@ launchCartAction(
 )
 ```
 
-Просмотры экранов отправляет приложение, а не экраны ([`ScreenViews.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/ScreenViews.kt)). Оно следит за стеком и сообщает о верхнем экране после каждого перехода и каждого возврата из фона. Каждая фича сама даёт имена своим экранам, а экран без имени не отправляется:
+Просмотры экранов отправляет приложение, а не экраны ([`ScreenViews.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/ScreenViews.kt)). Оно следит за стеком и сообщает о верхнем экране после каждого перехода и каждого возврата из фона. Каждая фича сама даёт имена своим экранам, а экран без имени не отправляется:
 
 ```kotlin
 fun NavDestination.catalogAnalyticsScreen(): AnalyticsScreen? = when {

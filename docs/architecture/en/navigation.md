@@ -8,7 +8,7 @@ Navigation is built on Navigation Compose with type-safe routes (`@Serializable`
 
 ## How features are connected
 
-The app builds three tabs, with checkout shown on top of them. Every path from one feature to another is a callback that [`AppNavGraph.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) passes to the feature graphs:
+The app builds three tabs, with checkout shown on top of them. Every path from one feature to another is a callback that [`AppNavGraph.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) passes to the feature graphs:
 
 | From | To | Callback |
 |---|---|---|
@@ -61,7 +61,7 @@ The `graph(navController, onClose, …)` signature is the same everywhere, even 
 
 ## Tabs
 
-Each tab keeps its own back stack. Switching to a tab pops everything, including the catalog, and saves the stack of the tab you're leaving ([`BottomTabs.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
+Each tab keeps its own back stack. Switching to a tab pops everything, including the catalog, and saves the stack of the tab you're leaving ([`BottomTabs.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
 
 ```kotlin
 navigate(route) {
@@ -162,7 +162,7 @@ fun navigate(block: () -> Unit) {
 <details>
 <summary>A second safeguard: a screen that is leaving ignores taps</summary>
 
-During a transition the old screen is still visible, and it used to catch the second tap: a double tap on Back closed two screens. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) ignores taps until the top screen is `RESUMED`.
+During a transition the old screen is still visible, and it used to catch the second tap: a double tap on Back closed two screens. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) ignores taps until the top screen is `RESUMED`.
 
 </details>
 
@@ -178,22 +178,23 @@ The app handles three kinds of links:
 | `https://dmitriiecho.github.io/ShoppingApp/cart` | the cart tab |
 | `https://dmitriiecho.github.io/ShoppingApp/product/{id}` | a product on top of the catalog |
 
-A link opens a screen the same way a user would get there ([`DeepLinks.kt`](../../../apps/shop/src/main/java/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
+A link opens a screen the same way a user would get there ([`DeepLinks.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
 
 ```kotlin
 // The tab that handles the link; if there is none, the link is ignored
-val tab = BottomNavRoutes.all.firstOrNull { tabGraph(it).hasDeepLink(link) } ?: return
+val tab = BottomNavRoutes.all.firstOrNull { tabGraph(it).hasDeepLink(request) } ?: return
 val tabRoot = tabGraph(tab).findStartDestination()
 
-navigateToBottomTab(tab)                       // like tapping the tab
-popBackStack(tabRoot.id, inclusive = false)    // back to the tab root
-if (!tabRoot.hasDeepLink(link)) navigate(link) // the screen on top of the root
+navigateToBottomTab(tab)                                // like tapping the tab
+popBackStack(checkNotNull(tabRoot.route), inclusive = false) // back to the tab root
+if (!tabRoot.hasDeepLink(request)) navigate(request)    // the screen on top of the root
 ```
 
 So Back from a product opened by a link goes to the catalog.
 
 - **App Links are verified**: the debug key is kept in the repo and its fingerprint is listed in `assetlinks.json` on the domain, so a build from any computer can open the links.
 - **The domain and paths are declared twice**, in the manifest's intent filter and in `DeepLinkConfig`; a comment in each one points to the other.
+- **The code is shared**: the platform hands a link over as a string ([`IncomingDeepLinks`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/IncomingDeepLinks.kt), a channel in the app's graph that keeps a link until the navigation is ready), and the navigation API used here is common: a tab root is popped to by its route, and the bottom bar pops to the root graph's route `AppRoute`, as the common API has no popping by destination id.
 - **Test pages** with every link, including variants with a trailing slash and edge cases (an unknown product, an unknown path), are in [`docs/deeplinks/`](../../deeplinks/) and published on GitHub Pages; the Settings screen opens them.
 
 <details>
@@ -204,7 +205,7 @@ So Back from a product opened by a link goes to the catalog.
 ```kotlin
 val launchedFromRecents = (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0
 if (savedInstanceState == null && !launchedFromRecents) {
-    intent.data?.let(viewModel::openDeepLink)
+    intent.data?.let { graph.incomingDeepLinks.open(it.toString()) }
 }
 intent.data = null
 ```
