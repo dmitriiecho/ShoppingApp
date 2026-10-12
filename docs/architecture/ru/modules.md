@@ -30,7 +30,7 @@
 Внутри уровней есть модули ещё двух видов:
 
 - **Модули `testing`** держат тестовых помощников, которые нужны и тестам других модулей, рядом с модулем, к которому они относятся: `:core:network:testing`, `:crossfeature:domain:testing`. У модулей на Kotlin Multiplatform нет test fixtures, поэтому помощники получают свой модуль; зависят от него только тесты ([Тестирование](testing.md#имена-и-расположение)).
-- **Приложение магазина разделено по платформам**, как советует JetBrains: в `:apps:shop:app` всё общее для обеих платформ (`App()`, навигация, нижняя панель, аналитика, основа графа приложения), в `iosMain` — точка входа и граф iOS, и он собирает фреймворк, который подключает Xcode-проект в `apps/shop/ios` ([Сборка](build.md#ios-приложение)); `:apps:shop:android` — точка входа Android (`MainActivity`, `ShoppingApp`, граф для Android, манифест, ресурсы).
+- **Приложение магазина разделено по платформам**, как советует JetBrains: в `:apps:shop:app` всё общее для обеих платформ (`App()`, навигация, нижняя панель, аналитика, основа графа приложения), в `iosMain` — точка входа и граф iOS, и он собирает фреймворк, который подключает Xcode-проект в `apps/shop/ios` ([Сборка](build.md#ios-приложение)); `:apps:shop:android` — точка входа Android (`MainActivity`, `ShoppingApp`, граф для Android, манифест, ресурсы). UI kit разделён так же: в `:apps:uikit:app` его экраны и образцы, в `:apps:uikit:android` — `UiKitActivity`.
 
 Вне уровней лежит [`contract/`](../../../contract/): DTO API, общие с сервером. Это отдельная сборка, которую подключают и приложение, и сервер, поэтому сервер, тоже отдельная сборка, может пользоваться ею без приложения. От неё зависят `:crossfeature:data` и `impl`-модули фич, которые обращаются к серверу ([Данные](data.md#договорённости-с-сервером)).
 
@@ -52,7 +52,7 @@
 | использует понятия магазина (товар, корзина, промокод, цена, остаток) и нужен двум фичам и больше | `:crossfeature:ui` |
 | использует понятия магазина и нужен одной фиче | `:feature:<name>:ui` |
 
-Фичи не стилизуют компоненты Material сами, а у каждого стилизованного компонента есть пример в приложении UI kit (`:apps:uikit`).
+Фичи не стилизуют компоненты Material сами, а у каждого стилизованного компонента есть пример в приложении UI kit (`:apps:uikit:app`).
 
 &nbsp;
 
@@ -114,6 +114,7 @@ fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Un
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (дефис убирается) |
 | `:apps:shop:android` | `krio.systemdesign.shoppingapp` |
+| `:apps:uikit:android`, `:apps:uikit:app` | `krio.systemdesign.shoppingapp.uikit` |
 | `:apps:shop:app` | `krio.systemdesign.shoppingapp`: это часть приложения, поэтому у неё пакет приложения; Android-namespace у неё по-прежнему по пути, потому что у библиотеки он не может совпадать с приложением |
 
 Пакет приложения привязан к applicationId, поэтому он не меняется, если приложение переедет в другую папку.
@@ -132,7 +133,8 @@ allowed = arrayOf(
     """:feature:\w+:ui -> :(core:designsystem|crossfeature:ui)""",
     """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
     """:feature:(\w+):impl -> :feature:\1:ui""",   // только свой ui
-    """:apps:uikit -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
+    """:apps:uikit:android -> :apps:uikit:app""",
+    """:apps:uikit:(android|app) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
     """:apps:shop:android -> :apps:shop:app""",
     """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
 )

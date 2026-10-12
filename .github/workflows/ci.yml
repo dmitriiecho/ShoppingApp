@@ -170,7 +170,7 @@ jobs:
 
       - name: Both apps compile (assembleDebug)
         if: ${{ !cancelled() }}
-        run: ./gradlew :apps:shop:android:assembleDebug :apps:uikit:assembleDebug
+        run: ./gradlew :apps:shop:android:assembleDebug :apps:uikit:android:assembleDebug
 
   # ==========================================================================
   # iOS: the shared code on the iOS simulator and the iOS app (apps/shop/ios)

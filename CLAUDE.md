@@ -7,7 +7,7 @@ A demo shop for Android and iOS: one Kotlin Multiplatform code base, the same Co
 | Stack | Kotlin Multiplatform, Jetpack Compose and Compose Multiplatform, Metro, Room |
 | Build | Gradle 9.8, AGP 9.4, JDK 21, compileSdk 37 |
 | Shop app | `:apps:shop:android` (starts the shared `:apps:shop:app`), applicationId `krio.systemdesign.shoppingapp`, launcher activity `.MainActivity` |
-| UI kit app | `:apps:uikit`, applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity` |
+| UI kit app | `:apps:uikit:android` (starts the shared `:apps:uikit:app`), applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity` |
 | iOS app | Xcode project `apps/shop/ios`, bundle id `krio.systemdesign.shoppingapp`; links the `ShopApp` framework of `:apps:shop:app`; builds only on a Mac |
 
 Machine-specific setup (SDK paths, emulator access) lives in `CLAUDE.local.md`, if present.
@@ -29,7 +29,8 @@ Folders are levels, bottom to top: `core/` → `crossfeature/` → `feature/` �
 | | `:feature:<name>:ui` | shop components only this feature uses, on plain values; depends only on `:core:designsystem` and `:crossfeature:ui`; exists only when the feature has such components (not in settings) |
 | `apps/`: nothing depends on them | `:apps:shop:app` | the shop's code for both platforms: `App()`, the navigation host, the bottom bar, analytics, the base of the app's graph; in `iosMain` the iOS entry point and graph (`IosAppGraph`); builds the `ShopApp` framework |
 | | `:apps:shop:android` | the Android app: `MainActivity`, `ShoppingApp`, the graph for Android, manifest and resources |
-| | `:apps:uikit` | a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data |
+| | `:apps:uikit:app` | the UI kit's code for both platforms: a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data |
+| | `:apps:uikit:android` | the UI kit's Android app: `UiKitActivity`, manifest and resources |
 
 - **The rules are checked** by `./gradlew assertModuleGraph` (a CI step too) against `build-logic/src/main/kotlin/ModuleGraphRules.kt`. A new kind of dependency between modules needs a rule there.
 - **An `impl` module shows only what `:apps:shop:app` wires**, all in `presentation/navigation`: the routes graph, `graph()`, analytics screen names. Everything else is `internal`.
@@ -111,7 +112,7 @@ A package follows the module:
 | Kotlin Multiplatform (`:core:*`, `:crossfeature:*`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`) + `kmp.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
 
-A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit` has none of its own.
+A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit:app` has none of its own.
 
 ## Server
 
@@ -125,7 +126,7 @@ The main commands, from the project root:
 |---|---|
 | `./gradlew :apps:shop:android:assembleDebug` | builds the debug APK: `apps/shop/android/build/outputs/apk/debug/shop-debug.apk` |
 | `./gradlew :apps:shop:android:installDebug` | builds and installs it on the connected device |
-| `./gradlew :apps:uikit:installDebug` | builds and installs the UI kit; in Android Studio, the run configuration of the `uikit` module |
+| `./gradlew :apps:uikit:android:installDebug` | builds and installs the UI kit; in Android Studio, the run configuration of `apps/uikit/android` |
 | `./gradlew testAndroidHostTest` | every app test on the JVM (the libraries are KMP modules, which have no `test`); screenshots compared with `<module>/screenshots/` |
 | `./gradlew compileKotlinIosSimulatorArm64` | compiles the shared code for iOS; works on Linux, catches iOS errors before CI |
 | `./gradlew iosSimulatorArm64Test` | the common tests on the iOS simulator (Mac only; CI runs them on macOS) |
@@ -135,7 +136,7 @@ The main commands, from the project root:
 The CI checks locally (CI treats Kotlin and lint warnings as errors):
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:assembleDebug compileKotlinIosSimulatorArm64
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:android:assembleDebug compileKotlinIosSimulatorArm64
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```
 
