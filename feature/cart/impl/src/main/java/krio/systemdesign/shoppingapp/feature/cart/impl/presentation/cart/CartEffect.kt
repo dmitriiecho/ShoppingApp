@@ -1,6 +1,6 @@
 package krio.systemdesign.shoppingapp.feature.cart.impl.presentation.cart
 
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 
 internal sealed interface CartEffect {
 
@@ -16,5 +16,5 @@ internal sealed interface CartEffect {
         val imageUrl: String,
     ) : CartEffect
 
-    data class ShowSnackBar(val message: UiText) : CartEffect
+    data class ShowSnackBar(val message: AndroidUiText) : CartEffect
 }

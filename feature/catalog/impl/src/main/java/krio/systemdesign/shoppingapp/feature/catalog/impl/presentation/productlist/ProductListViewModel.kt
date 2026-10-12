@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
@@ -158,7 +158,7 @@ internal class ProductListViewModel(
     }
 
     private fun showSnackBar(@StringRes message: Int) {
-        send(ProductListEffect.ShowSnackBar(UiText.Resource(message)))
+        send(ProductListEffect.ShowSnackBar(AndroidUiText.Resource(message)))
     }
 
     private fun send(effect: ProductListEffect) {

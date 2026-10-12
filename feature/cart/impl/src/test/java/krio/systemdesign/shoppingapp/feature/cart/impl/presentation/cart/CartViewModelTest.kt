@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.TestScope
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
 import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
 import krio.systemdesign.shoppingapp.crossfeature.analytics.event.AnalyticsScreen
@@ -227,7 +227,7 @@ class CartViewModelTest {
     private fun invalid(vararg issues: ItemIssue) =
         CartValidationResult.Invalid(issues.toList(), isPromoCodeValid = true)
 
-    private fun snackBar(message: Int) = CartEffect.ShowSnackBar(UiText.Resource(message))
+    private fun snackBar(message: Int) = CartEffect.ShowSnackBar(AndroidUiText.Resource(message))
 
     private fun CartUiState.loaded() = content as CartUiState.Content.Loaded
 }

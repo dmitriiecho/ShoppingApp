@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
@@ -239,7 +239,7 @@ internal class CartViewModel(
         @StringRes message: Int,
         vararg args: Any,
     ) {
-        send(CartEffect.ShowSnackBar(UiText.Resource(message, args.toList())))
+        send(CartEffect.ShowSnackBar(AndroidUiText.Resource(message, args.toList())))
     }
 
     private fun send(effect: CartEffect) {

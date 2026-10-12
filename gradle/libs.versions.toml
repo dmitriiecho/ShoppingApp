@@ -27,6 +27,9 @@ composeMultiplatform = "1.12.1"
 composeMultiplatformMaterial3 = "1.9.0"
 # JetBrains' builds of AndroidX Lifecycle for KMP; on Android they are Jetpack Lifecycle of the same version.
 jetbrainsLifecycle = "2.11.0"
+# JetBrains' build of Navigation Compose for KMP. On Android it is Jetpack's navigation-compose 2.10.0, raised to
+# "navigation" above by the app's own dependency.
+jetbrainsNavigation = "2.10.0-rc01"
 
 # DI
 metro = "1.4.5"
@@ -101,6 +104,7 @@ jetbrains-compose-material3 = { group = "org.jetbrains.compose.material3", name 
 jetbrains-compose-components-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "composeMultiplatform" }
 jetbrains-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "jetbrainsLifecycle" }
 jetbrains-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrainsLifecycle" }
+jetbrains-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "jetbrainsNavigation" }
 
 # Testing
 # kotlin.test for common tests (commonTest): Kotlin adds the test runner of each platform.
@@ -173,3 +177,4 @@ shoppingapp-android-feature = { id = "shoppingapp.android.feature" }
 shoppingapp-android-screenshots = { id = "shoppingapp.android.screenshots" }
 shoppingapp-kmp-library = { id = "shoppingapp.kmp.library" }
 shoppingapp-kmp-compose = { id = "shoppingapp.kmp.compose" }
+shoppingapp-kmp-feature = { id = "shoppingapp.kmp.feature" }

@@ -18,7 +18,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.typeText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
 import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
@@ -132,7 +132,7 @@ class ProductListViewModelTest {
 
             assertThat(
                 awaitItem(),
-            ).isEqualTo(ProductListEffect.ShowSnackBar(UiText.Resource(R.string.catalog_load_error)))
+            ).isEqualTo(ProductListEffect.ShowSnackBar(AndroidUiText.Resource(R.string.catalog_load_error)))
         }
     }
 

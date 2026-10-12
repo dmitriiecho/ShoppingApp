@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import krio.systemdesign.shoppingapp.core.composeutils.state.savedTextField
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelKey
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.ViewModelScope
 import krio.systemdesign.shoppingapp.crossfeature.analytics.Analytics
@@ -92,7 +92,7 @@ internal class CheckoutViewModel(
                     send(CheckoutEffect.Close)
                 }
                 .onFailure {
-                    send(CheckoutEffect.ShowSnackBar(UiText.Resource(R.string.checkout_place_order_error)))
+                    send(CheckoutEffect.ShowSnackBar(AndroidUiText.Resource(R.string.checkout_place_order_error)))
                     submission.value = Submission.Idle
                 }
         }

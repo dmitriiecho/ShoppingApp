@@ -24,7 +24,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
-import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.LoadingButton
@@ -156,7 +156,7 @@ private fun PromoCodeScreenNotFoundPreview() {
         PromoCodeScreen(
             uiState = PromoCodeUiState(
                 promoCode = TextFieldState("SALE99"),
-                check = PromoCodeUiState.Check.Failed(UiText.Resource(R.string.promo_not_found)),
+                check = PromoCodeUiState.Check.Failed(AndroidUiText.Resource(R.string.promo_not_found)),
                 availableCodes = PromoCodeUiState.AvailableCodes.Loaded(
                     listOf(PromoCode("SALE10", 10), PromoCode("SALE25", 25)),
                 ),

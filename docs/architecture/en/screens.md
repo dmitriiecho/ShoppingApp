@@ -110,14 +110,14 @@ private fun submitOrder() {
 
 ## Effects
 
-Navigation and snackbars happen once, so they are effects sent through a `Channel` rather than part of the state; in the state they would need one more event to mark them as handled. A screen handles them with [`ObserveEffects`](../../../core/compose-utils/src/main/java/krio/systemdesign/shoppingapp/core/composeutils/effects/ObserveEffects.kt):
+Navigation and snackbars happen once, so they are effects sent through a `Channel` rather than part of the state; in the state they would need one more event to mark them as handled. A screen handles them with [`ObserveEffects`](../../../core/compose-utils/src/commonMain/kotlin/krio/systemdesign/shoppingapp/core/composeutils/effects/ObserveEffects.kt):
 
 ```kotlin
 ObserveEffects(viewModel.effects) { effect ->
     when (effect) {
-        CartEffect.NavigateToCheckout -> navigate { onOpenCheckout() }
-        is CartEffect.ShowSnackBar -> showSnackbar(snackbarHostState, effect.message.asString(resources))
-        // ...
+        SettingsEffect.OpenDeepLinksPage -> uriHandler.openUri(deepLinksPageUrl)
+        is SettingsEffect.ShowSnackBar -> showSnackbar(snackbarHostState, effect.message)
+        SettingsEffect.NavigateBack -> navigate { onBack() }
     }
 }
 ```
@@ -136,7 +136,12 @@ lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
 - **`Main.immediate`** makes the screen handle the effect right inside the ViewModel's `send`: with a pause in between, a screen stopping at that moment could receive the effect and lose it.
 - **`navigate { }` runs only while the screen is on top**, and **`showSnackbar` runs in its own coroutine**, because a snackbar suspends until it is dismissed and would otherwise hold up the next effect.
 
-A screen has a single snackbar effect, `ShowSnackBar(UiText)`, so the ViewModel can build the text from a string resource without having access to resources.
+A screen has a single snackbar effect, `ShowSnackBar(UiText)`, so the ViewModel can build the text from a string resource without having access to resources:
+
+- **`UiText`** is either a ready string (`Dynamic`) or a Compose Multiplatform string resource with its arguments (`Resource`). A composable reads it with `asString()`.
+- **`showSnackbar(hostState, UiText)` reads the text itself**, in the coroutine that shows the snackbar: outside Compose a string resource can only be read by a suspending `getString`. The effects keep their order.
+- **A string the screen needs right in the handler** is read in the composable beforehand with `stringResource`. Settings opens its deep links page this way: the page address is a string resource, a different one for each language.
+- **`AndroidUiText`** is the same type with `R.string` ids, for the features that are still Android modules. It goes away with the last of them.
 
 &nbsp;
 

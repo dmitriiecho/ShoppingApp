@@ -90,7 +90,7 @@ when (val result = networkCall { api.getProduct(productId) }) {
 }
 ```
 
-[`databaseCall`](../../../crossfeature/data/src/main/java/krio/systemdesign/shoppingapp/crossfeature/data/database/DatabaseCall.kt) ловит только ошибки SQLite. Сработавший `require` — это баг, поэтому приложение падает, а не выдаёт его за ошибку базы данных:
+[`databaseCall`](../../../crossfeature/data/src/commonMain/kotlin/krio/systemdesign/shoppingapp/crossfeature/data/database/DatabaseCall.kt) ловит только ошибки SQLite. Сработавший `require` — это баг, поэтому приложение падает, а не выдаёт его за ошибку базы данных:
 
 ```kotlin
 internal inline fun <T> databaseCall(block: () -> T): Result<T> = try {
@@ -147,12 +147,19 @@ internal class NetworkDelayPlugin(private val appSettingsRepository: AppSettings
 
 ## Цены
 
-Все цены указаны в долларах США и хранятся как число центов типа `Long`: `14999` — это $149.99. Те же числа используются в JSON сервера, DTO, Room и доменных моделях. Показываются цены только через [`formatPrice`](../../../crossfeature/ui/src/main/java/krio/systemdesign/shoppingapp/crossfeature/ui/text/PriceFormat.kt) и всегда в американском формате, на каком бы языке ни работал телефон:
+Все цены указаны в долларах США и хранятся как число центов типа `Long`: `14999` — это $149.99. Те же числа используются в JSON сервера, DTO, Room и доменных моделях. Показываются цены только через [`formatPrice`](../../../crossfeature/ui/src/commonMain/kotlin/krio/systemdesign/shoppingapp/crossfeature/ui/text/PriceFormat.kt) и всегда в американском формате, на каком бы языке ни работал телефон:
 
 ```kotlin
-fun formatPrice(amountCents: Long): String =
-    NumberFormat.getCurrencyInstance(Locale.US).format(BigDecimal.valueOf(amountCents, 2))
+fun formatPrice(amountCents: Long): String {
+    val sign = if (amountCents < 0) "-" else ""
+    val cents = amountCents.absoluteValue
+    val dollars = (cents / 100).toString().reversed().chunked(3).joinToString(",").reversed()
+    val remainder = (cents % 100).toString().padStart(2, '0')
+    return "$sign$$dollars.$remainder"
+}
 ```
+Форматер написан вручную: форматы чисел платформ недоступны в общем коде, а приложению нужен только этот один формат.
+
 
 Value class `Money` в проекте нет. Он мог бы жить только в домене: `:crossfeature:ui` принимает простые значения, а доменный тип в UI state был бы нестабилен для Compose. Большая часть кода, который работает с ценами, — это UI, так что такой тип защищал бы немногое. Его стоит ввести, когда появится вторая валюта или налоги.
 

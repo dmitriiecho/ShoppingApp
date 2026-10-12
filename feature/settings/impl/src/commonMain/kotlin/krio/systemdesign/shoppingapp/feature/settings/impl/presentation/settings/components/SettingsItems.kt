@@ -1,6 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.settings.impl.presentation.settings.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -9,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.AndroidUiModes
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.SingleChoiceButtons
@@ -23,7 +22,17 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.LightMode
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.NetworkDelay
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.ThemeMode
-import krio.systemdesign.shoppingapp.feature.settings.impl.R
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.Res
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_network_delay
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_network_delay_four_seconds
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_network_delay_none
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_network_delay_two_seconds
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_theme
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_theme_dark
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_theme_light
+import krio.systemdesign.shoppingapp.feature.settings.impl.resources.settings_theme_system
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun ThemeModeItem(
@@ -33,7 +42,7 @@ internal fun ThemeModeItem(
 ) {
     AppListItem(
         icon = AppIcons.Contrast,
-        title = stringResource(R.string.settings_theme),
+        title = stringResource(Res.string.settings_theme),
         description = stringResource(selected.titleRes),
         modifier = modifier,
         trailing = {
@@ -52,7 +61,7 @@ internal fun NetworkDelayItem(
 ) {
     AppListItem(
         icon = AppIcons.HourglassEmpty,
-        title = stringResource(R.string.settings_network_delay),
+        title = stringResource(Res.string.settings_network_delay),
         description = stringResource(selected.descriptionRes),
         modifier = modifier,
         trailing = {
@@ -82,18 +91,18 @@ private fun <T> ChoiceButtons(
 
 private val ChoiceButtonsWidth = 168.dp
 
-private val NetworkDelay.descriptionRes: Int
+private val NetworkDelay.descriptionRes: StringResource
     get() = when (this) {
-        NetworkDelay.None -> R.string.settings_network_delay_none
-        NetworkDelay.TwoSeconds -> R.string.settings_network_delay_two_seconds
-        NetworkDelay.FourSeconds -> R.string.settings_network_delay_four_seconds
+        NetworkDelay.None -> Res.string.settings_network_delay_none
+        NetworkDelay.TwoSeconds -> Res.string.settings_network_delay_two_seconds
+        NetworkDelay.FourSeconds -> Res.string.settings_network_delay_four_seconds
     }
 
-private val ThemeMode.titleRes: Int
+private val ThemeMode.titleRes: StringResource
     get() = when (this) {
-        ThemeMode.System -> R.string.settings_theme_system
-        ThemeMode.Light -> R.string.settings_theme_light
-        ThemeMode.Dark -> R.string.settings_theme_dark
+        ThemeMode.System -> Res.string.settings_theme_system
+        ThemeMode.Light -> Res.string.settings_theme_light
+        ThemeMode.Dark -> Res.string.settings_theme_dark
     }
 
 private val ThemeMode.icon: ImageVector
@@ -104,7 +113,7 @@ private val ThemeMode.icon: ImageVector
     }
 
 @Preview(name = "Light")
-@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Dark", uiMode = AndroidUiModes.UI_MODE_NIGHT_YES)
 @Composable
 private fun ThemeModeItemPreview() {
     ShoppingAppTheme {
@@ -117,7 +126,7 @@ private fun ThemeModeItemPreview() {
 }
 
 @Preview(name = "Light")
-@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Dark", uiMode = AndroidUiModes.UI_MODE_NIGHT_YES)
 @Composable
 private fun NetworkDelayItemPreview() {
     ShoppingAppTheme {
