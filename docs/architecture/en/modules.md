@@ -57,17 +57,21 @@ Every feature consists of two modules. `impl` holds everything the feature does,
 ```kotlin
 // feature/cart/impl/build.gradle.kts
 plugins {
-    alias(libs.plugins.shoppingapp.android.feature)
+    alias(libs.plugins.shoppingapp.kmp.feature)
     alias(libs.plugins.shoppingapp.android.screenshots)
 }
 
-dependencies {
-    implementation(project(":feature:cart:ui"))
-    implementation(project(":crossfeature:domain"))
-    implementation(project(":crossfeature:ui"))
-    implementation(project(":crossfeature:analytics"))
-    implementation(project(":core:designsystem"))
-    // ...
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":feature:cart:ui"))
+            implementation(project(":crossfeature:domain"))
+            implementation(project(":crossfeature:ui"))
+            implementation(project(":crossfeature:analytics"))
+            implementation(project(":core:designsystem"))
+            // ...
+        }
+    }
 }
 ```
 
