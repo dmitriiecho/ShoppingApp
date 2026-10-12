@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 
 // A section's samples, grouped by component (sampleGroup). innerPadding comes from the screen's Scaffold.
 @Composable
@@ -52,14 +53,17 @@ internal fun LazyListScope.sampleGroup(
     }
     item {
         Column(
-            modifier = Modifier.padding(Spacing.ScreenPadding),
+            modifier = Modifier
+                .padding(Spacing.ScreenPadding)
+                .contentWidth(),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             content = content,
         )
     }
 }
 
-// The component name as in code, on a full-width background that covers samples scrolling under it.
+// The component name as in code, on a full-width background that covers samples scrolling under it. The name lines
+// up with the samples' column.
 @Composable
 private fun SampleGroupHeader(name: String) {
     Surface(
@@ -70,7 +74,9 @@ private fun SampleGroupHeader(name: String) {
             text = name,
             style = MaterialTheme.typography.titleSmall,
             fontFamily = FontFamily.Monospace,
-            modifier = Modifier.padding(horizontal = Spacing.ScreenPadding, vertical = 12.dp),
+            modifier = Modifier
+                .padding(horizontal = Spacing.ScreenPadding, vertical = 12.dp)
+                .contentWidth(),
         )
     }
 }

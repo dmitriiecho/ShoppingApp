@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.AndroidUiModes
 import androidx.compose.ui.tooling.preview.Preview
 import krio.systemdesign.shoppingapp.core.designsystem.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.uikit.resources.Res
 import krio.systemdesign.shoppingapp.uikit.resources.uikit_title
 import org.jetbrains.compose.resources.stringResource
@@ -31,6 +33,7 @@ internal fun GroupListScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Res.string.uikit_title)) },
+                modifier = Modifier.contentBarWidth(),
                 actions = {
                     ThemeToggleButton(darkTheme = darkTheme, onToggle = onToggleTheme)
                 },
@@ -48,6 +51,7 @@ internal fun GroupListScreen(
                     icon = group.icon,
                     title = stringResource(group.title),
                     description = stringResource(group.description),
+                    modifier = Modifier.contentWidth(),
                     onClick = { onOpenGroup(group) },
                 )
             }

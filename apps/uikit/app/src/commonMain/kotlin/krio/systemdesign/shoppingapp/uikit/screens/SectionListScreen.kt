@@ -16,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.NavigateBackIconButton
 import krio.systemdesign.shoppingapp.core.designsystem.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +33,7 @@ internal fun SectionListScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(group.title)) },
+                modifier = Modifier.contentBarWidth(),
                 navigationIcon = {
                     NavigateBackIconButton(onClick = onBack)
                 },
@@ -51,6 +54,7 @@ internal fun SectionListScreen(
                     icon = section.icon,
                     title = stringResource(section.title),
                     description = stringResource(section.description),
+                    modifier = Modifier.contentWidth(),
                     onClick = { onOpenSection(section) },
                 )
             }
