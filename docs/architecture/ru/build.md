@@ -18,8 +18,8 @@
 | `shoppingapp.metro` | модули с DI, Android и KMP | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Metro + serialization, библиотеки навигации и lifecycle |
 | `shoppingapp.android.screenshots` | каждая библиотека с превью, Android или KMP | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
-| `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:*`, `:crossfeature:domain`, `:crossfeature:analytics`, `:crossfeature:data` и их модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
-| `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:apps:shop:app` для iOS-приложения | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
+| `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` и модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
+| `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, `:apps:shop:app` для iOS-приложения | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
 
 Поэтому build-файл модуля получается коротким:
 

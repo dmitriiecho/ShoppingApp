@@ -100,8 +100,8 @@ A package follows the module:
 | Module | Applies |
 |---|---|
 | `:feature:<name>:impl` | `libs.plugins.shoppingapp.android.feature` |
-| `:feature:<name>:ui` | `library` + `compose` + `screenshots` |
-| Kotlin Multiplatform (`:core:*`, `:crossfeature:domain`, `:crossfeature:analytics`, `:crossfeature:data`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`) + `kmp.compose` |
+| `:feature:<name>:ui` | `kmp.library` + `kmp.compose` + `screenshots` |
+| Kotlin Multiplatform (`:core:*`, `:crossfeature:*`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`) + `kmp.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
 
 A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit` has none of its own.
