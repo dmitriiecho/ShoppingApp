@@ -218,7 +218,16 @@ jobs:
       # The common tests of every KMP module (src/commonTest), compiled for iOS and run on the simulator.
       - name: Shared code on iOS (simulator tests)
         id: tests
-        run: ./gradlew iosSimulatorArm64Test --continue
+        run: ./gradlew iosSimulatorArm64Test --continue --info -Dorg.gradle.caching.debug=true > gradle-info.log 2>&1
+
+      # TEMPORARY: why the test binaries are not taken from the build cache.
+      - name: Gradle info log
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: gradle-info-${{ github.run_attempt }}
+          path: gradle-info.log
+          retention-days: 3
 
       - name: Failed tests
         if: ${{ failure() && steps.tests.outcome == 'failure' }}
