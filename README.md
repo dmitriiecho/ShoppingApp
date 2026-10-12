@@ -31,7 +31,7 @@ Each branch comes with two APKs: the shop and the UI kit.
 
 - **Four apps from one branch**: the shop and the UI kit, each for Android and for iOS.
 - **Phones and tablets** on both platforms.
-- **The whole UI is shared**: every screen is written once in Compose Multiplatform, in common modules, and the same code draws it on Android and iOS.
+- **Almost all code is shared**: the UI in Compose Multiplatform, the ViewModels, navigation, data and network live in common modules, written once for both platforms. Each platform keeps only its entry point and a few platform details.
 
 &nbsp;
 
