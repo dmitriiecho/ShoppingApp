@@ -16,6 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import krio.systemdesign.shoppingapp.core.designsystem.components.cards.AppListItem
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
+import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.uikit.R
 
 // The first screen: the three groups of sections, by the module the components live in.
@@ -30,6 +32,7 @@ internal fun GroupListScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.uikit_title)) },
+                modifier = Modifier.contentBarWidth(),
                 actions = {
                     ThemeToggleButton(darkTheme = darkTheme, onToggle = onToggleTheme)
                 },
@@ -47,6 +50,7 @@ internal fun GroupListScreen(
                     icon = group.icon,
                     title = stringResource(group.titleRes),
                     description = stringResource(group.descriptionRes),
+                    modifier = Modifier.contentWidth(),
                     onClick = { onOpenGroup(group) },
                 )
             }
