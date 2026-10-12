@@ -25,6 +25,11 @@ dependencyAnalysis {
 
 kotlin {
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
+        // EXPERIMENT: does strict partial linkage fail the link on the productDetailsScreen mismatch?
+        compilations.configureEach {
+            compileTaskProvider.configure { compilerOptions.freeCompilerArgs.add("-Xpartial-linkage-loglevel=ERROR") }
+        }
+        binaries.all { freeCompilerArgs += "-Xpartial-linkage-loglevel=ERROR" }
         binaries.framework {
             baseName = "ShopApp"
             // Static: linked into the app, nothing to embed (the setup of JetBrains' KMP template).
