@@ -73,9 +73,9 @@ A helper used by the tests of **two or more modules** lives next to the module t
 | `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils:testing` | `src/commonMain` |
 | `PausedClockPreviewTester` | `:core:compose-utils:testing` | `src/androidMain` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
-| `databaseTest {}` | `:crossfeature:data` | `src/test` |
+| `databaseTest {}` | `:crossfeature:data` | `src/androidHostTest` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
-| `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
+| `TestPromoCodeRepository` | `:feature:promo:impl` | `src/commonTest` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
 A module uses another module's helpers through `testImplementation(project(":crossfeature:domain:testing"))` (in a KMP module, `commonTest.dependencies { implementation(…) }`), or `testImplementation(testFixtures(project(…)))` for an Android module's fixtures. Helpers see only the public API of their module. The [module graph check](modules.md#the-check) looks only at `api` and `implementation`, so test dependencies follow the levels by convention rather than being enforced.

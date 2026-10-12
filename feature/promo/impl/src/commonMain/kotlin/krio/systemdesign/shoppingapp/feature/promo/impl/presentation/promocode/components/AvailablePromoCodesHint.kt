@@ -1,6 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.AndroidUiModes
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import krio.systemdesign.shoppingapp.core.designsystem.components.cards.SectionCard
@@ -27,10 +26,16 @@ import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Error
 import krio.systemdesign.shoppingapp.core.designsystem.theme.ShoppingAppTheme
 import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.PromoCodeUiState
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.Res
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_available_empty
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_available_error
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_available_hint
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_available_title
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_retry
 import krio.systemdesign.shoppingapp.feature.promo.ui.PromoCodeCoupon
 import krio.systemdesign.shoppingapp.feature.promo.ui.PromoCodeCouponPlaceholder
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun AvailablePromoCodesHint(
@@ -42,8 +47,8 @@ internal fun AvailablePromoCodesHint(
 ) {
     SectionCard(
         icon = AppIcons.ConfirmationNumber,
-        title = stringResource(R.string.promo_available_title),
-        subtitle = stringResource(R.string.promo_available_hint),
+        title = stringResource(Res.string.promo_available_title),
+        subtitle = stringResource(Res.string.promo_available_hint),
         modifier = modifier,
     ) {
         // Every state takes the error notice's height, the tallest one, so the card doesn't jump
@@ -56,7 +61,7 @@ internal fun AvailablePromoCodesHint(
                 PromoCodeUiState.AvailableCodes.Loading -> PromoCodeCouponsPlaceholder()
                 is PromoCodeUiState.AvailableCodes.Loaded -> if (state.promoCodes.isEmpty()) {
                     Text(
-                        text = stringResource(R.string.promo_available_empty),
+                        text = stringResource(Res.string.promo_available_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -77,9 +82,9 @@ internal fun AvailablePromoCodesHint(
                 }
                 PromoCodeUiState.AvailableCodes.Error -> NoticeWithAction(
                     icon = AppIcons.Error,
-                    title = stringResource(R.string.promo_available_error),
+                    title = stringResource(Res.string.promo_available_error),
                     style = NoticeStyle.Error,
-                    actionText = stringResource(R.string.promo_retry),
+                    actionText = stringResource(Res.string.promo_retry),
                     onAction = onRetry,
                 )
             }
@@ -103,7 +108,7 @@ private fun PromoCodeCouponsPlaceholder(modifier: Modifier = Modifier) {
 private val CONTENT_MIN_HEIGHT = 56.dp
 
 @Preview(name = "Light")
-@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Dark", uiMode = AndroidUiModes.UI_MODE_NIGHT_YES)
 @Composable
 private fun AvailablePromoCodesHintPreview() {
     val states = listOf(

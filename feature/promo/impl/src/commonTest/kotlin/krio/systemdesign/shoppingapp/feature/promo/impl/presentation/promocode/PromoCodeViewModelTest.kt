@@ -7,23 +7,25 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
-import java.io.IOException
 import kotlin.test.Test
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.TestScope
+import kotlinx.io.IOException
 import krio.systemdesign.shoppingapp.core.composeutils.keepCollecting
-import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.typeText
 import krio.systemdesign.shoppingapp.core.composeutils.viewModelTest
 import krio.systemdesign.shoppingapp.crossfeature.analytics.TestAnalytics
 import krio.systemdesign.shoppingapp.crossfeature.analytics.sent
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.analytics.PromoCodeRejectedAnalyticsEvent
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.model.PromoCodeCheckResult
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.repository.TestPromoCodeRepository
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.CheckPromoCodeUseCase
 import krio.systemdesign.shoppingapp.feature.promo.impl.domain.usecase.GetPromoCodesUseCase
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.Res
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_check_error
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_not_found
 
 class PromoCodeViewModelTest {
 
@@ -74,7 +76,7 @@ class PromoCodeViewModelTest {
 
         viewModel.onEvent(PromoCodeEvent.OnApplyClick)
 
-        assertThat(viewModel.uiState.value.checkError).isEqualTo(AndroidUiText.Resource(R.string.promo_not_found))
+        assertThat(viewModel.uiState.value.checkError).isEqualTo(UiText.Resource(Res.string.promo_not_found))
     }
 
     @Test
@@ -95,7 +97,7 @@ class PromoCodeViewModelTest {
 
         viewModel.onEvent(PromoCodeEvent.OnApplyClick)
 
-        assertThat(viewModel.uiState.value.checkError).isEqualTo(AndroidUiText.Resource(R.string.promo_check_error))
+        assertThat(viewModel.uiState.value.checkError).isEqualTo(UiText.Resource(Res.string.promo_check_error))
     }
 
     @Test

@@ -73,9 +73,9 @@ fun `discount is the promo code percent of the subtotal`() {
 | `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils:testing` | `src/commonMain` |
 | `PausedClockPreviewTester` | `:core:compose-utils:testing` | `src/androidMain` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
-| `databaseTest {}` | `:crossfeature:data` | `src/test` |
+| `databaseTest {}` | `:crossfeature:data` | `src/androidHostTest` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
-| `TestPromoCodeRepository` | `:feature:promo:impl` | `src/test` |
+| `TestPromoCodeRepository` | `:feature:promo:impl` | `src/commonTest` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
 Модуль подключает чужих помощников через `testImplementation(project(":crossfeature:domain:testing"))` (в KMP-модуле — `commonTest.dependencies { implementation(…) }`) или через `testImplementation(testFixtures(project(…)))` для test fixtures Android-модуля. Помощники видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только на `api` и `implementation`, так что тестовые зависимости соблюдают уровни по договорённости, а не под контролем проверки.

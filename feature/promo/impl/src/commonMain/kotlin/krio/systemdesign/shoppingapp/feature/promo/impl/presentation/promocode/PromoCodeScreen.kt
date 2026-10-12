@@ -1,6 +1,5 @@
 package krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,13 +17,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.tooling.preview.AndroidUiModes
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import krio.systemdesign.shoppingapp.core.composeutils.effects.ObserveEffects
-import krio.systemdesign.shoppingapp.core.composeutils.text.AndroidUiText
+import krio.systemdesign.shoppingapp.core.composeutils.text.UiText
 import krio.systemdesign.shoppingapp.core.composeutils.text.asString
 import krio.systemdesign.shoppingapp.core.composeutils.viewmodel.injectedViewModel
 import krio.systemdesign.shoppingapp.core.designsystem.components.buttons.LoadingButton
@@ -35,8 +34,12 @@ import krio.systemdesign.shoppingapp.core.designsystem.theme.Spacing
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentBarWidth
 import krio.systemdesign.shoppingapp.core.designsystem.theme.contentWidth
 import krio.systemdesign.shoppingapp.crossfeature.domain.model.PromoCode
-import krio.systemdesign.shoppingapp.feature.promo.impl.R
 import krio.systemdesign.shoppingapp.feature.promo.impl.presentation.promocode.components.AvailablePromoCodesHint
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.Res
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_apply
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_code
+import krio.systemdesign.shoppingapp.feature.promo.impl.resources.promo_not_found
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PromoCodeScreen(
@@ -70,7 +73,7 @@ internal fun PromoCodeScreen(
         modifier = modifier.imePadding(),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.promo_code)) },
+                title = { Text(stringResource(Res.string.promo_code)) },
                 modifier = Modifier.contentBarWidth(),
                 navigationIcon = {
                     NavigateBackIconButton(onClick = { onEvent(PromoCodeEvent.OnBackClick) })
@@ -104,7 +107,7 @@ private fun PromoCodeContent(
     ) {
         AppOutlinedTextField(
             state = uiState.promoCode,
-            label = stringResource(R.string.promo_code),
+            label = stringResource(Res.string.promo_code),
             modifier = Modifier.fillMaxWidth(),
             enabled = !uiState.isChecking,
             error = uiState.checkError?.asString(),
@@ -116,7 +119,7 @@ private fun PromoCodeContent(
             onKeyboardAction = { onEvent(PromoCodeEvent.OnApplyClick) },
         )
         LoadingButton(
-            text = stringResource(R.string.promo_apply),
+            text = stringResource(Res.string.promo_apply),
             isLoading = uiState.isChecking,
             onClick = { onEvent(PromoCodeEvent.OnApplyClick) },
             enabled = uiState.canApply,
@@ -132,7 +135,7 @@ private fun PromoCodeContent(
 }
 
 @Preview(name = "Light")
-@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Dark", uiMode = AndroidUiModes.UI_MODE_NIGHT_YES)
 @Composable
 private fun PromoCodeScreenPreview() {
     ShoppingAppTheme {
@@ -149,14 +152,14 @@ private fun PromoCodeScreenPreview() {
 }
 
 @Preview(name = "Light")
-@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Dark", uiMode = AndroidUiModes.UI_MODE_NIGHT_YES)
 @Composable
 private fun PromoCodeScreenNotFoundPreview() {
     ShoppingAppTheme {
         PromoCodeScreen(
             uiState = PromoCodeUiState(
                 promoCode = TextFieldState("SALE99"),
-                check = PromoCodeUiState.Check.Failed(AndroidUiText.Resource(R.string.promo_not_found)),
+                check = PromoCodeUiState.Check.Failed(UiText.Resource(Res.string.promo_not_found)),
                 availableCodes = PromoCodeUiState.AvailableCodes.Loaded(
                     listOf(PromoCode("SALE10", 10), PromoCode("SALE25", 25)),
                 ),

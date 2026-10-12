@@ -16,11 +16,11 @@ Each kind of module has its own plugin:
 | `shoppingapp.android.library` | every Android library | compileSdk, minSdk, Java, dependency analysis, warnings as errors in CI, the test setup: unit tests on debug only, [Robolectric](testing.md#database), the [API samples](testing.md#contract-with-the-server), the message of a failed test in the log |
 | `shoppingapp.android.compose` | modules with Compose | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.metro` | modules with DI, Android or KMP | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
-| `shoppingapp.android.feature` | the `:feature:<name>:impl` modules that are still Android modules: promo, checkout, cart, catalog | library + Compose + Metro + serialization, navigation and lifecycle libraries |
+| `shoppingapp.android.feature` | the `:feature:<name>:impl` modules that are still Android modules: checkout, cart, catalog | library + Compose + Metro + serialization, navigation and lifecycle libraries |
 | `shoppingapp.android.screenshots` | every library module with previews, Android or KMP | [screenshot tests](testing.md#screenshots) generated from the previews |
 | `shoppingapp.kmp.library` | every Kotlin Multiplatform library: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` and the `testing` modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
 | `shoppingapp.kmp.compose` | KMP modules with Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, the iOS app's `:apps:shop:app` | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
-| `shoppingapp.kmp.feature` | the `:feature:<name>:impl` modules on Kotlin Multiplatform: settings | `kmp.library` + `kmp.compose` + Metro + serialization, JetBrains' navigation and lifecycle libraries for KMP |
+| `shoppingapp.kmp.feature` | the `:feature:<name>:impl` modules on Kotlin Multiplatform: settings, promo | `kmp.library` + `kmp.compose` + Metro + serialization, JetBrains' navigation and lifecycle libraries for KMP |
 
 As a result, a module's build file is short:
 
