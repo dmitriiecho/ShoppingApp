@@ -18,12 +18,12 @@
 
 | Плагин | Для чего | Что добавляет |
 |---|---|---|
-| `shoppingapp.android.application` | `:apps:shop:android`, `:apps:uikit` | настройку Android, targetSdk, подпись, R8 в release, языки приложения для системных настроек (список собирается из ресурсов; у магазина строки в ресурсах Compose, и он перечисляет языки сам, в `res/xml/locale_config.xml`), [проверку графа модулей](modules.md#проверка), анализ зависимостей, предупреждения как ошибки в CI |
-| `shoppingapp.android.compose` | `:apps:shop:android`, `:apps:uikit` | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
+| `shoppingapp.android.application` | `:apps:shop:android`, `:apps:uikit:android` | настройку Android, targetSdk, подпись, R8 в release, языки приложения для системных настроек (список собирается из ресурсов; у приложений строки в ресурсах Compose, и каждое перечисляет языки само, в `res/xml/locale_config.xml`), [проверку графа модулей](modules.md#проверка), анализ зависимостей, предупреждения как ошибки в CI |
+| `shoppingapp.android.compose` | `:apps:shop:android`, `:apps:uikit:android` | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.metro` | модули с DI, Android и KMP | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
 | `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
 | `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` и модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
-| `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, общий `:apps:shop:app` магазина | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
+| `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, общие `:apps:shop:app` магазина и `:apps:uikit:app` UI kit | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
 | `shoppingapp.kmp.feature` | каждый `:feature:<name>:impl` | `kmp.library` + `kmp.compose` + Metro + serialization, библиотеки навигации и lifecycle от JetBrains для KMP |
 
 Поэтому build-файл модуля получается коротким:
@@ -149,21 +149,21 @@ iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../.
 Основные команды из корня проекта:
 
 ```sh
-./gradlew :apps:shop:android:installDebug  # установить магазин на подключённое устройство
-./gradlew :apps:uikit:installDebug         # установить UI kit
-./gradlew assertModuleGraph                # проверить зависимости между модулями
-./gradlew buildHealth                      # найти неиспользуемые зависимости
-./gradlew lintDebug lintAndroidMain        # запустить Android lint в Android- и KMP-модулях
-./gradlew testAndroidHostTest              # запустить тесты приложения на JVM, включая скриншоты
-./gradlew compileKotlinIosSimulatorArm64   # скомпилировать общий код под iOS (и на Linux)
-./gradlew iosSimulatorArm64Test            # запустить общие тесты на iOS-симуляторе (на Mac)
+./gradlew :apps:shop:android:installDebug   # установить магазин на подключённое устройство
+./gradlew :apps:uikit:android:installDebug  # установить UI kit
+./gradlew assertModuleGraph                 # проверить зависимости между модулями
+./gradlew buildHealth                       # найти неиспользуемые зависимости
+./gradlew lintDebug lintAndroidMain         # запустить Android lint в Android- и KMP-модулях
+./gradlew testAndroidHostTest               # запустить тесты приложения на JVM, включая скриншоты
+./gradlew compileKotlinIosSimulatorArm64    # скомпилировать общий код под iOS (и на Linux)
+./gradlew iosSimulatorArm64Test             # запустить общие тесты на iOS-симуляторе (на Mac)
 ./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # записать новые скриншоты после изменения UI
-cd server && ./gradlew test                # запустить тесты сервера
+cd server && ./gradlew test                 # запустить тесты сервера
 ```
 
 Те же проверки, что и в CI, где предупреждения считаются ошибками; на Linux вместо iOS-задачи — компиляция iOS-кода:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:assembleDebug compileKotlinIosSimulatorArm64
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:android:assembleDebug :apps:uikit:android:assembleDebug compileKotlinIosSimulatorArm64
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

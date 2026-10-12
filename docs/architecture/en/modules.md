@@ -30,7 +30,7 @@ The middle level is named `crossfeature`, not `shared`: in Kotlin Multiplatform 
 Two kinds of modules sit inside the levels:
 
 - **`testing` modules** hold test helpers that the tests of other modules use too, next to the module they belong to: `:core:network:testing`, `:crossfeature:domain:testing`. Kotlin Multiplatform modules have no test fixtures, so the helpers get a module of their own; only tests depend on it ([Testing](testing.md#names-and-places)).
-- **The shop app is split by platform**, as JetBrains recommends: `:apps:shop:app` holds what both platforms share (`App()`, navigation, the bottom bar, analytics, the base of the app's graph), the iOS entry point and graph in `iosMain`, and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)); `:apps:shop:android` is the Android entry point (`MainActivity`, `ShoppingApp`, the Android graph, manifest, resources).
+- **The shop app is split by platform**, as JetBrains recommends: `:apps:shop:app` holds what both platforms share (`App()`, navigation, the bottom bar, analytics, the base of the app's graph), the iOS entry point and graph in `iosMain`, and builds the framework that the Xcode project in `apps/shop/ios` links ([Build](build.md#ios-app)); `:apps:shop:android` is the Android entry point (`MainActivity`, `ShoppingApp`, the Android graph, manifest, resources). The UI kit is split the same way: `:apps:uikit:app` holds its screens and samples, `:apps:uikit:android` its `UiKitActivity`.
 
 Outside the levels is [`contract/`](../../../contract/): the API's DTOs, shared with the server. It's a separate build that both the app and the server include, so the server, also a separate build, can use it without the app. `:crossfeature:data` and the features' `impl` modules that call the server depend on it ([Data](data.md#the-contract-with-the-server)).
 
@@ -52,7 +52,7 @@ Styled components follow the same rule:
 | refers to shop concepts (product, cart, promo, price, stock) and is used by two or more features | `:crossfeature:ui` |
 | refers to shop concepts and is used by only one feature | `:feature:<name>:ui` |
 
-Features don't style Material components themselves, and every styled component has a sample in the UI kit app (`:apps:uikit`).
+Features don't style Material components themselves, and every styled component has a sample in the UI kit app (`:apps:uikit:app`).
 
 &nbsp;
 
@@ -114,6 +114,7 @@ A library's package mirrors its module path, and an app's package is its applica
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (the hyphen is dropped) |
 | `:apps:shop:android` | `krio.systemdesign.shoppingapp` |
+| `:apps:uikit:android`, `:apps:uikit:app` | `krio.systemdesign.shoppingapp.uikit` |
 | `:apps:shop:app` | `krio.systemdesign.shoppingapp`: part of the app, so it has the app's package; its Android namespace still follows its path, since a library can't share the app's |
 
 Because an app's package is tied to its applicationId, it doesn't change when the app moves to another folder.
@@ -132,7 +133,8 @@ allowed = arrayOf(
     """:feature:\w+:ui -> :(core:designsystem|crossfeature:ui)""",
     """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
     """:feature:(\w+):impl -> :feature:\1:ui""",   // only its own ui
-    """:apps:uikit -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
+    """:apps:uikit:android -> :apps:uikit:app""",
+    """:apps:uikit:(android|app) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
     """:apps:shop:android -> :apps:shop:app""",
     """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
 )

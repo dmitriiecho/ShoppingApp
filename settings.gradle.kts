@@ -38,7 +38,8 @@ includeBuild("contract")
 
 include(":apps:shop:android")
 include(":apps:shop:app")
-include(":apps:uikit")
+include(":apps:uikit:android")
+include(":apps:uikit:app")
 
 include(":core:designsystem")
 include(":core:compose-utils")

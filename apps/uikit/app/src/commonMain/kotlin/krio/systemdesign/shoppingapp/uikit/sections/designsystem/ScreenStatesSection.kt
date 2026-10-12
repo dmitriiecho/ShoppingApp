@@ -1,0 +1,90 @@
+package krio.systemdesign.shoppingapp.uikit.sections.designsystem
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.EmptyState
+import krio.systemdesign.shoppingapp.core.designsystem.components.screenstates.ErrorState
+import krio.systemdesign.shoppingapp.core.designsystem.icons.AppIcons
+import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.Info
+import krio.systemdesign.shoppingapp.core.designsystem.icons.symbols.SearchOff
+import krio.systemdesign.shoppingapp.uikit.resources.Res
+import krio.systemdesign.shoppingapp.uikit.resources.uikit_sample_empty_message
+import krio.systemdesign.shoppingapp.uikit.resources.uikit_sample_empty_title
+import krio.systemdesign.shoppingapp.uikit.resources.uikit_sample_load_error
+import krio.systemdesign.shoppingapp.uikit.resources.uikit_sample_nothing_found
+import krio.systemdesign.shoppingapp.uikit.resources.uikit_variant_retry
+import krio.systemdesign.shoppingapp.uikit.resources.uikit_variant_with_title
+import krio.systemdesign.shoppingapp.uikit.resources.uikit_variant_without_title
+import krio.systemdesign.shoppingapp.uikit.samples.SampleList
+import krio.systemdesign.shoppingapp.uikit.samples.SampleVariant
+import krio.systemdesign.shoppingapp.uikit.samples.rememberSampleLoading
+import krio.systemdesign.shoppingapp.uikit.samples.sampleGroup
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+internal fun ScreenStatesSection(innerPadding: PaddingValues) {
+    SampleList(innerPadding) {
+        sampleGroup("EmptyState") {
+            SampleVariant(caption = stringResource(Res.string.uikit_variant_with_title)) {
+                ScreenArea {
+                    EmptyState(
+                        icon = AppIcons.Info,
+                        title = stringResource(Res.string.uikit_sample_empty_title),
+                        message = stringResource(Res.string.uikit_sample_empty_message),
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+            }
+            SampleVariant(caption = stringResource(Res.string.uikit_variant_without_title)) {
+                ScreenArea {
+                    EmptyState(
+                        icon = AppIcons.SearchOff,
+                        message = stringResource(Res.string.uikit_sample_nothing_found, SAMPLE_SEARCH_QUERY),
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+            }
+        }
+        sampleGroup("ErrorState") {
+            SampleVariant(caption = stringResource(Res.string.uikit_variant_retry)) {
+                var isRetrying by rememberSampleLoading()
+                ScreenArea {
+                    if (isRetrying) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    } else {
+                        ErrorState(
+                            message = stringResource(Res.string.uikit_sample_load_error),
+                            onRetry = { isRetrying = true },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// An area the size of a small screen: screen states fill the free space, and this shows how.
+@Composable
+private fun ScreenArea(content: @Composable BoxScope.() -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(SCREEN_AREA_HEIGHT),
+        content = content,
+    )
+}
+
+private val SCREEN_AREA_HEIGHT = 320.dp
+private const val SAMPLE_SEARCH_QUERY = "zzzz"

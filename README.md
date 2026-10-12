@@ -82,8 +82,8 @@ The easiest way is to download the [APK from `main`](https://github.com/dmitriie
 To build the apps yourself, you need JDK 21 and the Android SDK:
 
 ```sh
-./gradlew :apps:shop:android:installDebug  # installs the shop on a connected device
-./gradlew :apps:uikit:installDebug         # installs the UI kit
+./gradlew :apps:shop:android:installDebug   # installs the shop on a connected device
+./gradlew :apps:uikit:android:installDebug  # installs the UI kit
 ```
 
 The iOS app builds on a Mac with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator ([more](docs/architecture/en/build.md#ios-app)).

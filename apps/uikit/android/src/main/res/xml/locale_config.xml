@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The app's languages for the language setting of Android 13+. Its strings are Compose Multiplatform resources,
+     which Android doesn't see, so the list can't be generated (generateLocaleConfig). English is the fallback. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="ru" />
+</locale-config>

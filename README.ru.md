@@ -82,8 +82,8 @@ core/         designsystem, compose-utils, network, config   ничего не �
 Чтобы собрать приложения самостоятельно, понадобятся JDK 21 и Android SDK:
 
 ```sh
-./gradlew :apps:shop:android:installDebug  # установить магазин на подключённое устройство
-./gradlew :apps:uikit:installDebug         # установить UI kit
+./gradlew :apps:shop:android:installDebug   # установить магазин на подключённое устройство
+./gradlew :apps:uikit:android:installDebug  # установить UI kit
 ```
 
 iOS-приложение собирается на Mac с Xcode и JDK 21: откройте `apps/shop/ios/iosApp.xcodeproj` и запустите на симуляторе ([подробнее](docs/architecture/ru/build.md#ios-приложение)).
