@@ -1,12 +1,12 @@
 [English version](../en/modules.md) · [Все разделы](README.md)
 
-# Модули
-
 > **Вариант `main`**: Android, Hilt, Retrofit
 >
 > Эта страница в других вариантах:
 > - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/modules.md): Android, Metro, Ktor
 > - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/modules.md): Android и iOS, Metro, Ktor
+
+# Модули
 
 Папки — это уровни, снизу вверх: `core/` → `shared/` → `feature/` → `apps/`. Модуль не зависит от уровней выше своего, а фичи не зависят друг от друга.
 

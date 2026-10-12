@@ -1,12 +1,12 @@
 [English version](../en/testing.md) · [Все разделы](README.md)
 
-# Тесты
-
 > **Вариант `main`**: Android, Hilt, Retrofit
 >
 > Эта страница в других вариантах:
 > - [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/ru/testing.md): Android, Metro, Ktor
 > - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/testing.md): Android и iOS, Metro, Ktor
+
+# Тесты
 
 Тесты запускаются на JVM, без эмулятора. Они проверяют логику приложения, ViewModel, слой данных и экраны (скриншот каждого превью), контракт с сервером и сам сервер. Приложение и сервер следуют одним и тем же правилам, поэтому тесты с обеих сторон читаются одинаково.
 
