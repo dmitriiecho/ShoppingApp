@@ -1,14 +1,14 @@
 plugins {
-    alias(libs.plugins.shoppingapp.android.library)
-    alias(libs.plugins.shoppingapp.android.compose)
+    alias(libs.plugins.shoppingapp.kmp.library)
+    alias(libs.plugins.shoppingapp.kmp.compose)
     alias(libs.plugins.shoppingapp.android.screenshots)
 }
 
-android {
-    namespace = "krio.systemdesign.shoppingapp.feature.checkout.ui"
-}
-
-dependencies {
-    implementation(project(":core:designsystem"))
-    implementation(project(":crossfeature:ui"))
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core:designsystem"))
+            implementation(project(":crossfeature:ui"))
+        }
+    }
 }

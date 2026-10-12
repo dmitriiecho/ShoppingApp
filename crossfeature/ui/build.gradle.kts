@@ -1,19 +1,24 @@
 plugins {
-    alias(libs.plugins.shoppingapp.android.library)
-    alias(libs.plugins.shoppingapp.android.compose)
+    alias(libs.plugins.shoppingapp.kmp.library)
+    alias(libs.plugins.shoppingapp.kmp.compose)
     alias(libs.plugins.shoppingapp.android.screenshots)
 }
 
-android {
-    namespace = "krio.systemdesign.shoppingapp.crossfeature.ui"
-}
-
-dependencies {
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:compose-utils"))
-
-    implementation(libs.coil.compose)
-
-    testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.assertk)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core:designsystem"))
+            implementation(project(":core:compose-utils"))
+            implementation(libs.coil.compose)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.assertk)
+        }
+        // A phone set to another language: only the JVM can change the default locale in a test.
+        getByName("androidHostTest").dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.assertk)
+        }
+    }
 }
