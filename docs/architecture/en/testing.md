@@ -11,14 +11,13 @@ Tests run on the JVM, without an emulator. They cover the app's logic, ViewModel
 Each build runs its own tests, and CI runs both sets on every pull request:
 
 ```sh
-./gradlew test testAndroidHostTest   # the app on the JVM: every module, once, including screenshots
+./gradlew testAndroidHostTest   # the app on the JVM: every module, once, including screenshots
 ./gradlew iosSimulatorArm64Test      # the common tests on the iOS simulator (on a Mac; CI runs them on macOS)
 cd server && ./gradlew test          # the server
-./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # records new screenshots after a UI change
+./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # records new screenshots after a UI change
 ```
 
-- **Android modules** run their unit tests with `test`, in the debug variant only: `shoppingapp.android.library` turns off the release ones, which would just repeat them.
-- **Kotlin Multiplatform modules** have no `test` task. Their tests in `src/commonTest` run on both platforms: on the JVM with `testAndroidHostTest`, on the iOS simulator with `iosSimulatorArm64Test`. Tests that need Android classes (Robolectric) live in `src/androidHostTest` and run only on the JVM.
+- **Every library is a Kotlin Multiplatform module**, so there is no `test` task. The tests in `src/commonTest` run on both platforms: on the JVM with `testAndroidHostTest`, on the iOS simulator with `iosSimulatorArm64Test`. Tests that need Android classes (Robolectric) live in `src/androidHostTest` and run only on the JVM.
 - **iOS tests don't see Compose resources.** Compose Multiplatform would copy them next to the iOS test executable, but that copy keeps Gradle from caching the executable, so the build turns it off ([`KmpComposeConventionPlugin.kt`](../../../build-logic/src/main/kotlin/KmpComposeConventionPlugin.kt)). Common tests compare `StringResource`s rather than read them, and the screenshots, which show the texts, run on Android. A module whose iOS tests do read resources turns the `copyTestComposeResourcesFor*` tasks back on.
 - **Test names in `src/commonTest`** can't contain commas, dots, colons or semicolons: Kotlin/Native doesn't accept them in a function name.
 
@@ -64,7 +63,7 @@ Everything made for tests starts with `Test` or `test`, as in Now in Android. Th
 
 The only exception to the first row is the server's check of its `data/` files, `DataFilesTest`, since those files are data, not code.
 
-A helper used by the tests of **two or more modules** lives next to the module that owns what it replaces: in its `testing` module (Kotlin Multiplatform modules, which have no test fixtures) or in its **test fixtures** (Android modules). A helper used by a single module stays in that module's tests. It's the same rule as for [code and components](modules.md#where-new-code-goes):
+A helper used by the tests of **two or more modules** lives next to the module that owns what it replaces: in its `testing` module, since Kotlin Multiplatform modules have no test fixtures. A helper used by a single module stays in that module's tests. It's the same rule as for [code and components](modules.md#where-new-code-goes):
 
 | Helper | Module | Source set |
 |---|---|---|
@@ -75,11 +74,11 @@ A helper used by the tests of **two or more modules** lives next to the module t
 | `PausedClockPreviewTester` | `:core:compose-utils:testing` | `src/androidMain` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
 | `databaseTest {}` | `:crossfeature:data` | `src/androidHostTest` |
-| `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
+| `TestProductRepository` | `:feature:catalog:impl` | `src/commonTest` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/commonTest` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
-A module uses another module's helpers through `testImplementation(project(":crossfeature:domain:testing"))` (in a KMP module, `commonTest.dependencies { implementation(…) }`), or `testImplementation(testFixtures(project(…)))` for an Android module's fixtures. Helpers see only the public API of their module. The [module graph check](modules.md#the-check) looks only at `api` and `implementation`, so test dependencies follow the levels by convention rather than being enforced.
+A module uses another module's helpers through `commonTest.dependencies { implementation(project(":crossfeature:domain:testing")) }`. Helpers see only the public API of their module. The [module graph check](modules.md#the-check) looks only at `api` and `implementation`, so test dependencies follow the levels by convention rather than being enforced.
 
 &nbsp;
 
@@ -152,7 +151,7 @@ class LocalCartDataSourceTest {
 }
 ```
 
-Robolectric runs on the app's `targetSdk`: `shoppingapp.android.library` and `shoppingapp.kmp.library` give the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`. DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
+Robolectric runs on the app's `targetSdk`: `shoppingapp.kmp.library` gives the tests of every library module that SDK, its resources and the JVM flags Robolectric needs on Java 17 and later. Without them it would fall back to its oldest SDK, which is older than the app's `minSdk`. DataStore doesn't need a `Context`, so the settings are tested on a real DataStore in a temporary file, without Robolectric.
 
 ### Network
 
@@ -186,18 +185,18 @@ Every `@Preview` is a screenshot test, so nobody has to write them by hand. `sho
 
 | Command | Does |
 |---|---|
-| `./gradlew test testAndroidHostTest` | compares every preview with its saved image and fails if they differ (`test` in Android modules, `testAndroidHostTest` in KMP ones) |
-| `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` | renders the previews and saves them as the new images; deletes the images of previews that no longer exist |
+| `./gradlew testAndroidHostTest` | compares every preview with its saved image and fails if they differ |
+| `./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` | renders the previews and saves them as the new images; deletes the images of previews that no longer exist |
 
 These tests don't tell you whether a screen looks right; they catch changes nobody asked for. That's why images are recorded only by a person, deliberately, after a UI change:
 
 1. Change the UI.
 2. Check that only what you intended has changed, in one of two ways:
-   - **test first**: run `./gradlew test testAndroidHostTest`. Only the previews you meant to change should fail, and each one's `build/outputs/roborazzi/…_compare.png` should highlight in red only what you intended. It reveals a shift of a pixel or two that you'd miss comparing two images side by side;
+   - **test first**: run `./gradlew testAndroidHostTest`. Only the previews you meant to change should fail, and each one's `build/outputs/roborazzi/…_compare.png` should highlight in red only what you intended. It reveals a shift of a pixel or two that you'd miss comparing two images side by side;
    - **record first**: record (step 3), then look at which images changed (`git status`, or the images in the IDE). It's quicker, one run instead of two, but the old image is already overwritten, so there is no comparison image.
 
    Either way, thirty changed images after a change to a single button is a problem worth investigating.
-3. Record the images, if you haven't yet: `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true`, or the Record screenshots run configuration in Android Studio.
+3. Record the images, if you haven't yet: `./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true`, or the Record screenshots run configuration in Android Studio.
 4. Commit the images together with the code; the pull request shows the old and new version of each image side by side.
 
 > [!IMPORTANT]

@@ -11,14 +11,13 @@
 Каждая сборка запускает свои тесты, а CI запускает оба набора на каждом pull request:
 
 ```sh
-./gradlew test testAndroidHostTest   # приложение на JVM: все модули, по одному разу, включая скриншоты
+./gradlew testAndroidHostTest   # приложение на JVM: все модули, по одному разу, включая скриншоты
 ./gradlew iosSimulatorArm64Test      # общие тесты на iOS-симуляторе (на Mac; CI запускает их на macOS)
 cd server && ./gradlew test          # сервер
-./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # записывает новые скриншоты после изменения интерфейса
+./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # записывает новые скриншоты после изменения интерфейса
 ```
 
-- **Android-модули** запускают unit-тесты задачей `test` и только в debug-варианте: `shoppingapp.android.library` отключает release-тесты, которые просто повторяли бы их.
-- **У модулей на Kotlin Multiplatform задачи `test` нет.** Их тесты в `src/commonTest` идут на обеих платформах: на JVM задачей `testAndroidHostTest`, на iOS-симуляторе задачей `iosSimulatorArm64Test`. Тесты, которым нужны классы Android (Robolectric), лежат в `src/androidHostTest` и идут только на JVM.
+- **Все библиотеки — модули на Kotlin Multiplatform**, поэтому задачи `test` нет. Тесты в `src/commonTest` идут на обеих платформах: на JVM задачей `testAndroidHostTest`, на iOS-симуляторе задачей `iosSimulatorArm64Test`. Тесты, которым нужны классы Android (Robolectric), лежат в `src/androidHostTest` и идут только на JVM.
 - **iOS-тесты не видят ресурсов Compose.** Compose Multiplatform копировал бы их рядом с тестовой программой для iOS, но из-за этой копии Gradle не может кешировать саму программу, поэтому сборка копирование отключает ([`KmpComposeConventionPlugin.kt`](../../../build-logic/src/main/kotlin/KmpComposeConventionPlugin.kt)). Общие тесты сравнивают `StringResource`, а не читают их, а скриншоты, на которых видны тексты, идут на Android. Модуль, чьи iOS-тесты всё же читают ресурсы, включает задачи `copyTestComposeResourcesFor*` обратно.
 - **Имена тестов в `src/commonTest`** не могут содержать запятые, точки, двоеточия и точки с запятой: Kotlin/Native не принимает их в имени функции.
 
@@ -64,7 +63,7 @@ fun `discount is the promo code percent of the subtotal`() {
 
 Из первой строки есть одно исключение: проверка файлов `data/` сервера называется `DataFilesTest`, потому что эти файлы — данные, а не код.
 
-Помощник, который нужен тестам **двух модулей и больше**, лежит рядом с модулем, которому принадлежит то, что он подменяет: в его модуле `testing` (у модулей на Kotlin Multiplatform нет test fixtures) или в его **test fixtures** (у Android-модулей). Помощник, нужный одному модулю, лежит в его тестах. Это то же правило, что и для [кода и компонентов](modules.md#куда-класть-новый-код):
+Помощник, который нужен тестам **двух модулей и больше**, лежит рядом с модулем, которому принадлежит то, что он подменяет: в его модуле `testing`, потому что у модулей на Kotlin Multiplatform нет test fixtures. Помощник, нужный одному модулю, лежит в его тестах. Это то же правило, что и для [кода и компонентов](modules.md#куда-класть-новый-код):
 
 | Помощник | Модуль | Source set |
 |---|---|---|
@@ -75,11 +74,11 @@ fun `discount is the promo code percent of the subtotal`() {
 | `PausedClockPreviewTester` | `:core:compose-utils:testing` | `src/androidMain` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
 | `databaseTest {}` | `:crossfeature:data` | `src/androidHostTest` |
-| `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
+| `TestProductRepository` | `:feature:catalog:impl` | `src/commonTest` |
 | `TestPromoCodeRepository` | `:feature:promo:impl` | `src/commonTest` |
 | `serverTest {}`, `testShopData()`, `testProduct()`, `apiSample()`, `sendApiRequest()` | `server/` | `src/test` |
 
-Модуль подключает чужих помощников через `testImplementation(project(":crossfeature:domain:testing"))` (в KMP-модуле — `commonTest.dependencies { implementation(…) }`) или через `testImplementation(testFixtures(project(…)))` для test fixtures Android-модуля. Помощники видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только на `api` и `implementation`, так что тестовые зависимости соблюдают уровни по договорённости, а не под контролем проверки.
+Модуль подключает чужих помощников через `commonTest.dependencies { implementation(project(":crossfeature:domain:testing")) }`. Помощники видят только публичный API своего модуля. [Проверка графа модулей](modules.md#проверка) смотрит только на `api` и `implementation`, так что тестовые зависимости соблюдают уровни по договорённости, а не под контролем проверки.
 
 &nbsp;
 
@@ -152,7 +151,7 @@ class LocalCartDataSourceTest {
 }
 ```
 
-Robolectric работает на `targetSdk` приложения: `shoppingapp.android.library` и `shoppingapp.kmp.library` передают тестам каждого library-модуля этот SDK, его ресурсы и флаги JVM, которые нужны Robolectric на Java 17 и новее. Без них он взял бы свой самый старый SDK, который старше `minSdk` приложения. DataStore не нужен `Context`, поэтому настройки проверяются на настоящем DataStore во временном файле, без Robolectric.
+Robolectric работает на `targetSdk` приложения: `shoppingapp.kmp.library` передаёт тестам каждого library-модуля этот SDK, его ресурсы и флаги JVM, которые нужны Robolectric на Java 17 и новее. Без них он взял бы свой самый старый SDK, который старше `minSdk` приложения. DataStore не нужен `Context`, поэтому настройки проверяются на настоящем DataStore во временном файле, без Robolectric.
 
 ### Сеть
 
@@ -186,18 +185,18 @@ fun `client error returns HttpError with its code`() = networkTest(::TestApi) { 
 
 | Команда | Что делает |
 |---|---|
-| `./gradlew test testAndroidHostTest` | сравнивает каждое превью с сохранённой картинкой и падает, если они различаются (`test` в Android-модулях, `testAndroidHostTest` в KMP-модулях) |
-| `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` | отрисовывает превью и сохраняет их как новые картинки; удаляет картинки превью, которых больше нет |
+| `./gradlew testAndroidHostTest` | сравнивает каждое превью с сохранённой картинкой и падает, если они различаются |
+| `./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` | отрисовывает превью и сохраняет их как новые картинки; удаляет картинки превью, которых больше нет |
 
 Эти тесты не говорят, правильно ли выглядит экран, — они ловят изменения, которых никто не заказывал. Поэтому картинки записывает только человек, сознательно и только после изменения интерфейса:
 
 1. Изменить интерфейс.
 2. Убедиться, что изменилось только то, что задумано, одним из двух способов:
-   - **сначала тесты**: запустить `./gradlew test testAndroidHostTest`. Должны упасть только те превью, которые и должны были измениться, а на `build/outputs/roborazzi/…_compare.png` каждого из них красным должно быть отмечено только задуманное. Там виден даже сдвиг на пиксель-два, который на двух картинках рядом не заметить;
+   - **сначала тесты**: запустить `./gradlew testAndroidHostTest`. Должны упасть только те превью, которые и должны были измениться, а на `build/outputs/roborazzi/…_compare.png` каждого из них красным должно быть отмечено только задуманное. Там виден даже сдвиг на пиксель-два, который на двух картинках рядом не заметить;
    - **сначала запись**: записать картинки (шаг 3), а потом посмотреть, какие из них изменились (`git status` или сами картинки в IDE). Так быстрее — один прогон вместо двух, — но старая картинка уже перезаписана, и картинки сравнения не будет.
 
    В обоих случаях тридцать изменившихся картинок после правки одной кнопки — повод разобраться, что пошло не так.
-3. Записать картинки, если это ещё не сделано: `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` или через конфигурацию запуска Record screenshots в Android Studio.
+3. Записать картинки, если это ещё не сделано: `./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` или через конфигурацию запуска Record screenshots в Android Studio.
 4. Закоммитить картинки вместе с кодом; в pull request старая и новая версия каждой картинки будут показаны рядом.
 
 > [!IMPORTANT]

@@ -13,14 +13,12 @@
 | Плагин | Для чего | Что добавляет |
 |---|---|---|
 | `shoppingapp.android.application` | `:apps:shop`, `:apps:uikit` | настройку Android, targetSdk, подпись, R8 в release, языки приложения для системных настроек, [проверку графа модулей](modules.md#проверка), анализ зависимостей, предупреждения как ошибки в CI |
-| `shoppingapp.android.library` | каждая Android-библиотека | compileSdk, minSdk, Java, анализ зависимостей, предупреждения как ошибки в CI, настройку тестов: unit-тесты только на debug, [Robolectric](testing.md#база-данных), [образцы API](testing.md#контракт-с-сервером), текст ошибки упавшего теста в логе |
-| `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
+| `shoppingapp.android.compose` | `:apps:shop`, `:apps:uikit` | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.metro` | модули с DI, Android и KMP | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
-| `shoppingapp.android.feature` | модули `:feature:<name>:impl`, которые ещё остаются Android-модулями: catalog | library + Compose + Metro + serialization, библиотеки навигации и lifecycle |
-| `shoppingapp.android.screenshots` | каждая библиотека с превью, Android или KMP | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
+| `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
 | `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` и модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
 | `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, `:apps:shop:app` для iOS-приложения | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
-| `shoppingapp.kmp.feature` | модули `:feature:<name>:impl` на Kotlin Multiplatform: settings, promo, checkout, cart | `kmp.library` + `kmp.compose` + Metro + serialization, библиотеки навигации и lifecycle от JetBrains для KMP |
+| `shoppingapp.kmp.feature` | каждый `:feature:<name>:impl` | `kmp.library` + `kmp.compose` + Metro + serialization, библиотеки навигации и lifecycle от JetBrains для KMP |
 
 Поэтому build-файл модуля получается коротким:
 
@@ -148,16 +146,16 @@ iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../.
 ./gradlew assertModuleGraph            # проверить зависимости между модулями
 ./gradlew buildHealth                  # найти неиспользуемые зависимости
 ./gradlew lintDebug lintAndroidMain    # запустить Android lint в Android- и KMP-модулях
-./gradlew test testAndroidHostTest     # запустить тесты приложения на JVM, включая скриншоты
+./gradlew testAndroidHostTest     # запустить тесты приложения на JVM, включая скриншоты
 ./gradlew compileKotlinIosSimulatorArm64  # скомпилировать общий код под iOS (и на Linux)
 ./gradlew iosSimulatorArm64Test        # запустить общие тесты на iOS-симуляторе (на Mac)
-./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # записать новые скриншоты после изменения UI
+./gradlew recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # записать новые скриншоты после изменения UI
 cd server && ./gradlew test            # запустить тесты сервера
 ```
 
 Те же проверки, что и в CI, где предупреждения считаются ошибками:
 
 ```sh
-./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain test testAndroidHostTest :apps:shop:assembleDebug :apps:uikit:assembleDebug
+./gradlew -PwarningsAsErrors=true spotlessCheck assertModuleGraph buildHealth lintDebug lintAndroidMain testAndroidHostTest :apps:shop:assembleDebug :apps:uikit:assembleDebug
 cd server && ./gradlew -PwarningsAsErrors=true spotlessCheck test
 ```

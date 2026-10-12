@@ -126,13 +126,13 @@ jobs:
 
       # Every module's tests, on debug: logic, ViewModels, the database (Robolectric), the API samples, and the
       # screenshots of every @Preview compared with the saved images.
-      # test: the Android modules; testAndroidHostTest: the KMP modules, which have no test task, on the JVM.
+      # testAndroidHostTest: the libraries are KMP modules, which have no test task; their tests run on the JVM.
       # --continue: a failed module doesn't stop the others, so the report shows every failing test.
       # The rules for tests are in docs/architecture/en/testing.md.
       - name: Behaviour (unit tests)
         id: tests
         if: ${{ !cancelled() }}
-        run: ./gradlew test testAndroidHostTest --continue
+        run: ./gradlew testAndroidHostTest --continue
 
       # After the tests, which download it on a miss; also when one failed, the download is the same.
       - name: Save Robolectric's Android

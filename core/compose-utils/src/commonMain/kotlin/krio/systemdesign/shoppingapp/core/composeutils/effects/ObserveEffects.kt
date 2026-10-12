@@ -62,12 +62,4 @@ class ObserveEffectsScope internal constructor(
         // The text is read in the same coroutine, so the effects keep their order.
         scope.launch { hostState.showSnackbar(message.getString()) }
     }
-
-    // For the features that are still Android modules (AndroidUiText).
-    fun showSnackbar(
-        hostState: SnackbarHostState,
-        message: String,
-    ) {
-        scope.launch { hostState.showSnackbar(message) }
-    }
 }
