@@ -1,3 +1,5 @@
+[Русская версия](../ru/modules.md) · [All pages](README.md)
+
 # Modules
 
 > **Variant `kmp-ready`**: Android, Metro, Ktor
@@ -5,8 +7,6 @@
 > This page in the other variants:
 > - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/modules.md): Android, Hilt, Retrofit
 > - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/en/modules.md): Android and iOS, Metro, Ktor
-
-[Русская версия](../ru/modules.md) · [All pages](README.md)
 
 The folders are levels, from the bottom up: `core/` → `shared/` → `feature/` → `apps/`. A module never depends on a level above its own, and features never depend on each other.
 

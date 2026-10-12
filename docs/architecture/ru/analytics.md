@@ -1,3 +1,5 @@
+[English version](../en/analytics.md) · [Все разделы](README.md)
+
 # Аналитика
 
 > **Вариант `kmp-ready`**: Android, Metro, Ktor
@@ -5,8 +7,6 @@
 > Эта страница в других вариантах:
 > - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/ru/analytics.md): Android, Hilt, Retrofit
 > - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/analytics.md): Android и iOS, Metro, Ktor
-
-[English version](../en/analytics.md) · [Все разделы](README.md)
 
 Приложение отправляет события в две системы аналитики. Обе — заглушки, которые просто пишут в logcat, но код устроен так же, как с настоящими SDK.
 

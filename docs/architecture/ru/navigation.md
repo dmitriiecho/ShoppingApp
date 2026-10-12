@@ -1,3 +1,5 @@
+[English version](../en/navigation.md) · [Все разделы](README.md)
+
 # Навигация
 
 > **Вариант `kmp-ready`**: Android, Metro, Ktor
@@ -5,8 +7,6 @@
 > Эта страница в других вариантах:
 > - [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/ru/navigation.md): Android, Hilt, Retrofit
 > - [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/navigation.md): Android и iOS, Metro, Ktor
-
-[English version](../en/navigation.md) · [Все разделы](README.md)
 
 Навигация построена на Navigation Compose с типизированными маршрутами (`@Serializable`-объекты и классы). Фичи не знают друг о друге: каждая отдаёт приложению свой граф, а приложение связывает графы между собой.
 
