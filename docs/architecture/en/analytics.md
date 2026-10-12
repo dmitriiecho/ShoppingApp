@@ -2,6 +2,8 @@
 
 [Русская версия](../ru/analytics.md) · [All pages](README.md)
 
+Variant: **`kmp`** (Android and iOS, Metro, Ktor) · this page in [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/analytics.md) (Android, Hilt, Retrofit) · [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/docs/architecture/en/analytics.md) (Android, Metro, Ktor)
+
 The app sends events to two analytics systems. Both are fakes that just write to the log (logcat, the Xcode console), but the code is structured the way it would be with real SDKs.
 
 &nbsp;
