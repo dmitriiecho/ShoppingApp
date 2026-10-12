@@ -17,9 +17,9 @@ ShoppingApp — пример Android-приложения на современ�
 
 | Ветка | Платформы | DI | Сеть | Логирование | Скачать |
 |---|---|---|---|---|---|
-| [`main`](https://github.com/dmitriiecho/ShoppingApp/tree/main) | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
+| [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/README.ru.md) | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
 | **`kmp-ready`** | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
-| [`kmp`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp) | Android, iOS | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp-UiKit.apk) |
+| [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/README.ru.md) | Android, iOS | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp.apk), [APK UI kit](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp-UiKit.apk) |
 
 Во всех вариантах общие Compose, Navigation Compose, Room и DataStore.
 
@@ -27,7 +27,7 @@ ShoppingApp — пример Android-приложения на современ�
 
 &nbsp;
 
-## Вариант [`kmp`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp): Android и iOS
+## Вариант [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/README.ru.md): Android и iOS
 
 - **Четыре приложения из одной ветки**: магазин и UI kit, каждое для Android и для iOS.
 - **Телефоны и планшеты** на обеих платформах.
