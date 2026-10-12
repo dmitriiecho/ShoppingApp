@@ -199,31 +199,26 @@ jobs:
         with:
           cache-read-only: ${{ env.CACHE_READ_ONLY }}
 
-      # The Kotlin/Native compiler and its dependencies (~1 GB), downloaded once per Kotlin version: the key is that
-      # version, read from the catalog.
+      # The Kotlin/Native compiler and its dependencies (~1 GB), downloaded once per Kotlin version. When it links,
+      # it also builds caches of the libraries (Compose, coroutines…) into ~/.konan, a few minutes of work. So the
+      # key is the Kotlin version plus the version catalog: a new set of libraries saves a new copy, which starts
+      # from the latest one of that Kotlin version.
       - name: Kotlin version
         id: konan-key
-        run: echo "key=konan-${{ runner.os }}-$(sed -n 's/^kotlin = "\(.*\)"$/\1/p' gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
+        run: echo "kotlin=$(sed -n 's/^kotlin = "\(.*\)"$/\1/p' gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
 
       - name: Restore Kotlin/Native
         id: konan
         uses: actions/cache/restore@v6
         with:
           path: ~/.konan
-          key: ${{ steps.konan-key.outputs.key }}
+          key: konan-${{ runner.os }}-${{ steps.konan-key.outputs.kotlin }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: konan-${{ runner.os }}-${{ steps.konan-key.outputs.kotlin }}-
 
       # The common tests of every KMP module (src/commonTest), compiled for iOS and run on the simulator.
       - name: Shared code on iOS (simulator tests)
         id: tests
         run: ./gradlew iosSimulatorArm64Test --continue
-
-      # Gradle downloads Kotlin/Native in the step above on a miss.
-      - name: Save Kotlin/Native
-        if: ${{ !cancelled() && env.CACHE_READ_ONLY == 'false' && steps.konan.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v6
-        with:
-          path: ~/.konan
-          key: ${{ steps.konan-key.outputs.key }}
 
       - name: Failed tests
         if: ${{ failure() && steps.tests.outcome == 'failure' }}
@@ -243,6 +238,14 @@ jobs:
         run: >-
           xcodebuild -project iosApp.xcodeproj -scheme iosApp -configuration Debug
           -sdk iphonesimulator -arch arm64 CODE_SIGNING_ALLOWED=NO build
+
+      # Last: the Xcode build links the framework and adds the caches of its libraries to ~/.konan.
+      - name: Save Kotlin/Native
+        if: ${{ !cancelled() && env.CACHE_READ_ONLY == 'false' && steps.konan.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.konan
+          key: ${{ steps.konan.outputs.cache-primary-key }}
 
   # ==========================================================================
   # Server: the Ktor backend in server/
