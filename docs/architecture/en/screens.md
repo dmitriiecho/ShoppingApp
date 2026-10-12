@@ -2,6 +2,8 @@
 
 [Русская версия](../ru/screens.md) · [All pages](README.md)
 
+Variant: **`kmp-ready`** (Android, Metro, Ktor) · this page in [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/screens.md) (Android, Hilt, Retrofit) · [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/en/screens.md) (Android and iOS, Metro, Ktor)
+
 Each screen has one UI state, a set of user events and a set of one-off effects. The ViewModel turns events into a new state or an effect; the screen only draws the state and reacts to effects.
 
 &nbsp;

@@ -2,6 +2,8 @@
 
 [English version](../en/README.md)
 
+Вариант: **`kmp-ready`** (Android, Metro, Ktor) · эта страница в [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/ru/README.md) (Android, Hilt, Retrofit) · [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/ru/README.md) (Android и iOS, Metro, Ktor)
+
 ShoppingApp — демонстрационный интернет-магазин для Android: каталог с поиском, карточка товара, корзина, которая хранится на устройстве и сверяется с сервером, промокоды и форма заказа. Небольшой сервер на Ktor из папки [`server/`](../../../server/README.ru.md) отдаёт каталог и проверяет корзину.
 
 Эти страницы объясняют, как устроено приложение и почему именно так. На каждой — правила, причины, по которым они приняты, и короткие фрагменты кода проекта.

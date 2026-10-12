@@ -2,6 +2,8 @@
 
 [Русская версия](../ru/testing.md) · [All pages](README.md)
 
+Variant: **`kmp-ready`** (Android, Metro, Ktor) · this page in [`main`](https://github.com/dmitriiecho/ShoppingApp/blob/main/docs/architecture/en/testing.md) (Android, Hilt, Retrofit) · [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/docs/architecture/en/testing.md) (Android and iOS, Metro, Ktor)
+
 Tests run on the JVM, without an emulator. They cover the app's logic, ViewModels, data layer and screens (a screenshot of every preview), its contract with the server, and the server itself. The app and the server follow the same rules, so tests read the same way on both sides.
 
 &nbsp;
