@@ -17,9 +17,9 @@
 | `shoppingapp.android.compose` | модули с Compose | компилятор Compose, BOM, Material 3, правила lint для Compose от Slack |
 | `shoppingapp.metro` | модули с DI, Android и KMP | Metro: `internal`-класс с `@Contributes*` остаётся `internal`, а `internal` binding container роняет сборку |
 | `shoppingapp.android.feature` | каждый `:feature:<name>:impl` | library + Compose + Metro + serialization, библиотеки навигации и lifecycle |
-| `shoppingapp.android.screenshots` | каждая библиотека с превью | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
-| `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:config`, `:core:network`, `:crossfeature:domain`, `:crossfeature:analytics` и их модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
-| `shoppingapp.kmp.compose` | KMP-модули с Compose (пока `:apps:shop:app` для iOS-приложения) | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
+| `shoppingapp.android.screenshots` | каждая библиотека с превью, Android или KMP | [скриншот-тесты](testing.md#скриншоты), созданные из превью |
+| `shoppingapp.kmp.library` | каждая библиотека на Kotlin Multiplatform: `:core:*`, `:crossfeature:domain`, `:crossfeature:analytics`, `:crossfeature:data` и их модули `testing` | таргеты Android и iOS, настройку Android и [Robolectric](testing.md#база-данных) для host-тестов, Android lint и для общего кода, анализ зависимостей, предупреждения как ошибки в CI, текст ошибки упавшего теста в логе |
+| `shoppingapp.kmp.compose` | KMP-модули с Compose: `:core:designsystem`, `:core:compose-utils`, `:apps:shop:app` для iOS-приложения | Compose Multiplatform, его основные библиотеки и ресурсы (`Res`), правила lint для Compose от Slack |
 
 Поэтому build-файл модуля получается коротким:
 
@@ -148,7 +148,7 @@ iOS-приложение — это Xcode-проект в [`apps/shop/ios`](../.
 ./gradlew test testAndroidHostTest     # запустить тесты приложения на JVM, включая скриншоты
 ./gradlew compileKotlinIosSimulatorArm64  # скомпилировать общий код под iOS (и на Linux)
 ./gradlew iosSimulatorArm64Test        # запустить общие тесты на iOS-симуляторе (на Mac)
-./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # записать новые скриншоты после изменения UI
+./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # записать новые скриншоты после изменения UI
 cd server && ./gradlew test            # запустить тесты сервера
 ```
 

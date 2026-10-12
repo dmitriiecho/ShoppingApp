@@ -19,7 +19,7 @@ dependencies {
     implementation(libs.kermit)
 
     testImplementation(project(":crossfeature:analytics:testing"))
-    testImplementation(testFixtures(project(":core:compose-utils")))
+    testImplementation(project(":core:compose-utils:testing"))
     testImplementation(project(":core:network:testing"))
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.assertk)

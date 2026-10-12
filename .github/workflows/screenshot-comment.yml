@@ -136,7 +136,7 @@ jobs:
                 "Each image is the saved one, the difference in red and the new one."
               echo
               echo "If the change is meant, record the new images and commit them:" \
-                "\`./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true\`." \
+                "\`./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true\`." \
                 "If it isn't, the tests found a problem."
               sort images.txt | while read -r NAME MODULE; do
                 # krio...LoadingButtonKt.LoadingButtonPreview.Dark_NIGHT_compare.png → LoadingButton · Dark

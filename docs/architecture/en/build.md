@@ -17,9 +17,9 @@ Each kind of module has its own plugin:
 | `shoppingapp.android.compose` | modules with Compose | the Compose compiler, the BOM, Material 3, Slack's Compose lint rules |
 | `shoppingapp.metro` | modules with DI, Android or KMP | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
 | `shoppingapp.android.feature` | every `:feature:<name>:impl` | library + Compose + Metro + serialization, navigation and lifecycle libraries |
-| `shoppingapp.android.screenshots` | every library module with previews | [screenshot tests](testing.md#screenshots) generated from the previews |
-| `shoppingapp.kmp.library` | every Kotlin Multiplatform library: `:core:config`, `:core:network`, `:crossfeature:domain`, `:crossfeature:analytics` and their `testing` modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
-| `shoppingapp.kmp.compose` | KMP modules with Compose (for now the iOS app's `:apps:shop:app`) | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
+| `shoppingapp.android.screenshots` | every library module with previews, Android or KMP | [screenshot tests](testing.md#screenshots) generated from the previews |
+| `shoppingapp.kmp.library` | every Kotlin Multiplatform library: `:core:*`, `:crossfeature:domain`, `:crossfeature:analytics`, `:crossfeature:data` and their `testing` modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
+| `shoppingapp.kmp.compose` | KMP modules with Compose: `:core:designsystem`, `:core:compose-utils`, the iOS app's `:apps:shop:app` | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
 
 As a result, a module's build file is short:
 
@@ -148,7 +148,7 @@ The main commands, from the project root:
 ./gradlew test testAndroidHostTest     # run the app tests on the JVM, including screenshots
 ./gradlew compileKotlinIosSimulatorArm64  # compile the shared code for iOS (on Linux too)
 ./gradlew iosSimulatorArm64Test        # run the common tests on the iOS simulator (on a Mac)
-./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # record new screenshots after a UI change
+./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # record new screenshots after a UI change
 cd server && ./gradlew test            # run the server tests
 ```
 

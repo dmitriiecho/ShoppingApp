@@ -42,6 +42,7 @@ include(":apps:uikit")
 
 include(":core:designsystem")
 include(":core:compose-utils")
+include(":core:compose-utils:testing")
 include(":core:network")
 include(":core:network:testing")
 include(":core:config")

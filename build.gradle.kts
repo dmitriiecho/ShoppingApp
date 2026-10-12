@@ -37,8 +37,11 @@ dependencyAnalysis {
             // Convention plugins add these to every Compose module on purpose; a few modules don't use them.
             // The screenshot tests Roborazzi generates import the preview scanner without using it in bytecode, so
             // it looks unused, but they don't compile without it.
-            // The analysis sees a KMP module only through its Android target, and there the contract (a JVM library)
-            // doesn't match its declaration in commonMain: the classes are used, yet it advises removing it.
+            // The analysis sees a KMP module only through its Android target, and there two kinds of commonMain
+            // dependencies don't match the classes used, so it advises removing them although they are used:
+            // - the contract, a JVM library;
+            // - JetBrains' Compose and Lifecycle for KMP: on Android they are empty wrappers around the Jetpack
+            //   libraries, whose classes the code uses.
             onUnusedDependencies {
                 exclude(
                     libs.androidx.compose.ui.graphics,
@@ -46,6 +49,7 @@ dependencyAnalysis {
                     libs.composable.preview.scanner,
                     libs.shoppingapp.contract,
                 )
+                excludeRegex("org\\.jetbrains\\.compose\\..*", "org\\.jetbrains\\.androidx\\..*")
             }
         }
     }

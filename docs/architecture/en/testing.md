@@ -14,7 +14,7 @@ Each build runs its own tests, and CI runs both sets on every pull request:
 ./gradlew test testAndroidHostTest   # the app on the JVM: every module, once, including screenshots
 ./gradlew iosSimulatorArm64Test      # the common tests on the iOS simulator (on a Mac; CI runs them on macOS)
 cd server && ./gradlew test          # the server
-./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true  # records new screenshots after a UI change
+./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true  # records new screenshots after a UI change
 ```
 
 - **Android modules** run their unit tests with `test`, in the debug variant only: `shoppingapp.android.library` turns off the release ones, which would just repeat them.
@@ -70,7 +70,8 @@ A helper used by the tests of **two or more modules** lives next to the module t
 | `testProduct()`, `testCartItem()`, `testCart()` | `:crossfeature:domain:testing` | `src/commonMain` |
 | `TestCartRepository` | `:crossfeature:domain:testing` | `src/commonMain` |
 | `TestAnalyticsClient`, `TestAnalytics` | `:crossfeature:analytics:testing` | `src/commonMain` |
-| `viewModelTest {}`, `keepCollecting()`, `typeText()`, `PausedClockPreviewTester` | `:core:compose-utils` | `src/testFixtures` |
+| `viewModelTest {}`, `keepCollecting()`, `typeText()` | `:core:compose-utils:testing` | `src/commonMain` |
+| `PausedClockPreviewTester` | `:core:compose-utils:testing` | `src/androidMain` |
 | `networkTest {}`, `TestServer`, `apiSample()`, `apiRequest()` | `:core:network:testing` | `src/commonMain` |
 | `databaseTest {}` | `:crossfeature:data` | `src/test` |
 | `TestProductRepository` | `:feature:catalog:impl` | `src/test` |
@@ -180,28 +181,29 @@ Changing a format or an address on one side fails that side's tests until the sa
 
 ### Screenshots
 
-Every `@Preview` is a screenshot test, so nobody has to write them by hand. `shoppingapp.android.screenshots`, which every library module with previews applies, has [Roborazzi](https://github.com/takahirom/roborazzi) render each preview on Robolectric and compare it with the image saved in the module's `screenshots/` folder:
+Every `@Preview` is a screenshot test, so nobody has to write them by hand. `shoppingapp.android.screenshots`, which every library module with previews applies (Android or KMP), has [Roborazzi](https://github.com/takahirom/roborazzi) render each preview on Robolectric and compare it with the image saved in the module's `screenshots/` folder:
 
 | Command | Does |
 |---|---|
-| `./gradlew test` | compares every preview with its saved image and fails if they differ |
-| `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true` | renders the previews and saves them as the new images; deletes the images of previews that no longer exist |
+| `./gradlew test testAndroidHostTest` | compares every preview with its saved image and fails if they differ (`test` in Android modules, `testAndroidHostTest` in KMP ones) |
+| `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true` | renders the previews and saves them as the new images; deletes the images of previews that no longer exist |
 
 These tests don't tell you whether a screen looks right; they catch changes nobody asked for. That's why images are recorded only by a person, deliberately, after a UI change:
 
 1. Change the UI.
 2. Check that only what you intended has changed, in one of two ways:
-   - **test first**: run `./gradlew test`. Only the previews you meant to change should fail, and each one's `build/outputs/roborazzi/…_compare.png` should highlight in red only what you intended. It reveals a shift of a pixel or two that you'd miss comparing two images side by side;
+   - **test first**: run `./gradlew test testAndroidHostTest`. Only the previews you meant to change should fail, and each one's `build/outputs/roborazzi/…_compare.png` should highlight in red only what you intended. It reveals a shift of a pixel or two that you'd miss comparing two images side by side;
    - **record first**: record (step 3), then look at which images changed (`git status`, or the images in the IDE). It's quicker, one run instead of two, but the old image is already overwritten, so there is no comparison image.
 
    Either way, thirty changed images after a change to a single button is a problem worth investigating.
-3. Record the images, if you haven't yet: `./gradlew recordRoborazziDebug -Proborazzi.cleanupOldScreenshots=true`, or the Record screenshots run configuration in Android Studio.
+3. Record the images, if you haven't yet: `./gradlew recordRoborazziDebug recordRoborazziAndroidHostTest -Proborazzi.cleanupOldScreenshots=true`, or the Record screenshots run configuration in Android Studio.
 4. Commit the images together with the code; the pull request shows the old and new version of each image side by side.
 
 > [!IMPORTANT]
 > If you didn't mean to change how the app looks, don't record. In that case a failed screenshot test has caught a real problem: padding that shifted during a refactor, a library update that changed the buttons, a shared component that affected another screen. CI never records images.
 
 - **A changed screen is a failed test** until its new images are recorded and committed.
+- **The cleanup flag goes only with the record tasks.** Roborazzi also hooks the iOS test tasks of KMP modules, which take no screenshots: with the flag they would delete every saved image of the module.
 - **A failed test leaves a comparison image** in the build folder: `build/outputs/roborazzi/*_compare.png`, with the saved image, the difference in red and the new image. In CI these are attached to the run as `changed-screenshots` and shown in a comment on the pull request.
 - **The clock is paused**: `PausedClockPreviewTester` renders every preview at its first frame, so an endless animation (the shimmer, a spinner) doesn't hang the test and every run produces the same image.
 - **Old images are deleted only when recording**, through that flag: Roborazzi deletes every image the run didn't render, so if the flag were always on, running a single test from Android Studio would delete all the module's other images.

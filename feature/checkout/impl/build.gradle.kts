@@ -17,7 +17,7 @@ dependencies {
 
     testImplementation(project(":crossfeature:domain:testing"))
     testImplementation(project(":crossfeature:analytics:testing"))
-    testImplementation(testFixtures(project(":core:compose-utils")))
+    testImplementation(project(":core:compose-utils:testing"))
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.assertk)
     testImplementation(libs.turbine)
