@@ -7,7 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 
-// Links the app is asked to open, from the platform (an Android Intent). A link that comes before the navigation
+// Links the app is asked to open, from the platform (an Android Intent, onOpenURL on iOS). A link that comes before the navigation
 // is ready, as at a cold start, waits in the channel until AppNavHost takes it.
 @SingleIn(AppScope::class)
 @Inject

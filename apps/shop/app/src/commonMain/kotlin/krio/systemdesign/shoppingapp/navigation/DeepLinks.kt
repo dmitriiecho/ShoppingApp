@@ -6,6 +6,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavUri
 import co.touchlab.kermit.Logger
+import krio.systemdesign.shoppingapp.core.config.DeepLinkConfig
 import krio.systemdesign.shoppingapp.navigation.bottombar.BottomNavRoutes
 import krio.systemdesign.shoppingapp.navigation.bottombar.navigateToBottomTab
 
@@ -31,11 +32,18 @@ internal fun NavHostController.openDeepLink(link: String) {
     }
 }
 
-// Link patterns have no trailing slash, but /cart/ and /product/1/ must open too: the slash goes from the end of
-// the path, before a query or a fragment.
+// Brings a link to the form of the screens' link patterns. Those are https only, so a link with the iOS app's
+// scheme becomes https: shoppingapp://cart is DeepLinkConfig.BASE_URL/cart. They have no trailing slash, but /cart/
+// and /product/1/ must open too: the slash goes from the end of the path, before a query or a fragment.
 internal fun normalizeDeepLink(link: String): String {
-    val pathEnd = link.indexOfAny(charArrayOf('?', '#')).takeIf { it >= 0 } ?: link.length
-    return link.substring(0, pathEnd).trimEnd('/') + link.substring(pathEnd)
+    val appSchemePrefix = "${DeepLinkConfig.APP_SCHEME}://"
+    val httpsLink = if (link.startsWith(appSchemePrefix, ignoreCase = true)) {
+        "${DeepLinkConfig.BASE_URL}/${link.substring(appSchemePrefix.length)}"
+    } else {
+        link
+    }
+    val pathEnd = httpsLink.indexOfAny(charArrayOf('?', '#')).takeIf { it >= 0 } ?: httpsLink.length
+    return httpsLink.substring(0, pathEnd).trimEnd('/') + httpsLink.substring(pathEnd)
 }
 
 private fun NavHostController.tabGraph(tab: Any): NavGraph = graph.findNode(tab) as NavGraph

@@ -6,6 +6,10 @@ object DeepLinkConfig {
     // it is also where GitHub Pages publishes docs/.
     const val BASE_URL = "https://dmitriiecho.github.io/ShoppingApp"
 
+    // The iOS app's own scheme, registered in CFBundleURLTypes in apps/shop/ios/iosApp/Info.plist: iOS opens https
+    // links in an app only for a signed team with a file on the site. shoppingapp://cart is BASE_URL/cart.
+    const val APP_SCHEME = "shoppingapp"
+
     // Pages with links for manual testing, one per language: docs/deeplinks/.
     const val TEST_PAGES_URL = "$BASE_URL/deeplinks"
 }
