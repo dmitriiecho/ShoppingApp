@@ -1,5 +1,5 @@
 // The shop's Android app: the entry point (MainActivity, ShoppingApp), the app's dependency graph for Android and
-// what only an Android app has (manifest, themes, icons). The screens and navigation are in :apps:shop:app.
+// what only an Android app has (manifest, themes, icons). The screens and navigation are in :apps:shop:shared.
 plugins {
     alias(libs.plugins.shoppingapp.android.application)
     alias(libs.plugins.shoppingapp.android.compose)
@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":apps:shop:app"))
+    implementation(project(":apps:shop:shared"))
     // Not used by this module's code: the app's graph (AndroidAppGraph) sees only the modules on its compile classpath,
     // so every module with contributions or with classes the graph creates is a direct dependency.
     implementation(project(":feature:catalog:impl"))

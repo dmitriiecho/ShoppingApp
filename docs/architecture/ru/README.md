@@ -19,7 +19,7 @@ ShoppingApp — демонстрационный интернет-магазин
 Приложение разделено на четыре уровня, снизу вверх:
 
 ```text
-apps/         shop, uikit (each: app, android, ios)          приложения: общий код и вход для каждой платформы
+apps/         shop, uikit (each: shared, android, ios)       приложения: общий код и вход для каждой платформы
 feature/      catalog, cart, promo, checkout, settings       каждая фича — это ui + impl
 crossfeature/ domain, data, ui, analytics                    код магазина, нужный двум фичам и больше
 core/         designsystem, compose-utils, network, config   ничего не знает о магазине

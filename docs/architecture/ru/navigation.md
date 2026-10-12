@@ -14,7 +14,7 @@
 
 ## Как связаны фичи
 
-Приложение собирает три вкладки и экран оформления заказа поверх них. Любой переход из одной фичи в другую — это колбэк, который [`AppNavGraph.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) передаёт в графы фич:
+Приложение собирает три вкладки и экран оформления заказа поверх них. Любой переход из одной фичи в другую — это колбэк, который [`AppNavGraph.kt`](../../../apps/shop/shared/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/AppNavGraph.kt) передаёт в графы фич:
 
 | Откуда | Куда | Колбэк |
 |---|---|---|
@@ -67,7 +67,7 @@ fun CartNavigationScope.graph(
 
 ## Вкладки
 
-У каждой вкладки свой стек. При переходе на вкладку со стека снимается всё, в том числе каталог, а стек вкладки, с которой ушли, сохраняется ([`BottomTabs.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
+У каждой вкладки свой стек. При переходе на вкладку со стека снимается всё, в том числе каталог, а стек вкладки, с которой ушли, сохраняется ([`BottomTabs.kt`](../../../apps/shop/shared/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/bottombar/BottomTabs.kt)):
 
 ```kotlin
 navigate(route) {
@@ -168,7 +168,7 @@ fun navigate(block: () -> Unit) {
 <details>
 <summary>Вторая защита: уходящий экран не реагирует на нажатия</summary>
 
-Пока идёт анимация перехода, старый экран ещё виден, и раньше он ловил второе нажатие: двойное нажатие на «Назад» закрывало два экрана. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) игнорирует нажатия, пока верхний экран не перейдёт в `RESUMED`.
+Пока идёт анимация перехода, старый экран ещё виден, и раньше он ловил второе нажатие: двойное нажатие на «Назад» закрывало два экрана. [`BlockTouchesDuringTransitions.kt`](../../../apps/shop/shared/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/transitions/BlockTouchesDuringTransitions.kt) игнорирует нажатия, пока верхний экран не перейдёт в `RESUMED`.
 
 </details>
 
@@ -184,7 +184,7 @@ fun navigate(block: () -> Unit) {
 | `https://dmitriiecho.github.io/ShoppingApp/cart` | вкладку корзины |
 | `https://dmitriiecho.github.io/ShoppingApp/product/{id}` | товар поверх каталога |
 
-Ссылка открывает экран так же, как до него дошёл бы пользователь ([`DeepLinks.kt`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
+Ссылка открывает экран так же, как до него дошёл бы пользователь ([`DeepLinks.kt`](../../../apps/shop/shared/src/commonMain/kotlin/krio/systemdesign/shoppingapp/navigation/DeepLinks.kt)):
 
 ```kotlin
 // Вкладка, которая обрабатывает ссылку; если такой нет, ссылка игнорируется
@@ -201,7 +201,7 @@ if (!tabRoot.hasDeepLink(request)) navigate(request)    // экран повер
 - **App Links подтверждены**: debug-ключ хранится в репозитории, а его отпечаток указан в `assetlinks.json` на домене, поэтому ссылки открывает сборка с любого компьютера.
 - **Домен и пути записаны в двух местах**: в intent-filter манифеста и в `DeepLinkConfig`; комментарий в каждом месте указывает на другое.
 - **На iOS у ссылок своя схема**, `shoppingapp://cart`, `shoppingapp://product/1`: https-ссылку iOS открывает в приложении только через Universal Links, а им нужна платная команда разработчика и файл на домене. Схема зарегистрирована в `CFBundleURLTypes` в `Info.plist`, `onOpenURL` из SwiftUI передаёт ссылку в `openDeepLink()`, а `normalizeDeepLink()` переводит её в https-вид, так что экраны объявляют свои ссылки один раз.
-- **Код общий**: платформа передаёт ссылку строкой ([`IncomingDeepLinks`](../../../apps/shop/app/src/commonMain/kotlin/krio/systemdesign/shoppingapp/IncomingDeepLinks.kt) — канал в графе приложения, который держит ссылку, пока навигация не готова), а API навигации здесь общий: к корню вкладки возвращаемся по его маршруту, а нижняя панель снимает стек до маршрута корневого графа `AppRoute`, потому что в общем API нет снятия стека по id экрана.
+- **Код общий**: платформа передаёт ссылку строкой ([`IncomingDeepLinks`](../../../apps/shop/shared/src/commonMain/kotlin/krio/systemdesign/shoppingapp/IncomingDeepLinks.kt) — канал в графе приложения, который держит ссылку, пока навигация не готова), а API навигации здесь общий: к корню вкладки возвращаемся по его маршруту, а нижняя панель снимает стек до маршрута корневого графа `AppRoute`, потому что в общем API нет снятия стека по id экрана.
 - **Тестовые страницы** со всеми ссылками, включая варианты с завершающим слешем и краевые случаи (несуществующий товар, неизвестный путь), лежат в [`docs/deeplinks/`](../../deeplinks/), по странице на платформу (`android/`, `ios/`) и язык, и опубликованы на GitHub Pages; экран настроек открывает страницу своей платформы (`DeepLinkConfig.TEST_PAGES_URL`).
 
 <details>

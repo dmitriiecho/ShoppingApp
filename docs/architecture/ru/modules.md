@@ -30,7 +30,7 @@
 Внутри уровней есть модули ещё двух видов:
 
 - **Модули `testing`** держат тестовых помощников, которые нужны и тестам других модулей, рядом с модулем, к которому они относятся: `:core:network:testing`, `:crossfeature:domain:testing`. У модулей на Kotlin Multiplatform нет test fixtures, поэтому помощники получают свой модуль; зависят от него только тесты ([Тестирование](testing.md#имена-и-расположение)).
-- **Приложение магазина разделено по платформам**, как советует JetBrains: в `:apps:shop:app` всё общее для обеих платформ (`App()`, навигация, нижняя панель, аналитика, основа графа приложения), в `iosMain` — точка входа и граф iOS, и он собирает фреймворк, который подключает Xcode-проект в `apps/shop/ios` ([Сборка](build.md#ios-приложение)); `:apps:shop:android` — точка входа Android (`MainActivity`, `ShoppingApp`, граф для Android, манифест, ресурсы). UI kit разделён так же: в `:apps:uikit:app` его экраны и образцы, и он собирает фреймворк для `apps/uikit/ios`, в `:apps:uikit:android` — `UiKitActivity`.
+- **Приложение магазина разделено по платформам**, как в [рекомендуемой структуре](https://kotlinlang.org/docs/multiplatform/multiplatform-project-recommended-structure.html) JetBrains, и модули названы так же: в `:apps:shop:shared` всё общее для обеих платформ (`App()`, навигация, нижняя панель, аналитика, основа графа приложения), в `iosMain` — точка входа и граф iOS, и он собирает фреймворк, который подключает Xcode-проект в `apps/shop/ios` ([Сборка](build.md#ios-приложение)); `:apps:shop:android` — точка входа Android (`MainActivity`, `ShoppingApp`, граф для Android, манифест, ресурсы). UI kit разделён так же: в `:apps:uikit:shared` его экраны и образцы, и он собирает фреймворк для `apps/uikit/ios`, в `:apps:uikit:android` — `UiKitActivity`.
 
 Вне уровней лежит [`contract/`](../../../contract/): DTO API, общие с сервером. Это отдельная сборка, которую подключают и приложение, и сервер, поэтому сервер, тоже отдельная сборка, может пользоваться ею без приложения. От неё зависят `:crossfeature:data` и `impl`-модули фич, которые обращаются к серверу ([Данные](data.md#договорённости-с-сервером)).
 
@@ -52,7 +52,7 @@
 | использует понятия магазина (товар, корзина, промокод, цена, остаток) и нужен двум фичам и больше | `:crossfeature:ui` |
 | использует понятия магазина и нужен одной фиче | `:feature:<name>:ui` |
 
-Фичи не стилизуют компоненты Material сами, а у каждого стилизованного компонента есть пример в приложении UI kit (`:apps:uikit:app`).
+Фичи не стилизуют компоненты Material сами, а у каждого стилизованного компонента есть пример в приложении UI kit (`:apps:uikit:shared`).
 
 &nbsp;
 
@@ -83,7 +83,7 @@ kotlin {
 
 - **`ui` вынесен в отдельный модуль, чтобы UI kit мог его показать**, не видя экранов, ViewModel и данных. Если таких компонентов у фичи нет, то нет и модуля `ui` (например, у `settings`).
 - **Модуля `api` нет.** Фичи никогда не зависят друг от друга, так что API фичи нужно только приложению, а оно связывает фичи через колбэки (см. [Навигацию](navigation.md)).
-- **`:crossfeature:data` используют только графы приложений**: `:apps:shop:android` и iOS-часть `:apps:shop:app`. Фичи видят интерфейсы репозиториев из `:crossfeature:domain`, а реализации подставляет граф зависимостей приложения (Metro).
+- **`:crossfeature:data` используют только графы приложений**: `:apps:shop:android` и iOS-часть `:apps:shop:shared`. Фичи видят интерфейсы репозиториев из `:crossfeature:domain`, а реализации подставляет граф зависимостей приложения (Metro).
 - **Модуль с графом платформы напрямую зависит от каждого модуля с вкладами в DI** (`@ContributesTo`, `@ContributesBinding` и подобными) или с `@Inject`-классами, которые создаёт граф, хотя его собственный код их не использует: `:apps:shop:android` перечисляет фичи, `:crossfeature:data`, `:core:network` и другие. Metro строит граф при компиляции этого модуля и видит только то, что есть в его compile classpath; по той же причине типы модуля, которые встречаются в его привязках, подключены как `api` (Room и DataStore в `:crossfeature:data`).
 
 &nbsp;
@@ -114,8 +114,8 @@ fun CatalogNavigationScope.graph(navController: NavController, onClose: () -> Un
 | `:feature:cart:impl` | `krio.systemdesign.shoppingapp.feature.cart.impl` |
 | `:core:compose-utils` | `krio.systemdesign.shoppingapp.core.composeutils` (дефис убирается) |
 | `:apps:shop:android` | `krio.systemdesign.shoppingapp` |
-| `:apps:uikit:android`, `:apps:uikit:app` | `krio.systemdesign.shoppingapp.uikit` |
-| `:apps:shop:app` | `krio.systemdesign.shoppingapp`: это часть приложения, поэтому у неё пакет приложения; Android-namespace у неё по-прежнему по пути, потому что у библиотеки он не может совпадать с приложением |
+| `:apps:uikit:android`, `:apps:uikit:shared` | `krio.systemdesign.shoppingapp.uikit` |
+| `:apps:shop:shared` | `krio.systemdesign.shoppingapp`: это часть приложения, поэтому у неё пакет приложения; Android-namespace у неё по-прежнему по пути, потому что у библиотеки он не может совпадать с приложением |
 
 Пакет приложения привязан к applicationId, поэтому он не меняется, если приложение переедет в другую папку.
 
@@ -133,10 +133,10 @@ allowed = arrayOf(
     """:feature:\w+:ui -> :(core:designsystem|crossfeature:ui)""",
     """:feature:\w+:impl -> :(core:.*|crossfeature:(domain|ui|analytics))""",
     """:feature:(\w+):impl -> :feature:\1:ui""",   // только свой ui
-    """:apps:uikit:android -> :apps:uikit:app""",
-    """:apps:uikit:(android|app) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
-    """:apps:shop:android -> :apps:shop:app""",
-    """:apps:shop:(android|app) -> :(core|crossfeature|feature):.*""",
+    """:apps:uikit:android -> :apps:uikit:shared""",
+    """:apps:uikit:(android|shared) -> :(core:designsystem|crossfeature:ui|feature:\w+:ui)""",
+    """:apps:shop:android -> :apps:shop:shared""",
+    """:apps:shop:(android|shared) -> :(core|crossfeature|feature):.*""",
 )
 ```
 

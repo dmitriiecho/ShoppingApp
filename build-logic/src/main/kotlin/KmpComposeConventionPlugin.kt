@@ -8,7 +8,7 @@ import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 // Compose Multiplatform and its core libraries in a KMP module. Apply after shoppingapp.kmp.library, or after the
-// Kotlin Multiplatform plugin in an iOS-only module (:apps:shop:app).
+// Kotlin Multiplatform plugin in an iOS-only module (:apps:shop:shared).
 class KmpComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

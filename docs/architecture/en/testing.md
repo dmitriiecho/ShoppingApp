@@ -57,7 +57,7 @@ Comments follow the [code style](build.md#code-style): they appear only where th
 
 ## Names and places
 
-Everything made for tests starts with `Test` or `test`, as in Now in Android. The `Fake` prefix is already taken: `FakeInsightsClient` and `FakeAdTrackerClient` in `:apps:shop:app` are production code that stands in for analytics systems.
+Everything made for tests starts with `Test` or `test`, as in Now in Android. The `Fake` prefix is already taken: `FakeInsightsClient` and `FakeAdTrackerClient` in `:apps:shop:shared` are production code that stands in for analytics systems.
 
 | What | Name | Example |
 |---|---|---|

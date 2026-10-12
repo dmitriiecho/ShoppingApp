@@ -37,9 +37,9 @@ rootProject.name = "ShoppingApp"
 includeBuild("contract")
 
 include(":apps:shop:android")
-include(":apps:shop:app")
+include(":apps:shop:shared")
 include(":apps:uikit:android")
-include(":apps:uikit:app")
+include(":apps:uikit:shared")
 
 include(":core:designsystem")
 include(":core:compose-utils")

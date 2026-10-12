@@ -6,9 +6,9 @@ A demo shop for Android and iOS: one Kotlin Multiplatform code base, the same Co
 |---|---|
 | Stack | Kotlin Multiplatform, Jetpack Compose and Compose Multiplatform, Metro, Room |
 | Build | Gradle 9.8, AGP 9.4, JDK 21, compileSdk 37 |
-| Shop app | `:apps:shop:android` (starts the shared `:apps:shop:app`), applicationId `krio.systemdesign.shoppingapp`, launcher activity `.MainActivity` |
-| UI kit app | `:apps:uikit:android` (starts the shared `:apps:uikit:app`), applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity` |
-| iOS apps | Xcode projects, build only on a Mac: the shop `apps/shop/ios` (bundle id `krio.systemdesign.shoppingapp`, links the `ShopApp` framework of `:apps:shop:app`), the UI kit `apps/uikit/ios` (`krio.systemdesign.shoppingapp.uikit`, the `UiKitApp` framework of `:apps:uikit:app`) |
+| Shop app | `:apps:shop:android` (starts the shared `:apps:shop:shared`), applicationId `krio.systemdesign.shoppingapp`, launcher activity `.MainActivity` |
+| UI kit app | `:apps:uikit:android` (starts the shared `:apps:uikit:shared`), applicationId `krio.systemdesign.shoppingapp.uikit`, launcher activity `.UiKitActivity` |
+| iOS apps | Xcode projects, build only on a Mac: the shop `apps/shop/ios` (bundle id `krio.systemdesign.shoppingapp`, links the `ShopApp` framework of `:apps:shop:shared`), the UI kit `apps/uikit/ios` (`krio.systemdesign.shoppingapp.uikit`, the `UiKitApp` framework of `:apps:uikit:shared`) |
 
 Machine-specific setup (SDK paths, emulator access) lives in `CLAUDE.local.md`, if present.
 
@@ -22,18 +22,18 @@ Folders are levels, bottom to top: `core/` → `crossfeature/` → `feature/` �
 | | `:core:compose-utils` | Compose/ViewModel/navigation glue that draws nothing: `ObserveEffects`, `savedTextField`, `UiText`, shared element scopes, `injectedViewModel` |
 | | `:core:network`, `:core:config` | the HTTP client; the server and deep link addresses |
 | `crossfeature/`: shop code used by two or more features | `:crossfeature:domain` | models, repository interfaces, use cases; pure Kotlin |
-| | `:crossfeature:data` | their implementations; only the apps' graphs use it (`:apps:shop:android`, the iOS part of `:apps:shop:app`) |
+| | `:crossfeature:data` | their implementations; only the apps' graphs use it (`:apps:shop:android`, the iOS part of `:apps:shop:shared`) |
 | | `:crossfeature:ui` | shop components (`ProductCard`, `CartQuantityControl`, `OrderTotals`, `formatPrice`, ...) built from `:core:designsystem`; take plain values, never `:crossfeature:domain` models |
 | | `:crossfeature:analytics` | analytics, pure Kotlin (see [Analytics](#analytics)) |
 | `feature/<name>/`: catalog, cart, promo, checkout, settings | `:feature:<name>:impl` | screens, ViewModels, the feature's own use cases and navigation |
 | | `:feature:<name>:ui` | shop components only this feature uses, on plain values; depends only on `:core:designsystem` and `:crossfeature:ui`; exists only when the feature has such components (not in settings) |
-| `apps/`: nothing depends on them | `:apps:shop:app` | the shop's code for both platforms: `App()`, the navigation host, the bottom bar, analytics, the base of the app's graph; in `iosMain` the iOS entry point and graph (`IosAppGraph`); builds the `ShopApp` framework |
+| `apps/`: nothing depends on them | `:apps:shop:shared` | the shop's code for both platforms: `App()`, the navigation host, the bottom bar, analytics, the base of the app's graph; in `iosMain` the iOS entry point and graph (`IosAppGraph`); builds the `ShopApp` framework |
 | | `:apps:shop:android` | the Android app: `MainActivity`, `ShoppingApp`, the graph for Android, manifest and resources |
-| | `:apps:uikit:app` | the UI kit's code for both platforms: a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data; the iOS entry point and the `UiKitApp` framework |
+| | `:apps:uikit:shared` | the UI kit's code for both platforms: a sample of every styled component (see [UI kit](#ui-kit)); depends only on UI modules, never on `impl`, domain or data; the iOS entry point and the `UiKitApp` framework |
 | | `:apps:uikit:android` | the UI kit's Android app: `UiKitActivity`, manifest and resources |
 
 - **The rules are checked** by `./gradlew assertModuleGraph` (a CI step too) against `build-logic/src/main/kotlin/ModuleGraphRules.kt`. A new kind of dependency between modules needs a rule there.
-- **An `impl` module shows only what `:apps:shop:app` wires**, all in `presentation/navigation`: the routes graph, `graph()`, analytics screen names. Everything else is `internal`.
+- **An `impl` module shows only what `:apps:shop:shared` wires**, all in `presentation/navigation`: the routes graph, `graph()`, analytics screen names. Everything else is `internal`.
 
 More: [`modules.md`](docs/architecture/en/modules.md).
 
@@ -56,7 +56,7 @@ A package follows the module:
 | Module | Package |
 |---|---|
 | library | mirrors its module path: `:feature:cart:impl` → `krio.systemdesign.shoppingapp.feature.cart.impl`; a hyphen is dropped: `compose-utils` → `composeutils` |
-| app, and every module of one app | its applicationId, so it stays when the app moves to another folder: `:apps:shop:android`, `:apps:shop:app` → `krio.systemdesign.shoppingapp` (a library's Android namespace still follows its path) |
+| app, and every module of one app | its applicationId, so it stays when the app moves to another folder: `:apps:shop:android`, `:apps:shop:shared` → `krio.systemdesign.shoppingapp` (a library's Android namespace still follows its path) |
 
 ## Conventions
 
@@ -76,12 +76,12 @@ A package follows the module:
 
 - **`:crossfeature:analytics`**: in the root `Analytics` (what features call), `AnalyticsEvent`, `analyticsParams`; in `system/` `AnalyticsSystem` (the systems the app uses) and `AnalyticsSystemClient` (code that sends to one system); in `event/<topic>/` events sent by two or more features.
 - **An event** is a class `XxxAnalyticsEvent` that lists its `systems`. It lives in the feature that sends it (`impl/.../analytics/`), or in `:crossfeature:analytics` when two or more features send it.
-- **Clients**: `:apps:shop:app` (`analytics/`) holds one client class per `AnalyticsSystem`.
-- **Screen views** are sent by `:apps:shop:app` (`navigation/ScreenViews.kt`). Each feature names its screens in `NavDestination.xxxAnalyticsScreen()`; a screen with no name isn't reported.
+- **Clients**: `:apps:shop:shared` (`analytics/`) holds one client class per `AnalyticsSystem`.
+- **Screen views** are sent by `:apps:shop:shared` (`navigation/ScreenViews.kt`). Each feature names its screens in `NavDestination.xxxAnalyticsScreen()`; a screen with no name isn't reported.
 
 ### DI
 
-[Metro](https://zacsweers.github.io/metro/): the app's graph (`AppScope`) has a base `AppGraph` in `:apps:shop:app` and a graph per platform on top of it, `AndroidAppGraph` in `:apps:shop:android` and `IosAppGraph` in the `iosMain` of `:apps:shop:app`: Metro builds a graph only in platform code.
+[Metro](https://zacsweers.github.io/metro/): the app's graph (`AppScope`) has a base `AppGraph` in `:apps:shop:shared` and a graph per platform on top of it, `AndroidAppGraph` in `:apps:shop:android` and `IosAppGraph` in the `iosMain` of `:apps:shop:shared`: Metro builds a graph only in platform code.
 
 - **A class to inject** gets `@Inject` on the class, not on the constructor. A class with `@ContributesBinding`, `@ContributesIntoSet` or `@ContributesIntoMap` needs no `@Inject`: the contribution implies it.
 - **An implementation of an interface** binds itself with `@ContributesBinding(AppScope::class)` and stays `internal`. Only a third-party type needs a `@Provides` in a `@BindingContainer @ContributesTo(AppScope::class)` object, and that object is public (Metro skips internal ones; the build fails on them).
@@ -99,7 +99,7 @@ A package follows the module:
 - Tests follow [`testing.md`](docs/architecture/en/testing.md).
 - A test helper (`TestXxx` stand-in, `testXxx()` builder, `xxxTest {}` entry function) used by tests of two or more modules lives next to the module that owns what it replaces: in its `testing` module (`:crossfeature:analytics:testing` → `TestAnalyticsClient`; KMP has no test fixtures). One used by a single module stays in its own tests.
 - KMP modules: tests in `src/commonTest` run on the JVM (`testAndroidHostTest`) and on iOS (`iosSimulatorArm64Test`); Robolectric ones go to `src/androidHostTest`. No commas, dots or colons in test names there: Kotlin/Native rejects them. On iOS they can't read Compose resources: `shoppingapp.kmp.compose` turns off their copy so that the test executables stay cacheable.
-- The prefix `Fake` is taken by real code: the analytics stand-ins in `:apps:shop:app`.
+- The prefix `Fake` is taken by real code: the analytics stand-ins in `:apps:shop:shared`.
 
 ### build-logic
 
@@ -112,7 +112,7 @@ A package follows the module:
 | Kotlin Multiplatform (`:core:*`, `:crossfeature:*`, the `testing` modules) | `kmp.library`; with Compose (`:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`) + `kmp.compose` |
 | any module with DI (`@Inject`, `@Contributes*`), except `impl` (`feature` applies it) | + `metro` |
 
-A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit:app` has none of its own.
+A library module with `@Preview`s applies `screenshots`: screenshot tests made from the previews. `:apps:uikit:shared` has none of its own.
 
 ## Server
 

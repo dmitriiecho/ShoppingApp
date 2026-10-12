@@ -23,7 +23,7 @@ Each kind of module has its own plugin:
 | `shoppingapp.metro` | modules with DI, Android or KMP | Metro: an `internal` contributed class stays `internal`, an `internal` binding container fails the build |
 | `shoppingapp.android.screenshots` | every library with previews | [screenshot tests](testing.md#screenshots) generated from the previews |
 | `shoppingapp.kmp.library` | every Kotlin Multiplatform library: `:core:*`, `:crossfeature:*`, `:feature:<name>:ui` and the `testing` modules | Android and iOS targets, the Android setup and [Robolectric](testing.md#database) for host tests, Android lint for the common code too, dependency analysis, warnings as errors in CI, the message of a failed test in the log |
-| `shoppingapp.kmp.compose` | KMP modules with Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, the apps' shared `:apps:shop:app` and `:apps:uikit:app` | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
+| `shoppingapp.kmp.compose` | KMP modules with Compose: `:core:designsystem`, `:core:compose-utils`, `:crossfeature:ui`, `:feature:<name>:ui`, the apps' shared `:apps:shop:shared` and `:apps:uikit:shared` | Compose Multiplatform, its core libraries and resources (`Res`), Slack's Compose lint rules |
 | `shoppingapp.kmp.feature` | every `:feature:<name>:impl` | `kmp.library` + `kmp.compose` + Metro + serialization, JetBrains' navigation and lifecycle libraries for KMP |
 
 As a result, a module's build file is short:
@@ -134,12 +134,12 @@ The debug key is stored in the repo ([`build-logic/debug.keystore`](../../../bui
 
 ## iOS app
 
-The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). It shows the screens of `:apps:shop:app`, which builds them into the `ShopApp` framework: the project's Run Script calls Gradle (`embedAndSignAppleFrameworkForXcode`) before Xcode compiles the Swift code. The app is the whole shop: `MainViewController()` in `iosMain` creates the app's graph (`IosAppGraph`) and shows `App()`, as `MainActivity` does on Android.
+The iOS app is the Xcode project in [`apps/shop/ios`](../../../apps/shop/ios/). It shows the screens of `:apps:shop:shared`, which builds them into the `ShopApp` framework: the project's Run Script calls Gradle (`embedAndSignAppleFrameworkForXcode`) before Xcode compiles the Swift code. The app is the whole shop: `MainViewController()` in `iosMain` creates the app's graph (`IosAppGraph`) and shows `App()`, as `MainActivity` does on Android.
 
 - **It builds on a Mac** with Xcode and JDK 21: open `apps/shop/ios/iosApp.xcodeproj` and run it on a simulator, or use the iOS run configuration of Android Studio with the Kotlin Multiplatform plugin.
 - **On Linux the shared code compiles for iOS too** (`./gradlew compileKotlinIosSimulatorArm64`), which catches most iOS errors before CI; linking the framework, the iOS tests and the Xcode build need a Mac, so CI runs them on macOS.
 - **iOS 18.5 or later**, iPhone in portrait, iPad in any orientation. The server is reached over plain HTTP by its IP address, which iOS allows only with `NSAllowsArbitraryLoads` in `Info.plist`.
-- **The UI kit has its own Xcode project**, [`apps/uikit/ios`](../../../apps/uikit/ios/), made the same way: it links the `UiKitApp` framework of `:apps:uikit:app` (not `UiKit`: on a Mac's case-insensitive disk it would clash with Apple's `UIKit`). It works offline, so it doesn't need `NSAllowsArbitraryLoads`.
+- **The UI kit has its own Xcode project**, [`apps/uikit/ios`](../../../apps/uikit/ios/), made the same way: it links the `UiKitApp` framework of `:apps:uikit:shared` (not `UiKit`: on a Mac's case-insensitive disk it would clash with Apple's `UIKit`). It works offline, so it doesn't need `NSAllowsArbitraryLoads`.
 - **A missing function fails the link**: by default Kotlin/Native links a call to a function the libraries lack (e.g. one written under another signature) into a call that throws at run time; `shoppingapp.kmp.library` passes `-Xpartial-linkage-loglevel=ERROR`, so such a framework doesn't build. A compiler bug once made the app crash at start this way.
 - **Logs, as on Android**: a debug build writes HTTP requests and analytics events to the Xcode console, a release build writes nothing. A KMP module has no build variants, so the check is `Platform.isDebugBinary` at run time; Xcode's Release configuration builds the release framework.
 

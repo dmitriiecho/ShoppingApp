@@ -57,7 +57,7 @@ fun `discount is the promo code percent of the subtotal`() {
 
 ## Имена и расположение
 
-Имена всего, что сделано для тестов, начинаются с `Test` или `test`, как в Now in Android. Префикс `Fake` уже занят: `FakeInsightsClient` и `FakeAdTrackerClient` в `:apps:shop:app` — это рабочий код, заглушки систем аналитики.
+Имена всего, что сделано для тестов, начинаются с `Test` или `test`, как в Now in Android. Префикс `Fake` уже занят: `FakeInsightsClient` и `FakeAdTrackerClient` в `:apps:shop:shared` — это рабочий код, заглушки систем аналитики.
 
 | Что | Имя | Пример |
 |---|---|---|
