@@ -18,8 +18,8 @@ The same app is built on three slightly different stacks, each in its own branch
 | Branch | Platforms | DI | Network | Logging | Download |
 |---|---|---|---|---|---|
 | **`main`** | Android | Hilt | Retrofit + OkHttp | Timber | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/main-latest/ShoppingApp-UiKit.apk) |
-| [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp-ready) | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
-| [`kmp`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp) | Android, iOS | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp-UiKit.apk) |
+| [`kmp-ready`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp-ready/README.md) | Android | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-ready-latest/ShoppingApp-UiKit.apk) |
+| [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/README.md) | Android, iOS | Metro | Ktor | Kermit | [APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp.apk), [UI kit APK](https://github.com/dmitriiecho/ShoppingApp/releases/download/kmp-latest/ShoppingApp-UiKit.apk) |
 
 All variants share Compose, Navigation Compose, Room and DataStore.
 
@@ -27,7 +27,7 @@ Each branch comes with two APKs: the shop and the UI kit.
 
 &nbsp;
 
-## The [`kmp`](https://github.com/dmitriiecho/ShoppingApp/tree/kmp) variant: Android and iOS
+## The [`kmp`](https://github.com/dmitriiecho/ShoppingApp/blob/kmp/README.md) variant: Android and iOS
 
 - **Four apps from one branch**: the shop and the UI kit, each for Android and for iOS.
 - **Phones and tablets** on both platforms.
